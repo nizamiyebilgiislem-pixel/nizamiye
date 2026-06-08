@@ -1,0 +1,40 @@
+import Link from "next/link";
+import { Plus } from "lucide-react";
+
+import { CourseFilters } from "@/components/courses/course-filters";
+import { CourseList } from "@/components/courses/course-list";
+import { GradeErrorMessage } from "@/components/grades/grade-error-message";
+import { PageHeader } from "@/components/layout/page-header";
+import { buttonVariants } from "@/components/ui/button";
+import { requireAuth } from "@/lib/auth";
+import { getCoursesForProfile } from "@/lib/courses/queries";
+import { canManageGradeSettings } from "@/lib/grades/permissions";
+import { cn } from "@/lib/utils";
+
+type CoursesPageProps = {
+  searchParams: Promise<{ q?: string; department?: string; status?: string; error?: string }>;
+};
+
+export default async function CoursesPage({ searchParams }: CoursesPageProps) {
+  const params = await searchParams;
+  const { profile } = await requireAuth();
+  const { courses, departments } = await getCoursesForProfile(profile, {
+    search: params.q,
+    departmentId: params.department,
+    status: params.status,
+  });
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <PageHeader eyebrow="Not Sistemi" title="Dersler" description="Bölüm bazlı dersleri ve sınav türlerini yönetin." />
+        {canManageGradeSettings(profile) ? (
+          <Link href="/not-sistemi/dersler/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Ders</Link>
+        ) : null}
+      </div>
+      <GradeErrorMessage error={params.error} />
+      <CourseFilters departments={departments} values={{ search: params.q, departmentId: params.department, status: params.status }} />
+      {courses.length > 0 ? <CourseList courses={courses} profile={profile} /> : <p className="text-sm text-muted-foreground">Ders bulunamadı.</p>}
+    </div>
+  );
+}

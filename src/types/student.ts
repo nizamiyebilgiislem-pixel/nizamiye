@@ -1,0 +1,34 @@
+import type { StudentStatus } from "@/types/rbac";
+
+export type StudentProfile = {
+  id: string;
+  full_name: string;
+  identity_number: string | null;
+  father_name: string | null;
+  mother_name: string | null;
+  guardian_phone: string | null;
+  guardian_phone_2: string | null;
+  father_job: string | null;
+  mother_job: string | null;
+  father_status: string | null;
+  mother_status: string | null;
+  family_monthly_income: string | null;
+  home_status: string | null;
+  parent_marital_status: string | null;
+  blood_type: string | null;
+  sibling_in_institution: string | null;
+  birth_date: string | null;
+  registration_date: string | null;
+  course_class_id: string | null;
+  school_class: string | null;
+  school_name: string | null;
+  nationality: string | null;
+  hometown: string | null;
+  address: string | null;
+  photo_url: string | null;
+  status: StudentStatus;
+  created_by: string | null;
+  updated_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
