@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Plus, UserX } from "lucide-react";
+import { Plus } from "lucide-react";
 
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { cn } from "@/lib/utils";
 import type { DormitoryAssignmentWithRelations, DormitoryWithDepartment } from "@/lib/dormitory/queries";
 import { endAssignmentAction } from "@/lib/dormitory/actions";
@@ -70,10 +71,9 @@ export function DormitoryDetailPanel({ dormitory, assignments, assignedCount, ca
                       {canManage && (
                         <td className="px-4 py-3">
                           <form action={endAssignmentAction.bind(null, assignment.id) as unknown as (formData: FormData) => Promise<void>}>
-                            <Button type="submit" variant="ghost" size="sm" className="text-red-600 hover:bg-red-50 hover:text-red-700">
-                              <UserX className="size-3.5" aria-hidden="true" />
+                            <FormSubmitButton pendingLabel="Sonlandırılıyor..." variant="ghost" size="sm" className="text-red-600 hover:bg-red-50 hover:text-red-700">
                               Yerleşimi Sonlandır
-                            </Button>
+                            </FormSubmitButton>
                           </form>
                         </td>
                       )}

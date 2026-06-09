@@ -4,7 +4,6 @@ import { useActionState } from "react";
 
 import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { updateTalepStatusAction } from "@/lib/talepler/actions";
 
 type TalepStatusFormProps = {
@@ -50,9 +49,9 @@ export function TalepStatusForm({ talepId, currentStatus }: TalepStatusFormProps
             <form key={action.status} action={formAction}>
               <input type="hidden" name="id" value={talepId} />
               <input type="hidden" name="status" value={action.status} />
-              <Button type="submit" variant={action.variant ?? "default"} size="sm">
+              <FormSubmitButton pendingLabel="İşleniyor..." variant={action.variant ?? "default"} size="sm">
                 {action.label}
-              </Button>
+              </FormSubmitButton>
             </form>
           ))}
         </div>

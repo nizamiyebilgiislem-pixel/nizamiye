@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { CalendarClock, CheckCircle2, Plus } from "lucide-react";
+import { CalendarClock, Plus } from "lucide-react";
 
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { upsertTermAction, setCurrentTermAction } from "@/lib/terms/actions";
 import type { AcademicTermRow } from "@/types/database";
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -33,10 +34,9 @@ export function TermsManager({ terms, canManage }: { terms: AcademicTermRow[]; c
                   <>
                     <form action={setCurrentTermAction}>
                       <input type="hidden" name="id" value={term.id} />
-                      <Button type="submit" variant="secondary" size="sm" disabled={term.is_current || term.status === "closed" || term.status === "archived"}>
-                        <CheckCircle2 className="size-4" aria-hidden="true" />
+                      <FormSubmitButton pendingLabel="Aktifleştiriliyor..." variant="secondary" size="sm">
                         Aktif Yap
-                      </Button>
+                      </FormSubmitButton>
                     </form>
                     <Link href={`/not-sistemi/donemler/${term.id}/kapat`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
                       Kapat
@@ -62,9 +62,7 @@ export function TermsManager({ terms, canManage }: { terms: AcademicTermRow[]; c
                   Current
                 </label>
                 {canManage ? (
-                  <button type="submit" className={cn(buttonVariants({ size: "sm" }), "h-10 px-4")}>
-                    Kaydet
-                  </button>
+                  <FormSubmitButton pendingLabel="Kaydediliyor..." size="sm">Kaydet</FormSubmitButton>
                 ) : null}
               </form>
             </CardContent>
@@ -99,9 +97,7 @@ function TermForm() {
             <input type="checkbox" name="is_current" />
             Current
           </label>
-          <button type="submit" className={cn(buttonVariants({ size: "sm" }), "h-10 px-4")}>
-            Ekle
-          </button>
+          <FormSubmitButton pendingLabel="Kaydediliyor..." size="sm">Ekle</FormSubmitButton>
         </form>
       </CardContent>
     </Card>

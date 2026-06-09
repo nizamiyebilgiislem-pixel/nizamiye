@@ -279,7 +279,7 @@ export async function createParentProfileAction(formData: FormData) {
     revalidatePath(`/talebeler/${studentId}`);
   });
 
-  redirect(`/veliler/${createdParent.id}${authUserId ? "?success=auth-created" : ""}`);
+  redirect(`/veliler/${createdParent.id}${authUserId ? "?success=auth-created" : "?success=created"}`);
 }
 
 export async function updateParentProfileAction(formData: FormData) {

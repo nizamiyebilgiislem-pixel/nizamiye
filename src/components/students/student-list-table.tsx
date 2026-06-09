@@ -3,8 +3,9 @@ import { Eye, Pencil } from "lucide-react";
 
 import { StudentAvatar } from "@/components/students/student-avatar";
 import { StatusBadge } from "@/components/students/status-badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { canEditStudent } from "@/lib/students/permissions";
 import type { StudentWithRelations } from "@/lib/students/queries";
@@ -74,9 +75,9 @@ export function StudentListTable({ students, profile, showReactivate, reactivate
                         {showReactivate && reactivateAction ? (
                           <form action={reactivateAction}>
                             <input type="hidden" name="id" value={student.id} />
-                            <Button type="submit" variant="secondary" size="sm">
+                            <FormSubmitButton pendingLabel="Aktifleştiriliyor..." variant="secondary" size="sm">
                               Aktif yap
-                            </Button>
+                            </FormSubmitButton>
                           </form>
                         ) : null}
                       </div>

@@ -1,4 +1,6 @@
 import { PanelShell } from "@/components/layout/panel-shell";
+import { ToastProvider } from "@/components/toast/toast-provider";
+import { RouteToast } from "@/components/toast/route-toast";
 import { requireAuth } from "@/lib/auth";
 import { getNavigationForRole } from "@/lib/navigation";
 
@@ -14,8 +16,11 @@ export default async function PanelLayout({
   const navigationGroups = getNavigationForRole(profile.role);
 
   return (
-    <PanelShell navigationGroups={navigationGroups} profile={profile}>
-      {children}
-    </PanelShell>
+    <ToastProvider>
+      <RouteToast />
+      <PanelShell navigationGroups={navigationGroups} profile={profile}>
+        {children}
+      </PanelShell>
+    </ToastProvider>
   );
 }

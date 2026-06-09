@@ -79,7 +79,7 @@ export async function createInfirmaryRecordAction(formData: FormData) {
 
   revalidatePath("/revir");
   revalidatePath(`/talebeler/${student.id}`);
-  redirect(`/revir/${data.id}`);
+  redirect(`/revir/${data.id}?success=created`);
 }
 
 export async function updateInfirmaryRecordAction(formData: FormData) {
@@ -127,5 +127,5 @@ export async function updateInfirmaryRecordAction(formData: FormData) {
   revalidatePath("/revir");
   revalidatePath(`/revir/${record.id}`);
   revalidatePath(`/talebeler/${record.student.id}`);
-  redirect(`/revir/${record.id}`);
+  redirect(`/revir/${record.id}?success=updated`);
 }

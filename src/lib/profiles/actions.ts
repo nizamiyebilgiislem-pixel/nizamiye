@@ -241,7 +241,7 @@ export async function createStaffProfileAction(formData: FormData) {
 
   revalidatePath("/hocalar");
   revalidatePath("/kullanicilar");
-  redirect(`/hocalar/${data.id}${authUserId ? "?success=auth-created" : ""}`);
+  redirect(`/hocalar/${data.id}${authUserId ? "?success=auth-created" : "?success=created"}`);
 }
 
 export async function updateStaffProfileAction(formData: FormData) {
@@ -277,7 +277,7 @@ export async function updateStaffProfileAction(formData: FormData) {
   revalidatePath("/hocalar");
   revalidatePath("/kullanicilar");
   revalidatePath(`/hocalar/${target.id}`);
-  redirect(`/hocalar/${target.id}`);
+  redirect(`/hocalar/${target.id}?success=updated`);
 }
 
 export async function updateUserProfileAction(formData: FormData) {
@@ -309,7 +309,7 @@ export async function updateUserProfileAction(formData: FormData) {
   revalidatePath("/hocalar");
   revalidatePath("/kullanicilar");
   revalidatePath(`/kullanicilar/${target.id}`);
-  redirect(`/kullanicilar/${target.id}`);
+  redirect(`/kullanicilar/${target.id}?success=updated`);
 }
 
 export async function createProfileAuthAccountAction(formData: FormData) {

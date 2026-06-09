@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { saveStudentGradesAction } from "@/lib/grades/actions";
 import type { StudentGradeSummary } from "@/lib/grades/queries";
 import type { StudentWithRelations } from "@/lib/students/queries";
@@ -86,13 +87,7 @@ export function GradeEntryForm({ student, summary }: { student: StudentWithRelat
         </div>
       ))}
       <div className="flex justify-end">
-        <button
-          type="submit"
-          disabled={!hasTerms || !hasCourses || !isEditable}
-          className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          Notları Kaydet
-        </button>
+        <FormSubmitButton pendingLabel="Kaydediliyor...">Notları Kaydet</FormSubmitButton>
       </div>
     </form>
   );

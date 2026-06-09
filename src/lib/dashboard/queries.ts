@@ -92,9 +92,9 @@ export async function getDashboardData(profile: ProfileRow): Promise<DashboardDa
     safeQuery(supabase.from("profiles").select("*"), emptyResult.profiles),
     safeQuery(supabase.from("departments").select("*").eq("is_active", true).order("name", { ascending: true }), emptyResult.departments),
     safeQuery(supabase.from("classes").select("*").order("name", { ascending: true }), emptyResult.classes),
-    safeQuery(supabase.from("infirmary_records").select("*").order("record_date", { ascending: false }), emptyResult.infirmaryRecords),
-    safeQuery(supabase.from("student_documents").select("*").order("created_at", { ascending: false }), emptyResult.documents),
-    safeQuery(supabase.from("student_evaluations").select("*").order("created_at", { ascending: false }), emptyResult.evaluations),
+    safeQuery(supabase.from("infirmary_records").select("*").order("record_date", { ascending: false }).limit(50), emptyResult.infirmaryRecords),
+    safeQuery(supabase.from("student_documents").select("*").order("created_at", { ascending: false }).limit(50), emptyResult.documents),
+    safeQuery(supabase.from("student_evaluations").select("*").order("created_at", { ascending: false }).limit(50), emptyResult.evaluations),
     safeQuery(supabase.from("class_courses").select("*"), emptyResult.classCourses),
     safeQuery(supabase.from("weekly_schedule_slots").select("*"), emptyResult.scheduleSlots),
   ]);

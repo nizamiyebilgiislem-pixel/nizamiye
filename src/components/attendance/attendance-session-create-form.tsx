@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { attendanceTypeDescriptions, attendanceTypeLabels } from "@/lib/attendance/constants";
@@ -67,7 +67,7 @@ export function AttendanceSessionCreateForm({
           </div>
           <Textarea name="note" placeholder="İsteğe bağlı açıklama" className="min-h-24" />
           <div className="flex justify-end">
-            <Button type="submit">Yoklama Oluştur</Button>
+            <FormSubmitButton pendingLabel="Kaydediliyor...">Yoklama Oluştur</FormSubmitButton>
           </div>
         </form>
       </CardContent>

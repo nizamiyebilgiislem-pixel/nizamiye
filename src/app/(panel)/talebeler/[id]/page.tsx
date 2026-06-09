@@ -97,8 +97,16 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
           <PageHeader
             eyebrow={student.department?.name ?? "Talebe"}
             title={student.full_name}
-            description={`${student.course_class?.name ?? "Sınıf yok"} · ${student.guardian_phone ?? "Veli telefonu yok"}`}
+            description={`${student.guardian_phone ?? "Veli telefonu yok"}`}
           />
+          {student.course_class?.id ? (
+            <Link
+              href={`/siniflar/${student.course_class.id}`}
+              className="text-sm font-medium text-[#093657] hover:underline"
+            >
+              {student.course_class.name}
+            </Link>
+          ) : null}
         </div>
         <div className="flex items-center gap-2">
           <StatusBadge status={student.status} />

@@ -79,7 +79,7 @@ export async function createDepartmentAction(formData: FormData) {
   }
 
   revalidateDepartmentPages();
-  redirect(`/bolumler/${data.id}`);
+  redirect(`/bolumler/${data.id}?success=created`);
 }
 
 export async function updateDepartmentAction(formData: FormData) {
@@ -137,7 +137,7 @@ export async function updateDepartmentAction(formData: FormData) {
   }
 
   revalidateDepartmentPages();
-  redirect(`/bolumler/${parsed.data.id}`);
+  redirect(`/bolumler/${parsed.data.id}?success=updated`);
 }
 
 function revalidateDepartmentPages() {

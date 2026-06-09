@@ -3,11 +3,11 @@ import type { ComponentType } from "react";
 import { notFound, redirect } from "next/navigation";
 import { BookOpen, CalendarDays, Pencil, UsersRound } from "lucide-react";
 
+import { ClassCourseManager } from "@/components/classes/class-course-manager";
 import { ClassErrorMessage } from "@/components/classes/class-error-message";
 import { DepartmentManagerCard } from "@/components/departments/department-manager-card";
 import { ProgressMeter } from "@/components/departments/progress-meter";
 import { PageHeader } from "@/components/layout/page-header";
-import { RichProfileCard } from "@/components/profiles/rich-profile-card";
 import { WeeklySchedulePreview } from "@/components/schedule/weekly-schedule-preview";
 import { StudentCompactCard } from "@/components/students/student-compact-card";
 import { Badge } from "@/components/ui/badge";
@@ -103,35 +103,7 @@ export default async function ClassDetailPage({ params, searchParams }: ClassDet
       </section>
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-        <Card>
-          <CardHeader className="border-b border-border">
-            <CardTitle>Sınıf Dersleri</CardTitle>
-            <CardDescription>Aktif dersler ve atanmış hocalar.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3 p-4">
-            {classRow.courses.length > 0 ? (
-              classRow.courses.map((course) => (
-                <div key={course.id} className="rounded-md border border-border bg-[#f8fafc] p-3">
-                  <p className="text-sm font-semibold text-[#093657]">{course.name}</p>
-                  {course.teacher ? (
-                    <div className="mt-3">
-                      <RichProfileCard
-                        profile={course.teacher}
-                        href={`/hocalar/${course.teacher.id}`}
-                        compact
-                        className="border-0 bg-transparent p-0 shadow-none hover:bg-transparent"
-                      />
-                    </div>
-                  ) : (
-                    <p className="mt-2 text-xs text-muted-foreground">Hoca atanmadı</p>
-                  )}
-                </div>
-              ))
-            ) : (
-              <p className="text-sm text-muted-foreground">Bu sınıfa aktif ders atanmadı.</p>
-            )}
-          </CardContent>
-        </Card>
+        <ClassCourseManager classId={classRow.id} profile={profile} />
 
         <WeeklySchedulePreview
           classRow={scheduleClassRow}

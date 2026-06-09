@@ -2,7 +2,6 @@ import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { parentRelationLabels, type ParentRelation } from "@/lib/parents/constants";
 import type { ParentProfileDetail, ParentVisibleStudent } from "@/lib/parents/queries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 
 type ParentLinkManagerProps = {
   parent: ParentProfileDetail;
@@ -67,9 +66,9 @@ export function ParentLinkManager({ parent, availableStudents, addAction, remove
                   <input type="hidden" name="parent_profile_id" value={parent.id} />
                   <input type="hidden" name="student_id" value={student.id} />
                   <input type="hidden" name="relation" value={student.relation ?? "Baba"} />
-                  <Button type="submit" variant="destructive">
+                  <FormSubmitButton pendingLabel="Kaldırılıyor..." variant="destructive">
                     Talebe Bağını Kaldır
-                  </Button>
+                  </FormSubmitButton>
                 </form>
               </div>
             ))

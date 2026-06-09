@@ -489,7 +489,7 @@ async function getActiveStudentCountMap(classMap: Map<string, ClassRow>) {
 
 async function getSessionsByStudentId(profile: ProfileRow, studentId: string) {
   const admin = createSupabaseAdminClient();
-  const { data: studentData, error: studentError } = await admin.from("students").select("*").eq("id", studentId).maybeSingle();
+  const { data: studentData, error: studentError } = await admin.from("students").select("id,course_class_id").eq("id", studentId).maybeSingle();
 
   if (studentError) {
     throw new Error("Talebe bilgisi alınamadı.");

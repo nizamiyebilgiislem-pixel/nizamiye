@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import type { DepartmentRow, ProfileRow } from "@/types/database";
 
 type ClassFormProps = {
@@ -86,9 +87,7 @@ export function ClassForm({ action, departments, teachers, profile, mode, initia
         </label>
       </div>
       <div className="flex justify-end">
-        <button type="submit" className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">
-          {mode === "create" ? "Sınıfı Kaydet" : "Değişiklikleri Kaydet"}
-        </button>
+        <FormSubmitButton pendingLabel="Kaydediliyor...">{mode === "create" ? "Sınıfı Kaydet" : "Değişiklikleri Kaydet"}</FormSubmitButton>
       </div>
     </form>
   );

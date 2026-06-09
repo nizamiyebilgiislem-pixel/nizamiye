@@ -49,6 +49,11 @@ export async function createDormitoryAction(_previousState: unknown, formData: F
   }
 
   const { department_id, name, capacity, description } = parsed.data;
+
+  if (profile.role === "bolum_muduru" && department_id !== profile.department_id) {
+    return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
+  }
+
   const supabase = await createSupabaseServerClient();
 
   const { data: dormitory, error } = await supabase
@@ -73,7 +78,7 @@ export async function createDormitoryAction(_previousState: unknown, formData: F
   });
 
   revalidatePath("/yatakhane");
-  redirect("/yatakhane");
+  redirect("/yatakhane?success=created");
 }
 
 export async function updateDormitoryAction(_previousState: unknown, formData: FormData) {
@@ -91,6 +96,11 @@ export async function updateDormitoryAction(_previousState: unknown, formData: F
   }
 
   const { id, department_id, name, capacity, description, is_active } = parsed.data;
+
+  if (profile.role === "bolum_muduru" && department_id !== profile.department_id) {
+    return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
+  }
+
   const supabase = await createSupabaseServerClient();
 
   const { error } = await supabase
@@ -115,7 +125,7 @@ export async function updateDormitoryAction(_previousState: unknown, formData: F
 
   revalidatePath("/yatakhane");
   revalidatePath(`/yatakhane/${id}`);
-  redirect("/yatakhane");
+  redirect("/yatakhane?success=updated");
 }
 
 export async function assignStudentAction(_previousState: unknown, formData: FormData) {
@@ -139,6 +149,10 @@ export async function assignStudentAction(_previousState: unknown, formData: For
 
   if (!dormitory) {
     return { error: "Yatakhane bulunamadı." };
+  }
+
+  if (profile.role === "bolum_muduru" && dormitory.department_id !== profile.department_id) {
+    return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
   const currentCount = await getDormitoryAssignmentCount(dormitory_id);
@@ -204,6 +218,12 @@ export async function endAssignmentAction(assignmentId: string) {
 
   if (!assignment) {
     return { error: "Yerleşim kaydı bulunamadı." };
+  }
+
+  const dormitory = await getDormitoryById(assignment.dormitory_id);
+
+  if (profile.role === "bolum_muduru" && (!dormitory || dormitory.department_id !== profile.department_id)) {
+    return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
   const today = new Date().toISOString().split("T")[0];

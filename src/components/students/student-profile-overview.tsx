@@ -1,5 +1,6 @@
 import { BookOpen, HeartPulse, MessageSquareText, TrendingUp } from "lucide-react";
 
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { addStudentBookAction, addStudentProfileNoteAction } from "@/lib/student-profile/actions";
 import type { EvaluationWithRelations } from "@/lib/evaluations/queries";
 import type { StudentGradeSummary } from "@/lib/grades/queries";
@@ -9,11 +10,9 @@ import type { InfirmaryRecordRow, ProfileRow } from "@/types/database";
 import { StudentAvatar } from "@/components/students/student-avatar";
 import { StudentProfilePdfButton } from "@/components/students/student-profile-pdf-button";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
 
 type InfirmaryRecord = InfirmaryRecordRow & { created_by_profile: ProfileRow | null };
 
@@ -208,7 +207,7 @@ function StudentProfileNoteForm({
         <Textarea name="note" required minLength={3} placeholder="Dönem içi gözlem, davranış veya akademik takip notu" className="min-h-20" />
       </div>
       <div className="flex justify-end">
-        <button type="submit" className={cn(buttonVariants({ size: "sm" }))}>Yorum Ekle</button>
+        <FormSubmitButton pendingLabel="Kaydediliyor..." size="sm">Yorum Ekle</FormSubmitButton>
       </div>
     </form>
   );
@@ -237,7 +236,7 @@ function StudentBookForm({
       </div>
       <Textarea name="note" placeholder="Kitapla ilgili kısa not" />
       <div className="flex justify-end">
-        <button type="submit" className={cn(buttonVariants({ size: "sm" }))}>Kitap Ekle</button>
+        <FormSubmitButton pendingLabel="Kaydediliyor..." size="sm">Kitap Ekle</FormSubmitButton>
       </div>
     </form>
   );

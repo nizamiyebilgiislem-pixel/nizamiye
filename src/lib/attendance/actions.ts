@@ -118,7 +118,7 @@ export async function createAttendanceSessionAction(formData: FormData) {
 
   revalidatePath("/yoklama");
   revalidatePath("/dashboard");
-  redirect(`/yoklama/${session.id}`);
+  redirect(`/yoklama/${session.id}?success=created`);
 }
 
 export async function updateAttendanceSessionAction(formData: FormData) {

@@ -1,3 +1,4 @@
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import type { CourseRow, DepartmentRow, ProfileRow } from "@/types/database";
 
 export function CourseForm({
@@ -45,9 +46,7 @@ export function CourseForm({
         </label>
       </div>
       <div className="flex justify-end">
-        <button type="submit" className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">
-          {course ? "Dersi Güncelle" : "Dersi Kaydet"}
-        </button>
+        <FormSubmitButton pendingLabel="Kaydediliyor...">{course ? "Dersi Güncelle" : "Dersi Kaydet"}</FormSubmitButton>
       </div>
     </form>
   );

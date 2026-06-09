@@ -7,17 +7,8 @@ import { getDefaultPathForRole } from "@/lib/route-permissions";
 
 export const dynamic = "force-dynamic";
 
-type LoginPageProps = {
-  searchParams: Promise<{
-    debug?: string;
-    error?: string;
-  }>;
-};
-
-export default async function LoginPage({ searchParams }: LoginPageProps) {
-  const params = await searchParams;
-  const { user, profile } = await getCurrentAuthState();
-  const debugMode = params?.debug === "1";
+export default async function LoginPage() {
+  const { profile } = await getCurrentAuthState();
 
   if (profile) {
     redirect(getDefaultPathForRole(profile.role));
@@ -55,13 +46,6 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
         {/* Login card */}
         <div className="rounded-2xl border border-[#e5e7eb] bg-white/80 p-8 shadow-xl shadow-[#093657]/5 backdrop-blur-sm">
-          {debugMode && user && !profile ? (
-            <div className="mb-5 rounded-lg border border-amber-200 bg-amber-50 p-3">
-              <p className="text-sm font-medium text-amber-800">Debug: aktif profil bulunamadı</p>
-              <p className="mt-1.5 break-all text-xs text-amber-600">user.id: {user.id}</p>
-              <p className="mt-1 break-all text-xs text-amber-600">user.email: {user.email ?? "-"}</p>
-            </div>
-          ) : null}
           <LoginForm />
         </div>
 

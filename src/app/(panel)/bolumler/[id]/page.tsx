@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { Pencil } from "lucide-react";
 
 import { ClassAccordionCard } from "@/components/classes/class-accordion-card";
+import { DepartmentCourseManager } from "@/components/courses/department-course-manager";
 import { DepartmentErrorMessage } from "@/components/departments/department-error-message";
 import { DepartmentManagerCard } from "@/components/departments/department-manager-card";
 import { ProgressMeter } from "@/components/departments/progress-meter";
@@ -94,6 +95,17 @@ export default async function DepartmentDetailPage({ params, searchParams }: Dep
         </Card>
 
         <DepartmentManagerCard manager={department.department_manager} />
+      </section>
+
+      <section className="space-y-4">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <PageHeader
+            eyebrow="Dersler"
+            title="Bölüm Dersleri"
+            description="Bölüme ait derslerin listesi ve yönetimi."
+          />
+        </div>
+        <DepartmentCourseManager departmentId={department.id} profile={profile} />
       </section>
 
       <section className="space-y-4">

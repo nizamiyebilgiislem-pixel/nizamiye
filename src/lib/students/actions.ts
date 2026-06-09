@@ -151,7 +151,7 @@ export async function createStudentAction(formData: FormData) {
   });
 
   revalidatePath("/talebeler");
-  redirect(`/talebeler/${data.id}`);
+  redirect(`/talebeler/${data.id}?success=created`);
 }
 
 export async function updateStudentAction(formData: FormData) {
@@ -301,7 +301,7 @@ export async function updateStudentAction(formData: FormData) {
 
   revalidatePath("/talebeler");
   revalidatePath(`/talebeler/${parsed.data.id}`);
-  redirect(`/talebeler/${parsed.data.id}`);
+  redirect(`/talebeler/${parsed.data.id}?success=updated`);
 }
 
 export async function reactivateStudentAction(formData: FormData) {

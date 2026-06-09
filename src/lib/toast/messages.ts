@@ -1,0 +1,33 @@
+export const successMessages: Record<string, string> = {
+  created: "Kayıt başarıyla oluşturuldu.",
+  updated: "Kayıt başarıyla güncellendi.",
+  deleted: "Kayıt başarıyla silindi.",
+  saved: "Değişiklikler kaydedildi.",
+  sent: "İşlem başarıyla gönderildi.",
+  assigned: "Atama başarıyla yapıldı.",
+  completed: "İşlem tamamlandı.",
+  "auth-created": "Kullanıcı hesabı oluşturuldu.",
+  "auth-linked": "Kimlik doğrulama bağlantısı kuruldu.",
+  "password-reset": "Şifre sıfırlama başarılı.",
+  "profile-updated": "Profil bilgileri güncellendi.",
+  "password-updated": "Şifre başarıyla güncellendi.",
+  "student-linked": "Talebe bağlantısı eklendi.",
+  "student-unlinked": "Talebe bağlantısı kaldırıldı.",
+  "parent-linked": "Veli bağlantısı kuruldu.",
+};
+
+export const errorMessages: Record<string, string> = {
+  save: "Kayıt sırasında hata oluştu.",
+  permission: "Bu işlem için yetkiniz yok.",
+  unauthorized: "Bu işlem için yetkiniz yok.",
+  not_found: "Kayıt bulunamadı.",
+  "not-found": "Kayıt bulunamadı.",
+  validation: "Lütfen zorunlu alanları kontrol edin.",
+  duplicate: "Bu kayıt zaten mevcut.",
+  class: "Seçilen sınıf geçerli değil.",
+  teacher: "Seçilen hoca uygun değil.",
+  department: "Bölüm bilgisi geçerli değil.",
+  photo: "Fotoğraf yüklenemedi.",
+  "photo-upload": "Fotoğraf yüklenemedi.",
+  unknown: "Beklenmeyen bir hata oluştu.",
+};

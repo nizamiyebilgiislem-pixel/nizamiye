@@ -1,3 +1,4 @@
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import type { InfirmaryRecordWithRelations } from "@/lib/infirmary/queries";
 import type { StudentRow } from "@/types/database";
 
@@ -55,7 +56,7 @@ export function InfirmaryForm({
         <div className="md:col-span-2"><TextArea label="Not" name="note" value={record?.note} /></div>
       </div>
       <div className="flex justify-end">
-        <button type="submit" className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">Revir Kaydını Kaydet</button>
+        <FormSubmitButton pendingLabel="Kaydediliyor...">Revir Kaydını Kaydet</FormSubmitButton>
       </div>
     </form>
   );

@@ -1,16 +1,13 @@
-import { Save } from "lucide-react";
-
 import { AttendanceStatusBadge, AttendanceTypeBadge } from "@/components/attendance/attendance-badges";
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { StudentAvatar } from "@/components/students/student-avatar";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { attendanceRecordStatusLabelsByType, attendanceTypeDescriptions, attendanceTypeLabels } from "@/lib/attendance/constants";
 import { updateAttendanceSessionAction } from "@/lib/attendance/actions";
 import type { AttendanceSessionDetail } from "@/lib/attendance/queries";
-import { cn } from "@/lib/utils";
 
 export function AttendanceRecordEditor({ detail, canEdit }: { detail: AttendanceSessionDetail; canEdit: boolean }) {
   const { session, records } = detail;
@@ -108,10 +105,7 @@ export function AttendanceRecordEditor({ detail, canEdit }: { detail: Attendance
 
         {canEdit ? (
           <div className="flex justify-end">
-            <button type="submit" className={cn(buttonVariants(), "inline-flex items-center gap-2")}>
-              <Save className="size-4" aria-hidden="true" />
-              Kaydet
-            </button>
+            <FormSubmitButton pendingLabel="Kaydediliyor...">Kaydet</FormSubmitButton>
           </div>
         ) : null}
       </form>

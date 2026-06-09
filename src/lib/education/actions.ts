@@ -158,7 +158,7 @@ export async function createClassCourseAction(formData: FormData) {
   revalidatePath("/egitim-planlama");
   revalidatePath(`/egitim-planlama/ders-atamalari/${classRow.id}`);
   revalidatePath(`/egitim-planlama/ders-programi/${classRow.id}`);
-  redirect(`/egitim-planlama/ders-atamalari/${classRow.id}?saved=1`);
+  redirect(`/egitim-planlama/ders-atamalari/${classRow.id}?success=saved`);
 }
 
 export async function updateClassCourseAction(formData: FormData) {
@@ -228,7 +228,7 @@ export async function updateClassCourseAction(formData: FormData) {
   revalidatePath("/egitim-planlama");
   revalidatePath(`/egitim-planlama/ders-atamalari/${classCourse.class_id}`);
   revalidatePath(`/egitim-planlama/ders-programi/${classCourse.class_id}`);
-  redirect(`/egitim-planlama/ders-atamalari/${classCourse.class_id}?saved=1`);
+  redirect(`/egitim-planlama/ders-atamalari/${classCourse.class_id}?success=saved`);
 }
 
 export async function createScheduleSlotAction(formData: FormData) {

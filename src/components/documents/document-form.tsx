@@ -1,3 +1,4 @@
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { documentTypes } from "@/lib/documents/constants";
 import type { StudentDocumentWithRelations } from "@/lib/documents/queries";
 import type { StudentRow } from "@/types/database";
@@ -43,7 +44,7 @@ export function DocumentForm({
         </label>
       </div>
       <div className="flex justify-end">
-        <button type="submit" className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">Evrakı Kaydet</button>
+        <FormSubmitButton pendingLabel="Kaydediliyor...">Evrakı Kaydet</FormSubmitButton>
       </div>
     </form>
   );

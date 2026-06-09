@@ -34,7 +34,11 @@ export function ClassListTable({ classes, profile }: ClassListTableProps) {
             <TableBody>
               {classes.map((classRow) => (
                 <TableRow key={classRow.id}>
-                  <TableCell className="min-w-44 font-medium">{classRow.name}</TableCell>
+                  <TableCell className="min-w-44 font-medium">
+                    <Link href={`/siniflar/${classRow.id}`} className="text-[#093657] hover:underline">
+                      {classRow.name}
+                    </Link>
+                  </TableCell>
                   <TableCell>{classRow.department?.name ?? "-"}</TableCell>
                   <TableCell className="min-w-52">
                     {classRow.class_teacher ? (

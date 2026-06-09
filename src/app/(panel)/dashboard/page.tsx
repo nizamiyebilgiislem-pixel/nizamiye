@@ -310,7 +310,11 @@ function DistributionCard({ title, items }: { title: string; items: DashboardDis
       <CardContent className="space-y-2.5 p-4">
         {items.length > 0 ? (
           items.map((item) => (
-            <div key={item.id} className="space-y-1.5 rounded-lg border border-[#e5e7eb] bg-[#f8fafc] p-2.5">
+            <Link
+              key={item.id}
+              href={title === "Sınıflara Göre Dağılım" ? `/siniflar/${item.id}` : `/bolumler/${item.id}`}
+              className="block space-y-1.5 rounded-lg border border-[#e5e7eb] bg-[#f8fafc] p-2.5 transition-colors hover:bg-[#eaf1f6]"
+            >
               <div className="flex items-center justify-between gap-2">
                 <p className="truncate text-xs font-medium text-[#0f172a]">{item.name}</p>
                 <span className="text-sm font-semibold text-[#093657]">{item.count}</span>
@@ -318,7 +322,7 @@ function DistributionCard({ title, items }: { title: string; items: DashboardDis
               <div className="h-1.5 rounded-full bg-[#eaf1f6]">
                 <div className="h-1.5 rounded-full bg-[#093657]" style={{ width: `${Math.max(4, (item.count / maxCount) * 100)}%` }} />
               </div>
-            </div>
+            </Link>
           ))
         ) : (
           <EmptyState text="Veri yok." />

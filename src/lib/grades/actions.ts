@@ -113,5 +113,5 @@ export async function saveStudentGradesAction(formData: FormData) {
   revalidatePath("/dashboard");
   revalidatePath("/bolumler");
   revalidatePath(`/siniflar/${student.course_class.id}`);
-  redirect(`/not-sistemi/not-girisi/${student.id}?saved=1&term=${termId}`);
+  redirect(`/not-sistemi/not-girisi/${student.id}?success=saved&term=${termId}`);
 }

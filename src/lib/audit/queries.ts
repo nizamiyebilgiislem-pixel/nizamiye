@@ -40,7 +40,13 @@ export async function getAuditLogsForProfile(profile: ProfileRow, filters: Audit
     return [];
   }
 
-  const { data, error } = await admin.from("audit_logs").select("*").order("created_at", { ascending: false });
+  let query = admin.from("audit_logs").select("*").order("created_at", { ascending: false });
+
+  if (visibleStudentIds && visibleStudentIds.size > 0) {
+    query = query.in("student_id", Array.from(visibleStudentIds));
+  }
+
+  const { data, error } = await query.limit(200);
 
   if (error) {
     throw new Error("Audit logları alınamadı.");
@@ -156,7 +162,8 @@ async function filterAuditLogs(
     if (filters.search) {
       const term = filters.search.trim().toLocaleLowerCase("tr-TR");
       const student = log.student_id ? studentMap.get(log.student_id) ?? null : null;
-      const haystack = [log.title, log.description ?? "", log.actor_name, student?.full_name ?? ""]
+      const studentFullName = student && "full_name" in student ? (student as Pick<StudentRow, "id" | "full_name">).full_name : "";
+      const haystack = [log.title, log.description ?? "", log.actor_name, studentFullName]
         .join(" ")
         .toLocaleLowerCase("tr-TR");
       if (!haystack.includes(term)) {
@@ -172,7 +179,7 @@ async function attachStudents(admin: ReturnType<typeof createSupabaseAdminClient
   const studentMap = await buildStudentMap(admin, logs);
   return logs.map((log) => ({
     ...log,
-    student: log.student_id ? studentMap.get(log.student_id) ?? null : null,
+    student: log.student_id ? (studentMap.get(log.student_id) ?? null) as StudentRow | null : null,
   }));
 }
 
@@ -183,13 +190,13 @@ async function buildStudentMap(admin: ReturnType<typeof createSupabaseAdminClien
     return new Map<string, StudentRow>();
   }
 
-  const { data, error } = await admin.from("students").select("*").in("id", studentIds);
+  const { data, error } = await admin.from("students").select("id,full_name").in("id", studentIds);
 
   if (error) {
     throw new Error("Talebe verisi alınamadı.");
   }
 
-  return new Map((data ?? []).map((student) => [student.id, student as StudentRow]));
+  return new Map((data ?? []).map((student) => [student.id, student as Pick<StudentRow, "id" | "full_name">]));
 }
 
 async function getVisibleStudentIds(profile: ProfileRow) {

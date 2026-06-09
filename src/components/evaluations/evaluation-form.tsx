@@ -1,3 +1,4 @@
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { saveEvaluationAction } from "@/lib/evaluations/actions";
 import type { AcademicTermRow, StudentEvaluationRow } from "@/types/database";
 
@@ -50,9 +51,7 @@ export function EvaluationForm({
         />
       </label>
       <div className="flex justify-end">
-        <button type="submit" disabled={readOnly} className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60">
-          Kanaati Kaydet
-        </button>
+        {!readOnly ? <FormSubmitButton pendingLabel="Kaydediliyor...">Kanaati Kaydet</FormSubmitButton> : null}
       </div>
     </form>
   );

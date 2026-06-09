@@ -101,7 +101,7 @@ export async function createClassAction(formData: FormData) {
   }
 
   revalidatePath("/siniflar");
-  redirect(`/siniflar/${data.id}`);
+  redirect("/siniflar?success=created");
 }
 
 export async function updateClassAction(formData: FormData) {
@@ -169,7 +169,7 @@ export async function updateClassAction(formData: FormData) {
 
   revalidatePath("/siniflar");
   revalidatePath(`/siniflar/${parsed.data.id}`);
-  redirect(`/siniflar/${parsed.data.id}`);
+  redirect(`/siniflar/${parsed.data.id}?success=updated`);
 }
 
 async function isTeacherInDepartment(teacherId: string, departmentId: string) {

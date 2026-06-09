@@ -104,5 +104,5 @@ export async function saveEvaluationAction(formData: FormData) {
 
   revalidatePath(`/talebeler/${student.id}`);
   revalidatePath(`/kanaat-sistemi/kanaat-girisi/${student.id}`);
-  redirect(`/kanaat-sistemi/kanaat-girisi/${student.id}?saved=1&term=${parsed.data.term_id}`);
+  redirect(`/kanaat-sistemi/kanaat-girisi/${student.id}?success=saved&term=${parsed.data.term_id}`);
 }

@@ -54,7 +54,7 @@ export async function createDocumentAction(formData: FormData) {
 
   revalidatePath("/evraklar");
   revalidatePath(`/talebeler/${student.id}`);
-  redirect(`/evraklar/${data.id}`);
+  redirect(`/evraklar/${data.id}?success=created`);
 }
 
 export async function updateDocumentAction(formData: FormData) {
@@ -90,5 +90,5 @@ export async function updateDocumentAction(formData: FormData) {
   revalidatePath("/evraklar");
   revalidatePath(`/evraklar/${document.id}`);
   revalidatePath(`/talebeler/${document.student.id}`);
-  redirect(`/evraklar/${document.id}`);
+  redirect(`/evraklar/${document.id}?success=updated`);
 }

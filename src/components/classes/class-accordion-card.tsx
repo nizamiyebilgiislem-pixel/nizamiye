@@ -31,7 +31,7 @@ export function ClassAccordionCard({
       <summary className="flex cursor-pointer list-none flex-col gap-3 px-4 py-4 marker:hidden lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <p className="truncate text-base font-semibold text-[#093657]">{classRow.name}</p>
+            <Link href={`/siniflar/${classRow.id}`} className="truncate text-base font-semibold text-[#093657] hover:underline">{classRow.name}</Link>
             <ChevronDown className="size-4 text-muted-foreground transition-transform group-open:rotate-180" aria-hidden="true" />
           </div>
           {showDepartment && classRow.department?.name ? <p className="mt-1 text-sm text-muted-foreground">{classRow.department.name}</p> : null}

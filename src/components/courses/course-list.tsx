@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Pencil } from "lucide-react";
 
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { createExamTypeAction, updateExamTypeAction } from "@/lib/courses/actions";
 import { canManageGradeSettings } from "@/lib/grades/permissions";
 import type { CourseWithRelations } from "@/lib/courses/queries";
@@ -40,7 +41,7 @@ export function CourseList({ courses, profile }: { courses: CourseWithRelations[
                   <option value="true">Aktif</option>
                   <option value="false">Pasif</option>
                 </select>
-                {manageable ? <button type="submit" className="h-9 rounded-md bg-secondary px-3 text-sm">Güncelle</button> : null}
+                {manageable ? <FormSubmitButton pendingLabel="Güncelleniyor..." variant="secondary">Güncelle</FormSubmitButton> : null}
               </form>
             ))}
             {manageable ? (
@@ -52,7 +53,7 @@ export function CourseList({ courses, profile }: { courses: CourseWithRelations[
                   <option value="true">Aktif</option>
                   <option value="false">Pasif</option>
                 </select>
-                <button type="submit" className="h-9 rounded-md bg-primary px-3 text-sm text-primary-foreground">Ekle</button>
+                <FormSubmitButton pendingLabel="Kaydediliyor...">Ekle</FormSubmitButton>
               </form>
             ) : null}
           </CardContent>
