@@ -12,9 +12,36 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.VERCEL_URL ?? "http://localhost:3000";
+
 export const metadata: Metadata = {
-  title: "Nizamiye Öğrenci Sistemi",
-  description: "Nizamiye için öğrenci yönetim paneli",
+  metadataBase: new URL(baseUrl.startsWith("http") ? baseUrl : `https://${baseUrl}`),
+  title: "Nizamiye Öğrenci Yönetim Sistemi",
+  description: "Nizamiye Medresesi Öğrenci Yönetim ve Eğitim Takip Sistemi",
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
+  },
+  openGraph: {
+    title: "Nizamiye Öğrenci Yönetim Sistemi",
+    description: "Nizamiye Medresesi Öğrenci Yönetim ve Eğitim Takip Sistemi",
+    siteName: "Nizamiye ÖYS",
+    type: "website",
+    images: [
+      {
+        url: "/favicon.png",
+        width: 512,
+        height: 512,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary",
+    title: "Nizamiye Öğrenci Yönetim Sistemi",
+    description: "Nizamiye Medresesi Öğrenci Yönetim ve Eğitim Takip Sistemi",
+    images: ["/favicon.png"],
+  },
 };
 
 export default function RootLayout({
