@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Image from "next/image";
 
 import { LoginForm } from "@/components/auth/login-form";
 import { getCurrentAuthState } from "@/lib/auth";
@@ -23,28 +24,39 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#f0f5f8] px-4">
-      {/* Decorative background pattern */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 size-80 rounded-full bg-[#093657]/5" />
-        <div className="absolute -bottom-40 -left-40 size-80 rounded-full bg-[#093657]/5" />
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-[#f0f5f8] via-white to-[#e8f0f5] px-4">
+      {/* Decorative background elements */}
+      <div className="pointer-events-none fixed inset-0">
+        <div className="absolute -top-48 -right-48 size-96 rounded-full bg-[#093657]/[0.04]" />
+        <div className="absolute -bottom-48 -left-48 size-96 rounded-full bg-[#093657]/[0.04]" />
+        <div className="absolute top-1/3 left-1/4 size-64 rounded-full bg-[#093657]/[0.02]" />
+        <div className="absolute bottom-1/4 right-1/3 size-48 rounded-full bg-[#093657]/[0.02]" />
       </div>
 
-      <section className="relative w-full max-w-md">
+      <section className="relative w-full max-w-[420px]">
         {/* Logo and header area */}
-        <div className="mb-6 flex flex-col items-center text-center">
-          <div className="mb-4 flex size-20 items-center justify-center rounded-xl bg-white shadow-md ring-1 ring-[#e5e7eb]">
-            <img src="/logo.svg" alt="Nizamiye" className="size-14 object-contain" />
+        <div className="mb-8 flex flex-col items-center text-center">
+          <div className="mb-6">
+            <Image
+              src="/logo.png"
+              alt="Nizamiye"
+              width={120}
+              height={120}
+              className="size-[120px] object-contain drop-shadow-lg"
+              priority
+            />
           </div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-[#093657]/60">Nizamiye Eğitim Kurumu</p>
-          <h1 className="mt-3 text-2xl font-bold tracking-tight text-[#093657]">Öğrenci Yönetim Sistemi</h1>
-          <p className="mt-2 max-w-xs text-sm text-muted-foreground">Panele erişmek için yetkili hesabınızla giriş yapın.</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#093657]/50">Nizamiye Eğitim Kurumu</p>
+          <h1 className="mt-4 text-2xl font-bold tracking-tight text-[#093657]">Öğrenci Yönetim Sistemi</h1>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            Panele erişmek için yetkili hesabınızla giriş yapın.
+          </p>
         </div>
 
         {/* Login card */}
-        <div className="rounded-xl border border-[#e5e7eb] bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border-[#e5e7eb] bg-white/80 p-8 shadow-xl shadow-[#093657]/5 backdrop-blur-sm">
           {debugMode && user && !profile ? (
-            <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3">
+            <div className="mb-5 rounded-lg border border-amber-200 bg-amber-50 p-3">
               <p className="text-sm font-medium text-amber-800">Debug: aktif profil bulunamadı</p>
               <p className="mt-1.5 break-all text-xs text-amber-600">user.id: {user.id}</p>
               <p className="mt-1 break-all text-xs text-amber-600">user.email: {user.email ?? "-"}</p>
@@ -54,9 +66,11 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         </div>
 
         {/* Footer */}
-        <p className="mt-6 text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Nizamiye Eğitim Kurumu
-        </p>
+        <div className="mt-8 text-center">
+          <p className="text-xs text-muted-foreground">
+            &copy; {new Date().getFullYear()} Nizamiye Eğitim Kurumu
+          </p>
+        </div>
       </section>
     </main>
   );
