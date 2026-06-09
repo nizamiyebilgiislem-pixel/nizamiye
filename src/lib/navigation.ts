@@ -18,6 +18,7 @@ const parentManagerRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", 
 const allRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "veli"];
 const libraryRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevlisi", "bolum_muduru", "hoca"];
 const guidanceRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik", "bolum_muduru", "hoca"];
+const talepRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "rehberlik", "destek_birim_muduru", "muhasebe"];
 
 export const moduleGroups: NavigationGroup[] = [
   {
@@ -25,6 +26,7 @@ export const moduleGroups: NavigationGroup[] = [
     items: [
       { label: "Dashboard", href: "/dashboard", iconKey: "dashboard", allowedRoles: staffRoles },
       { label: "Veli Paneli", href: "/veli", iconKey: "home", allowedRoles: ["veli"] },
+      { label: "Hesabım", href: "/hesabim", iconKey: "user", allowedRoles: allRoles },
       { label: "Talebeler", href: "/talebeler", iconKey: "students", allowedRoles: staffRoles },
       { label: "Veliler", href: "/veliler", iconKey: "users", allowedRoles: parentManagerRoles },
       { label: "Hocalar", href: "/hocalar", iconKey: "teachers", allowedRoles: staffRoles },
@@ -54,6 +56,7 @@ export const moduleGroups: NavigationGroup[] = [
       { label: "Raporlar", href: "/raporlar", iconKey: "evaluations", allowedRoles: allRoles },
       { label: "PDF Merkezi", href: "/raporlar/talebeler", iconKey: "documents", allowedRoles: allRoles },
       { label: "Kullanıcılar", href: "/kullanicilar", iconKey: "users", allowedRoles: topManagerRoles },
+      { label: "Talep Yönetimi", href: "/talepler", iconKey: "talepler", allowedRoles: talepRoles },
       { label: "Ayarlar", href: "/ayarlar", iconKey: "settings", allowedRoles: ["admin"] },
     ],
   },

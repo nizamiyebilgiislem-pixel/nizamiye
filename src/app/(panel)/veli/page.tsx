@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FileText, HeartHandshake, CalendarDays } from "lucide-react";
+import { BookOpen, ClipboardCheck, FileText, HeartHandshake, CalendarDays } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { EvaluationSummary } from "@/components/evaluations/evaluation-summary";
@@ -8,6 +8,8 @@ import { StudentInfirmarySummary } from "@/components/infirmary/infirmary-summar
 import { StudentDocumentSummary } from "@/components/documents/student-document-summary";
 import { StudentDormitoryPanel } from "@/components/dormitory/student-dormitory-panel";
 import { StudentProfileOverview } from "@/components/students/student-profile-overview";
+import { StudentLibraryPanel } from "@/components/library/student-library-panel";
+import { StudentAttendanceSummaryPanel } from "@/components/attendance/student-attendance-summary";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -22,6 +24,8 @@ import { getStudentById } from "@/lib/students/queries";
 import { getClassById } from "@/lib/classes/queries";
 import { getDepartmentById } from "@/lib/departments/queries";
 import { getSurveysForParent, getStudentInterviewsForParent, getDepartmentActivities } from "@/lib/guidance/queries";
+import { getStudentLoans } from "@/lib/library/queries";
+import { getStudentAttendanceSummaryForParent } from "@/lib/attendance/queries";
 import { cn } from "@/lib/utils";
 
 const scopeLabels: Record<string, string> = { all_students: "Tüm Öğrenciler", department: "Bölüm", class: "Sınıf" };
@@ -56,7 +60,7 @@ export default async function ParentPanelPage() {
 
   const profiles = await Promise.all(
     students.map(async (student) => {
-      const [gradeSummary, evaluations, infirmaryRecords, profileEntries, documents, dormitoryAssignment, dormitoryHistory] = await Promise.all([
+      const [gradeSummary, evaluations, infirmaryRecords, profileEntries, documents, dormitoryAssignment, dormitoryHistory, libraryLoans, attendanceSummary] = await Promise.all([
         student.course_class ? getStudentGradeSummary(profile, student) : Promise.resolve(null),
         getEvaluationsByStudent(student.id),
         getInfirmaryRecordsByStudent(student.id),
@@ -64,9 +68,11 @@ export default async function ParentPanelPage() {
         getDocumentsByStudent(student.id),
         getStudentActiveAssignment(student.id),
         getStudentAssignmentHistory(student.id),
+        getStudentLoans(student.id),
+        getStudentAttendanceSummaryForParent(student.id),
       ]);
 
-      return { student, gradeSummary, evaluations, infirmaryRecords, profileEntries, documents, dormitoryAssignment, dormitoryHistory };
+      return { student, gradeSummary, evaluations, infirmaryRecords, profileEntries, documents, dormitoryAssignment, dormitoryHistory, libraryLoans, attendanceSummary };
     }),
   );
 
@@ -83,7 +89,7 @@ export default async function ParentPanelPage() {
       <PageHeader
         eyebrow="Veli"
         title="Öğrenci Profili"
-        description="Bağlı talebelerinizin profil, not, kanaat, yatakhane, revir, evrak ve rehberlik bilgilerini görüntüleyebilirsiniz."
+        description="Bağlı talebelerinizin profil, not, kanaat, yatakhane, revir, evrak, kütüphane, devamsızlık ve rehberlik bilgilerini görüntüleyebilirsiniz."
       />
 
       {surveys.length > 0 && (
@@ -139,7 +145,7 @@ export default async function ParentPanelPage() {
       )}
 
       {profiles.length > 0 ? (
-        profiles.map(({ student, gradeSummary, evaluations, infirmaryRecords, profileEntries, documents, dormitoryAssignment, dormitoryHistory }) => {
+        profiles.map(({ student, gradeSummary, evaluations, infirmaryRecords, profileEntries, documents, dormitoryAssignment, dormitoryHistory, libraryLoans, attendanceSummary }) => {
           const interviews = studentInterviews[student.id] ?? [];
           return (
             <div key={student.id} className="space-y-4">
@@ -186,6 +192,36 @@ export default async function ParentPanelPage() {
               <StudentDormitoryPanel activeAssignment={dormitoryAssignment} history={dormitoryHistory} />
               <StudentInfirmarySummary records={infirmaryRecords} studentId={student.id} canEdit={false} />
               <StudentDocumentSummary documents={documents} studentId={student.id} canEdit={false} />
+
+              {libraryLoans.length > 0 && (
+                <Card>
+                  <CardHeader className="flex flex-row items-center gap-2 pb-3">
+                    <BookOpen className="size-5 text-[#093657]" />
+                    <div>
+                      <CardTitle className="text-sm">Kütüphane Emanetleri</CardTitle>
+                      <CardDescription className="text-xs">{student.full_name} için kütüphane kayıtları</CardDescription>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <StudentLibraryPanel loans={libraryLoans} />
+                  </CardContent>
+                </Card>
+              )}
+
+              {attendanceSummary.student && (
+                <Card>
+                  <CardHeader className="flex flex-row items-center gap-2 pb-3">
+                    <ClipboardCheck className="size-5 text-[#093657]" />
+                    <div>
+                      <CardTitle className="text-sm">Devamsızlık / Yoklama</CardTitle>
+                      <CardDescription className="text-xs">{student.full_name} için yoklama kayıtları</CardDescription>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <StudentAttendanceSummaryPanel summary={attendanceSummary} />
+                  </CardContent>
+                </Card>
+              )}
             </div>
           );
         })

@@ -5,6 +5,8 @@ const managerRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru"];
 const topManagerRoles: UserRole[] = ["admin", "genel_mudur"];
 const parentManagerRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca"];
 const allRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "veli"];
+const talepRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "rehberlik", "destek_birim_muduru", "muhasebe"];
+const talepManageRoles: UserRole[] = ["admin", "genel_mudur"];
 const libraryStaffRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevlisi"];
 const libraryViewRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevlisi", "bolum_muduru", "hoca"];
 const guidanceStaffRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik"];
@@ -101,6 +103,10 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/rehberlik/etkinlikler/yeni": guidanceStaffRoles,
   "/rehberlik/etkinlikler/[id]": guidanceViewRoles,
   "/rehberlik/raporlar": guidanceViewRoles,
+  "/talepler": talepRoles,
+  "/talepler/yeni": talepRoles,
+  "/talepler/[id]": talepRoles,
+  "/talepler/[id]/duzenle": talepManageRoles,
 };
 
 export const roleLabels: Record<UserRole, string> = {
@@ -111,6 +117,8 @@ export const roleLabels: Record<UserRole, string> = {
   kutuphane_gorevlisi: "Kütüphane Görevlisi",
   rehberlik: "Rehberlik",
   veli: "Veli",
+  destek_birim_muduru: "Destek Birim Müdürü",
+  muhasebe: "Muhasebe",
 };
 
 export function getRouteAllowedRoles(pathname: string) {

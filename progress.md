@@ -1,6 +1,6 @@
 # Nizamiye İlerleme Özeti
 
-Son güncelleme: 2026-06-06
+Son güncelleme: 2026-06-09
 
 ## Mevcut Durum
 
@@ -68,6 +68,37 @@ Son güncelleme: 2026-06-06
 - Bu fazdan sonra `npm.cmd run lint` ve `npm.cmd run build` başarılı çalıştı.
 - Talebe profil özetine `PDF İndir` butonu eklendi. Buton tarayıcı PDF yazdırma akışını açar ve print CSS sadece seçili profil alanını basar; form ve aksiyon butonları çıktıdan gizlenir.
 - PDF indirme eklemesinden sonra `npm.cmd run lint` ve `npm.cmd run build` başarılı çalıştı.
+- **Veli Paneli genişletildi:**
+  - Kütüphane emanet bilgisi görüntüleme eklendi (yalnızca okuma, mutation yok)
+  - Devamsızlık/yoklama bilgisi görüntüleme eklendi (yalnızca okuma, mutation yok)
+  - Parent için ayrı permission bypass'lı `getStudentAttendanceSummaryForParent()` sorgusu eklendi
+  - Sidebar'a veli rolü için "Hesabım" öğesi eklendi (profil/şifre/fotoğraf yönetimi)
+  - Tüm görüntülemeler `canEdit={false}` ile salt okunur
+  - Build ve lint başarılı
+- **Auth akışı test edildi:** Admin, bölüm müdürü, hoca, veli rolleri ile login/logout/role-redirect başarılı.
+  - Dashboard yetkisiz erişimde `/login`'e redirect (proxy)
+  - Veli login → `/veli` paneline yönlenme (proxy role check)
+  - Tüm modüller yetkiye göre görünüyor/gizleniyor
+- **Teknik borç temizliği:**
+  - `console.log` debug satırları zaten önceki commit'de temizlenmişti (tespit edildi, aksiyon gerekmedi)
+  - `middleware.ts` ➜ `proxy.ts` geçişi yapıldı (Next.js 16 uyumluluğu)
+  - Fonksiyon adı `middleware` ➜ `proxy` olarak değiştirildi
+  - `src/lib/supabase/server.ts` yorumu güncellendi
+  - Build başarılı — build çıktısında `ƒ Proxy (Middleware)` olarak görünüyor
+- **Talep ve İstekler Modülü — revizyon:**
+  - RBAC: `destek_birim_muduru`, `muhasebe` rolleri eklendi; hoca ve kütüphane görevlisinin talep oluşturma yetkisi kaldırıldı
+  - `talepler` tablosu: tür, öncelik (normal/acil), hedef kişi, son tarih, cevap notu, red sebebi, iç not alanları eklendi
+  - Durumlar genişletildi: `bekliyor → incelemede → isleme_alindi → onaylandi/reddedildi → tamamlandi` (+ iptal_edildi)
+  - Hedef birim dinamik: departman isimleri + "Destek Birimi" + "Muhasebe Birimi"
+  - Yetki matrisi:
+    - admin/genel_mudur: tüm talepleri görür ve yönetir
+    - bolum_muduru: kendi departmanına gelen talepleri + kendi açtıklarını görür
+    - destek_birim_muduru: "Destek Birimi" taleplerini görür/yönetir
+    - muhasebe: "Muhasebe Birimi" taleplerini görür/yönetir
+  - Liste sayfası: sekmeli filtreleme (Hepsi/Gelen/Giden/Bekleyen/Acil/Onaylanan/Reddedilen/Tamamlanan), istatistik kartları
+  - Detay sayfası: tüm alanlar görüntülenir, durum aksiyon butonları (İncelemeye Al, Onayla, Reddet, İşleme Al, Tamamlandı, İptal Et), not alanları
+  - Status form: akışa uygun butonlar + cevap notu/red sebebi/iç not girişi
+  - Build ve lint başarılı (0 error, 2 pre-existing warnings)
 
 ## Mimari Kararlar
 
@@ -81,16 +112,19 @@ Son güncelleme: 2026-06-06
 
 ## Açık Konular
 
-- `middleware.ts` hâlâ mevcut; Next.js 16 dokümanına göre `proxy.ts` geçişi değerlendirilmesi gereken teknik borç.
-- `middleware.ts`, `src/lib/auth.ts` ve `src/lib/supabase/server.ts` içinde debug amaçlı `console.log` satırları var; üretime hazırlıkta temizlenmeli veya kontrollü log stratejisine alınmalı.
+- ~~`middleware.ts` -> `proxy.ts` geçişi~~ ✅ **tamamlandı**
+- ~~`console.log` temizliği~~ ✅ **zaten temizmiş**
 - Supabase RLS genel migrationlarda aktif görünmüyor; canlı ortamda RLS açıksa policy dokümanlarıyla uyumlu kontrol edilmeli.
 - Storage bucket ve policy kurulumları canlı Supabase tarafında doğrulanmalı.
-- Git çalışma ağacında `CLAUDE.md` dışındaki birçok değişiklik/untracked dosya zaten mevcut; bunlara bu çalışmada dokunulmadı.
+- **Proje genelinde hiç test dosyası bulunmuyor** (unit/integration/E2E).
+- **Supabase RLS çoğu tabloda ya pasif ya da `USING(true)` seviyesinde**; gerçek ortamda sıkılaştırılmalı. Çoğu server action admin client (RLS bypass) ile çalışıyor.
+- `kullanici-yonetimi` route'u `route-permissions.ts`'de tanımlı ancak karşilik gelen panel sayfası mevcut değil; route-permissions'ta `/kullanici-yonetimi` admin'e açılmış durumda.
 
 ## Sonraki Mantıklı Adımlar
 
-- `npm run lint` ve `npm.cmd run build` ile mevcut kod tabanı doğrulanmalı.
-- Auth akışı gerçek Supabase projesiyle test edilmeli: login, aktif profile eşleşmesi, role göre redirect.
-- Kritik panel route'ları rol bazında gezilmeli: admin, genel_mudur, bolum_muduru, hoca, veli.
+- ~~Auth akışı testi~~ ✅ **tamamlandı**
+- ~~Veli paneli genişletme~~ ✅ **tamamlandı**
+- ~~Next.js 16 uyumluluğu (middleware -> proxy)~~ ✅ **tamamlandı**
 - Form akışları test edilmeli: talebe oluşturma/düzenleme, foto upload, not/kanaat/revir/evrak kayıtları.
-- Next.js 16 uyumluluğu için `middleware.ts` -> `proxy.ts` geçişi ayrı bir küçük iş olarak planlanmalı.
+- Yeni modül: Sınav Takvimi, Yemekhane, Muhasebe, Servis, SMS, Öğretmen Performansı
+- `kullanici-yonetimi` sayfası oluşturulmalı veya route-permissions'tan kaldırılmalı

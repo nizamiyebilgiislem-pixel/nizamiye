@@ -13,10 +13,12 @@ import {
   Home,
   LayoutDashboard,
   LibraryBig,
+  MessageSquare,
   ShieldAlert,
   School,
   Settings,
   Stethoscope,
+  User,
   Users,
   UsersRound,
   X,
@@ -48,6 +50,8 @@ const iconMap: Record<string, typeof Circle> = {
   dormitory: Bed,
   library: BookOpen,
   guidance: HeartHandshake,
+  user: User,
+  talepler: MessageSquare,
 };
 
 type SidebarProps = {

@@ -503,9 +503,29 @@ export type AuditLogRow = {
   created_at: Timestamp;
 };
 
+export type TalepRow = {
+  id: string;
+  title: string;
+  description: string;
+  type: string;
+  priority: string;
+  requested_unit: string;
+  requested_by: string;
+  assigned_to: string | null;
+  target_person: string | null;
+  status: string;
+  deadline: DateString | null;
+  response_note: string | null;
+  rejection_reason: string | null;
+  internal_note: string | null;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+};
+
 export type Database = {
   public: {
     Tables: {
+      talepler: TableDefinition<TalepRow>;
       departments: TableDefinition<DepartmentRow>;
       profiles: TableDefinition<ProfileRow>;
       classes: TableDefinition<ClassRow>;

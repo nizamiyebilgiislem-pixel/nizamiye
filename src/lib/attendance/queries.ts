@@ -598,6 +598,106 @@ function emptyStudentDailySummary() {
   };
 }
 
+export async function getStudentAttendanceSummaryForParent(studentId: string): Promise<AttendanceStudentSummary> {
+  const admin = createSupabaseAdminClient();
+  const { data: student, error: studentError } = await admin.from("students").select("*").eq("id", studentId).maybeSingle();
+
+  if (studentError || !student) {
+    return {
+      student: null,
+      daily: emptyStudentDailySummary(),
+      prayers: prayerAttendanceTypes.map((type) => buildEmptyDashboardSummary(type)),
+      entries: [],
+    };
+  }
+
+  const studentRow = student as StudentRow;
+  const classRow = studentRow.course_class_id ? await getClassById(studentRow.course_class_id) : null;
+
+  const { data: records, error: recordError } = await admin.from("attendance_records").select("*").eq("student_id", studentId).order("created_at", { ascending: false });
+  if (recordError) {
+    return {
+      student: null,
+      daily: emptyStudentDailySummary(),
+      prayers: prayerAttendanceTypes.map((type) => buildEmptyDashboardSummary(type)),
+      entries: [],
+    };
+  }
+
+  const sessionIds = Array.from(new Set((records ?? []).map((record) => record.session_id)));
+  let sessions: AttendanceSessionWithRelations[] = [];
+
+  if (sessionIds.length > 0) {
+    const { data: sessionData, error: sessionError } = await admin.from("attendance_sessions").select("*").in("id", sessionIds);
+    if (!sessionError && sessionData) {
+      const takenByIds = Array.from(new Set((sessionData as AttendanceSessionRow[]).map((s) => s.taken_by).filter((v): v is string => Boolean(v))));
+      const takenByMap = new Map<string, ProfileRow>();
+      if (takenByIds.length > 0) {
+        const { data: profiles } = await admin.from("profiles").select("*").in("id", takenByIds);
+        for (const p of (profiles ?? []) as ProfileRow[]) {
+          takenByMap.set(p.id, p);
+        }
+      }
+
+      sessions = (sessionData as AttendanceSessionRow[]).map((s) => ({
+        ...s,
+        course_class: classRow,
+        department: classRow ? null : null,
+        taken_by_profile: s.taken_by ? takenByMap.get(s.taken_by) ?? null : null,
+        record_count: 0,
+        active_student_count: 0,
+        present_count: 0,
+        absent_count: 0,
+        excused_count: 0,
+        late_count: 0,
+        completion_status: "completed" as const,
+      }));
+    }
+  }
+
+  const recordMap = new Map((records ?? []).map((record) => [record.session_id, record as AttendanceRecordRow]));
+  const entries: AttendanceStudentHistoryEntry[] = sessions
+    .filter((session) => recordMap.has(session.id))
+    .map((session) => ({
+      id: session.id,
+      status: (recordMap.get(session.id)?.status ?? "absent") as AttendanceRecordStatus,
+      note: recordMap.get(session.id)?.note ?? null,
+      session,
+    }))
+    .sort((a, b) => new Date(b.session.attendance_date).getTime() - new Date(a.session.attendance_date).getTime());
+
+  const currentMonth = getIstanbulMonthKey(new Date());
+  const monthlySessions = entries.filter((e) => e.session.attendance_date.startsWith(currentMonth));
+  const dailyEntries = monthlySessions.filter((e) => e.session.attendance_type === "daily");
+  const prayerEntries = monthlySessions.filter((e) => prayerAttendanceTypes.includes(e.session.attendance_type));
+
+  return {
+    student: {
+      ...studentRow,
+      course_class: classRow,
+      department: classRow ? await getDepartmentById(classRow.department_id) : null,
+    } as StudentWithRelations,
+    daily: {
+      takenCount: dailyEntries.length,
+      presentCount: dailyEntries.filter((e) => e.status === "present").length,
+      absentCount: dailyEntries.filter((e) => e.status === "absent").length,
+      excusedCount: dailyEntries.filter((e) => e.status === "excused").length,
+      lateCount: dailyEntries.filter((e) => e.status === "late").length,
+    },
+    prayers: prayerAttendanceTypes.map((type) => {
+      const entries = prayerEntries.filter((e) => e.session.attendance_type === type);
+      const summary = buildEmptyDashboardSummary(type);
+      summary.takenClassCount = entries.length;
+      summary.presentCount = entries.filter((e) => e.status === "present").length;
+      summary.absentCount = entries.filter((e) => e.status === "absent").length;
+      summary.excusedCount = entries.filter((e) => e.status === "excused").length;
+      summary.lateCount = entries.filter((e) => e.status === "late").length;
+      return summary;
+    }),
+    entries,
+  };
+}
+
 function getIstanbulDateString(date: Date) {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Europe/Istanbul",

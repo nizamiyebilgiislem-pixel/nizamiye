@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getDefaultPathForRole, getRouteAllowedRoles } from "@/lib/route-permissions";
 import type { Database } from "@/types/database";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request,
   });
