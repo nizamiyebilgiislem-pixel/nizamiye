@@ -19,9 +19,21 @@ export const metadata: Metadata = {
   title: "Nizamiye Öğrenci Yönetim Sistemi",
   description: "Nizamiye Medresesi Öğrenci Yönetim ve Eğitim Takip Sistemi",
   icons: {
-    icon: "/favicon.png",
-    shortcut: "/favicon.png",
-    apple: "/favicon.png",
+    icon: [
+      {
+        url: "/favicon.png",
+        type: "image/png",
+        sizes: "512x512",
+      },
+    ],
+    shortcut: ["/favicon.png"],
+    apple: [
+      {
+        url: "/favicon.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
+    ],
   },
   openGraph: {
     title: "Nizamiye Öğrenci Yönetim Sistemi",
