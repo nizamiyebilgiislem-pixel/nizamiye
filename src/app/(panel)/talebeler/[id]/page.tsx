@@ -8,6 +8,8 @@ import { GradeSummary } from "@/components/grades/grade-summary";
 import { AuditTimeline } from "@/components/audit/audit-timeline";
 import { StudentAttendanceSummaryPanel } from "@/components/attendance/student-attendance-summary";
 import { StudentDormitoryPanel } from "@/components/dormitory/student-dormitory-panel";
+import { StudentLibraryPanel } from "@/components/library/student-library-panel";
+import { StudentGuidancePanel } from "@/components/guidance/student-guidance-panel";
 import { StudentInfirmarySummary } from "@/components/infirmary/infirmary-summary";
 import { PageHeader } from "@/components/layout/page-header";
 import { StudentParentsCard } from "@/components/parents/student-parents-card";
@@ -22,6 +24,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { requireAuth } from "@/lib/auth";
 import { getDocumentsByStudent } from "@/lib/documents/queries";
 import { canEditStudentDocuments } from "@/lib/documents/permissions";
+import { getStudentActiveAssignment, getStudentAssignmentHistory } from "@/lib/dormitory/queries";
+import { canViewDormitoryForStudents } from "@/lib/dormitory/permissions";
+import { getStudentLoans } from "@/lib/library/queries";
+import { canViewLibrary } from "@/lib/library/permissions";
+import { canViewGuidance } from "@/lib/guidance/permissions";
 import { getEvaluationsByStudent } from "@/lib/evaluations/queries";
 import { canEditStudentEvaluations } from "@/lib/evaluations/permissions";
 import { getStudentGradeSummary } from "@/lib/grades/queries";
@@ -33,8 +40,6 @@ import { linkExistingParentToStudentAction } from "@/lib/parents/actions";
 import { canBindParentFromStudentDetail } from "@/lib/parents/permissions";
 import { getParentProfilesByStudentId, getParentSelectionOptionsForStudent } from "@/lib/parents/queries";
 import { getStudentAuditLogs } from "@/lib/audit/queries";
-import { canManageDormitoryAssignments } from "@/lib/dormitory/permissions";
-import { getStudentDormitoryAssignment } from "@/lib/dormitory/queries";
 import { getStudentProfileEntries } from "@/lib/student-profile/queries";
 import { canManageStudentProfileEntries } from "@/lib/student-profile/permissions";
 import { getStudentTermSnapshots } from "@/lib/terms/queries";
@@ -77,9 +82,12 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
   const canManageParents = canBindParentFromStudentDetail(profile);
   const availableParents = canManageParents ? await getParentSelectionOptionsForStudent(profile, student.id) : [];
   const termSnapshots = await getStudentTermSnapshots(student.id);
-  const dormitoryAssignments = await getStudentDormitoryAssignment(student.id);
-  const currentDormitoryAssignment = dormitoryAssignments.find((assignment) => assignment.status === "active") ?? null;
-  const canManageDormitory = canManageDormitoryAssignments(profile);
+  const canViewDormitory = canViewDormitoryForStudents(profile, student.department?.id ?? null);
+  const dormitoryAssignment = canViewDormitory ? await getStudentActiveAssignment(student.id) : null;
+  const dormitoryHistory = canViewDormitory ? await getStudentAssignmentHistory(student.id) : [];
+  const canViewLib = canViewLibrary(profile);
+  const studentLoans = canViewLib ? await getStudentLoans(student.id) : [];
+  const canViewGuid = canViewGuidance(profile);
 
   return (
     <div className="space-y-6">
@@ -139,6 +147,8 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
           <TabsTrigger value="evraklar">Evraklar</TabsTrigger>
           <TabsTrigger value="yoklama">Yoklama</TabsTrigger>
           <TabsTrigger value="yatakhane">Yatakhane</TabsTrigger>
+          <TabsTrigger value="kutuphane">Kütüphane</TabsTrigger>
+          <TabsTrigger value="rehberlik">Rehberlik</TabsTrigger>
           <TabsTrigger value="donem-gecmisi">Dönem Geçmişi</TabsTrigger>
           <TabsTrigger value="gecmis">Geçmiş</TabsTrigger>
         </TabsList>
@@ -225,12 +235,25 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
           <StudentAttendanceSummaryPanel summary={attendanceSummary} />
         </TabsContent>
         <TabsContent value="yatakhane">
-          <StudentDormitoryPanel
-            currentAssignment={currentDormitoryAssignment}
-            history={dormitoryAssignments.filter((assignment) => assignment.status !== "active")}
-            canManage={canManageDormitory}
-            studentId={student.id}
-          />
+          {canViewDormitory ? (
+            <StudentDormitoryPanel activeAssignment={dormitoryAssignment} history={dormitoryHistory} />
+          ) : (
+            <PlaceholderCard />
+          )}
+        </TabsContent>
+        <TabsContent value="kutuphane">
+          {canViewLib ? (
+            <StudentLibraryPanel loans={studentLoans} />
+          ) : (
+            <PlaceholderCard />
+          )}
+        </TabsContent>
+        <TabsContent value="rehberlik">
+          {canViewGuid ? (
+            <StudentGuidancePanel studentId={student.id} profile={profile} />
+          ) : (
+            <PlaceholderCard />
+          )}
         </TabsContent>
         <TabsContent value="donem-gecmisi">
           <StudentTermHistoryPanel snapshots={termSnapshots} />

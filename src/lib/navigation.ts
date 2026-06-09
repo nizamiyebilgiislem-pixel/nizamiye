@@ -16,6 +16,8 @@ const staffRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca"];
 const topManagerRoles: UserRole[] = ["admin", "genel_mudur"];
 const parentManagerRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca"];
 const allRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "veli"];
+const libraryRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevlisi", "bolum_muduru", "hoca"];
+const guidanceRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik", "bolum_muduru", "hoca"];
 
 export const moduleGroups: NavigationGroup[] = [
   {
@@ -37,8 +39,10 @@ export const moduleGroups: NavigationGroup[] = [
       { label: "Eğitim Planlama", href: "/egitim-planlama", iconKey: "calendar", allowedRoles: staffRoles },
       { label: "Kanaat Sistemi", href: "/kanaat-sistemi", iconKey: "evaluations", allowedRoles: staffRoles },
       { label: "Yoklama", href: "/yoklama", iconKey: "attendance", allowedRoles: staffRoles },
+      { label: "Yatakhane Yönetimi", href: "/yatakhane", iconKey: "dormitory", allowedRoles: staffRoles },
       { label: "Revir Sistemi", href: "/revir", iconKey: "infirmary", allowedRoles: staffRoles },
-      { label: "Yatakhane", href: "/yatakhane", iconKey: "dormitory", allowedRoles: staffRoles },
+      { label: "Kütüphane", href: "/kutuphane", iconKey: "library", allowedRoles: libraryRoles },
+      { label: "Rehberlik", href: "/rehberlik", iconKey: "guidance", allowedRoles: guidanceRoles },
     ],
   },
   {

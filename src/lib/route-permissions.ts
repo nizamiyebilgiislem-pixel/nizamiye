@@ -5,6 +5,10 @@ const managerRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru"];
 const topManagerRoles: UserRole[] = ["admin", "genel_mudur"];
 const parentManagerRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca"];
 const allRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "veli"];
+const libraryStaffRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevlisi"];
+const libraryViewRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevlisi", "bolum_muduru", "hoca"];
+const guidanceStaffRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik"];
+const guidanceViewRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik", "bolum_muduru", "hoca"];
 
 export const routePermissions: Record<string, UserRole[]> = {
   "/dashboard": staffRoles,
@@ -37,24 +41,22 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/yoklama": staffRoles,
   "/yoklama/yeni": staffRoles,
   "/yoklama/raporlar": staffRoles,
-  "/yatakhane": staffRoles,
-  "/yatakhane/yeni": topManagerRoles,
-  "/yatakhane/[id]": staffRoles,
-  "/yatakhane/[id]/duzenle": topManagerRoles,
-  "/yatakhane/katlar/[floorId]": staffRoles,
-  "/yatakhane/odalar/[roomId]": staffRoles,
-  "/yatakhane/yerlesim": staffRoles,
-  "/yatakhane/yerlesim/yeni": managerRoles,
-  "/yatakhane/yerlesim/[assignmentId]": managerRoles,
-  "/yatakhane/raporlar": staffRoles,
   "/egitim-planlama": staffRoles,
   "/egitim-planlama/ders-atamalari": staffRoles,
   "/egitim-planlama/ders-programi": staffRoles,
   "/kanaat-sistemi": staffRoles,
   "/kanaat-sistemi/kanaat-girisi": staffRoles,
+  "/yatakhane": staffRoles,
+  "/yatakhane/yeni": managerRoles,
+  "/yatakhane/[id]": staffRoles,
+  "/yatakhane/[id]/duzenle": managerRoles,
+  "/yatakhane/[id]/yerlestir": managerRoles,
   "/revir": staffRoles,
   "/revir-sistemi": staffRoles,
   "/duyurular": staffRoles,
+  "/duyurular/yeni": topManagerRoles,
+  "/duyurular/[id]": staffRoles,
+  "/duyurular/[id]/duzenle": topManagerRoles,
   "/evraklar": staffRoles,
   "/evrak-yonetimi": managerRoles,
   "/raporlar": allRoles,
@@ -71,6 +73,34 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/kullanicilar": topManagerRoles,
   "/kullanici-yonetimi": ["admin"],
   "/ayarlar": ["admin"],
+  "/kutuphane": libraryViewRoles,
+  "/kutuphane/kitaplar": libraryViewRoles,
+  "/kutuphane/kitaplar/yeni": libraryStaffRoles,
+  "/kutuphane/kitaplar/[id]": libraryViewRoles,
+  "/kutuphane/kitaplar/[id]/duzenle": libraryStaffRoles,
+  "/kutuphane/emanetler": libraryViewRoles,
+  "/kutuphane/emanetler/yeni": libraryStaffRoles,
+  "/kutuphane/emanetler/[id]": libraryViewRoles,
+  "/kutuphane/dokumanlar": libraryViewRoles,
+  "/kutuphane/dokumanlar/yeni": libraryStaffRoles,
+  "/kutuphane/kategoriler": libraryStaffRoles,
+  "/kutuphane/raporlar": libraryViewRoles,
+  "/rehberlik": guidanceViewRoles,
+  "/rehberlik/gorusmeler": guidanceViewRoles,
+  "/rehberlik/gorusmeler/yeni": guidanceStaffRoles,
+  "/rehberlik/gorusmeler/[id]": guidanceViewRoles,
+  "/rehberlik/gorusmeler/[id]/duzenle": guidanceStaffRoles,
+  "/rehberlik/takipler": guidanceViewRoles,
+  "/rehberlik/takipler/yeni": guidanceStaffRoles,
+  "/rehberlik/takipler/[id]": guidanceViewRoles,
+  "/rehberlik/anketler": guidanceViewRoles,
+  "/rehberlik/anketler/yeni": guidanceStaffRoles,
+  "/rehberlik/anketler/[id]": guidanceViewRoles,
+  "/rehberlik/anketler/[id]/sonuclar": guidanceViewRoles,
+  "/rehberlik/etkinlikler": guidanceViewRoles,
+  "/rehberlik/etkinlikler/yeni": guidanceStaffRoles,
+  "/rehberlik/etkinlikler/[id]": guidanceViewRoles,
+  "/rehberlik/raporlar": guidanceViewRoles,
 };
 
 export const roleLabels: Record<UserRole, string> = {
@@ -78,6 +108,8 @@ export const roleLabels: Record<UserRole, string> = {
   genel_mudur: "Genel Müdür",
   bolum_muduru: "Bölüm Müdürü",
   hoca: "Hoca",
+  kutuphane_gorevlisi: "Kütüphane Görevlisi",
+  rehberlik: "Rehberlik",
   veli: "Veli",
 };
 

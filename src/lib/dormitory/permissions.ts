@@ -1,29 +1,29 @@
 import type { ProfileRow } from "@/types/database";
 
-export function canViewDormitoryModule(profile: ProfileRow) {
-  return profile.role !== "veli";
-}
-
 export function canManageDormitories(profile: ProfileRow) {
-  return profile.role === "admin" || profile.role === "genel_mudur";
+  return ["admin", "genel_mudur", "bolum_muduru"].includes(profile.role);
 }
 
-export function canManageDormitoryStructure(profile: ProfileRow) {
-  return profile.role === "admin" || profile.role === "genel_mudur" || profile.role === "bolum_muduru";
+export function canDeleteDormitories(profile: ProfileRow) {
+  return ["admin", "genel_mudur"].includes(profile.role);
+}
+
+export function canViewDormitories(profile: ProfileRow) {
+  return ["admin", "genel_mudur", "bolum_muduru", "hoca"].includes(profile.role);
 }
 
 export function canManageDormitoryAssignments(profile: ProfileRow) {
-  return profile.role === "admin" || profile.role === "genel_mudur" || profile.role === "bolum_muduru";
+  return ["admin", "genel_mudur", "bolum_muduru"].includes(profile.role);
 }
 
-export function canViewDormitoryAssignments(profile: ProfileRow) {
-  return profile.role === "admin" || profile.role === "genel_mudur" || profile.role === "bolum_muduru" || profile.role === "hoca";
-}
+export function canViewDormitoryForStudents(profile: ProfileRow, studentDepartmentId: string | null) {
+  if (profile.role === "admin" || profile.role === "genel_mudur") {
+    return true;
+  }
 
-export function canViewStudentDormitory(profile: ProfileRow) {
-  return profile.role !== "veli" ? true : false;
-}
+  if (profile.role === "bolum_muduru" || profile.role === "hoca") {
+    return Boolean(profile.department_id && studentDepartmentId === profile.department_id);
+  }
 
-export function canViewDormitoryReports(profile: ProfileRow) {
-  return profile.role !== "veli";
+  return false;
 }

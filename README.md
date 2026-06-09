@@ -28,7 +28,8 @@ Nizamiye Ogrenci Sistemi, medrese veya okul yonetim ekiplerinin ogrenci, persone
 - Kullanici ve profil yonetimi
 - Yoklama sistemi
 - Raporlar ve PDF Merkezi
-- Yatakhane / kat / oda / yatak ve talebe yerleşim yönetimi
+- Yatakhane yönetimi (bölüm bazlı yatakhane ve talebe yerleşim)
+- Kütüphane modülü (kitap, emanet, doküman takibi)
 - Veli paneli
 - Audit log ve talebe gecmisi
 
@@ -72,6 +73,16 @@ Migration sirasi:
 10. `supabase/migrations/00010_audit_logs.sql`
 11. `supabase/migrations/00011_term_archives_and_snapshots.sql`
 12. `supabase/migrations/00012_attendance_sessions_and_records.sql`
+13. `supabase/migrations/00013_dormitory_module.sql`
+14. `supabase/migrations/00014_dormitory_capacity_fix.sql`
+15. `supabase/migrations/00015_dormitory_simplify.sql`
+16. `supabase/migrations/00016_dormitory_rls.sql`
+17. `supabase/migrations/00017_dormitory_assignments_dormitory_id.sql`
+18. `supabase/migrations/00018_remove_dormitory_module.sql`
+19. `supabase/migrations/00019_dormitory_v2.sql`
+20. `supabase/migrations/00020_fix_dormitory_rls.sql`
+21. `supabase/migrations/00021_fix_dormitory_rls_update_policies.sql`
+22. `supabase/migrations/00022_library_module.sql`
 
 Supabase CLI kullaniyorsaniz kendi ortam komutlarinizla bu migrationlari sirasiyla uygulayin. Canliya cikistan once temiz bir veritabaninda sifirdan uygulanabildigini dogrulayin.
 
@@ -109,6 +120,7 @@ Desteklenen temel roller:
 - `admin`
 - `genel_mudur`
 - `bolum_muduru`
+- `kutuphane_gorevlisi`
 - `hoca`
 - `veli`
 
@@ -154,18 +166,13 @@ Teknik not:
 - Sinif ve bolum PDF ciktolari: `/siniflar/[id]/pdf`, `/bolumler/[id]/pdf`
 - Yazdirma akisi mevcut tarayici print mekanizmasi ile calisir; yeni agir PDF kutuphanesi eklenmemistir.
 
-## Yatakhane
-
-- Yatakhane, kat, oda ve yatak yönetimi `/yatakhane` altindadir.
-- Talebe yerleşimleri ve geçmiş yerleşimler buradan takip edilir.
-- Doluluk ve yataksiz talebe ozeti dashboard ve rapor ekranlarinda goruntulenir.
-
 ## Storage Bucket Kurulumu
 
-Projede iki bucket beklenir:
+Projede su bucket'lar beklenir:
 
 - `student-photos`
 - `profile-photos`
+- `library-documents`
 
 Kurulum ozeti:
 

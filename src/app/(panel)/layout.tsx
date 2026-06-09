@@ -3,6 +3,7 @@ import { requireAuth } from "@/lib/auth";
 import { getNavigationForRole } from "@/lib/navigation";
 
 export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 export default async function PanelLayout({
   children,

@@ -220,62 +220,6 @@ export type ParentStudentLinkRow = {
   created_at: Timestamp;
 };
 
-export type DormitoryRow = {
-  id: string;
-  name: string;
-  description: string | null;
-  is_active: boolean;
-  created_at: Timestamp;
-  updated_at: Timestamp;
-};
-
-export type DormitoryFloorRow = {
-  id: string;
-  dormitory_id: string;
-  name: string;
-  floor_no: number | null;
-  is_active: boolean;
-  created_at: Timestamp;
-  updated_at: Timestamp;
-};
-
-export type DormitoryRoomRow = {
-  id: string;
-  floor_id: string;
-  name: string;
-  room_no: string | null;
-  capacity: number;
-  is_active: boolean;
-  note: string | null;
-  created_at: Timestamp;
-  updated_at: Timestamp;
-};
-
-export type DormitoryBedRow = {
-  id: string;
-  room_id: string;
-  bed_no: string;
-  is_active: boolean;
-  note: string | null;
-  created_at: Timestamp;
-  updated_at: Timestamp;
-};
-
-export type DormitoryAssignmentStatus = "active" | "ended";
-
-export type DormitoryAssignmentRow = {
-  id: string;
-  student_id: string;
-  bed_id: string;
-  start_date: DateString;
-  end_date: DateString | null;
-  status: DormitoryAssignmentStatus;
-  note: string | null;
-  assigned_by: string | null;
-  created_at: Timestamp;
-  updated_at: Timestamp;
-};
-
 export type StudentProfileNoteRow = {
   id: string;
   student_id: string;
@@ -343,6 +287,205 @@ export type AttendanceRecordRow = {
   updated_at: Timestamp;
 };
 
+export type DormitoryRow = {
+  id: string;
+  department_id: string;
+  name: string;
+  capacity: number;
+  description: string | null;
+  is_active: boolean;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+};
+
+export type DormitoryAssignmentStatus = "active" | "ended";
+
+export type DormitoryAssignmentRow = {
+  id: string;
+  dormitory_id: string;
+  student_id: string;
+  start_date: DateString;
+  end_date: DateString | null;
+  status: DormitoryAssignmentStatus;
+  note: string | null;
+  assigned_by: string | null;
+  created_at: Timestamp;
+};
+
+export type LibraryCategoryRow = {
+  id: string;
+  name: string;
+  description: string | null;
+  is_active: boolean;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+};
+
+export type LibraryBookRow = {
+  id: string;
+  category_id: string | null;
+  title: string;
+  author: string | null;
+  publisher: string | null;
+  isbn: string | null;
+  publication_year: number | null;
+  shelf_code: string | null;
+  location_note: string | null;
+  total_count: number;
+  available_count: number;
+  description: string | null;
+  cover_url: string | null;
+  is_active: boolean;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+};
+
+export type LibraryLoanStatus = "borrowed" | "returned" | "lost";
+export type LibraryBorrowerType = "student" | "profile";
+
+export type LibraryLoanRow = {
+  id: string;
+  book_id: string;
+  borrower_type: LibraryBorrowerType;
+  student_id: string | null;
+  profile_id: string | null;
+  loan_date: DateString;
+  due_date: DateString | null;
+  returned_at: DateString | null;
+  status: LibraryLoanStatus;
+  note: string | null;
+  given_by: string | null;
+  received_by: string | null;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+};
+
+export type LibraryDocumentType = "pdf" | "word" | "excel" | "image" | "other";
+
+export type LibraryDocumentRow = {
+  id: string;
+  title: string;
+  category_id: string | null;
+  document_type: LibraryDocumentType | null;
+  file_url: string;
+  file_name: string | null;
+  file_size: number | null;
+  description: string | null;
+  uploaded_by: string | null;
+  is_active: boolean;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+};
+
+export type GuidanceInterviewRow = {
+  id: string;
+  student_id: string;
+  counselor_id: string | null;
+  interview_date: string;
+  interview_type: "individual" | "group" | "parent" | "emergency" | "follow_up";
+  visibility: "private" | "summary" | "shared";
+  title: string;
+  summary: string | null;
+  private_notes: string | null;
+  emotional_state: string | null;
+  academic_state: string | null;
+  social_state: string | null;
+  action_plan: string | null;
+  next_follow_up_date: string | null;
+  status: "open" | "followed" | "closed";
+  created_by: string | null;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+};
+
+export type GuidanceFollowUpRow = {
+  id: string;
+  interview_id: string | null;
+  student_id: string;
+  assigned_to: string | null;
+  follow_up_date: string;
+  title: string;
+  description: string | null;
+  result_note: string | null;
+  status: "planned" | "completed" | "cancelled";
+  created_by: string | null;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+};
+
+export type GuidanceSurveyRow = {
+  id: string;
+  title: string;
+  description: string | null;
+  target_scope: "all_students" | "department" | "class";
+  department_id: string | null;
+  class_id: string | null;
+  starts_at: string | null;
+  ends_at: string | null;
+  is_anonymous: boolean;
+  status: "draft" | "active" | "closed";
+  created_by: string | null;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+};
+
+export type GuidanceSurveyQuestionRow = {
+  id: string;
+  survey_id: string;
+  question_text: string;
+  question_type: "scale" | "choice" | "text" | "yes_no";
+  options: JsonValue | null;
+  sort_order: number;
+  is_required: boolean;
+  created_at: Timestamp;
+};
+
+export type GuidanceSurveyResponseRow = {
+  id: string;
+  survey_id: string;
+  student_id: string | null;
+  profile_id: string | null;
+  submitted_at: Timestamp;
+  created_at: Timestamp;
+};
+
+export type GuidanceSurveyAnswerRow = {
+  id: string;
+  response_id: string;
+  question_id: string;
+  answer_text: string | null;
+  answer_number: number | null;
+  answer_json: JsonValue | null;
+  created_at: Timestamp;
+};
+
+export type GuidanceActivityRow = {
+  id: string;
+  title: string;
+  activity_type: "trip" | "seminar" | "meeting" | "sports" | "cultural" | "activity";
+  description: string | null;
+  location: string | null;
+  activity_date: string;
+  start_time: string | null;
+  end_time: string | null;
+  status: "planned" | "completed" | "cancelled";
+  department_id: string | null;
+  responsible_profile_id: string | null;
+  created_by: string | null;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+};
+
+export type GuidanceActivityParticipantRow = {
+  id: string;
+  activity_id: string;
+  student_id: string | null;
+  profile_id: string | null;
+  participant_type: "student" | "profile";
+  attendance_status: "planned" | "attended" | "absent";
+  created_at: Timestamp;
+};
+
 export type AuditLogRow = {
   id: string;
   actor_profile_id: string | null;
@@ -378,17 +521,26 @@ export type Database = {
       announcements: TableDefinition<AnnouncementRow>;
       student_documents: TableDefinition<StudentDocumentRow>;
       parent_student_links: TableDefinition<ParentStudentLinkRow>;
-      dormitories: TableDefinition<DormitoryRow>;
-      dormitory_floors: TableDefinition<DormitoryFloorRow>;
-      dormitory_rooms: TableDefinition<DormitoryRoomRow>;
-      dormitory_beds: TableDefinition<DormitoryBedRow>;
-      dormitory_assignments: TableDefinition<DormitoryAssignmentRow>;
       student_profile_notes: TableDefinition<StudentProfileNoteRow>;
       student_books: TableDefinition<StudentBookRow>;
       student_term_snapshots: TableDefinition<StudentTermSnapshotRow>;
       audit_logs: TableDefinition<AuditLogRow>;
       attendance_sessions: TableDefinition<AttendanceSessionRow>;
       attendance_records: TableDefinition<AttendanceRecordRow>;
+      dormitories: TableDefinition<DormitoryRow>;
+      dormitory_assignments: TableDefinition<DormitoryAssignmentRow>;
+      library_categories: TableDefinition<LibraryCategoryRow>;
+      library_books: TableDefinition<LibraryBookRow>;
+      library_loans: TableDefinition<LibraryLoanRow>;
+      library_documents: TableDefinition<LibraryDocumentRow>;
+      guidance_interviews: TableDefinition<GuidanceInterviewRow>;
+      guidance_follow_ups: TableDefinition<GuidanceFollowUpRow>;
+      guidance_surveys: TableDefinition<GuidanceSurveyRow>;
+      guidance_survey_questions: TableDefinition<GuidanceSurveyQuestionRow>;
+      guidance_survey_responses: TableDefinition<GuidanceSurveyResponseRow>;
+      guidance_survey_answers: TableDefinition<GuidanceSurveyAnswerRow>;
+      guidance_activities: TableDefinition<GuidanceActivityRow>;
+      guidance_activity_participants: TableDefinition<GuidanceActivityParticipantRow>;
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

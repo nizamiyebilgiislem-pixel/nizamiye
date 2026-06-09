@@ -37,9 +37,9 @@ export function LoginForm() {
 
   return (
     <form className="space-y-4" method="post" onSubmit={handleSubmit}>
-      <div className="space-y-2">
-        <label className="text-sm font-medium" htmlFor="email">
-          E-posta
+      <div className="space-y-1.5">
+        <label className="text-sm font-medium text-[#093657]" htmlFor="email">
+          E-posta adresi
         </label>
         <input
           id="email"
@@ -49,12 +49,13 @@ export function LoginForm() {
           required
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-ring"
+          placeholder="ornek@nizamiye.edu.tr"
+          className="h-11 w-full rounded-lg border border-[#dbe3ea] bg-[#fafcfd] px-3.5 text-sm outline-none transition-all placeholder:text-[#94a3b8] focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/15"
         />
       </div>
 
-      <div className="space-y-2">
-        <label className="text-sm font-medium" htmlFor="password">
+      <div className="space-y-1.5">
+        <label className="text-sm font-medium text-[#093657]" htmlFor="password">
           Şifre
         </label>
         <input
@@ -65,18 +66,33 @@ export function LoginForm() {
           required
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-ring"
+          placeholder="••••••••"
+          className="h-11 w-full rounded-lg border border-[#dbe3ea] bg-[#fafcfd] px-3.5 text-sm outline-none transition-all placeholder:text-[#94a3b8] focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/15"
         />
       </div>
 
       {error ? (
-        <div className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </div>
       ) : null}
 
-      <Button type="submit" className="h-11 w-full" disabled={isLoading}>
-        {isLoading ? "Giriş yapılıyor" : "Giriş yap"}
+      <Button
+        type="submit"
+        className="h-11 w-full rounded-lg bg-[#093657] text-sm font-medium shadow-sm transition-colors hover:bg-[#093657]/90 focus-visible:ring-2 focus-visible:ring-[#093657]/30"
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <span className="flex items-center gap-2">
+            <svg className="size-4 animate-spin" viewBox="0 0 24 24" fill="none">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            Giriş yapılıyor...
+          </span>
+        ) : (
+          "Giriş yap"
+        )}
       </Button>
     </form>
   );

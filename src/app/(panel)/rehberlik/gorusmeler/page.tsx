@@ -1,0 +1,137 @@
+import Link from "next/link";
+import { Plus } from "lucide-react";
+
+import { PageHeader } from "@/components/layout/page-header";
+import { requireAuth } from "@/lib/auth";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { canViewGuidance, canManageGuidance } from "@/lib/guidance/permissions";
+import { getInterviews } from "@/lib/guidance/queries";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+const interviewTypeLabels: Record<string, string> = {
+  individual: "Bireysel", group: "Grup", parent: "Veli", emergency: "Acil", follow_up: "Takip",
+};
+
+const statusLabels: Record<string, string> = {
+  open: "Açık", followed: "Takip Ediliyor", closed: "Kapalı",
+};
+
+const statusColors: Record<string, "default" | "secondary" | "outline"> = {
+  open: "default", followed: "secondary", closed: "outline",
+};
+
+type Props = {
+  searchParams: Promise<{ search?: string; status?: string; interview_type?: string; counselor_id?: string; date_from?: string; date_to?: string }>;
+};
+
+export default async function GorusmelerPage({ searchParams }: Props) {
+  const { profile } = await requireAuth();
+  const params = await searchParams;
+
+  if (!canViewGuidance(profile)) {
+    return <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Bu sayfaya erişim yetkiniz bulunmamaktadır.</div>;
+  }
+
+  const interviews = await getInterviews(profile, params);
+  const canManage = canManageGuidance(profile);
+  const supabase = await createSupabaseServerClient();
+  const { data: counselors } = await supabase.from("profiles").select("id, full_name").in("role", ["admin", "genel_mudur", "rehberlik"]).eq("is_active", true).order("full_name");
+
+  return (
+    <div className="space-y-6">
+      <PageHeader eyebrow="Rehberlik" title="Görüşmeler" description="Tüm rehberlik görüşmeleri." actions={canManage ? <Link href="/rehberlik/gorusmeler/yeni" className={cn(buttonVariants({ size: "sm" }))}><Plus className="mr-1.5 size-4" /> Yeni Görüşme</Link> : undefined} />
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm">Filtreler</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form className="flex flex-wrap items-end gap-3">
+            <label className="grid gap-1 text-xs font-medium">
+              Arama
+              <input name="search" defaultValue={params.search ?? ""} placeholder="Başlık veya özet..." className="h-9 rounded-md border border-input bg-background px-2.5 text-sm outline-none focus:border-[#093657]" />
+            </label>
+            <label className="grid gap-1 text-xs font-medium">
+              Durum
+              <select name="status" defaultValue={params.status ?? ""} className="h-9 rounded-md border border-input bg-background px-2.5 text-sm outline-none focus:border-[#093657]">
+                <option value="">Tümü</option>
+                <option value="open">Açık</option>
+                <option value="followed">Takip Ediliyor</option>
+                <option value="closed">Kapalı</option>
+              </select>
+            </label>
+            <label className="grid gap-1 text-xs font-medium">
+              Tür
+              <select name="interview_type" defaultValue={params.interview_type ?? ""} className="h-9 rounded-md border border-input bg-background px-2.5 text-sm outline-none focus:border-[#093657]">
+                <option value="">Tümü</option>
+                <option value="individual">Bireysel</option>
+                <option value="group">Grup</option>
+                <option value="parent">Veli</option>
+                <option value="emergency">Acil</option>
+                <option value="follow_up">Takip</option>
+              </select>
+            </label>
+            <label className="grid gap-1 text-xs font-medium">
+              Rehberlik
+              <select name="counselor_id" defaultValue={params.counselor_id ?? ""} className="h-9 rounded-md border border-input bg-background px-2.5 text-sm outline-none focus:border-[#093657]">
+                <option value="">Tümü</option>
+                {(counselors ?? []).map((c) => <option key={c.id} value={c.id}>{c.full_name}</option>)}
+              </select>
+            </label>
+            <label className="grid gap-1 text-xs font-medium">
+              Başlangıç
+              <input name="date_from" type="date" defaultValue={params.date_from ?? ""} className="h-9 rounded-md border border-input bg-background px-2.5 text-sm outline-none focus:border-[#093657]" />
+            </label>
+            <label className="grid gap-1 text-xs font-medium">
+              Bitiş
+              <input name="date_to" type="date" defaultValue={params.date_to ?? ""} className="h-9 rounded-md border border-input bg-background px-2.5 text-sm outline-none focus:border-[#093657]" />
+            </label>
+            <button type="submit" className="h-9 rounded-md bg-[#093657] px-4 text-xs font-medium text-white hover:bg-[#093657]/90">Filtrele</button>
+          </form>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border bg-muted/50">
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Talebe</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Tarih</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Tür</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Başlık</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Durum</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Takip Tarihi</th>
+                  {canManage && <th className="px-4 py-3 text-right font-medium text-muted-foreground">İşlem</th>}
+                </tr>
+              </thead>
+              <tbody>
+                {interviews.length === 0 ? (
+                  <tr><td colSpan={canManage ? 7 : 6} className="px-4 py-8 text-center text-muted-foreground">Hiç görüşme bulunamadı.</td></tr>
+                ) : interviews.map((i) => (
+                  <tr key={i.id} className="border-b border-border last:border-0 hover:bg-muted/30">
+                    <td className="px-4 py-3">{i.student?.full_name ?? "—"}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{i.interview_date}</td>
+                    <td className="px-4 py-3"><Badge variant="secondary">{interviewTypeLabels[i.interview_type] ?? i.interview_type}</Badge></td>
+                    <td className="px-4 py-3 font-medium">{i.title}</td>
+                    <td className="px-4 py-3"><Badge variant={statusColors[i.status] ?? "outline"}>{statusLabels[i.status] ?? i.status}</Badge></td>
+                    <td className="px-4 py-3 text-muted-foreground">{i.next_follow_up_date ?? "—"}</td>
+                    {canManage && (
+                      <td className="px-4 py-3 text-right">
+                        <Link href={`/rehberlik/gorusmeler/${i.id}`} className="text-xs font-medium text-[#093657] hover:underline">Detay</Link>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
