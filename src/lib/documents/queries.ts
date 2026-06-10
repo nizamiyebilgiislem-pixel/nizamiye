@@ -155,6 +155,70 @@ function filterDepartments(departments: DepartmentRow[], profile: ProfileRow) {
   return departments.filter((department) => department.id === profile.department_id);
 }
 
+export type DocumentCreateOptions = {
+  departments: DepartmentRow[];
+  classesByDepartment: Record<string, ClassRow[]>;
+  studentsByClass: Record<string, StudentRow[]>;
+};
+
+export async function getDocumentCreateOptions(profile: ProfileRow): Promise<DocumentCreateOptions> {
+  const supabase = await createSupabaseServerClient();
+
+  let deptQuery = supabase.from("departments").select("*").eq("is_active", true).order("name");
+  if (profile.role === "bolum_muduru" || profile.role === "hoca") {
+    deptQuery = deptQuery.eq("id", profile.department_id ?? "");
+  }
+  const { data: departments } = await deptQuery;
+  const visibleDepartments = departments ?? [];
+  const visibleDeptIds = visibleDepartments.map((d) => d.id);
+
+  if (visibleDeptIds.length === 0) {
+    return { departments: [], classesByDepartment: {}, studentsByClass: {} };
+  }
+
+  let visibleClasses: ClassRow[] = [];
+  const { data: allClasses } = await supabase
+    .from("classes")
+    .select("*")
+    .eq("is_active", true)
+    .in("department_id", visibleDeptIds)
+    .order("name");
+  visibleClasses = allClasses ?? [];
+
+  if (profile.role === "hoca") {
+    visibleClasses = visibleClasses.filter((c) => c.class_teacher_id === profile.id);
+  }
+
+  const visibleClassIds = visibleClasses.map((c) => c.id);
+
+  let visibleStudents: StudentRow[] = [];
+  if (visibleClassIds.length > 0) {
+    const { data: students } = await supabase
+      .from("students")
+      .select("*")
+      .eq("status", "active")
+      .in("course_class_id", visibleClassIds)
+      .order("full_name");
+    visibleStudents = students ?? [];
+  }
+
+  return {
+    departments: visibleDepartments,
+    classesByDepartment: groupBy(visibleClasses, "department_id"),
+    studentsByClass: groupBy(visibleStudents, "course_class_id"),
+  };
+}
+
+function groupBy<T extends Record<string, unknown>>(items: T[], key: string): Record<string, T[]> {
+  const map: Record<string, T[]> = {};
+  for (const item of items) {
+    const k = String(item[key]);
+    if (!map[k]) map[k] = [];
+    map[k].push(item);
+  }
+  return map;
+}
+
 function attachRelations(
   document: StudentDocumentRow,
   studentMap: Map<string, StudentRow>,
