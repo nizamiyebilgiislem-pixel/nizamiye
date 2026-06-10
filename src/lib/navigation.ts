@@ -61,7 +61,6 @@ export const moduleGroups: NavigationGroup[] = [
       { label: "Evrak Yönetimi", href: "/evraklar", iconKey: "documents", allowedRoles: staffRoles },
       { label: "Audit Log", href: "/audit-log", iconKey: "audit", allowedRoles: topManagerRoles },
       { label: "Raporlar", href: "/raporlar", iconKey: "evaluations", allowedRoles: allRoles },
-      { label: "PDF Merkezi", href: "/raporlar/talebeler", iconKey: "documents", allowedRoles: allRoles },
       { label: "Kullanıcılar", href: "/kullanicilar", iconKey: "users", allowedRoles: topManagerRoles },
       { label: "Talep Yönetimi", href: "/talepler", iconKey: "talepler", allowedRoles: talepRoles },
       { label: "Görev Yönetimi", href: "/gorevler", iconKey: "tasks", allowedRoles: taskRoles },

@@ -1,25 +1,70 @@
-import { BarChart3, FileText, GraduationCap, Printer, School, UsersRound } from "lucide-react";
-import type { ComponentType } from "react";
+import { Printer, FileText } from "lucide-react";
 
-import { ReportShortcutCard } from "@/components/reports/report-shortcut-card";
+import { ReportCard } from "@/components/reports/report-card";
+import { ReportPrintActions } from "@/components/reports/report-print-actions";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { requireAuth } from "@/lib/auth";
-import { getDashboardData } from "@/lib/dashboard/queries";
+import { reportCategories } from "@/lib/reports/constants";
+import {
+  canViewStudentReports,
+  canViewClassReports,
+  canViewDepartmentReports,
+  canViewGradeReports,
+  canViewAttendanceReports,
+  canViewEvaluationReports,
+  canViewInfirmaryReports,
+  canViewDormitoryReports,
+  canViewLibraryReports,
+  canViewGuidanceReports,
+  canViewTaskReports,
+  canViewRequestReports,
+  canViewDocumentReports,
+} from "@/lib/reports/permissions";
 import { getActiveTerms } from "@/lib/terms/queries";
+
+const permissionMap: Record<string, (profile: import("@/types/database").ProfileRow) => boolean | Promise<boolean>> = {
+  student: canViewStudentReports,
+  class: canViewClassReports,
+  department: canViewDepartmentReports,
+  grade: canViewGradeReports,
+  attendance: canViewAttendanceReports,
+  evaluation: canViewEvaluationReports,
+  infirmary: canViewInfirmaryReports,
+  dormitory: canViewDormitoryReports,
+  library: canViewLibraryReports,
+  guidance: canViewGuidanceReports,
+  task: canViewTaskReports,
+  request: canViewRequestReports,
+  document: canViewDocumentReports,
+};
 
 export default async function ReportsPage() {
   const { profile } = await requireAuth();
-  const [dashboard, activeTerms] = await Promise.all([getDashboardData(profile), getActiveTerms()]);
+  const activeTerms = await getActiveTerms();
   const activeTerm = activeTerms[0] ?? null;
+
+  const visibleCategories = [];
+  for (const cat of reportCategories) {
+    const checker = permissionMap[cat.permissionKey];
+    if (checker) {
+      const result = await Promise.resolve(checker(profile));
+      if (result) {
+        visibleCategories.push(cat);
+      }
+    }
+  }
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        eyebrow="Yönetim"
-        title="Raporlar"
-        description="Kurum çıktılarını, resmi PDF görünümünü ve dönemsel özetleri tek merkezden yönetin."
-      />
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <PageHeader
+          eyebrow="Yönetim"
+          title="Rapor Merkezi"
+          description="Kurum çıktılarını, resmi PDF görünümünü ve dönemsel özetleri tek merkezden yönetin."
+        />
+        <ReportPrintActions backHref="/dashboard" />
+      </div>
 
       <Card size="sm" className="border-[#093657]/15 bg-white">
         <CardContent className="flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between">
@@ -28,86 +73,57 @@ export default async function ReportsPage() {
             <p className="text-xl font-semibold text-[#093657]">{activeTerm?.name ?? "Aktif dönem tanımlı değil"}</p>
           </div>
           <p className="max-w-2xl text-sm text-muted-foreground">
-            PDF çıktıları bu dönem verileri ve yetki kapsamına göre hazırlanır. Resmi çıktı almak için ilgili rapor ekranını açın.
+            Raporlar yetki kapsamınıza göre filtrelenir. Resmi çıktı almak için ilgili rapor kategorisini açın.
           </p>
         </CardContent>
       </Card>
 
-      <section className="space-y-3">
-        <div className="space-y-1">
-          <h2 className="text-lg font-semibold text-[#093657]">PDF Merkezi</h2>
-          <p className="text-sm text-muted-foreground">Bireysel ve kurumsal PDF çıktılarına buradan erişin.</p>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          <ReportShortcutCard
-            title="Talebe PDF Merkezi"
-            description="Bilgi formu, not dökümü, kanaat ve revir geçmişi."
-            href="/raporlar/talebeler"
-            badge="Bireysel"
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {visibleCategories.map((cat) => (
+          <ReportCard
+            key={cat.key}
+            title={cat.title}
+            description={cat.description}
+            href={cat.href}
+            icon={cat.icon}
+            badge={cat.badge}
+            roles={cat.roles}
           />
-          <ReportShortcutCard
-            title="Sınıf PDF Merkezi"
-            description="Sınıf listesi, ders programı ve yoklama çıktıları."
-            href="/raporlar/siniflar"
-            badge="Sınıf"
-          />
-          <ReportShortcutCard
-            title="Bölüm PDF Merkezi"
-            description="Bölüm raporu, doluluk, başarı ve sınıf özetleri."
-            href="/raporlar/bolumler"
-            badge="Bölüm"
-          />
-        </div>
-      </section>
+        ))}
+      </div>
 
-      <section className="space-y-3">
-        <div className="space-y-1">
-          <h2 className="text-lg font-semibold text-[#093657]">Rapor Kategorileri</h2>
-          <p className="text-sm text-muted-foreground">Resmi çıktıları konu bazında ayırın ve yazdırın.</p>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          <Shortcut icon={GraduationCap} title="Notlar" href="/raporlar/notlar" description="Dönemsel not dökümleri ve başarı özetleri." />
-          <Shortcut icon={FileText} title="Kanaatler" href="/raporlar/kanaatler" description="Kanaat kayıtları ve öğretmen yorumları." />
-          <Shortcut icon={UsersRound} title="Revir" href="/raporlar/revir" description="Sağlık kayıtları ve geçmiş işlemler." />
-          <Shortcut icon={BarChart3} title="Yoklama" href="/raporlar/yoklama" description="Günlük yoklama raporları ve aylık özetler." />
-          <Shortcut icon={School} title="Namaz Yoklama" href="/raporlar/namaz-yoklama" description="Sabah, öğle, ikindi, akşam ve yatsı raporları." />
-          <Shortcut icon={Printer} title="Dönem Sonu" href="/raporlar/donem-sonu" description="Başarı, devamsızlık ve dönem sonu akademik özet." />
-        </div>
-      </section>
+      {visibleCategories.length === 0 && (
+        <Card>
+          <CardContent className="py-12 text-center text-sm text-muted-foreground">
+            Yetki kapsamınızda görüntüleyebileceğiniz rapor bulunmamaktadır.
+          </CardContent>
+        </Card>
+      )}
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {dashboard.metrics.slice(0, 4).map((metric) => (
-          <Card key={metric.key} size="sm" className="bg-white">
-            <CardContent className="p-4">
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{metric.label}</p>
-              <p className="mt-2 text-2xl font-semibold text-[#093657]">{metric.value.toLocaleString("tr-TR")}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{metric.description}</p>
-            </CardContent>
-          </Card>
-        ))}
+        <Card size="sm" className="bg-white">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <Printer className="size-4 text-[#093657]" aria-hidden />
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Yazdırılabilir</p>
+            </div>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Tüm rapor sayfaları <strong>PDF</strong> olarak yazdırılabilir. Raporu açın, &quot;Yazdır / PDF Al&quot; butonunu kullanın.
+            </p>
+          </CardContent>
+        </Card>
+        <Card size="sm" className="bg-white">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <FileText className="size-4 text-[#093657]" aria-hidden />
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Filtreleme</p>
+            </div>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Her rapor sayfasında bölüm, sınıf, tarih aralığı ve durum filtreleri bulunur.
+            </p>
+          </CardContent>
+        </Card>
       </section>
     </div>
-  );
-}
-
-function Shortcut({
-  icon: Icon,
-  title,
-  href,
-  description,
-}: {
-  icon: ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
-  title: string;
-  href: string;
-  description: string;
-}) {
-  return (
-    <ReportShortcutCard
-      title={title}
-      description={description}
-      href={href}
-      className="border-[#093657]/10"
-      badge={<Icon className="size-4" aria-hidden={true} />}
-    />
   );
 }

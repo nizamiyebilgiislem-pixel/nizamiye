@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { PageHeader } from "@/components/layout/page-header";
 import { ReportShortcutCard } from "@/components/reports/report-shortcut-card";
 import { Card, CardContent } from "@/components/ui/card";
@@ -24,7 +22,6 @@ export default async function InfirmaryReportsPage() {
       </Card>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <ReportShortcutCard title="Talebe Revir PDF" description="Bir talebenin revir kayıt geçmişi." href="/raporlar/talebeler" badge="Bireysel" />
         <ReportShortcutCard title="Sınıf Revir Özeti" description="Sınıf bazlı sağlık kayıtları." href="/raporlar/siniflar" badge="Sınıf" />
         <ReportShortcutCard title="Dönem Sonu Akademik Rapor" description="Revir kayıtları dönem sonu özetine dahil edilir." href="/raporlar/donem-sonu" badge="Dönem" />
       </div>
@@ -35,9 +32,6 @@ export default async function InfirmaryReportsPage() {
           <p className="text-sm leading-6 text-muted-foreground">
             Revir PDF&apos;i talebe detayındaki <strong>Revir PDF</strong> butonundan açılabilir.
           </p>
-          <Link href="/raporlar/talebeler" className="text-sm font-medium text-[#093657] hover:underline">
-            PDF Merkezi&apos;ne git
-          </Link>
         </CardContent>
       </Card>
     </div>

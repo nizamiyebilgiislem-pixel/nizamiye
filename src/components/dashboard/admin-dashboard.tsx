@@ -133,7 +133,7 @@ export async function AdminDashboard({ profile }: { profile: ProfileRow }) {
           <ReportShortcutCard
             title="PDF Merkezi"
             description="Talebe, sınıf, bölüm ve dönem raporlarına hızlı erişim."
-            href="/raporlar/talebeler"
+            href="/raporlar"
             badge={
               <span className="inline-flex items-center rounded-md bg-[#eaf1f6] px-2 py-0.5 text-xs font-medium text-[#093657]">
                 Hızlı erişim

@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { PageHeader } from "@/components/layout/page-header";
 import { ReportShortcutCard } from "@/components/reports/report-shortcut-card";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,7 +23,6 @@ export default async function EvaluationReportsPage() {
       </Card>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <ReportShortcutCard title="Talebe Kanaat PDF" description="Bir talebenin kanaat geçmişi." href="/raporlar/talebeler" badge="Bireysel" />
         <ReportShortcutCard title="Sınıf Kanaat Özeti" description="Sınıf bazlı kanaat ve yorum görünümü." href="/raporlar/siniflar" badge="Sınıf" />
         <ReportShortcutCard title="Dönem Sonu Akademik Rapor" description="Kanaat özeti dönem sonu raporuna dahil edilir." href="/raporlar/donem-sonu" badge="Dönem" />
       </div>
@@ -36,9 +33,6 @@ export default async function EvaluationReportsPage() {
           <p className="text-sm leading-6 text-muted-foreground">
             Kanaat PDF&apos;i talebe detayındaki <strong>Kanaat PDF</strong> butonundan açılabilir.
           </p>
-          <Link href="/raporlar/talebeler" className="text-sm font-medium text-[#093657] hover:underline">
-            PDF Merkezi&apos;ne git
-          </Link>
         </CardContent>
       </Card>
     </div>

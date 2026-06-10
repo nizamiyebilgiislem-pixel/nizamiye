@@ -62,7 +62,6 @@ export default async function TermEndReportsPage() {
       <AttendanceDashboardCard summary={attendance} />
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <ReportShortcutCard title="Talebe Bilgi Formu PDF" description="Bireysel öğrenci bilgileri ve dönem özetleri." href="/raporlar/talebeler" badge="Bireysel" />
         <ReportShortcutCard title="Sınıf Listesi PDF" description="Sınıf, talebe ve hoca özetleri." href="/raporlar/siniflar" badge="Sınıf" />
         <ReportShortcutCard title="Bölüm Raporu PDF" description="Bölüm bazlı başarı ve doluluk özeti." href="/raporlar/bolumler" badge="Bölüm" />
       </div>
