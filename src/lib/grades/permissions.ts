@@ -19,7 +19,7 @@ export function canViewDepartmentGrades(profile: ProfileRow, departmentId: strin
 export function canEditStudentGrades(
   profile: ProfileRow,
   student: Pick<StudentRow, "status">,
-  courseClass: Pick<ClassRow, "department_id" | "class_teacher_id"> | null,
+  _courseClass: Pick<ClassRow, "department_id" | "class_teacher_id"> | null,
   classCourses: Array<Pick<ClassCourseRow, "teacher_id">> = [],
 ) {
   if (student.status !== "active") {
@@ -30,15 +30,7 @@ export function canEditStudentGrades(
     return true;
   }
 
-  if (profile.role === "bolum_muduru") {
-    return Boolean(profile.department_id && courseClass?.department_id === profile.department_id);
-  }
-
   if (profile.role === "hoca") {
-    if (courseClass?.class_teacher_id === profile.id) {
-      return true;
-    }
-
     return classCourses.some((classCourse) => classCourse.teacher_id === profile.id);
   }
 

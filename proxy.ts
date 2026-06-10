@@ -4,6 +4,32 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getDefaultPathForRole, getRouteAllowedRoles } from "@/lib/route-permissions";
 import type { Database } from "@/types/database";
 
+function redirectToLogin(request: NextRequest, error?: string) {
+  const loginUrl = new URL("/login", request.url);
+  if (error) {
+    loginUrl.searchParams.set("error", error);
+  }
+  return NextResponse.redirect(loginUrl);
+}
+
+function clearSbCookies(response: NextResponse, request: NextRequest) {
+  for (const cookie of request.cookies.getAll()) {
+    if (cookie.name.startsWith("sb-") || cookie.name.startsWith("supabase-")) {
+      response.cookies.set(cookie.name, "", { maxAge: 0, path: "/" });
+    }
+  }
+  return response;
+}
+
+async function getAuthUserSafe(supabase: ReturnType<typeof createServerClient<Database>>) {
+  try {
+    const { data } = await supabase.auth.getUser();
+    return { user: data.user, error: null };
+  } catch {
+    return { user: null, error: "auth_error" };
+  }
+}
+
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request,
@@ -36,20 +62,25 @@ export async function proxy(request: NextRequest) {
   const isProtectedRoute = Boolean(allowedRoles);
   const isLoginRoute = pathname === "/login";
 
-  if (!isProtectedRoute && !isLoginRoute) {
-    await supabase.auth.getUser();
+  const { user, error: authError } = await getAuthUserSafe(supabase);
+
+  if (authError) {
+    // Invalid or expired refresh token — clear session cookies silently
+    response = clearSbCookies(response, request);
+    if (isProtectedRoute) {
+      return redirectToLogin(request, "session-expired");
+    }
     return response;
   }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  if (!isProtectedRoute && !isLoginRoute) {
+    return response;
+  }
 
   if (!user) {
     if (isProtectedRoute) {
-      return NextResponse.redirect(new URL("/login", request.url));
+      return redirectToLogin(request);
     }
-
     return response;
   }
 
@@ -63,9 +94,8 @@ export async function proxy(request: NextRequest) {
   if (!profile) {
     if (isProtectedRoute) {
       await supabase.auth.signOut();
-      return NextResponse.redirect(new URL("/login?error=profile", request.url));
+      return redirectToLogin(request, "profile");
     }
-
     return response;
   }
 

@@ -9,7 +9,12 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createSupabaseServerClient();
-    await supabase.auth.exchangeCodeForSession(code);
+    try {
+      await supabase.auth.exchangeCodeForSession(code);
+    } catch {
+      // Code exchange failed (e.g., expired code); redirect to login
+      return NextResponse.redirect(new URL("/login?error=code", requestUrl.origin));
+    }
   }
 
   return NextResponse.redirect(new URL(next, requestUrl.origin));

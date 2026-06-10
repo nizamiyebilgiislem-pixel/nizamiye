@@ -19,11 +19,16 @@ export type CurrentAuthState = {
 
 export async function getCurrentUser() {
   const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
-  return user;
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    return user;
+  } catch {
+    return null;
+  }
 }
 
 export async function getCurrentAuthState(): Promise<CurrentAuthState> {
