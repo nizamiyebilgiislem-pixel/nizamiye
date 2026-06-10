@@ -18,7 +18,7 @@ export default async function TakipDetayPage({ params }: { params: Promise<{ id:
   const { profile } = await requireAuth();
   const { id } = await params;
 
-  const followUp = await getFollowUpById(id);
+  const followUp = await getFollowUpById(id, profile);
   if (!followUp) notFound();
 
   const canManage = canManageGuidance(profile);

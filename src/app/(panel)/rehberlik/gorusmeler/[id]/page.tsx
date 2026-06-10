@@ -19,7 +19,7 @@ export default async function GorusmeDetayPage({ params }: { params: Promise<{ i
   const { profile } = await requireAuth();
   const { id } = await params;
 
-  const interview = await getInterviewById(id);
+  const interview = await getInterviewById(id, profile);
   if (!interview) notFound();
 
   const canManage = canManageGuidance(profile);

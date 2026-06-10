@@ -24,7 +24,7 @@ export default async function EtkinliklerPage({ searchParams }: Props) {
     return <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Bu sayfaya erişim yetkiniz bulunmamaktadır.</div>;
   }
 
-  const activities = await getActivities(params.status ? { status: params.status } : undefined);
+  const activities = await getActivities(profile, params.status ? { status: params.status } : undefined);
   const canManage = canManageGuidance(profile);
 
   return (

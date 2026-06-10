@@ -37,11 +37,11 @@ export default async function RehberlikPage() {
   }
 
   const [dashboardData, recentInterviews, upcomingFollowUps, activeSurveys, plannedActivities] = await Promise.all([
-    getGuidanceDashboardData(),
-    getRecentInterviews(5),
-    getUpcomingFollowUps(5),
-    getActiveSurveys(5),
-    getPlannedActivities(5),
+    getGuidanceDashboardData(profile),
+    getRecentInterviews(profile, 5),
+    getUpcomingFollowUps(profile, 5),
+    getActiveSurveys(profile, 5),
+    getPlannedActivities(profile, 5),
   ]);
 
   const canManage = canManageGuidance(profile);

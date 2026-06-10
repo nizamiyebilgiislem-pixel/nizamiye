@@ -29,6 +29,7 @@ import { canViewDormitoryForStudents } from "@/lib/dormitory/permissions";
 import { getStudentLoans } from "@/lib/library/queries";
 import { canViewLibrary } from "@/lib/library/permissions";
 import { canViewGuidance } from "@/lib/guidance/permissions";
+import { canViewGuidanceForStudent } from "@/lib/guidance/scope";
 import { getEvaluationsByStudent } from "@/lib/evaluations/queries";
 import { canEditStudentEvaluations } from "@/lib/evaluations/permissions";
 import { getStudentGradeSummary } from "@/lib/grades/queries";
@@ -87,7 +88,7 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
   const dormitoryHistory = canViewDormitory ? await getStudentAssignmentHistory(student.id) : [];
   const canViewLib = canViewLibrary(profile);
   const studentLoans = canViewLib ? await getStudentLoans(student.id) : [];
-  const canViewGuid = canViewGuidance(profile);
+  const canViewGuid = canViewGuidance(profile) && await canViewGuidanceForStudent(profile, { course_class_id: student.course_class?.id ?? null, department_id: student.department?.id ?? null });
 
   return (
     <div className="space-y-6">
@@ -156,7 +157,7 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
           <TabsTrigger value="yoklama">Yoklama</TabsTrigger>
           <TabsTrigger value="yatakhane">Yatakhane</TabsTrigger>
           <TabsTrigger value="kutuphane">Kütüphane</TabsTrigger>
-          <TabsTrigger value="rehberlik">Rehberlik</TabsTrigger>
+          {canViewGuid && <TabsTrigger value="rehberlik">Rehberlik</TabsTrigger>}
           <TabsTrigger value="donem-gecmisi">Dönem Geçmişi</TabsTrigger>
           <TabsTrigger value="gecmis">Geçmiş</TabsTrigger>
         </TabsList>
@@ -256,13 +257,11 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
             <PlaceholderCard />
           )}
         </TabsContent>
-        <TabsContent value="rehberlik">
-          {canViewGuid ? (
+        {canViewGuid && (
+          <TabsContent value="rehberlik">
             <StudentGuidancePanel studentId={student.id} profile={profile} />
-          ) : (
-            <PlaceholderCard />
-          )}
-        </TabsContent>
+          </TabsContent>
+        )}
         <TabsContent value="donem-gecmisi">
           <StudentTermHistoryPanel snapshots={termSnapshots} />
         </TabsContent>

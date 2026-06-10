@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { AlertTriangle, BookOpen, CheckCircle2, ClipboardList, FileText, GraduationCap, ListChecks, School, Users } from "lucide-react";
+import { AlertTriangle, BookOpen, CheckCircle2, ClipboardList, FileText, GraduationCap, HeartHandshake, ListChecks, School, Users } from "lucide-react";
 
 import { StudentAvatar } from "@/components/students/student-avatar";
 import { StudentStatusBadge } from "@/components/students/student-status-badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/layout/page-header";
 import { getAttendanceDashboardSummary } from "@/lib/attendance/queries";
+import { getGuidanceDashboardData } from "@/lib/guidance/queries";
 import { getActiveTerms } from "@/lib/terms/queries";
 import { getTaskCounts } from "@/lib/tasks/queries";
 import type { ProfileRow } from "@/types/database";
@@ -13,10 +14,11 @@ import type { ProfileRow } from "@/types/database";
 import { getClassTeacherDashboardData } from "@/lib/dashboard/role-based-queries";
 
 export async function ClassTeacherDashboard({ profile }: { profile: ProfileRow }) {
-  const [data, activeTerms, taskCounts] = await Promise.all([
+  const [data, activeTerms, taskCounts, guidanceData] = await Promise.all([
     getClassTeacherDashboardData(profile),
     getActiveTerms(),
     getTaskCounts(profile),
+    getGuidanceDashboardData(profile),
   ]);
 
   const activeTerm = activeTerms[0] ?? null;
@@ -141,6 +143,43 @@ export async function ClassTeacherDashboard({ profile }: { profile: ProfileRow }
           </CardContent>
         </Card>
       </div>
+
+      {guidanceData.total_interviews > 0 || guidanceData.open_follow_ups > 0 || guidanceData.upcoming_follow_ups > 0 ? (
+        <Card className="border-[#e5e7eb] bg-white">
+          <CardHeader className="flex flex-row items-center gap-3 border-b border-border pb-3">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#eaf1f6]">
+              <HeartHandshake className="size-5 text-[#093657]" aria-hidden />
+            </div>
+            <div>
+              <CardTitle className="text-sm">Rehberlik Özeti</CardTitle>
+              <CardDescription className="text-xs">Sınıfınızdaki öğrencilere ait rehberlik verileri</CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent className="p-4">
+            <div className="grid grid-cols-3 gap-3 text-center text-xs">
+              <div className="rounded-md border border-border bg-[#f8fafc] p-2">
+                <p className="text-muted-foreground">Açık Rehberlik Kaydı</p>
+                <p className="mt-1 text-lg font-semibold text-[#093657]">{guidanceData.total_interviews}</p>
+              </div>
+              <div className="rounded-md border border-border bg-[#f8fafc] p-2">
+                <p className="text-muted-foreground">Takip Bekleyen</p>
+                <p className="mt-1 text-lg font-semibold text-[#093657]">{guidanceData.open_follow_ups}</p>
+              </div>
+              <div className="rounded-md border border-border bg-[#f8fafc] p-2">
+                <p className="text-muted-foreground">Yaklaşan Takip</p>
+                <p className="mt-1 text-lg font-semibold text-[#093657]">{guidanceData.upcoming_follow_ups}</p>
+              </div>
+            </div>
+            {guidanceData.total_interviews > 0 && (
+              <div className="mt-3 text-right">
+                <Link href="/rehberlik" className="text-xs font-medium text-[#093657] underline underline-offset-2">
+                  Rehberlik Sayfasına Git →
+                </Link>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      ) : null}
 
       <section className="space-y-3">
         <div className="flex items-center justify-between gap-3">

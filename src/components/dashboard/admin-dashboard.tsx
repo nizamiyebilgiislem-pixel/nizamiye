@@ -41,7 +41,7 @@ export async function AdminDashboard({ profile }: { profile: ProfileRow }) {
     getDormitoryDashboardData(profile),
     getUnassignedStudentsCount(profile),
     getLibraryDashboardData(),
-    getGuidanceDashboardData(),
+    getGuidanceDashboardData(profile),
     getTaskCounts(profile),
   ]);
   const activeTerm = activeTerms[0] ?? null;

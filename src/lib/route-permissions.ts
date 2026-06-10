@@ -10,7 +10,7 @@ const talepManageRoles: UserRole[] = ["admin", "genel_mudur"];
 const libraryStaffRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevlisi"];
 const libraryViewRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevlisi", "bolum_muduru", "hoca"];
 const guidanceStaffRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik"];
-const guidanceViewRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik", "bolum_muduru", "hoca"];
+const guidanceViewRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik", "bolum_muduru"];
 
 export const routePermissions: Record<string, UserRole[]> = {
   "/dashboard": staffRoles,

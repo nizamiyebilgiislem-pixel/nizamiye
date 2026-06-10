@@ -35,9 +35,9 @@ export async function StudentGuidancePanel({ studentId, profile }: StudentGuidan
   }
 
   const [interviews, followUps, activities] = await Promise.all([
-    getStudentInterviews(studentId),
-    getStudentFollowUps(studentId),
-    getStudentActivities(studentId),
+    getStudentInterviews(studentId, profile),
+    getStudentFollowUps(studentId, profile),
+    getStudentActivities(studentId, profile),
   ]);
 
   const canViewPrivate = canViewPrivateNotes(profile);

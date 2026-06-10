@@ -21,7 +21,7 @@ export default async function AnketlerPage() {
     return <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Bu sayfaya erişim yetkiniz bulunmamaktadır.</div>;
   }
 
-  const surveys = await getSurveys();
+  const surveys = await getSurveys(profile);
   const canManage = canManageGuidance(profile);
 
   return (

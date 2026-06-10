@@ -35,7 +35,7 @@ export async function DepartmentManagerDashboard({ profile }: { profile: Profile
     getDormitoryDashboardData(profile),
     getUnassignedStudentsCount(profile),
     getLibraryDashboardData(),
-    getGuidanceDashboardData(),
+    getGuidanceDashboardData(profile),
     getActiveTerms(),
     getTaskCounts(profile),
   ]);

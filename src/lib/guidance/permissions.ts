@@ -35,3 +35,5 @@ export function canManageActivities(profile: ProfileRow) {
 export function canViewGuidanceReports(profile: ProfileRow) {
   return canViewGuidance(profile);
 }
+
+

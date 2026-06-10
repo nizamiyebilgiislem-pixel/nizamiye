@@ -1,4 +1,5 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getGuidanceScopedStudentIds, isGuidanceUnrestricted } from "@/lib/guidance/scope";
 import type {
   GuidanceActivityParticipantRow,
   GuidanceActivityRow,
@@ -40,10 +41,24 @@ export type GuidanceDashboardData = {
   upcoming_follow_ups: number;
 };
 
-export async function getGuidanceDashboardData(): Promise<GuidanceDashboardData> {
+export async function getGuidanceDashboardData(profile?: ProfileRow | null): Promise<GuidanceDashboardData> {
   const supabase = await createSupabaseServerClient();
   const today = new Date().toISOString().split("T")[0];
   const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0];
+
+  const scopedIds = profile && !isGuidanceUnrestricted(profile) ? await getGuidanceScopedStudentIds(profile) : null;
+
+  if (scopedIds !== null && scopedIds.length === 0) {
+    return { total_interviews: 0, open_follow_ups: 0, this_month_interviews: 0, active_surveys: 0, planned_activities: 0, upcoming_follow_ups: 0 };
+  }
+
+  const maybeFilterStudentIds = (qb: ReturnType<ReturnType<typeof supabase.from>["select"]>) => {
+    return scopedIds !== null ? qb.in("student_id", scopedIds) : qb;
+  };
+
+  const maybeFilterDepartment = (qb: ReturnType<ReturnType<typeof supabase.from>["select"]>) => {
+    return profile?.role === "bolum_muduru" && profile.department_id ? qb.eq("department_id", profile.department_id) : qb;
+  };
 
   const [
     totalInterviews,
@@ -53,12 +68,12 @@ export async function getGuidanceDashboardData(): Promise<GuidanceDashboardData>
     plannedActivities,
     upcomingFollowUps,
   ] = await Promise.all([
-    supabase.from("guidance_interviews").select("*", { count: "exact", head: true }),
-    supabase.from("guidance_follow_ups").select("*", { count: "exact", head: true }).eq("status", "planned"),
-    supabase.from("guidance_interviews").select("*", { count: "exact", head: true }).gte("interview_date", monthStart),
-    supabase.from("guidance_surveys").select("*", { count: "exact", head: true }).eq("status", "active"),
-    supabase.from("guidance_activities").select("*", { count: "exact", head: true }).eq("status", "planned"),
-    supabase.from("guidance_follow_ups").select("*", { count: "exact", head: true }).gte("follow_up_date", today).eq("status", "planned"),
+    maybeFilterStudentIds(supabase.from("guidance_interviews").select("*", { count: "exact", head: true })),
+    maybeFilterStudentIds(supabase.from("guidance_follow_ups").select("*", { count: "exact", head: true }).eq("status", "planned")),
+    maybeFilterStudentIds(supabase.from("guidance_interviews").select("*", { count: "exact", head: true }).gte("interview_date", monthStart)),
+    maybeFilterDepartment(supabase.from("guidance_surveys").select("*", { count: "exact", head: true }).eq("status", "active")),
+    maybeFilterDepartment(supabase.from("guidance_activities").select("*", { count: "exact", head: true }).eq("status", "planned")),
+    maybeFilterStudentIds(supabase.from("guidance_follow_ups").select("*", { count: "exact", head: true }).gte("follow_up_date", today).eq("status", "planned")),
   ]);
 
   return {
@@ -71,21 +86,28 @@ export async function getGuidanceDashboardData(): Promise<GuidanceDashboardData>
   };
 }
 
-export async function getRecentInterviews(limit = 5): Promise<InterviewWithRelations[]> {
+export async function getRecentInterviews(profile: ProfileRow, limit = 5): Promise<InterviewWithRelations[]> {
   const supabase = await createSupabaseServerClient();
-  const { data } = await supabase
+  let query = supabase
     .from("guidance_interviews")
     .select("*, student:student_id(id, full_name), counselor:counselor_id(id, full_name), created_by_profile:created_by(id, full_name)")
     .order("interview_date", { ascending: false })
     .limit(limit);
 
+  if (!isGuidanceUnrestricted(profile)) {
+    const scopedIds = (await getGuidanceScopedStudentIds(profile)) ?? [];
+    if (scopedIds.length === 0) return [];
+    query = query.in("student_id", scopedIds);
+  }
+
+  const { data } = await query;
   return (data ?? []) as unknown as InterviewWithRelations[];
 }
 
-export async function getUpcomingFollowUps(limit = 5): Promise<FollowUpWithRelations[]> {
+export async function getUpcomingFollowUps(profile: ProfileRow, limit = 5): Promise<FollowUpWithRelations[]> {
   const supabase = await createSupabaseServerClient();
   const today = new Date().toISOString().split("T")[0];
-  const { data } = await supabase
+  let query = supabase
     .from("guidance_follow_ups")
     .select("*, student:student_id(id, full_name), assigned_to_profile:assigned_to(id, full_name), interview:interview_id(id, title)")
     .eq("status", "planned")
@@ -93,18 +115,30 @@ export async function getUpcomingFollowUps(limit = 5): Promise<FollowUpWithRelat
     .order("follow_up_date", { ascending: true })
     .limit(limit);
 
+  if (!isGuidanceUnrestricted(profile)) {
+    const scopedIds = (await getGuidanceScopedStudentIds(profile)) ?? [];
+    if (scopedIds.length === 0) return [];
+    query = query.in("student_id", scopedIds);
+  }
+
+  const { data } = await query;
   return (data ?? []) as unknown as FollowUpWithRelations[];
 }
 
-export async function getActiveSurveys(limit = 5): Promise<SurveyWithCount[]> {
+export async function getActiveSurveys(profile: ProfileRow, limit = 5): Promise<SurveyWithCount[]> {
   const supabase = await createSupabaseServerClient();
-  const { data } = await supabase
+  let query = supabase
     .from("guidance_surveys")
     .select("*, question_count:guidance_survey_questions(count)")
     .eq("status", "active")
     .order("created_at", { ascending: false })
     .limit(limit);
 
+  if (profile.role === "bolum_muduru" && profile.department_id) {
+    query = query.eq("department_id", profile.department_id);
+  }
+
+  const { data } = await query;
   const surveys = (data ?? []) as unknown as (GuidanceSurveyRow & { question_count: { count: number } })[];
   return await Promise.all(surveys.map(async (s) => ({
     ...s,
@@ -113,15 +147,20 @@ export async function getActiveSurveys(limit = 5): Promise<SurveyWithCount[]> {
   })));
 }
 
-export async function getPlannedActivities(limit = 5): Promise<ActivityWithRelations[]> {
+export async function getPlannedActivities(profile: ProfileRow, limit = 5): Promise<ActivityWithRelations[]> {
   const supabase = await createSupabaseServerClient();
-  const { data } = await supabase
+  let query = supabase
     .from("guidance_activities")
     .select("*, responsible_profile:responsible_profile_id(id, full_name)")
     .eq("status", "planned")
     .order("activity_date", { ascending: true })
     .limit(limit);
 
+  if (profile.role === "bolum_muduru" && profile.department_id) {
+    query = query.eq("department_id", profile.department_id);
+  }
+
+  const { data } = await query;
   const activities = (data ?? []) as unknown as (GuidanceActivityRow & { responsible_profile: { id: string; full_name: string } | null })[];
   return await Promise.all(activities.map(async (a) => ({
     ...a,
@@ -147,6 +186,12 @@ export async function getInterviews(
     .from("guidance_interviews")
     .select("*, student:student_id(id, full_name), counselor:counselor_id(id, full_name), created_by_profile:created_by(id, full_name)")
     .order("interview_date", { ascending: false });
+
+  if (!isGuidanceUnrestricted(profile)) {
+    const scopedIds = (await getGuidanceScopedStudentIds(profile)) ?? [];
+    if (scopedIds.length === 0) return [];
+    query = query.in("student_id", scopedIds);
+  }
 
   if (filters?.search) {
     const term = `%${filters.search}%`;
@@ -177,14 +222,21 @@ export async function getInterviews(
   return (data ?? []) as unknown as InterviewWithRelations[];
 }
 
-export async function getInterviewById(id: string): Promise<InterviewWithRelations | null> {
+export async function getInterviewById(id: string, profile?: ProfileRow | null): Promise<InterviewWithRelations | null> {
   const supabase = await createSupabaseServerClient();
-  const { data } = await supabase
+
+  let query = supabase
     .from("guidance_interviews")
     .select("*, student:student_id(id, full_name), counselor:counselor_id(id, full_name), created_by_profile:created_by(id, full_name)")
-    .eq("id", id)
-    .single();
+    .eq("id", id);
 
+  if (profile && !isGuidanceUnrestricted(profile)) {
+    const scopedIds = (await getGuidanceScopedStudentIds(profile)) ?? [];
+    if (scopedIds.length === 0) return null;
+    query = query.in("student_id", scopedIds);
+  }
+
+  const { data } = await query.single();
   return (data ?? null) as unknown as InterviewWithRelations | null;
 }
 
@@ -205,6 +257,12 @@ export async function getFollowUps(
     .from("guidance_follow_ups")
     .select("*, student:student_id(id, full_name), assigned_to_profile:assigned_to(id, full_name), interview:interview_id(id, title)")
     .order("follow_up_date", { ascending: false });
+
+  if (!isGuidanceUnrestricted(profile)) {
+    const scopedIds = (await getGuidanceScopedStudentIds(profile)) ?? [];
+    if (scopedIds.length === 0) return [];
+    query = query.in("student_id", scopedIds);
+  }
 
   if (filters?.status) {
     query = query.eq("status", filters.status as "planned" | "completed" | "cancelled");
@@ -230,24 +288,36 @@ export async function getFollowUps(
   return (data ?? []) as unknown as FollowUpWithRelations[];
 }
 
-export async function getFollowUpById(id: string): Promise<FollowUpWithRelations | null> {
+export async function getFollowUpById(id: string, profile?: ProfileRow | null): Promise<FollowUpWithRelations | null> {
   const supabase = await createSupabaseServerClient();
-  const { data } = await supabase
+
+  let query = supabase
     .from("guidance_follow_ups")
     .select("*, student:student_id(id, full_name), assigned_to_profile:assigned_to(id, full_name), interview:interview_id(id, title)")
-    .eq("id", id)
-    .single();
+    .eq("id", id);
 
+  if (profile && !isGuidanceUnrestricted(profile)) {
+    const scopedIds = (await getGuidanceScopedStudentIds(profile)) ?? [];
+    if (scopedIds.length === 0) return null;
+    query = query.in("student_id", scopedIds);
+  }
+
+  const { data } = await query.single();
   return (data ?? null) as unknown as FollowUpWithRelations | null;
 }
 
-export async function getSurveys(): Promise<SurveyWithCount[]> {
+export async function getSurveys(profile?: ProfileRow | null): Promise<SurveyWithCount[]> {
   const supabase = await createSupabaseServerClient();
-  const { data } = await supabase
+  let query = supabase
     .from("guidance_surveys")
     .select("*, question_count:guidance_survey_questions(count)")
     .order("created_at", { ascending: false });
 
+  if (profile?.role === "bolum_muduru" && profile.department_id) {
+    query = query.eq("department_id", profile.department_id);
+  }
+
+  const { data } = await query;
   const surveys = (data ?? []) as unknown as (GuidanceSurveyRow & { question_count: { count: number } })[];
   return await Promise.all(surveys.map(async (s) => ({
     ...s,
@@ -328,12 +398,16 @@ export async function getSurveyResults(surveyId: string) {
   return { survey, totalResponses, results };
 }
 
-export async function getActivities(filters?: { status?: string; activity_type?: string }): Promise<ActivityWithRelations[]> {
+export async function getActivities(profile?: ProfileRow | null, filters?: { status?: string; activity_type?: string }): Promise<ActivityWithRelations[]> {
   const supabase = await createSupabaseServerClient();
   let query = supabase
     .from("guidance_activities")
     .select("*, responsible_profile:responsible_profile_id(id, full_name)")
     .order("activity_date", { ascending: false });
+
+  if (profile?.role === "bolum_muduru" && profile.department_id) {
+    query = query.eq("department_id", profile.department_id);
+  }
 
   if (filters?.status) {
     query = query.eq("status", filters.status as "planned" | "completed" | "cancelled");
@@ -375,8 +449,14 @@ export async function getActivityById(id: string): Promise<ActivityWithResponsib
   return { ...activity, participants: participants ?? [] };
 }
 
-export async function getStudentInterviews(studentId: string): Promise<InterviewWithRelations[]> {
+export async function getStudentInterviews(studentId: string, profile?: ProfileRow | null): Promise<InterviewWithRelations[]> {
   const supabase = await createSupabaseServerClient();
+
+  if (profile && !isGuidanceUnrestricted(profile)) {
+    const scopedIds = (await getGuidanceScopedStudentIds(profile)) ?? [];
+    if (!scopedIds.includes(studentId)) return [];
+  }
+
   const { data } = await supabase
     .from("guidance_interviews")
     .select("*, student:student_id(id, full_name), counselor:counselor_id(id, full_name), created_by_profile:created_by(id, full_name)")
@@ -386,8 +466,14 @@ export async function getStudentInterviews(studentId: string): Promise<Interview
   return (data ?? []) as unknown as InterviewWithRelations[];
 }
 
-export async function getStudentFollowUps(studentId: string): Promise<FollowUpWithRelations[]> {
+export async function getStudentFollowUps(studentId: string, profile?: ProfileRow | null): Promise<FollowUpWithRelations[]> {
   const supabase = await createSupabaseServerClient();
+
+  if (profile && !isGuidanceUnrestricted(profile)) {
+    const scopedIds = (await getGuidanceScopedStudentIds(profile)) ?? [];
+    if (!scopedIds.includes(studentId)) return [];
+  }
+
   const { data } = await supabase
     .from("guidance_follow_ups")
     .select("*, student:student_id(id, full_name), assigned_to_profile:assigned_to(id, full_name), interview:interview_id(id, title)")
@@ -397,8 +483,14 @@ export async function getStudentFollowUps(studentId: string): Promise<FollowUpWi
   return (data ?? []) as unknown as FollowUpWithRelations[];
 }
 
-export async function getStudentActivities(studentId: string): Promise<ActivityWithRelations[]> {
+export async function getStudentActivities(studentId: string, profile?: ProfileRow | null): Promise<ActivityWithRelations[]> {
   const supabase = await createSupabaseServerClient();
+
+  if (profile && !isGuidanceUnrestricted(profile)) {
+    const scopedIds = (await getGuidanceScopedStudentIds(profile)) ?? [];
+    if (!scopedIds.includes(studentId)) return [];
+  }
+
   const { data: participations } = await supabase
     .from("guidance_activity_participants")
     .select("activity_id")
