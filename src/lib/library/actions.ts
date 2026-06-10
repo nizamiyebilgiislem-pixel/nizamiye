@@ -63,7 +63,7 @@ const createLoanSchema = z.object({
 export async function createCategoryAction(_previousState: unknown, formData: FormData) {
   const { profile } = await requireAuth();
 
-  if (!canManageCategories(profile)) {
+  if (!(await canManageCategories(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -105,7 +105,7 @@ export async function createCategoryAction(_previousState: unknown, formData: Fo
 export async function updateCategoryAction(_previousState: unknown, formData: FormData) {
   const { profile } = await requireAuth();
 
-  if (!canManageCategories(profile)) {
+  if (!(await canManageCategories(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -146,7 +146,7 @@ export async function updateCategoryAction(_previousState: unknown, formData: Fo
 export async function createBookAction(_previousState: unknown, formData: FormData) {
   const { profile } = await requireAuth();
 
-  if (!canManageBooks(profile)) {
+  if (!(await canManageBooks(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -202,7 +202,7 @@ export async function createBookAction(_previousState: unknown, formData: FormDa
 export async function updateBookAction(_previousState: unknown, formData: FormData) {
   const { profile } = await requireAuth();
 
-  if (!canManageBooks(profile)) {
+  if (!(await canManageBooks(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -271,7 +271,7 @@ export async function updateBookAction(_previousState: unknown, formData: FormDa
 export async function createLoanAction(_previousState: unknown, formData: FormData) {
   const { profile } = await requireAuth();
 
-  if (!canManageLoans(profile)) {
+  if (!(await canManageLoans(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -367,7 +367,7 @@ export async function createLoanAction(_previousState: unknown, formData: FormDa
 export async function returnLoanAction(_previousState: unknown, formData: FormData) {
   const { profile } = await requireAuth();
 
-  if (!canManageLoans(profile)) {
+  if (!(await canManageLoans(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -438,7 +438,7 @@ export async function returnLoanAction(_previousState: unknown, formData: FormDa
 export async function markLoanLostAction(_previousState: unknown, formData: FormData) {
   const { profile } = await requireAuth();
 
-  if (!canManageLoans(profile)) {
+  if (!(await canManageLoans(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -493,7 +493,7 @@ export async function markLoanLostAction(_previousState: unknown, formData: Form
 export async function deleteLoanAction(loanId: string) {
   const { profile } = await requireAuth();
 
-  if (!canManageLibrary(profile)) {
+  if (!(await canManageLibrary(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -520,7 +520,7 @@ const allowedDocTypes = new Set(["application/pdf", "application/msword", "appli
 export async function uploadDocumentAction(_previousState: unknown, formData: FormData) {
   const { profile } = await requireAuth();
 
-  if (!canManageDocuments(profile)) {
+  if (!(await canManageDocuments(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -614,7 +614,7 @@ function mapMimeToDocType(mime: string): "pdf" | "word" | "excel" | "image" | "o
 export async function deleteDocumentAction(docId: string) {
   const { profile } = await requireAuth();
 
-  if (!canManageLibrary(profile)) {
+  if (!(await canManageLibrary(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 

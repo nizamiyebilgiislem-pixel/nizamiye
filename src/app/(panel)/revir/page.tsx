@@ -8,6 +8,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { requireAuth } from "@/lib/auth";
 import { getInfirmaryDashboardSummary } from "@/lib/infirmary/queries";
+import { canManageInfirmary } from "@/lib/module-assignments/permissions";
 import { cn } from "@/lib/utils";
 
 type InfirmaryPageProps = { searchParams: Promise<{ error?: string }> };
@@ -15,6 +16,7 @@ type InfirmaryPageProps = { searchParams: Promise<{ error?: string }> };
 export default async function InfirmaryPage({ searchParams }: InfirmaryPageProps) {
   const params = await searchParams;
   const { profile } = await requireAuth();
+  const canManage = await canManageInfirmary(profile);
   const summary = await getInfirmaryDashboardSummary(profile);
   return (
     <div className="space-y-6">
@@ -22,7 +24,7 @@ export default async function InfirmaryPage({ searchParams }: InfirmaryPageProps
         <PageHeader eyebrow="Revir" title="Revir Sistemi" description="Talebe revir kayıtlarını takip edin." />
         <div className="flex gap-2">
           <Link href="/revir/kayitlar" className={cn(buttonVariants({ variant: "secondary" }))}>Tüm Kayıtlar</Link>
-          <Link href="/revir/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Revir Kaydı</Link>
+          {canManage ? <Link href="/revir/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Revir Kaydı</Link> : null}
         </div>
       </div>
       <InfirmaryErrorMessage error={params.error} />
@@ -34,7 +36,7 @@ export default async function InfirmaryPage({ searchParams }: InfirmaryPageProps
       </section>
       <div>
         <h2 className="mb-3 text-lg font-semibold">Son 10 Revir Kaydı</h2>
-        <InfirmaryList records={summary.latestRecords} profile={profile} />
+        <InfirmaryList records={summary.latestRecords} profile={profile} canManageAll={canManage} />
       </div>
     </div>
   );

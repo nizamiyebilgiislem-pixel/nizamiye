@@ -22,8 +22,8 @@ export default async function GorusmeDetayPage({ params }: { params: Promise<{ i
   const interview = await getInterviewById(id, profile);
   if (!interview) notFound();
 
-  const canManage = canManageGuidance(profile);
-  const canViewPrivate = canViewPrivateNotes(profile);
+  const canManage = await canManageGuidance(profile);
+  const canViewPrivate = await canViewPrivateNotes(profile);
 
   return (
     <div className="space-y-6">

@@ -4,6 +4,7 @@ import { AttendanceSessionCreateForm } from "@/components/attendance/attendance-
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { requireAuth } from "@/lib/auth";
+import { canManageAttendance } from "@/lib/attendance/permissions";
 import { getAttendanceFilterOptions } from "@/lib/attendance/queries";
 import { attendanceTypes } from "@/lib/attendance/constants";
 
@@ -14,6 +15,16 @@ type AttendanceNewPageProps = {
 export default async function AttendanceNewPage({ searchParams }: AttendanceNewPageProps) {
   const query = await searchParams;
   const { profile } = await requireAuth();
+
+  if (!canManageAttendance(profile)) {
+    return (
+      <div className="space-y-6">
+        <PageHeader eyebrow="Yeni Yoklama" title="Yetkisiz erişim" description="Yoklama oluşturma yetkiniz bulunmamaktadır." />
+        <Card><CardContent className="p-5 text-center text-sm text-muted-foreground">Bu işlem için yetkiniz bulunmamaktadır.</CardContent></Card>
+      </div>
+    );
+  }
+
   const { classes } = await getAttendanceFilterOptions(profile);
   const activeClasses = classes.filter((classRow) => classRow.is_active);
 

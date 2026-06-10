@@ -10,7 +10,7 @@ import { createCategoryAction } from "@/lib/library/actions";
 export default async function KategorilerPage() {
   const { profile } = await requireAuth();
 
-  if (!canManageCategories(profile)) {
+  if (!await canManageCategories(profile)) {
     return <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Bu sayfaya erişim yetkiniz bulunmamaktadır.</div>;
   }
 

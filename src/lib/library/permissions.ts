@@ -1,30 +1,36 @@
+import { hasModuleAssignment } from "@/lib/module-assignments/queries";
 import type { ProfileRow } from "@/types/database";
 
-export function canManageLibrary(profile: ProfileRow) {
+function isLibraryManager(profile: ProfileRow) {
   return ["admin", "genel_mudur", "kutuphane_gorevlisi"].includes(profile.role);
 }
 
+export async function canManageLibrary(profile: ProfileRow) {
+  if (isLibraryManager(profile)) return true;
+  return hasModuleAssignment(profile.id, "library");
+}
+
 export function canViewLibrary(profile: ProfileRow) {
-  return ["admin", "genel_mudur", "kutuphane_gorevlisi", "bolum_muduru", "hoca"].includes(profile.role);
+  return ["admin", "genel_mudur", "kutuphane_gorevlisi", "bolum_muduru", "hoca", "destek_birim_muduru"].includes(profile.role);
 }
 
 export function canDeleteLibraryItems(profile: ProfileRow) {
   return ["admin", "genel_mudur"].includes(profile.role);
 }
 
-export function canManageCategories(profile: ProfileRow) {
+export async function canManageCategories(profile: ProfileRow) {
   return canManageLibrary(profile);
 }
 
-export function canManageBooks(profile: ProfileRow) {
+export async function canManageBooks(profile: ProfileRow) {
   return canManageLibrary(profile);
 }
 
-export function canManageLoans(profile: ProfileRow) {
+export async function canManageLoans(profile: ProfileRow) {
   return canManageLibrary(profile);
 }
 
-export function canManageDocuments(profile: ProfileRow) {
+export async function canManageDocuments(profile: ProfileRow) {
   return canManageLibrary(profile);
 }
 

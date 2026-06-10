@@ -21,7 +21,7 @@ export default async function TakipDetayPage({ params }: { params: Promise<{ id:
   const followUp = await getFollowUpById(id, profile);
   if (!followUp) notFound();
 
-  const canManage = canManageGuidance(profile);
+  const canManage = await canManageGuidance(profile);
 
   return (
     <div className="space-y-6">

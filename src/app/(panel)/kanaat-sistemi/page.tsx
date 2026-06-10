@@ -36,10 +36,12 @@ export default async function EvaluationsDashboardPage({ searchParams }: Evaluat
           ))}
         </CardContent>
       </Card>
-      <Link href="/kanaat-sistemi/kanaat-girisi" className={cn(buttonVariants())}>
-        <ClipboardList className="size-4" aria-hidden="true" />
-        Kanaat Girişi
-      </Link>
+      {profile.role !== "destek_birim_muduru" ? (
+        <Link href="/kanaat-sistemi/kanaat-girisi" className={cn(buttonVariants())}>
+          <ClipboardList className="size-4" aria-hidden="true" />
+          Kanaat Girişi
+        </Link>
+      ) : null}
     </div>
   );
 }

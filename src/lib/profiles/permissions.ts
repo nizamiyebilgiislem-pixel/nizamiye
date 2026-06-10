@@ -45,11 +45,11 @@ export function canManageUserProfile(profile: ProfileRow, target: ProfileRow) {
 
 export function getCreatableRoles(profile: ProfileRow): UserRole[] {
   if (profile.role === "admin") {
-    return ["genel_mudur", "bolum_muduru", "hoca"];
+    return ["genel_mudur", "bolum_muduru", "hoca", "destek_birim_muduru"];
   }
 
   if (profile.role === "genel_mudur") {
-    return ["bolum_muduru", "hoca"];
+    return ["bolum_muduru", "hoca", "destek_birim_muduru"];
   }
 
   return [];

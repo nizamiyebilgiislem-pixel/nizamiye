@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { requireAuth } from "@/lib/auth";
 import { getAttendanceDashboardSummary, getAttendanceFilterOptions, getAttendanceSessionsForProfile } from "@/lib/attendance/queries";
 import { attendanceTypes } from "@/lib/attendance/constants";
+import { canManageAttendance } from "@/lib/attendance/permissions";
 import { cn } from "@/lib/utils";
 
 type AttendancePageProps = {
@@ -28,6 +29,7 @@ type AttendancePageProps = {
 export default async function AttendancePage({ searchParams }: AttendancePageProps) {
   const query = await searchParams;
   const { profile } = await requireAuth();
+  const canManage = canManageAttendance(profile);
   const [summary, data, options] = await Promise.all([
     getAttendanceDashboardSummary(profile),
     getAttendanceSessionsForProfile(profile, {
@@ -56,10 +58,12 @@ export default async function AttendancePage({ searchParams }: AttendancePagePro
             <FileText className="size-4" aria-hidden="true" />
             Raporlar
           </Link>
-          <Link href="/yoklama/yeni" className={cn(buttonVariants())}>
-            <Plus className="size-4" aria-hidden="true" />
-            Yeni Yoklama
-          </Link>
+          {canManage ? (
+            <Link href="/yoklama/yeni" className={cn(buttonVariants())}>
+              <Plus className="size-4" aria-hidden="true" />
+              Yeni Yoklama
+            </Link>
+          ) : null}
         </div>
       </div>
 
@@ -143,7 +147,7 @@ export default async function AttendancePage({ searchParams }: AttendancePagePro
         </CardContent>
       </Card>
 
-      <AttendanceSessionList sessions={data.sessions} />
+      <AttendanceSessionList sessions={data.sessions} canManageAll={canManage} />
 
       <AttendanceSessionCreateForm classes={activeClasses} />
     </div>

@@ -1,3 +1,5 @@
+import { getProfileModuleKeys } from "@/lib/module-assignments/queries";
+import type { ProfileRow } from "@/types/database";
 import type { UserRole } from "@/types/rbac";
 
 export type NavigationItem = {
@@ -5,6 +7,7 @@ export type NavigationItem = {
   href: string;
   iconKey: string;
   allowedRoles: UserRole[];
+  moduleKey?: string;
 };
 
 export type NavigationGroup = {
@@ -12,15 +15,15 @@ export type NavigationGroup = {
   items: NavigationItem[];
 };
 
-const staffRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca"];
+const staffRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "destek_birim_muduru"];
 const topManagerRoles: UserRole[] = ["admin", "genel_mudur"];
 const managerRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru"];
-const parentManagerRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca"];
-const allRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "veli"];
-const libraryRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevlisi", "bolum_muduru", "hoca"];
+const parentManagerRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "destek_birim_muduru"];
+const allRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "veli", "destek_birim_muduru"];
+const libraryRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevlisi", "bolum_muduru", "hoca", "destek_birim_muduru"];
 const guidanceRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik", "bolum_muduru"];
-const talepRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "rehberlik", "destek_birim_muduru", "muhasebe"];
-const taskRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "rehberlik", "destek_birim_muduru", "muhasebe", "kutuphane_gorevlisi"];
+const talepRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "rehberlik", "destek_birim_muduru"];
+const taskRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "rehberlik", "destek_birim_muduru", "kutuphane_gorevlisi"];
 
 export const moduleGroups: NavigationGroup[] = [
   {
@@ -46,9 +49,9 @@ export const moduleGroups: NavigationGroup[] = [
       { label: "Kanaat Sistemi", href: "/kanaat-sistemi", iconKey: "evaluations", allowedRoles: staffRoles },
       { label: "Yoklama", href: "/yoklama", iconKey: "attendance", allowedRoles: staffRoles },
       { label: "Yatakhane Yönetimi", href: "/yatakhane", iconKey: "dormitory", allowedRoles: staffRoles },
-      { label: "Revir Sistemi", href: "/revir", iconKey: "infirmary", allowedRoles: staffRoles },
-      { label: "Kütüphane", href: "/kutuphane", iconKey: "library", allowedRoles: libraryRoles },
-      { label: "Rehberlik", href: "/rehberlik", iconKey: "guidance", allowedRoles: guidanceRoles },
+      { label: "Revir Sistemi", href: "/revir", iconKey: "infirmary", allowedRoles: staffRoles, moduleKey: "infirmary" },
+      { label: "Kütüphane", href: "/kutuphane", iconKey: "library", allowedRoles: libraryRoles, moduleKey: "library" },
+      { label: "Rehberlik", href: "/rehberlik", iconKey: "guidance", allowedRoles: guidanceRoles, moduleKey: "guidance" },
     ],
   },
   {
@@ -56,13 +59,14 @@ export const moduleGroups: NavigationGroup[] = [
     items: [
       { label: "Duyurular", href: "/duyurular", iconKey: "announcements", allowedRoles: staffRoles },
       { label: "Evrak Yönetimi", href: "/evraklar", iconKey: "documents", allowedRoles: staffRoles },
-      { label: "Audit Log", href: "/audit-log", iconKey: "audit", allowedRoles: staffRoles },
+      { label: "Audit Log", href: "/audit-log", iconKey: "audit", allowedRoles: topManagerRoles },
       { label: "Raporlar", href: "/raporlar", iconKey: "evaluations", allowedRoles: allRoles },
       { label: "PDF Merkezi", href: "/raporlar/talebeler", iconKey: "documents", allowedRoles: allRoles },
       { label: "Kullanıcılar", href: "/kullanicilar", iconKey: "users", allowedRoles: topManagerRoles },
       { label: "Talep Yönetimi", href: "/talepler", iconKey: "talepler", allowedRoles: talepRoles },
       { label: "Görev Yönetimi", href: "/gorevler", iconKey: "tasks", allowedRoles: taskRoles },
-      { label: "Ayarlar", href: "/ayarlar", iconKey: "settings", allowedRoles: ["admin"] },
+      { label: "Ayarlar", href: "/ayarlar", iconKey: "settings", allowedRoles: topManagerRoles },
+      { label: "Modül Yetkilileri", href: "/ayarlar/modul-yetkilileri", iconKey: "settings", allowedRoles: topManagerRoles },
     ],
   },
 ];
@@ -74,6 +78,21 @@ export function getNavigationForRole(role: UserRole): NavigationGroup[] {
     .map((group) => ({
       ...group,
       items: group.items.filter((item) => item.allowedRoles.includes(role)),
+    }))
+    .filter((group) => group.items.length > 0);
+}
+
+export async function getNavigationForProfile(profile: ProfileRow): Promise<NavigationGroup[]> {
+  const moduleKeys = await getProfileModuleKeys(profile.id);
+
+  return moduleGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => {
+        if (item.allowedRoles.includes(profile.role)) return true;
+        if (item.moduleKey && moduleKeys.includes(item.moduleKey)) return true;
+        return false;
+      }),
     }))
     .filter((group) => group.items.length > 0);
 }

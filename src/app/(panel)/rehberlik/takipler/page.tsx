@@ -24,7 +24,7 @@ export default async function TakiplerPage({ searchParams }: Props) {
   }
 
   const followUps = await getFollowUps(profile, params.status ? { status: params.status } : undefined);
-  const canManage = canManageGuidance(profile);
+  const canManage = await canManageGuidance(profile);
 
   return (
     <div className="space-y-6">

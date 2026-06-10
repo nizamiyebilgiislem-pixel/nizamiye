@@ -24,7 +24,7 @@ export default async function DocumentsPage({ searchParams }: DocumentsPageProps
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <PageHeader eyebrow="Evraklar" title="Evrak Yönetimi" description="Talebe evrak URL kayıtlarını yönetin." />
-        <Link href="/evraklar/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Evrak</Link>
+        {profile.role !== "destek_birim_muduru" ? <Link href="/evraklar/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Evrak</Link> : null}
       </div>
       <DocumentErrorMessage error={params.error} />
       <section className="grid gap-4 md:grid-cols-3">

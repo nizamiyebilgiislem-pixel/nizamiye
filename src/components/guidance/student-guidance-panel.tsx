@@ -40,7 +40,7 @@ export async function StudentGuidancePanel({ studentId, profile }: StudentGuidan
     getStudentActivities(studentId, profile),
   ]);
 
-  const canViewPrivate = canViewPrivateNotes(profile);
+  const canViewPrivate = await canViewPrivateNotes(profile);
 
   return (
     <div className="space-y-6">

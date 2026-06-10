@@ -46,7 +46,7 @@ export async function getGuidanceDashboardData(profile?: ProfileRow | null): Pro
   const today = new Date().toISOString().split("T")[0];
   const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0];
 
-  const scopedIds = profile && !isGuidanceUnrestricted(profile) ? await getGuidanceScopedStudentIds(profile) : null;
+  const scopedIds = profile && !(await isGuidanceUnrestricted(profile)) ? await getGuidanceScopedStudentIds(profile) : null;
 
   if (scopedIds !== null && scopedIds.length === 0) {
     return { total_interviews: 0, open_follow_ups: 0, this_month_interviews: 0, active_surveys: 0, planned_activities: 0, upcoming_follow_ups: 0 };
@@ -94,7 +94,7 @@ export async function getRecentInterviews(profile: ProfileRow, limit = 5): Promi
     .order("interview_date", { ascending: false })
     .limit(limit);
 
-  if (!isGuidanceUnrestricted(profile)) {
+  if (!(await isGuidanceUnrestricted(profile))) {
     const scopedIds = (await getGuidanceScopedStudentIds(profile)) ?? [];
     if (scopedIds.length === 0) return [];
     query = query.in("student_id", scopedIds);
@@ -115,7 +115,7 @@ export async function getUpcomingFollowUps(profile: ProfileRow, limit = 5): Prom
     .order("follow_up_date", { ascending: true })
     .limit(limit);
 
-  if (!isGuidanceUnrestricted(profile)) {
+  if (!(await isGuidanceUnrestricted(profile))) {
     const scopedIds = (await getGuidanceScopedStudentIds(profile)) ?? [];
     if (scopedIds.length === 0) return [];
     query = query.in("student_id", scopedIds);
@@ -187,7 +187,7 @@ export async function getInterviews(
     .select("*, student:student_id(id, full_name), counselor:counselor_id(id, full_name), created_by_profile:created_by(id, full_name)")
     .order("interview_date", { ascending: false });
 
-  if (!isGuidanceUnrestricted(profile)) {
+  if (!(await isGuidanceUnrestricted(profile))) {
     const scopedIds = (await getGuidanceScopedStudentIds(profile)) ?? [];
     if (scopedIds.length === 0) return [];
     query = query.in("student_id", scopedIds);
@@ -230,7 +230,7 @@ export async function getInterviewById(id: string, profile?: ProfileRow | null):
     .select("*, student:student_id(id, full_name), counselor:counselor_id(id, full_name), created_by_profile:created_by(id, full_name)")
     .eq("id", id);
 
-  if (profile && !isGuidanceUnrestricted(profile)) {
+  if (profile && !(await isGuidanceUnrestricted(profile))) {
     const scopedIds = (await getGuidanceScopedStudentIds(profile)) ?? [];
     if (scopedIds.length === 0) return null;
     query = query.in("student_id", scopedIds);
@@ -258,7 +258,7 @@ export async function getFollowUps(
     .select("*, student:student_id(id, full_name), assigned_to_profile:assigned_to(id, full_name), interview:interview_id(id, title)")
     .order("follow_up_date", { ascending: false });
 
-  if (!isGuidanceUnrestricted(profile)) {
+  if (!(await isGuidanceUnrestricted(profile))) {
     const scopedIds = (await getGuidanceScopedStudentIds(profile)) ?? [];
     if (scopedIds.length === 0) return [];
     query = query.in("student_id", scopedIds);
@@ -296,7 +296,7 @@ export async function getFollowUpById(id: string, profile?: ProfileRow | null): 
     .select("*, student:student_id(id, full_name), assigned_to_profile:assigned_to(id, full_name), interview:interview_id(id, title)")
     .eq("id", id);
 
-  if (profile && !isGuidanceUnrestricted(profile)) {
+  if (profile && !(await isGuidanceUnrestricted(profile))) {
     const scopedIds = (await getGuidanceScopedStudentIds(profile)) ?? [];
     if (scopedIds.length === 0) return null;
     query = query.in("student_id", scopedIds);
@@ -452,7 +452,7 @@ export async function getActivityById(id: string): Promise<ActivityWithResponsib
 export async function getStudentInterviews(studentId: string, profile?: ProfileRow | null): Promise<InterviewWithRelations[]> {
   const supabase = await createSupabaseServerClient();
 
-  if (profile && !isGuidanceUnrestricted(profile)) {
+  if (profile && !(await isGuidanceUnrestricted(profile))) {
     const scopedIds = (await getGuidanceScopedStudentIds(profile)) ?? [];
     if (!scopedIds.includes(studentId)) return [];
   }
@@ -469,7 +469,7 @@ export async function getStudentInterviews(studentId: string, profile?: ProfileR
 export async function getStudentFollowUps(studentId: string, profile?: ProfileRow | null): Promise<FollowUpWithRelations[]> {
   const supabase = await createSupabaseServerClient();
 
-  if (profile && !isGuidanceUnrestricted(profile)) {
+  if (profile && !(await isGuidanceUnrestricted(profile))) {
     const scopedIds = (await getGuidanceScopedStudentIds(profile)) ?? [];
     if (!scopedIds.includes(studentId)) return [];
   }
@@ -486,7 +486,7 @@ export async function getStudentFollowUps(studentId: string, profile?: ProfileRo
 export async function getStudentActivities(studentId: string, profile?: ProfileRow | null): Promise<ActivityWithRelations[]> {
   const supabase = await createSupabaseServerClient();
 
-  if (profile && !isGuidanceUnrestricted(profile)) {
+  if (profile && !(await isGuidanceUnrestricted(profile))) {
     const scopedIds = (await getGuidanceScopedStudentIds(profile)) ?? [];
     if (!scopedIds.includes(studentId)) return [];
   }

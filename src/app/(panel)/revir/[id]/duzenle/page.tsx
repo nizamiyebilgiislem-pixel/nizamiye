@@ -8,6 +8,7 @@ import { requireAuth } from "@/lib/auth";
 import { updateInfirmaryRecordAction } from "@/lib/infirmary/actions";
 import { canEditInfirmaryRecord } from "@/lib/infirmary/permissions";
 import { getInfirmaryRecordById } from "@/lib/infirmary/queries";
+import { canManageInfirmary } from "@/lib/module-assignments/permissions";
 
 type EditInfirmaryPageProps = { params: Promise<{ id: string }>; searchParams: Promise<{ error?: string }> };
 
@@ -16,7 +17,7 @@ export default async function EditInfirmaryPage({ params, searchParams }: EditIn
   const { profile } = await requireAuth();
   const record = await getInfirmaryRecordById(id);
   if (!record?.student) notFound();
-  if (!canEditInfirmaryRecord(profile, record.student, record.course_class)) redirect(`/revir/${id}?error=unauthorized`);
+  if (!canEditInfirmaryRecord(profile, record.student, record.course_class) && !(await canManageInfirmary(profile))) redirect(`/revir/${id}?error=unauthorized`);
   return (
     <div className="space-y-6">
       <PageHeader eyebrow="Revir" title="Revir Kaydı Düzenle" description={record.student.full_name} />

@@ -1,7 +1,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { ProfileRow } from "@/types/database";
 
-export type DashboardRole = "admin" | "genel_mudur" | "bolum_muduru" | "class_teacher" | "course_teacher" | "other";
+export type DashboardRole = "admin" | "genel_mudur" | "bolum_muduru" | "class_teacher" | "course_teacher" | "destek_birim_muduru" | "other";
 
 export async function getPrimaryDashboardRole(profile: ProfileRow): Promise<DashboardRole> {
   if (profile.role === "admin" || profile.role === "genel_mudur") {
@@ -10,6 +10,10 @@ export async function getPrimaryDashboardRole(profile: ProfileRow): Promise<Dash
 
   if (profile.role === "bolum_muduru") {
     return "bolum_muduru";
+  }
+
+  if (profile.role === "destek_birim_muduru") {
+    return "destek_birim_muduru";
   }
 
   const isClassTeacher = await checkIsClassTeacher(profile.id);

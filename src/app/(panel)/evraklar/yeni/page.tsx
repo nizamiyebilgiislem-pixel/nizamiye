@@ -11,6 +11,16 @@ type NewDocumentPageProps = { searchParams: Promise<{ department?: string; class
 export default async function NewDocumentPage({ searchParams }: NewDocumentPageProps) {
   const params = await searchParams;
   const { profile } = await requireAuth();
+
+  if (profile.role === "destek_birim_muduru") {
+    return (
+      <div className="space-y-6">
+        <PageHeader eyebrow="Evraklar" title="Yeni Evrak" description="Yetkisiz erişim" />
+        <Card><CardContent className="p-5 text-center text-sm text-muted-foreground">Bu işlem için yetkiniz bulunmamaktadır.</CardContent></Card>
+      </div>
+    );
+  }
+
   const { departments, classes, selectedClass, students } = await getDocumentEntryOptions(profile, { departmentId: params.department, classId: params.class });
   return (
     <div className="space-y-6">

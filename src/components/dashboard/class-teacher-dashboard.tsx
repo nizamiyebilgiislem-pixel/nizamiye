@@ -250,7 +250,6 @@ export async function ClassTeacherDashboard({ profile }: { profile: ProfileRow }
             href={`/egitim-planlama/ders-programi/${primaryClass.id}`}
             label="Ders Programı"
           />
-          <QuickActionButton href="/talepler/yeni" label="Talep Oluştur" />
         </div>
       </section>
     </div>

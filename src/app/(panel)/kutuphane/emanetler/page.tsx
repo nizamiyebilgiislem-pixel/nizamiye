@@ -31,7 +31,7 @@ export default async function EmanetlerPage({ searchParams }: Props) {
     book_id: filters.book_id,
   });
 
-  const canManage = canManageLoans(profile);
+  const canManage = await canManageLoans(profile);
   const today = new Date().toISOString().split("T")[0];
 
   return (

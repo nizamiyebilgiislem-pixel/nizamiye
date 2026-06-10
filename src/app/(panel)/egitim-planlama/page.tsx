@@ -101,12 +101,16 @@ export default async function EducationPlanningPage({ searchParams }: EducationP
                     </TableCell>
                     <TableCell>
                       <div className="flex justify-end gap-2">
-                        <Link href={`/egitim-planlama/ders-atamalari/${classRow.id}`} className={cn(buttonVariants({ variant: "secondary", size: "sm" }))}>
-                          Ders Atamaları
-                        </Link>
-                        <Link href={`/egitim-planlama/ders-programi/${classRow.id}`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
-                          Ders Programı
-                        </Link>
+                        {["admin", "genel_mudur", "bolum_muduru"].includes(profile.role) ? (
+                          <Link href={`/egitim-planlama/ders-atamalari/${classRow.id}`} className={cn(buttonVariants({ variant: "secondary", size: "sm" }))}>
+                            Ders Atamaları
+                          </Link>
+                        ) : null}
+                        {profile.role !== "destek_birim_muduru" ? (
+                          <Link href={`/egitim-planlama/ders-programi/${classRow.id}`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+                            Ders Programı
+                          </Link>
+                        ) : null}
                       </div>
                     </TableCell>
                   </TableRow>

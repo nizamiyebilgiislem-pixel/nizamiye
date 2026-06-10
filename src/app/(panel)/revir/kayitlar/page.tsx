@@ -4,12 +4,14 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { requireAuth } from "@/lib/auth";
 import { getInfirmaryRecordsForProfile } from "@/lib/infirmary/queries";
+import { canManageInfirmary } from "@/lib/module-assignments/permissions";
 
 type RecordsPageProps = { searchParams: Promise<{ q?: string; department?: string; class?: string; from?: string; to?: string; hospital?: string; parent?: string; error?: string }> };
 
 export default async function RecordsPage({ searchParams }: RecordsPageProps) {
   const params = await searchParams;
   const { profile } = await requireAuth();
+  const canManage = await canManageInfirmary(profile);
   const { records, departments, classes } = await getInfirmaryRecordsForProfile(profile, {
     search: params.q,
     departmentId: params.department,
@@ -33,7 +35,7 @@ export default async function RecordsPage({ searchParams }: RecordsPageProps) {
         <select name="parent" defaultValue={params.parent ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Veli tümü</option><option value="true">Bilgilendirildi</option><option value="false">Bilgilendirilmedi</option></select>
         <button type="submit" className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">Filtrele</button>
       </form></CardContent></Card>
-      {records.length > 0 ? <InfirmaryList records={records} profile={profile} /> : <p className="text-sm text-muted-foreground">Revir kaydı bulunamadı.</p>}
+      {records.length > 0 ? <InfirmaryList records={records} profile={profile} canManageAll={canManage} /> : <p className="text-sm text-muted-foreground">Revir kaydı bulunamadı.</p>}
     </div>
   );
 }

@@ -28,7 +28,7 @@ export default async function EtkinlikDetayPage({ params }: { params: Promise<{ 
   const activity = await getActivityById(id);
   if (!activity) notFound();
 
-  const canManage = canManageGuidance(profile);
+  const canManage = await canManageGuidance(profile);
   const supabase = await createSupabaseServerClient();
   const [{ data: students }] = await Promise.all([
     supabase.from("students").select("id, full_name").eq("status", "active").order("full_name"),

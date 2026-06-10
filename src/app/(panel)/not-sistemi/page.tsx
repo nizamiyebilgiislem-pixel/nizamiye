@@ -34,7 +34,7 @@ export default async function GradesDashboardPage() {
       <div className="flex flex-wrap gap-2">
         <Link href="/not-sistemi/dersler" className={cn(buttonVariants({ variant: "secondary" }))}>Dersler</Link>
         <Link href="/not-sistemi/donemler" className={cn(buttonVariants({ variant: "secondary" }))}>Dönemler</Link>
-        <Link href="/not-sistemi/not-girisi" className={cn(buttonVariants())}>Not Girişi</Link>
+        {profile.role !== "destek_birim_muduru" ? <Link href="/not-sistemi/not-girisi" className={cn(buttonVariants())}>Not Girişi</Link> : null}
         <Link href="/egitim-planlama" className={cn(buttonVariants({ variant: "outline" }))}>Eğitim Planlama</Link>
       </div>
     </div>

@@ -3,6 +3,7 @@ import { ClassTeacherDashboard } from "@/components/dashboard/class-teacher-dash
 import { CourseTeacherDashboard } from "@/components/dashboard/course-teacher-dashboard";
 import { DefaultDashboard } from "@/components/dashboard/default-dashboard";
 import { DepartmentManagerDashboard } from "@/components/dashboard/department-manager-dashboard";
+import { SupportDashboard } from "@/components/dashboard/support-dashboard";
 import { requireAuth } from "@/lib/auth";
 import { getPrimaryDashboardRole } from "@/lib/dashboard/permissions";
 
@@ -20,6 +21,8 @@ export default async function DashboardPage() {
       return <ClassTeacherDashboard profile={profile} />;
     case "course_teacher":
       return <CourseTeacherDashboard profile={profile} />;
+    case "destek_birim_muduru":
+      return <SupportDashboard profile={profile} />;
     default:
       return <DefaultDashboard profile={profile} />;
   }

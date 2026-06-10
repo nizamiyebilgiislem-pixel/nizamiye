@@ -84,7 +84,7 @@ const createActivitySchema = z.object({
 export async function createInterviewAction(_previousState: unknown, formData: FormData) {
   const { profile } = await requireAuth();
 
-  if (!canManageInterviews(profile)) {
+  if (!(await canManageInterviews(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -144,7 +144,7 @@ export async function createInterviewAction(_previousState: unknown, formData: F
 export async function updateInterviewAction(_previousState: unknown, formData: FormData) {
   const { profile } = await requireAuth();
 
-  if (!canManageInterviews(profile)) {
+  if (!(await canManageInterviews(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -202,7 +202,7 @@ export async function updateInterviewAction(_previousState: unknown, formData: F
 export async function createFollowUpAction(_previousState: unknown, formData: FormData) {
   const { profile } = await requireAuth();
 
-  if (!canManageFollowUps(profile)) {
+  if (!(await canManageFollowUps(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -254,7 +254,7 @@ export async function createFollowUpAction(_previousState: unknown, formData: Fo
 export async function completeFollowUpAction(followUpId: string, formData: FormData) {
   const { profile } = await requireAuth();
 
-  if (!canManageFollowUps(profile)) {
+  if (!(await canManageFollowUps(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -288,7 +288,7 @@ export async function completeFollowUpAction(followUpId: string, formData: FormD
 export async function cancelFollowUpAction(followUpId: string) {
   const { profile } = await requireAuth();
 
-  if (!canManageFollowUps(profile)) {
+  if (!(await canManageFollowUps(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -320,7 +320,7 @@ export async function cancelFollowUpAction(followUpId: string) {
 export async function createSurveyAction(_previousState: unknown, formData: FormData) {
   const { profile } = await requireAuth();
 
-  if (!canManageSurveys(profile)) {
+  if (!(await canManageSurveys(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -372,7 +372,7 @@ export async function createSurveyAction(_previousState: unknown, formData: Form
 export async function closeSurveyAction(surveyId: string) {
   const { profile } = await requireAuth();
 
-  if (!canManageSurveys(profile)) {
+  if (!(await canManageSurveys(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -405,7 +405,7 @@ export async function closeSurveyAction(surveyId: string) {
 export async function saveSurveyQuestionsAction(surveyId: string, formData: FormData) {
   const { profile } = await requireAuth();
 
-  if (!canManageSurveys(profile)) {
+  if (!(await canManageSurveys(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -458,7 +458,7 @@ export async function saveSurveyQuestionsAction(surveyId: string, formData: Form
 export async function submitSurveyResponseAction(surveyId: string, formData: FormData) {
   const { profile } = await requireAuth();
 
-  if (!canManageSurveys(profile)) {
+  if (!(await canManageSurveys(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -503,7 +503,7 @@ export async function submitSurveyResponseAction(surveyId: string, formData: For
 export async function createActivityAction(_previousState: unknown, formData: FormData) {
   const { profile } = await requireAuth();
 
-  if (!canManageActivities(profile)) {
+  if (!(await canManageActivities(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -556,7 +556,7 @@ export async function createActivityAction(_previousState: unknown, formData: Fo
 export async function updateActivityAction(_previousState: unknown, formData: FormData) {
   const { profile } = await requireAuth();
 
-  if (!canManageActivities(profile)) {
+  if (!(await canManageActivities(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -609,7 +609,7 @@ export async function updateActivityAction(_previousState: unknown, formData: Fo
 export async function addActivityParticipantsAction(activityId: string, formData: FormData) {
   const { profile } = await requireAuth();
 
-  if (!canManageActivities(profile)) {
+  if (!(await canManageActivities(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -636,7 +636,7 @@ export async function addActivityParticipantsAction(activityId: string, formData
 export async function updateParticipantAttendanceAction(participantId: string, formData: FormData) {
   const { profile } = await requireAuth();
 
-  if (!canManageActivities(profile)) {
+  if (!(await canManageActivities(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -659,7 +659,7 @@ export async function updateParticipantAttendanceAction(participantId: string, f
 export async function removeActivityParticipantAction(participantId: string) {
   const { profile } = await requireAuth();
 
-  if (!canManageActivities(profile)) {
+  if (!(await canManageActivities(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -681,7 +681,7 @@ export async function removeActivityParticipantAction(participantId: string) {
 export async function deleteSurveyAction(surveyId: string) {
   const { profile } = await requireAuth();
 
-  if (!canManageSurveys(profile)) {
+  if (!(await canManageSurveys(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
@@ -761,7 +761,7 @@ export async function submitSurveyResponseAsParentAction(surveyId: string, formD
 export async function deleteActivityAction(activityId: string) {
   const { profile } = await requireAuth();
 
-  if (!canManageActivities(profile)) {
+  if (!(await canManageActivities(profile))) {
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 

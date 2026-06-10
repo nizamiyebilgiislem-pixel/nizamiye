@@ -34,7 +34,7 @@ export default async function KitaplarPage({ searchParams }: Props) {
     getActiveCategories(),
   ]);
 
-  const canManage = canManageBooks(profile);
+  const canManage = await canManageBooks(profile);
 
   return (
     <div className="space-y-6">

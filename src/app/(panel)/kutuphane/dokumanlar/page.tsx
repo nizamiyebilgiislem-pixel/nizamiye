@@ -28,7 +28,7 @@ export default async function DokumanlarPage({ searchParams }: Props) {
     getActiveCategories(),
   ]);
 
-  const canManage = canManageDocuments(profile);
+  const canManage = await canManageDocuments(profile);
 
   return (
     <div className="space-y-6">

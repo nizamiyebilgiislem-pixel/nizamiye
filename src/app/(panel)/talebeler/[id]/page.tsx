@@ -36,6 +36,7 @@ import { getStudentGradeSummary } from "@/lib/grades/queries";
 import { canEditStudentGrades } from "@/lib/grades/permissions";
 import { getInfirmaryRecordsByStudent } from "@/lib/infirmary/queries";
 import { canEditInfirmaryRecord } from "@/lib/infirmary/permissions";
+import { canManageInfirmary } from "@/lib/module-assignments/permissions";
 import { getAttendanceStudentSummary } from "@/lib/attendance/queries";
 import { linkExistingParentToStudentAction } from "@/lib/parents/actions";
 import { canBindParentFromStudentDetail } from "@/lib/parents/permissions";
@@ -72,7 +73,7 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
   const evaluations = await getEvaluationsByStudent(student.id);
   const canEditEvaluations = student.course_class ? canEditStudentEvaluations(profile, student, student.course_class) : false;
   const infirmaryRecords = await getInfirmaryRecordsByStudent(student.id);
-  const canEditInfirmary = student.course_class ? canEditInfirmaryRecord(profile, student, student.course_class) : false;
+  const canEditInfirmary = (student.course_class ? canEditInfirmaryRecord(profile, student, student.course_class) : false) || await canManageInfirmary(profile);
   const documents = await getDocumentsByStudent(student.id);
   const canEditDocuments = student.course_class ? canEditStudentDocuments(profile, student, student.course_class) : false;
   const auditLogs = await getStudentAuditLogs(profile, student.id);

@@ -24,7 +24,7 @@ export default async function AnketDetayPage({ params }: { params: Promise<{ id:
   const survey = await getSurveyById(id);
   if (!survey) notFound();
 
-  const canManage = canManageGuidance(profile);
+  const canManage = await canManageGuidance(profile);
   const scopeLabels: Record<string, string> = { all_students: "Tüm Öğrenciler", department: "Bölüm", class: "Sınıf" };
   const statusLabels: Record<string, string> = { draft: "Taslak", active: "Aktif", closed: "Kapalı" };
   const statusColors: Record<string, "default" | "secondary" | "outline"> = { draft: "outline", active: "default", closed: "secondary" };

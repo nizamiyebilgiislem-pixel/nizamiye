@@ -44,7 +44,7 @@ export default async function RehberlikPage() {
     getPlannedActivities(profile, 5),
   ]);
 
-  const canManage = canManageGuidance(profile);
+  const canManage = await canManageGuidance(profile);
 
   return (
     <div className="space-y-6">

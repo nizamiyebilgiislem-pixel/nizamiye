@@ -22,7 +22,7 @@ export default async function AnketlerPage() {
   }
 
   const surveys = await getSurveys(profile);
-  const canManage = canManageGuidance(profile);
+  const canManage = await canManageGuidance(profile);
 
   return (
     <div className="space-y-6">

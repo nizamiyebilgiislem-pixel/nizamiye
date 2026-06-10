@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 
 export default async function LibraryPage() {
   const { profile } = await requireAuth();
-  const canManage = canManageBooks(profile);
+  const canManage = await canManageBooks(profile);
   const canView = canViewLibrary(profile);
 
   if (!canView) {

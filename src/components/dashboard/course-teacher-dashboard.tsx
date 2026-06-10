@@ -119,7 +119,6 @@ export async function CourseTeacherDashboard({ profile }: { profile: ProfileRow 
           <QuickActionButton href="/not-sistemi" label="Not Sistemi" />
           <QuickActionButton href="/yoklama/yeni" label="Ders Yoklaması Al" />
           <QuickActionButton href="/egitim-planlama/ders-programi" label="Ders Programım" />
-          <QuickActionButton href="/talepler/yeni" label="Talep Oluştur" />
         </div>
       </section>
     </div>

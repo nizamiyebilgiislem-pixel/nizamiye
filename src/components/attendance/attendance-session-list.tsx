@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { AttendanceSessionWithRelations } from "@/lib/attendance/queries";
 import { cn } from "@/lib/utils";
 
-export function AttendanceSessionList({ sessions }: { sessions: AttendanceSessionWithRelations[] }) {
+export function AttendanceSessionList({ sessions, canManageAll }: { sessions: AttendanceSessionWithRelations[]; canManageAll?: boolean }) {
   return (
     <Card>
       <CardHeader>
@@ -50,9 +50,11 @@ export function AttendanceSessionList({ sessions }: { sessions: AttendanceSessio
                       <Link href={`/yoklama/${session.id}`} className={cn("text-sm font-medium text-[#093657] hover:underline")}>
                         Detay
                       </Link>
-                      <Link href={`/yoklama/${session.id}/duzenle`} className={cn("text-sm font-medium text-[#093657] hover:underline")}>
-                        Düzenle
-                      </Link>
+                      {canManageAll ? (
+                        <Link href={`/yoklama/${session.id}/duzenle`} className={cn("text-sm font-medium text-[#093657] hover:underline")}>
+                          Düzenle
+                        </Link>
+                      ) : null}
                     </div>
                   </td>
                 </tr>

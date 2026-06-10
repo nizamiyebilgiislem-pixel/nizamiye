@@ -11,7 +11,7 @@ import type { InfirmaryRecordWithRelations } from "@/lib/infirmary/queries";
 import { cn } from "@/lib/utils";
 import type { ProfileRow } from "@/types/database";
 
-export function InfirmaryList({ records, profile }: { records: InfirmaryRecordWithRelations[]; profile: ProfileRow }) {
+export function InfirmaryList({ records, profile, canManageAll = false }: { records: InfirmaryRecordWithRelations[]; profile: ProfileRow; canManageAll?: boolean }) {
   return (
     <Card>
       <CardContent className="p-0">
@@ -20,7 +20,7 @@ export function InfirmaryList({ records, profile }: { records: InfirmaryRecordWi
             <TableHeader><TableRow><TableHead>Tarih</TableHead><TableHead>Talebe</TableHead><TableHead>Bölüm</TableHead><TableHead>Sınıf</TableHead><TableHead>Şikayet</TableHead><TableHead>Sevk</TableHead><TableHead>Veli</TableHead><TableHead>Giren</TableHead><TableHead className="text-right">İşlemler</TableHead></TableRow></TableHeader>
             <TableBody>
               {records.map((record) => {
-                const editable = record.student ? canEditInfirmaryRecord(profile, record.student, record.course_class) : false;
+                const editable = canManageAll || (record.student ? canEditInfirmaryRecord(profile, record.student, record.course_class) : false);
                 return (
                   <TableRow key={record.id}>
                     <TableCell>{record.record_date}</TableCell>

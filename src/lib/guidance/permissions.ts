@@ -1,7 +1,13 @@
+import { hasModuleAssignment } from "@/lib/module-assignments/queries";
 import type { ProfileRow } from "@/types/database";
 
-export function canManageGuidance(profile: ProfileRow) {
+function isGuidanceManager(profile: ProfileRow) {
   return ["admin", "genel_mudur", "rehberlik"].includes(profile.role);
+}
+
+export async function canManageGuidance(profile: ProfileRow) {
+  if (isGuidanceManager(profile)) return true;
+  return hasModuleAssignment(profile.id, "guidance");
 }
 
 export function canViewGuidance(profile: ProfileRow) {
@@ -12,23 +18,24 @@ export function canViewGuidanceAsParent(profile: ProfileRow) {
   return profile.role === "veli";
 }
 
-export function canViewPrivateNotes(profile: ProfileRow) {
-  return ["admin", "genel_mudur", "rehberlik"].includes(profile.role);
+export async function canViewPrivateNotes(profile: ProfileRow) {
+  if (isGuidanceManager(profile)) return true;
+  return hasModuleAssignment(profile.id, "guidance");
 }
 
-export function canManageInterviews(profile: ProfileRow) {
+export async function canManageInterviews(profile: ProfileRow) {
   return canManageGuidance(profile);
 }
 
-export function canManageFollowUps(profile: ProfileRow) {
+export async function canManageFollowUps(profile: ProfileRow) {
   return canManageGuidance(profile);
 }
 
-export function canManageSurveys(profile: ProfileRow) {
+export async function canManageSurveys(profile: ProfileRow) {
   return canManageGuidance(profile);
 }
 
-export function canManageActivities(profile: ProfileRow) {
+export async function canManageActivities(profile: ProfileRow) {
   return canManageGuidance(profile);
 }
 

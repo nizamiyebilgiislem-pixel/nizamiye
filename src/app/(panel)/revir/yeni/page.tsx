@@ -5,12 +5,24 @@ import { Card, CardContent } from "@/components/ui/card";
 import { requireAuth } from "@/lib/auth";
 import { createInfirmaryRecordAction } from "@/lib/infirmary/actions";
 import { getInfirmaryEntryOptions } from "@/lib/infirmary/queries";
+import { canManageInfirmary } from "@/lib/module-assignments/permissions";
 
 type NewInfirmaryPageProps = { searchParams: Promise<{ department?: string; class?: string; error?: string }> };
 
 export default async function NewInfirmaryPage({ searchParams }: NewInfirmaryPageProps) {
   const params = await searchParams;
   const { profile } = await requireAuth();
+  const canManage = await canManageInfirmary(profile);
+
+  if (!canManage) {
+    return (
+      <div className="space-y-6">
+        <PageHeader eyebrow="Revir" title="Yeni Revir Kaydı" description="Yetkisiz erişim" />
+        <Card><CardContent className="p-5 text-center text-sm text-muted-foreground">Bu işlem için yetkiniz bulunmamaktadır.</CardContent></Card>
+      </div>
+    );
+  }
+
   const { departments, classes, selectedClass, students } = await getInfirmaryEntryOptions(profile, { departmentId: params.department, classId: params.class });
   return (
     <div className="space-y-6">

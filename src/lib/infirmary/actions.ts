@@ -7,6 +7,7 @@ import { z } from "zod";
 import { requireAuth } from "@/lib/auth";
 import { buildAuditActor, createAuditLog } from "@/lib/audit/log";
 import { canEditInfirmaryRecord } from "@/lib/infirmary/permissions";
+import { canManageInfirmary } from "@/lib/module-assignments/permissions";
 import { getInfirmaryRecordById } from "@/lib/infirmary/queries";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getStudentById } from "@/lib/students/queries";
@@ -39,7 +40,7 @@ export async function createInfirmaryRecordAction(formData: FormData) {
   if (!parsed.success) redirect(`/revir/yeni?error=${encodeURIComponent(parsed.error.issues[0]?.message ?? "Form hatalı.")}`);
   const student = await getStudentById(parsed.data.student_id);
   if (!student) redirect("/revir/yeni?error=not-found");
-  if (!canEditInfirmaryRecord(profile, student, student.course_class)) redirect("/revir/yeni?error=unauthorized");
+  if (!canEditInfirmaryRecord(profile, student, student.course_class) && !(await canManageInfirmary(profile))) redirect("/revir/yeni?error=unauthorized");
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.from("infirmary_records").insert({
     student_id: student.id,
@@ -89,7 +90,7 @@ export async function updateInfirmaryRecordAction(formData: FormData) {
   if (!parsed.success) redirect(`/revir/${fallbackId}/duzenle?error=${encodeURIComponent(parsed.error.issues[0]?.message ?? "Form hatalı.")}`);
   const record = await getInfirmaryRecordById(parsed.data.id);
   if (!record?.student) redirect("/revir/kayitlar?error=not-found");
-  if (!canEditInfirmaryRecord(profile, record.student, record.course_class)) redirect(`/revir/${record.id}?error=unauthorized`);
+  if (!canEditInfirmaryRecord(profile, record.student, record.course_class) && !(await canManageInfirmary(profile))) redirect(`/revir/${record.id}?error=unauthorized`);
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from("infirmary_records").update({
     record_date: parsed.data.record_date,

@@ -2,7 +2,7 @@ import type { ProfileRow, TalepRow } from "@/types/database";
 import type { UserRole } from "@/types/rbac";
 
 const talepCreatorRoles: UserRole[] = [
-  "admin", "genel_mudur", "bolum_muduru", "rehberlik", "destek_birim_muduru", "muhasebe",
+  "admin", "genel_mudur", "bolum_muduru", "rehberlik", "destek_birim_muduru",
 ];
 
 export function canViewTalepler(profile: ProfileRow) {
@@ -15,7 +15,6 @@ export function canCreateTalep(profile: ProfileRow) {
 
 export function isHandlerForUnit(profile: ProfileRow, requestedUnit: string): boolean {
   if (profile.role === "destek_birim_muduru" && requestedUnit === "destek") return true;
-  if (profile.role === "muhasebe" && requestedUnit === "muhasebe") return true;
   if (profile.role === "bolum_muduru" && requestedUnit === profile.department_id) return true;
   return false;
 }

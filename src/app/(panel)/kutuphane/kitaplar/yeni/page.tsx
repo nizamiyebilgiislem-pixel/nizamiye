@@ -8,7 +8,7 @@ import { createBookAction } from "@/lib/library/actions";
 export default async function YeniKitapPage() {
   const { profile } = await requireAuth();
 
-  if (!canManageBooks(profile)) {
+  if (!await canManageBooks(profile)) {
     return <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Bu işlem için yetkiniz bulunmamaktadır.</div>;
   }
 

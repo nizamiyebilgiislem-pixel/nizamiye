@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAuth } from "@/lib/auth";
 import { canEditInfirmaryRecord, canViewInfirmaryRecords } from "@/lib/infirmary/permissions";
 import { getInfirmaryRecordById } from "@/lib/infirmary/queries";
+import { canManageInfirmary } from "@/lib/module-assignments/permissions";
 import { cn } from "@/lib/utils";
 
 type InfirmaryDetailPageProps = { params: Promise<{ id: string }>; searchParams: Promise<{ error?: string }> };
@@ -18,8 +19,8 @@ export default async function InfirmaryDetailPage({ params, searchParams }: Infi
   const { profile } = await requireAuth();
   const record = await getInfirmaryRecordById(id);
   if (!record?.student) notFound();
-  if (!canViewInfirmaryRecords(profile, record.course_class)) redirect("/revir/kayitlar?error=unauthorized");
-  const editable = canEditInfirmaryRecord(profile, record.student, record.course_class);
+  if (!canViewInfirmaryRecords(profile, record.course_class) && !(await canManageInfirmary(profile))) redirect("/revir/kayitlar?error=unauthorized");
+  const editable = canEditInfirmaryRecord(profile, record.student, record.course_class) || await canManageInfirmary(profile);
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">

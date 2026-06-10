@@ -29,7 +29,7 @@ export default async function EmanetDetayPage({ params }: Props) {
     notFound();
   }
 
-  const canManage = canManageLoans(profile);
+  const canManage = await canManageLoans(profile);
   const today = new Date().toISOString().split("T")[0];
   const isOverdue = loan.status === "borrowed" && loan.due_date && loan.due_date < today;
 

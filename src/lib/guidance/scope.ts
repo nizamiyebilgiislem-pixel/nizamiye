@@ -1,8 +1,10 @@
+import { hasModuleAssignment } from "@/lib/module-assignments/queries";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { ProfileRow } from "@/types/database";
 
-export function isGuidanceUnrestricted(profile: ProfileRow) {
-  return ["admin", "genel_mudur", "rehberlik"].includes(profile.role);
+export async function isGuidanceUnrestricted(profile: ProfileRow) {
+  if (["admin", "genel_mudur", "rehberlik"].includes(profile.role)) return true;
+  return hasModuleAssignment(profile.id, "guidance");
 }
 
 export function requiresGuidanceScoping(profile: ProfileRow) {
@@ -13,7 +15,7 @@ export async function canViewGuidanceForStudent(profile: ProfileRow, student: {
   course_class_id: string | null;
   department_id?: string | null;
 }): Promise<boolean> {
-  if (isGuidanceUnrestricted(profile)) return true;
+  if (await isGuidanceUnrestricted(profile)) return true;
 
   if (profile.role === "bolum_muduru") {
     return student.department_id === profile.department_id;
@@ -35,7 +37,7 @@ export async function canViewGuidanceForStudent(profile: ProfileRow, student: {
 }
 
 export async function getGuidanceScopedStudentIds(profile: ProfileRow): Promise<string[] | null> {
-  if (isGuidanceUnrestricted(profile)) return null;
+  if (await isGuidanceUnrestricted(profile)) return null;
 
   const supabase = await createSupabaseServerClient();
   let classIds: string[] = [];

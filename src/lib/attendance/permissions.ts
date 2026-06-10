@@ -1,7 +1,7 @@
 import type { ClassRow, ProfileRow } from "@/types/database";
 
 export function canViewAttendance(profile: ProfileRow) {
-  return profile.role !== "veli";
+  return ["admin", "genel_mudur", "bolum_muduru", "hoca"].includes(profile.role);
 }
 
 export function canManageAttendance(profile: ProfileRow) {

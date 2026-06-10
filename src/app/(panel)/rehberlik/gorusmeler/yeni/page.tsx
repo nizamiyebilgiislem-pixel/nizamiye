@@ -13,7 +13,7 @@ export default async function YeniGorusmePage({ searchParams }: Props) {
   const { profile } = await requireAuth();
   const params = await searchParams;
 
-  if (!canManageGuidance(profile)) {
+  if (!await canManageGuidance(profile)) {
     return <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Bu işlem için yetkiniz bulunmamaktadır.</div>;
   }
 

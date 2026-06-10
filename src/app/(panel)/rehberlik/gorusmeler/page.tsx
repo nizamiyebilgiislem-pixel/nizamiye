@@ -36,7 +36,7 @@ export default async function GorusmelerPage({ searchParams }: Props) {
   }
 
   const interviews = await getInterviews(profile, params);
-  const canManage = canManageGuidance(profile);
+  const canManage = await canManageGuidance(profile);
   const supabase = await createSupabaseServerClient();
   const { data: counselors } = await supabase.from("profiles").select("id, full_name").in("role", ["admin", "genel_mudur", "rehberlik"]).eq("is_active", true).order("full_name");
 

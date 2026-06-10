@@ -7,7 +7,8 @@ import Link from "next/link";
 import { ProfileAvatar } from "@/components/profiles/profile-avatar";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Button } from "@/components/ui/button";
-import { roleLabels, type NavigationGroup } from "@/lib/navigation";
+import { roleLabels } from "@/lib/route-permissions";
+import type { NavigationGroup } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import type { ProfileRow } from "@/types/database";
 
