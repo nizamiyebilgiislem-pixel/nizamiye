@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AlertTriangle, BookOpen, CheckCircle2, ClipboardList, FileText, GraduationCap, School, Users } from "lucide-react";
+import { AlertTriangle, BookOpen, CheckCircle2, ClipboardList, FileText, GraduationCap, ListChecks, School, Users } from "lucide-react";
 
 import { StudentAvatar } from "@/components/students/student-avatar";
 import { StudentStatusBadge } from "@/components/students/student-status-badge";
@@ -7,14 +7,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { PageHeader } from "@/components/layout/page-header";
 import { getAttendanceDashboardSummary } from "@/lib/attendance/queries";
 import { getActiveTerms } from "@/lib/terms/queries";
+import { getTaskCounts } from "@/lib/tasks/queries";
 import type { ProfileRow } from "@/types/database";
 
 import { getClassTeacherDashboardData } from "@/lib/dashboard/role-based-queries";
 
 export async function ClassTeacherDashboard({ profile }: { profile: ProfileRow }) {
-  const [data, activeTerms] = await Promise.all([
+  const [data, activeTerms, taskCounts] = await Promise.all([
     getClassTeacherDashboardData(profile),
     getActiveTerms(),
+    getTaskCounts(profile),
   ]);
 
   const activeTerm = activeTerms[0] ?? null;
@@ -106,6 +108,39 @@ export async function ClassTeacherDashboard({ profile }: { profile: ProfileRow }
       ) : null}
 
       <AttendanceSummaryCard profile={profile} />
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Card className="bg-white">
+          <CardHeader className="border-b border-border pb-2">
+            <CardTitle className="flex items-center gap-2 text-sm">
+              <ListChecks className="size-4 text-[#093657]" />
+              Bana Atanan Görevler
+            </CardTitle>
+            <CardDescription className="text-xs">Aktif görevleriniz</CardDescription>
+          </CardHeader>
+          <CardContent className="p-3 pt-2">
+            <p className="text-2xl font-semibold text-[#093657]">{taskCounts.myTasks}</p>
+            <Link href="/gorevler?tab=my" className="mt-2 inline-block text-xs font-medium text-[#093657] underline underline-offset-2">
+              Görevleri Görüntüle
+            </Link>
+          </CardContent>
+        </Card>
+        <Card className="bg-white">
+          <CardHeader className="border-b border-border pb-2">
+            <CardTitle className="flex items-center gap-2 text-sm">
+              <ListChecks className="size-4 text-[#093657]" />
+              Bugün Bitecek Görevler
+            </CardTitle>
+            <CardDescription className="text-xs">Bugün son teslim tarihi</CardDescription>
+          </CardHeader>
+          <CardContent className="p-3 pt-2">
+            <p className="text-2xl font-semibold text-orange-600">{taskCounts.dueToday}</p>
+            <Link href="/gorevler?tab=overdue" className="mt-2 inline-block text-xs font-medium text-[#093657] underline underline-offset-2">
+              Görevleri Görüntüle
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
 
       <section className="space-y-3">
         <div className="flex items-center justify-between gap-3">

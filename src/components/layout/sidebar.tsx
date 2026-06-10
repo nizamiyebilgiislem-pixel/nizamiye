@@ -13,6 +13,7 @@ import {
   Home,
   LayoutDashboard,
   LibraryBig,
+  ListChecks,
   MessageSquare,
   ShieldAlert,
   School,
@@ -52,6 +53,7 @@ const iconMap: Record<string, typeof Circle> = {
   guidance: HeartHandshake,
   user: User,
   talepler: MessageSquare,
+  tasks: ListChecks,
 };
 
 type SidebarProps = {

@@ -115,16 +115,19 @@ const resetPasswordSchema = z.object({
   temporary_password: z.string().trim().min(8, "Geçici şifre en az 8 karakter olmalıdır."),
 });
 
-export async function createStaffProfileAction(formData: FormData) {
+async function createProfileAction(formData: FormData, source: "hocalar" | "kullanicilar") {
   const { profile } = await requireAuth();
   const parsed = createStaffProfileSchema.safeParse(Object.fromEntries(formData));
 
+  const yeniPath = `/${source}/yeni`;
+  const detailPath = (id: string) => `/${source}/${id}`;
+
   if (!parsed.success) {
-    redirect(`/hocalar/yeni?error=${encodeURIComponent(parsed.error.issues[0]?.message ?? "Form bilgileri hatalı.")}`);
+    redirect(`${yeniPath}?error=${encodeURIComponent(parsed.error.issues[0]?.message ?? "Form bilgileri hatalı.")}`);
   }
 
   if (!canAssignRole(profile, parsed.data.role)) {
-    redirect("/hocalar/yeni?error=unauthorized");
+    redirect(`${yeniPath}?error=unauthorized`);
   }
 
   const supabase = await createSupabaseServerClient();
@@ -133,12 +136,12 @@ export async function createStaffProfileAction(formData: FormData) {
     : { data: null };
 
   if (existing) {
-    redirect("/hocalar/yeni?error=email");
+    redirect(`${yeniPath}?error=email`);
   }
 
   const photoFile = getPhotoFile(formData);
   if (photoFile) {
-    validateProfilePhoto(photoFile, "/hocalar/yeni");
+    validateProfilePhoto(photoFile, yeniPath);
   }
 
   let authUserId: string | null = null;
@@ -147,7 +150,7 @@ export async function createStaffProfileAction(formData: FormData) {
     const existingAuthUser = await findAuthUserByEmail(parsed.data.email);
 
     if (existingAuthUser) {
-      redirect("/hocalar/yeni?error=auth-email");
+      redirect(`${yeniPath}?error=auth-email`);
     }
 
     const { user, error } = await createAuthUserAccount({
@@ -158,7 +161,7 @@ export async function createStaffProfileAction(formData: FormData) {
     });
 
     if (error || !user) {
-      redirect("/hocalar/yeni?error=auth-create");
+      redirect(`${yeniPath}?error=auth-create`);
     }
 
     authUserId = user.id;
@@ -181,15 +184,15 @@ export async function createStaffProfileAction(formData: FormData) {
   if (error || !data) {
     if (authUserId) {
       await deleteAuthUserAccount(authUserId);
-      redirect("/hocalar/yeni?error=auth-rollback");
+      redirect(`${yeniPath}?error=auth-rollback`);
     }
 
-    redirect("/hocalar/yeni?error=save");
+    redirect(`${yeniPath}?error=save`);
   }
 
   if (photoFile) {
     const uploaded = await uploadProfilePhoto(data.id, photoFile).catch(() => {
-      redirect(`/hocalar/${data.id}/duzenle?error=photo-upload`);
+      redirect(`${detailPath(data.id)}/duzenle?error=photo-upload`);
     });
 
     if (uploaded) {
@@ -216,7 +219,7 @@ export async function createStaffProfileAction(formData: FormData) {
       auth_user_id: authUserId,
     },
     metadata: {
-      source: "hocalar",
+      source,
     },
   });
 
@@ -241,7 +244,15 @@ export async function createStaffProfileAction(formData: FormData) {
 
   revalidatePath("/hocalar");
   revalidatePath("/kullanicilar");
-  redirect(`/hocalar/${data.id}${authUserId ? "?success=auth-created" : "?success=created"}`);
+  redirect(`${detailPath(data.id)}${authUserId ? "?success=auth-created" : "?success=created"}`);
+}
+
+export async function createStaffProfileAction(formData: FormData) {
+  return createProfileAction(formData, "hocalar");
+}
+
+export async function createUserProfileAction(formData: FormData) {
+  return createProfileAction(formData, "kullanicilar");
 }
 
 export async function updateStaffProfileAction(formData: FormData) {
@@ -310,6 +321,59 @@ export async function updateUserProfileAction(formData: FormData) {
   revalidatePath("/kullanicilar");
   revalidatePath(`/kullanicilar/${target.id}`);
   redirect(`/kullanicilar/${target.id}?success=updated`);
+}
+
+export async function deleteUserProfileAction(formData: FormData) {
+  const { profile } = await requireAuth();
+  const id = formData.get("id");
+
+  if (typeof id !== "string" || !id) {
+    redirect("/kullanicilar?error=missing-id");
+  }
+
+  const target = await getProfileById(id);
+
+  if (!target) {
+    redirect("/kullanicilar?error=not-found");
+  }
+
+  if (!canManageUserProfile(profile, target)) {
+    redirect(`/kullanicilar/${target.id}?error=unauthorized`);
+  }
+
+  const supabase = await createSupabaseServerClient();
+
+  if (target.auth_user_id) {
+    await deleteAuthUserAccount(target.auth_user_id);
+  }
+
+  const { error } = await supabase.from("profiles").delete().eq("id", target.id);
+
+  if (error) {
+    redirect("/kullanicilar?error=delete-failed");
+  }
+
+  await createAuditLog({
+    ...buildAuditActor(profile),
+    action: "staff_profile_deleted",
+    title: "Kullanıcı silindi",
+    description: `${target.full_name} profili silindi.`,
+    entityType: "staff_profile",
+    entityId: target.id,
+    beforeData: {
+      full_name: target.full_name,
+      email: target.email,
+      role: target.role,
+    },
+    afterData: null,
+    metadata: {
+      source: "kullanicilar",
+    },
+  });
+
+  revalidatePath("/hocalar");
+  revalidatePath("/kullanicilar");
+  redirect("/kullanicilar?success=deleted");
 }
 
 export async function createProfileAuthAccountAction(formData: FormData) {

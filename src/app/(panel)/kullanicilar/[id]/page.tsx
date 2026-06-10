@@ -1,19 +1,25 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Pencil } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
+import { ProfileDeleteButton } from "@/components/profiles/profile-delete-button";
 import { ParentLinkedStudentsCard } from "@/components/parents/parent-linked-students-card";
 import { ProfileAuthManagement } from "@/components/profiles/profile-auth-management";
 import { ProfileAvatar } from "@/components/profiles/profile-avatar";
 import { ProfileErrorMessage } from "@/components/profiles/profile-error-message";
 import { ProfileInfoCard } from "@/components/profiles/profile-info-card";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireRole } from "@/lib/auth";
 import {
   createProfileAuthAccountAction,
   resetProfileAuthPasswordAction,
 } from "@/lib/profiles/actions";
+import { canManageUserProfile } from "@/lib/profiles/permissions";
 import { getParentProfileByIdForProfile } from "@/lib/parents/queries";
 import { getProfileById } from "@/lib/profiles/queries";
+import { cn } from "@/lib/utils";
 
 type UserDetailPageProps = {
   params: Promise<{ id: string }>;
@@ -30,12 +36,26 @@ export default async function UserDetailPage({ params, searchParams }: UserDetai
   }
 
   const parentDetail = profile.role === "veli" ? await getParentProfileByIdForProfile(viewer, profile.id) : null;
+  const canManage = canManageUserProfile(viewer, profile);
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start gap-4">
-        <ProfileAvatar name={profile.full_name} photoUrl={profile.photo_url} size="lg" />
-        <PageHeader eyebrow="Kullanıcılar" title={profile.full_name} description={profile.email ?? "E-posta yok"} />
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex items-start gap-4">
+          <ProfileAvatar name={profile.full_name} photoUrl={profile.photo_url} size="lg" />
+          <PageHeader eyebrow="Kullanıcılar" title={profile.full_name} description={profile.email ?? "E-posta yok"} />
+        </div>
+        {canManage ? (
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/kullanicilar/${profile.id}/duzenle`}
+              className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+            >
+              <Pencil className="mr-1.5 size-4" /> Düzenle
+            </Link>
+            <ProfileDeleteButton profileId={profile.id} profileName={profile.full_name} />
+          </div>
+        ) : null}
       </div>
       <ProfileErrorMessage error={query.error} />
       {query.success ? <SuccessMessage success={query.success} /> : null}

@@ -14,6 +14,7 @@ import {
 import { AttendanceDashboardCard } from "@/components/attendance/attendance-dashboard-card";
 import { DormitoryDashboardCard } from "@/components/dormitory/dormitory-dashboard-card";
 import { GuidanceDashboardCard } from "@/components/guidance/guidance-dashboard-card";
+import { TaskDashboardCard } from "@/components/tasks/task-dashboard-card";
 import { LibraryDashboardCard } from "@/components/library/library-dashboard-card";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,12 +23,13 @@ import { getDormitoryDashboardData, getUnassignedStudentsCount } from "@/lib/dor
 import { getGuidanceDashboardData } from "@/lib/guidance/queries";
 import { getLibraryDashboardData } from "@/lib/library/queries";
 import { getActiveTerms } from "@/lib/terms/queries";
+import { getTaskCounts } from "@/lib/tasks/queries";
 import type { ProfileRow } from "@/types/database";
 
 import { getDepartmentManagerDashboardData } from "@/lib/dashboard/role-based-queries";
 
 export async function DepartmentManagerDashboard({ profile }: { profile: ProfileRow }) {
-  const [data, attendanceSummary, dormitoryData, unassignedCount, libraryData, guidanceData, activeTerms] = await Promise.all([
+  const [data, attendanceSummary, dormitoryData, unassignedCount, libraryData, guidanceData, activeTerms, taskCounts] = await Promise.all([
     getDepartmentManagerDashboardData(profile),
     getAttendanceDashboardSummary(profile),
     getDormitoryDashboardData(profile),
@@ -35,6 +37,7 @@ export async function DepartmentManagerDashboard({ profile }: { profile: Profile
     getLibraryDashboardData(),
     getGuidanceDashboardData(),
     getActiveTerms(),
+    getTaskCounts(profile),
   ]);
 
   const activeTerm = activeTerms[0] ?? null;
@@ -191,18 +194,12 @@ export async function DepartmentManagerDashboard({ profile }: { profile: Profile
           activeSurveys={guidanceData.active_surveys}
           plannedActivities={guidanceData.planned_activities}
         />
-        <Card className="bg-white">
-          <CardHeader className="border-b border-border pb-2">
-            <CardTitle className="text-sm">Açık Talepler</CardTitle>
-            <CardDescription className="text-xs">Bekleyen talep ve istekler.</CardDescription>
-          </CardHeader>
-          <CardContent className="p-3 pt-2">
-            <p className="text-2xl font-semibold text-[#093657]">{data.open_talep_count}</p>
-            <Link href="/talepler" className="mt-2 inline-block text-xs font-medium text-[#093657] underline underline-offset-2">
-              Talepleri Görüntüle
-            </Link>
-          </CardContent>
-        </Card>
+        <TaskDashboardCard
+          openCount={taskCounts.pending + taskCounts.in_progress}
+          overdueCount={taskCounts.overdue}
+          dueTodayCount={taskCounts.dueToday}
+          completedCount={taskCounts.completed}
+        />
       </div>
 
       <section className="space-y-2">

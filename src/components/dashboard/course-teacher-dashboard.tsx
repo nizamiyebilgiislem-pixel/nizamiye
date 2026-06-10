@@ -4,14 +4,16 @@ import { BookOpen, FileText, GraduationCap, ListChecks, School } from "lucide-re
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/layout/page-header";
 import { getActiveTerms } from "@/lib/terms/queries";
+import { getTaskCounts } from "@/lib/tasks/queries";
 import type { ProfileRow } from "@/types/database";
 
 import { getCourseTeacherDashboardData } from "@/lib/dashboard/role-based-queries";
 
 export async function CourseTeacherDashboard({ profile }: { profile: ProfileRow }) {
-  const [data, activeTerms] = await Promise.all([
+  const [data, activeTerms, taskCounts] = await Promise.all([
     getCourseTeacherDashboardData(profile),
     getActiveTerms(),
+    getTaskCounts(profile),
   ]);
 
   const activeTerm = activeTerms[0] ?? null;
@@ -68,6 +70,17 @@ export async function CourseTeacherDashboard({ profile }: { profile: ProfileRow 
         <MiniStatCard icon={BookOpen} label="Aktif Ders" value={data.courses.length} />
         <MiniStatCard icon={School} label="Atandığım Sınıf" value={assignedClassIds.length} />
         <MiniStatCard icon={ListChecks} label="Bugünkü Ders" value={todaySlotCount} />
+        <Card className="bg-white">
+          <CardContent className="flex items-center gap-2.5 p-3">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-[#eaf1f6]">
+              <ListChecks className="size-4 text-[#093657]" aria-hidden />
+            </div>
+            <div className="flex flex-1 items-center justify-between gap-2">
+              <p className="truncate text-xs font-medium text-muted-foreground">Bana Atanan Görev</p>
+              <Link href="/gorevler?tab=my" className="text-sm font-semibold text-[#093657] underline underline-offset-2">{taskCounts.myTasks}</Link>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <section className="space-y-3">

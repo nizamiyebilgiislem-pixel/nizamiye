@@ -14,11 +14,13 @@ export type NavigationGroup = {
 
 const staffRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca"];
 const topManagerRoles: UserRole[] = ["admin", "genel_mudur"];
+const managerRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru"];
 const parentManagerRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca"];
 const allRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "veli"];
 const libraryRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevlisi", "bolum_muduru", "hoca"];
 const guidanceRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik", "bolum_muduru", "hoca"];
 const talepRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "rehberlik", "destek_birim_muduru", "muhasebe"];
+const taskRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "rehberlik", "destek_birim_muduru", "muhasebe", "kutuphane_gorevlisi"];
 
 export const moduleGroups: NavigationGroup[] = [
   {
@@ -37,7 +39,9 @@ export const moduleGroups: NavigationGroup[] = [
   {
     label: "Akademik",
     items: [
-      { label: "Not Sistemi", href: "/not-sistemi", iconKey: "grades", allowedRoles: staffRoles },
+      { label: "Ders Sistemi", href: "/ders-sistemi", iconKey: "grades", allowedRoles: managerRoles },
+      { label: "Not Girişi", href: "/not-sistemi/not-girisi", iconKey: "grades", allowedRoles: staffRoles },
+      { label: "Dönemler", href: "/not-sistemi/donemler", iconKey: "calendar", allowedRoles: managerRoles },
       { label: "Eğitim Planlama", href: "/egitim-planlama", iconKey: "calendar", allowedRoles: staffRoles },
       { label: "Kanaat Sistemi", href: "/kanaat-sistemi", iconKey: "evaluations", allowedRoles: staffRoles },
       { label: "Yoklama", href: "/yoklama", iconKey: "attendance", allowedRoles: staffRoles },
@@ -57,6 +61,7 @@ export const moduleGroups: NavigationGroup[] = [
       { label: "PDF Merkezi", href: "/raporlar/talebeler", iconKey: "documents", allowedRoles: allRoles },
       { label: "Kullanıcılar", href: "/kullanicilar", iconKey: "users", allowedRoles: topManagerRoles },
       { label: "Talep Yönetimi", href: "/talepler", iconKey: "talepler", allowedRoles: talepRoles },
+      { label: "Görev Yönetimi", href: "/gorevler", iconKey: "tasks", allowedRoles: taskRoles },
       { label: "Ayarlar", href: "/ayarlar", iconKey: "settings", allowedRoles: ["admin"] },
     ],
   },

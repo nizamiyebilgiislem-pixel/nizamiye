@@ -13,6 +13,7 @@ export type ClassWithRelations = ClassRow & {
   department: DepartmentRow | null;
   class_teacher: ProfileRow | null;
   active_student_count: number;
+  students: StudentRow[];
 };
 
 export type ClassListFilters = {
@@ -122,10 +123,11 @@ export async function getClassesForProfile(profile: ProfileRow, filters: ClassLi
 
   const departmentMap = new Map(departments.map((department) => [department.id, department]));
   const teacherMap = new Map(teachers.map((teacher) => [teacher.id, teacher]));
+  const studentGroupMap = groupStudentsByClass(students);
   const search = filters.search?.trim().toLocaleLowerCase("tr-TR");
 
   const rows = (classes ?? [])
-    .map((classRow) => attachClassRelations(classRow, departmentMap, teacherMap, students))
+    .map((classRow) => attachClassRelations(classRow, departmentMap, teacherMap, students, studentGroupMap))
     .filter((classRow) => {
       if (!search) {
         return true;
@@ -213,17 +215,31 @@ async function getActiveStudentsByClassId(classId: string) {
   return data;
 }
 
+function groupStudentsByClass(students: StudentRow[]) {
+  const map = new Map<string, StudentRow[]>();
+  for (const student of students) {
+    if (!student.course_class_id) continue;
+    const list = map.get(student.course_class_id) ?? [];
+    list.push(student);
+    map.set(student.course_class_id, list);
+  }
+  return map;
+}
+
 function attachClassRelations(
   classRow: ClassRow,
   departmentMap: Map<string, DepartmentRow>,
   teacherMap: Map<string, ProfileRow>,
   students: StudentRow[],
+  studentGroupMap: Map<string, StudentRow[]>,
 ): ClassWithRelations {
+  const classStudents = studentGroupMap.get(classRow.id) ?? [];
   return {
     ...classRow,
     department: departmentMap.get(classRow.department_id) ?? null,
     class_teacher: classRow.class_teacher_id ? teacherMap.get(classRow.class_teacher_id) ?? null : null,
-    active_student_count: students.filter((student) => student.course_class_id === classRow.id).length,
+    active_student_count: classStudents.length,
+    students: classStudents,
   };
 }
 

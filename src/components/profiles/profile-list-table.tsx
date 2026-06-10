@@ -73,7 +73,7 @@ export function ProfileListTable({ profiles, currentProfile, detailBasePath, sho
                       </Link>
                       {showEdit && canEditStaffProfile(currentProfile, profile) ? (
                         <Link
-                          href={`/hocalar/${profile.id}/duzenle`}
+                          href={`${detailBasePath}/${profile.id}/duzenle`}
                           className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
                           aria-label="Profili düzenle"
                         >

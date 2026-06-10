@@ -9,6 +9,7 @@ import { AttendanceDashboardCard } from "@/components/attendance/attendance-dash
 import { DormitoryDashboardCard } from "@/components/dormitory/dormitory-dashboard-card";
 import { LibraryDashboardCard } from "@/components/library/library-dashboard-card";
 import { GuidanceDashboardCard } from "@/components/guidance/guidance-dashboard-card";
+import { TaskDashboardCard } from "@/components/tasks/task-dashboard-card";
 import { PageHeader } from "@/components/layout/page-header";
 import { ReportShortcutCard } from "@/components/reports/report-shortcut-card";
 import { StudentAvatar } from "@/components/students/student-avatar";
@@ -21,6 +22,7 @@ import { getDormitoryDashboardData, getUnassignedStudentsCount } from "@/lib/dor
 import { getGuidanceDashboardData } from "@/lib/guidance/queries";
 import { getLibraryDashboardData } from "@/lib/library/queries";
 import { getActiveTerms } from "@/lib/terms/queries";
+import { getTaskCounts } from "@/lib/tasks/queries";
 import type { ProfileRow } from "@/types/database";
 
 const metricIcons: Record<string, ComponentType<{ className?: string; "aria-hidden"?: boolean }>> = {
@@ -31,7 +33,7 @@ const metricIcons: Record<string, ComponentType<{ className?: string; "aria-hidd
 };
 
 export async function AdminDashboard({ profile }: { profile: ProfileRow }) {
-  const [dashboard, departments, activeTerms, attendanceSummary, dormitoryData, unassignedCount, libraryData, guidanceData] = await Promise.all([
+  const [dashboard, departments, activeTerms, attendanceSummary, dormitoryData, unassignedCount, libraryData, guidanceData, taskCounts] = await Promise.all([
     getDashboardData(profile),
     getDepartmentAnalyticsForProfile(profile),
     getActiveTerms(),
@@ -40,9 +42,11 @@ export async function AdminDashboard({ profile }: { profile: ProfileRow }) {
     getUnassignedStudentsCount(profile),
     getLibraryDashboardData(),
     getGuidanceDashboardData(),
+    getTaskCounts(profile),
   ]);
   const activeTerm = activeTerms[0] ?? null;
   const mainMetricKeys = new Set(["active-students", "teachers", "active-classes", "active-departments"]);
+
 
   return (
     <div className="space-y-6">
@@ -119,6 +123,12 @@ export async function AdminDashboard({ profile }: { profile: ProfileRow }) {
           activeSurveys={guidanceData.active_surveys}
           plannedActivities={guidanceData.planned_activities}
         />
+        <TaskDashboardCard
+          openCount={taskCounts.pending + taskCounts.in_progress}
+          overdueCount={taskCounts.overdue}
+          dueTodayCount={taskCounts.dueToday}
+          completedCount={taskCounts.completed}
+        />
         <div className="space-y-3">
           <ReportShortcutCard
             title="PDF Merkezi"
@@ -137,16 +147,6 @@ export async function AdminDashboard({ profile }: { profile: ProfileRow }) {
             badge={
               <span className="inline-flex items-center rounded-md bg-[#eaf1f6] px-2 py-0.5 text-xs font-medium text-[#093657]">
                 Merkez
-              </span>
-            }
-          />
-          <ReportShortcutCard
-            title="Yoklama Raporları"
-            description="Günlük ve namaz yoklaması özetleri."
-            href="/raporlar/yoklama"
-            badge={
-              <span className="inline-flex items-center rounded-md bg-[#eaf1f6] px-2 py-0.5 text-xs font-medium text-[#093657]">
-                Operasyon
               </span>
             }
           />

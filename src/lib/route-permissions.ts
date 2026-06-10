@@ -73,6 +73,8 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/raporlar/donem-sonu": allRoles,
   "/audit-log": staffRoles,
   "/kullanicilar": topManagerRoles,
+  "/kullanicilar/yeni": topManagerRoles,
+  "/kullanicilar/[id]/duzenle": topManagerRoles,
   "/ayarlar": ["admin"],
   "/kutuphane": libraryViewRoles,
   "/kutuphane/kitaplar": libraryViewRoles,
@@ -106,6 +108,13 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/talepler/yeni": talepRoles,
   "/talepler/[id]": talepRoles,
   "/talepler/[id]/duzenle": talepManageRoles,
+  "/gorevler": staffRoles,
+  "/gorevler/yeni": managerRoles,
+  "/gorevler/[id]": staffRoles,
+  "/gorevler/[id]/duzenle": topManagerRoles,
+  "/ders-sistemi": managerRoles,
+  "/ders-sistemi/yeni": managerRoles,
+  "/ders-sistemi/[id]/duzenle": managerRoles,
 };
 
 export const roleLabels: Record<UserRole, string> = {

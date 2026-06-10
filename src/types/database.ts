@@ -522,10 +522,46 @@ export type TalepRow = {
   updated_at: Timestamp;
 };
 
+export type TaskRow = {
+  id: string;
+  title: string;
+  description: string | null;
+  priority: string;
+  status: string;
+  assigned_by: string;
+  assigned_to: string;
+  department_id: string | null;
+  due_date: DateString | null;
+  completed_at: Timestamp | null;
+  is_active: boolean;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+};
+
+export type TaskCommentRow = {
+  id: string;
+  task_id: string;
+  profile_id: string;
+  comment: string;
+  created_at: Timestamp;
+};
+
+export type TaskAttachmentRow = {
+  id: string;
+  task_id: string;
+  file_name: string;
+  file_url: string;
+  uploaded_by: string;
+  created_at: Timestamp;
+};
+
 export type Database = {
   public: {
     Tables: {
       talepler: TableDefinition<TalepRow>;
+      tasks: TableDefinition<TaskRow>;
+      task_comments: TableDefinition<TaskCommentRow>;
+      task_attachments: TableDefinition<TaskAttachmentRow>;
       departments: TableDefinition<DepartmentRow>;
       profiles: TableDefinition<ProfileRow>;
       classes: TableDefinition<ClassRow>;

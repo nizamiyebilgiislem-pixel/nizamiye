@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { FileDown } from "lucide-react";
 
+import { GradeEntryFilter } from "@/components/grades/grade-entry-filter";
 import { GradeErrorMessage } from "@/components/grades/grade-error-message";
 import { PageHeader } from "@/components/layout/page-header";
 import { StudentAvatar } from "@/components/students/student-avatar";
@@ -20,22 +22,29 @@ export default async function GradeEntryPage({ searchParams }: GradeEntryPagePro
     classId: params.class,
   });
   const classCourses = selectedClass ? await getClassCoursesForStudent(selectedClass.id) : [];
+  const selectedDepartmentId = params.department ?? selectedClass?.department_id ?? departments[0]?.id ?? "";
 
   return (
     <div className="space-y-6">
       <PageHeader eyebrow="Not Sistemi" title="Not Girişi" description="Bölüm ve sınıf seçerek aktif talebelerin notlarını yönetin." />
       <GradeErrorMessage error={params.error} />
       <Card>
-        <CardContent className="p-4">
-          <form action="/not-sistemi/not-girisi" className="grid gap-3 md:grid-cols-[220px_220px_auto]">
-            <select name="department" defaultValue={params.department ?? selectedClass?.department_id ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm">
-              {departments.map((department) => <option key={department.id} value={department.id}>{department.name}</option>)}
-            </select>
-            <select name="class" defaultValue={selectedClass?.id ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm">
-              {classes.map((classRow) => <option key={classRow.id} value={classRow.id}>{classRow.name}</option>)}
-            </select>
-            <button type="submit" className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">Göster</button>
-          </form>
+        <CardContent className="flex flex-wrap items-end justify-between gap-3 p-4">
+          <GradeEntryFilter
+            departments={departments}
+            classes={classes}
+            selectedDepartmentId={selectedDepartmentId}
+            selectedClassId={selectedClass?.id ?? ""}
+          />
+          {selectedClass ? (
+            <Link
+              href={`/not-sistemi/not-girisi/pdf?department=${selectedClass.department_id}&class=${selectedClass.id}`}
+              className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+            >
+              <FileDown className="mr-1.5 size-4" />
+              PDF İndir
+            </Link>
+          ) : null}
         </CardContent>
       </Card>
       <div className="grid gap-3">
