@@ -25,6 +25,15 @@ export function canManageTalepStatus(profile: ProfileRow, talep: TalepRow): bool
   return isHandlerForUnit(profile, talep.requested_unit);
 }
 
+export function canViewTalep(profile: ProfileRow, talep: TalepRow): boolean {
+  if (["admin", "genel_mudur"].includes(profile.role)) return true;
+  if (talep.requested_by === profile.id) return true;
+  if (profile.role === "bolum_muduru" && profile.department_id && talep.requested_unit === profile.department_id) return true;
+  if (profile.role === "destek_birim_muduru" && talep.requested_unit === "destek") return true;
+  if (profile.role === "muhasebe" && talep.requested_unit === "muhasebe") return true;
+  return false;
+}
+
 export function canEditTalep(profile: ProfileRow, talep: TalepRow): boolean {
   if (["admin", "genel_mudur"].includes(profile.role)) return true;
   if (talep.requested_by === profile.id && talep.status === "bekliyor") return true;

@@ -4,7 +4,7 @@ import { ArrowLeft, Pencil } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { requireAuth } from "@/lib/auth";
-import { canViewTalepler, canManageTalepStatus, canEditTalep } from "@/lib/talepler/permissions";
+import { canViewTalepler, canViewTalep, canManageTalepStatus, canEditTalep } from "@/lib/talepler/permissions";
 import { getTalepById, statusLabels, priorityLabels } from "@/lib/talepler/queries";
 import { getUnitLabel } from "@/lib/talepler/queries";
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,6 +33,7 @@ export default async function TalepDetayPage({ params }: { params: Promise<{ id:
 
   const talep = await getTalepById(id);
   if (!talep) notFound();
+  if (!canViewTalep(profile, talep)) notFound();
 
   const canManageStatus = canManageTalepStatus(profile, talep);
   const canEdit = canEditTalep(profile, talep);

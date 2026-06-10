@@ -93,6 +93,40 @@ export async function getTalepler(profile: ProfileRow): Promise<TalepWithProfile
   return (data ?? []) as unknown as TalepWithProfiles[];
 }
 
+export async function getRecentTalepler(profile: ProfileRow, limit = 5): Promise<TalepWithProfiles[]> {
+  const supabase = createSupabaseAdminClient();
+  const selectFields = "*, requester:requested_by(id, full_name), assignee:assigned_to(id, full_name), target:target_person(id, full_name)";
+
+  if (["admin", "genel_mudur"].includes(profile.role)) {
+    const { data } = await supabase
+      .from("talepler")
+      .select(selectFields)
+      .order("created_at", { ascending: false })
+      .limit(limit);
+    return (data ?? []) as unknown as TalepWithProfiles[];
+  }
+
+  const handlerUnits: string[] = [];
+  if (profile.role === "destek_birim_muduru") handlerUnits.push("destek");
+  if (profile.role === "muhasebe") handlerUnits.push("muhasebe");
+  if (profile.role === "bolum_muduru" && profile.department_id) handlerUnits.push(profile.department_id);
+
+  const query = supabase
+    .from("talepler")
+    .select(selectFields)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (handlerUnits.length > 0) {
+    const unitFilters = handlerUnits.map((u) => `requested_unit.eq.${u}`).join(",");
+    const { data } = await query.or(`requested_by.eq.${profile.id},or(${unitFilters})`);
+    return (data ?? []) as unknown as TalepWithProfiles[];
+  }
+
+  const { data } = await query.eq("requested_by", profile.id);
+  return (data ?? []) as unknown as TalepWithProfiles[];
+}
+
 export async function getTalepById(id: string): Promise<TalepWithProfiles | null> {
   const supabase = createSupabaseAdminClient();
   const { data } = await supabase
