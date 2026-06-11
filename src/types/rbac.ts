@@ -1,6 +1,11 @@
-export const roles = ["admin", "genel_mudur", "bolum_muduru", "kutuphane_gorevlisi", "hoca", "veli", "rehberlik", "destek_birim_muduru", "muhasebe"] as const;
+export const activeRoles = ["admin", "genel_mudur", "bolum_muduru", "kutuphane_gorevlisi", "hoca", "veli", "rehberlik", "destek_birim_muduru"] as const;
+export const legacyRoles = ["muhasebe"] as const;
 
-export type UserRole = (typeof roles)[number];
+export const roles = activeRoles;
+
+export type ActiveUserRole = (typeof activeRoles)[number];
+export type LegacyUserRole = (typeof legacyRoles)[number];
+export type UserRole = ActiveUserRole | LegacyUserRole;
 
 export const departments = ["arapca", "iptida", "hafizlik", "proje"] as const;
 

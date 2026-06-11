@@ -7,10 +7,8 @@ export function canUseAssistant(profile: ProfileRow) {
     "genel_mudur",
     "bolum_muduru",
     "hoca",
-    "rehberlik",
     "kutuphane_gorevlisi",
     "destek_birim_muduru",
-    "muhasebe",
   ].includes(profile.role);
 }
 

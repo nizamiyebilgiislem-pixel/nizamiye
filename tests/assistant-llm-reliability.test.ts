@@ -9,7 +9,6 @@ import {
   getAiUserMessage,
   parseAiError,
   runAiModelWithRetryAndFallback,
-  selectAiModelsForQuestion,
 } from "../src/lib/assistant/llm-reliability";
 
 function statusError(status: number) {
@@ -34,8 +33,8 @@ test("normal cevap ilk primary çağrısından döner", async () => {
   assert.deepEqual(calls, [AI_PRIMARY_MODEL]);
 });
 
-test("timeout retry edilir ve timeout kullanıcı mesajına çevrilir", async () => {
-  const logs: Array<{ attempt: number; retry: boolean }> = [];
+test("timeout fallback modele geçer ve timeout kullanıcı mesajına çevrilir", async () => {
+  const logs: Array<{ fallback: boolean; status?: number }> = [];
   const timeoutError = new Error("Request timed out.");
 
   await assert.rejects(
@@ -45,29 +44,28 @@ test("timeout retry edilir ve timeout kullanıcı mesajına çevrilir", async ()
       callModel: async () => {
         throw timeoutError;
       },
-      logAttempt: (entry) => logs.push({ attempt: entry.attempt, retry: entry.retry }),
+      logAttempt: (entry) => logs.push({ fallback: entry.fallback, status: entry.status }),
     }),
   );
 
   const message = getAiUserMessage(parseAiError(timeoutError));
   assert.equal(message, "Yapay zeka yanıt vermekte gecikiyor. Lütfen tekrar deneyin.");
-  assert.equal(logs[0]?.attempt, 1);
-  assert.equal(logs[0]?.retry, true);
+  assert.deepEqual(logs.map((entry) => entry.fallback), [false, true]);
 });
 
-test("500 hatası bir kez retry edilir", async () => {
+test("500 hatası fallback modele geçer", async () => {
   const calls: string[] = [];
   const result = await runAiModelWithRetryAndFallback({
     callModel: async (model) => {
       calls.push(model);
-      if (calls.length === 1) throw statusError(500);
-      return "retry-ok";
+      if (model === AI_PRIMARY_MODEL) throw statusError(500);
+      return "fallback-ok";
     },
     logAttempt: () => undefined,
   });
 
-  assert.equal(result, "retry-ok");
-  assert.deepEqual(calls, [AI_PRIMARY_MODEL, AI_PRIMARY_MODEL]);
+  assert.equal(result, "fallback-ok");
+  assert.deepEqual(calls, [AI_PRIMARY_MODEL, AI_FALLBACK_MODEL]);
 });
 
 test("primary başarısız olursa fallback model kullanılır", async () => {
@@ -82,7 +80,7 @@ test("primary başarısız olursa fallback model kullanılır", async () => {
   });
 
   assert.equal(result, "fallback-ok");
-  assert.deepEqual(calls, [AI_PRIMARY_MODEL, AI_PRIMARY_MODEL, AI_FALLBACK_MODEL]);
+  assert.deepEqual(calls, [AI_PRIMARY_MODEL, AI_FALLBACK_MODEL]);
 });
 
 test("429 retry ve fallback yapmaz", async () => {
@@ -99,7 +97,7 @@ test("429 retry ve fallback yapmaz", async () => {
   );
 
   const message = getAiUserMessage(parseAiError(statusError(429)));
-  assert.equal(message, "Yapay zeka kullanım limiti geçici olarak doldu.");
+  assert.equal(message, "Yapay zeka kullanım limiti geçici olarak doldu. Lütfen biraz sonra tekrar deneyin.");
   assert.deepEqual(calls, [AI_PRIMARY_MODEL]);
 });
 
@@ -117,22 +115,11 @@ test("401 yapılandırma mesajına çevrilir ve retry yapmaz", async () => {
   );
 
   const message = getAiUserMessage(parseAiError(statusError(401)));
-  assert.equal(message, "Yapay zeka yapılandırması eksik.");
+  assert.equal(message, "Yapay zeka yapılandırması eksik veya hatalı.");
   assert.deepEqual(calls, [AI_PRIMARY_MODEL]);
 });
 
-test("kısa operasyonel sorularda hızlı model primary seçilir", () => {
-  const selection = selectAiModelsForQuestion("Bugün yoklama alındı mı?");
-
-  assert.equal(selection.primaryModel, AI_FAST_MODEL);
-  assert.equal(selection.fallbackModel, AI_STRONG_MODEL);
-  assert.equal(selection.reason, "fast_default");
-});
-
-test("analiz ve rapor sorularında güçlü model primary seçilir", () => {
-  const selection = selectAiModelsForQuestion("Ahmet talebe durumu için detaylı analiz raporu hazırla");
-
-  assert.equal(selection.primaryModel, AI_STRONG_MODEL);
-  assert.equal(selection.fallbackModel, AI_FAST_MODEL);
-  assert.equal(selection.reason, "strong_analysis");
+test("varsayılan model sırası güçlü primary ve hızlı fallback kullanır", () => {
+  assert.equal(AI_PRIMARY_MODEL, AI_STRONG_MODEL);
+  assert.equal(AI_FALLBACK_MODEL, AI_FAST_MODEL);
 });

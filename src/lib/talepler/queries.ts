@@ -4,7 +4,6 @@ import type { UserRole } from "@/types/rbac";
 
 export const talepUnitRoles: Record<string, UserRole[]> = {
   destek: ["destek_birim_muduru"],
-  muhasebe: ["muhasebe"],
 };
 
 export const statusLabels: Record<string, string> = {
@@ -47,7 +46,6 @@ export async function getUnitOptions(): Promise<{ value: string; label: string }
   }
 
   options.push({ value: "destek", label: "Destek Birimi" });
-  options.push({ value: "muhasebe", label: "Muhasebe Birimi" });
 
   return options;
 }
@@ -75,7 +73,6 @@ export async function getTalepler(profile: ProfileRow, page?: number, pageSize =
   } else {
     const handlerUnits: string[] = [];
     if (profile.role === "destek_birim_muduru") handlerUnits.push("destek");
-    if (profile.role === "muhasebe") handlerUnits.push("muhasebe");
     if (profile.role === "bolum_muduru" && profile.department_id) handlerUnits.push(profile.department_id);
 
     if (handlerUnits.length > 0) {
@@ -110,7 +107,6 @@ export async function getRecentTalepler(profile: ProfileRow, limit = 5): Promise
 
   const handlerUnits: string[] = [];
   if (profile.role === "destek_birim_muduru") handlerUnits.push("destek");
-  if (profile.role === "muhasebe") handlerUnits.push("muhasebe");
   if (profile.role === "bolum_muduru" && profile.department_id) handlerUnits.push(profile.department_id);
 
   const query = supabase

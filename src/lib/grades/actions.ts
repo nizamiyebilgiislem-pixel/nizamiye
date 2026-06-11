@@ -10,6 +10,7 @@ import { canEditStudentGrades } from "@/lib/grades/permissions";
 import { getClassCoursesForStudent } from "@/lib/grades/queries";
 import { getStudentById } from "@/lib/students/queries";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { requireAcademicTermWritable } from "@/lib/terms/guards";
 
 const gradeSchema = z.coerce.number().min(0, "Not 0'dan küçük olamaz.").max(100, "Not 100'den büyük olamaz.");
 
@@ -78,6 +79,12 @@ export async function saveStudentGradesAction(formData: FormData) {
 
   if (!termId) {
     redirect(`/not-sistemi/not-girisi/${student.id}?error=term`);
+  }
+
+  try {
+    await requireAcademicTermWritable(termId);
+  } catch {
+    redirect(`/not-sistemi/not-girisi/${student.id}?error=term-closed`);
   }
 
   const supabase = await createSupabaseServerClient();

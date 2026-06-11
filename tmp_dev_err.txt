@@ -838,3 +838,152 @@ Error [AuthRefreshDiscardedError]: Refresh result discarded: session state chang
   status: 409,
   code: undefined
 }
+[browser] Uncaught Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <RedirectErrorBoundary router={{...}}>
+      <InnerLayoutRouter url="/asistan" tree={[...]} params={{}} cacheNode={{rsc:{...}, ...}} segmentPath={[...]} ...>
+        <SegmentViewNode type="page" pagePath="(panel)/as...">
+          <SegmentTrieNode>
+          <AsistanPage>
+            <div>
+              <div>
+              <AssistantChat profile={{id:"0c6db8...", ...}}>
+                <div className="flex h-[ca...">
+                  <Card className="flex flex-...">
+                    <div data-slot="card" data-size="default" className={"group/ca..."}>
+                      <CardContent className="flex flex-...">
+                        <div data-slot="card-content" className="flex flex-...">
+                          <div className="flex items...">
+                            <Button variant="ghost" size="sm" onClick={function onClick} className="gap-1 text...">
+                              <Button data-slot="button" className={"group/bu..."} onClick={function onClick}>
++                               <button
++                                 type="button"
++                                 onClick={function}
++                                 onMouseDown={function}
++                                 onKeyDown={function}
++                                 onKeyUp={function}
++                                 onPointerDown={function}
++                                 tabIndex={0}
++                                 disabled={false}
++                                 data-slot="button"
++                                 ref={function}
++                                 className={"group/button inline-flex shrink-0 items-center justify-center border bo..."}
++                               >
+                          ...
+        ...
+      ...
+
+    at <unknown> (https://react.dev/link/hydration-mismatch)
+    at button (<anonymous>)
+    at Button (src/components/ui/button.tsx:50:5)
+    at AssistantChat (src/components/assistant/assistant-chat.tsx:197:15)
+    at AsistanPage (src\app\(panel)\asistan\page.tsx:20:7)
+  48 | }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  49 |   return (
+> 50 |     <ButtonPrimitive
+     |     ^
+  51 |       data-slot="button"
+  52 |       className={cn(buttonVariants({ variant, size, className }))}
+  53 |       {...props}
+⨯ ./src/app/(panel)/sistem/donem-sonlandirma/page.tsx:2:1
+Module not found: Can't resolve '@/components/terms/term-closure-simulation-panel'
+  [90m1 |[0m [36mimport[0m { [33mPageHeader[0m } [36mfrom[0m [32m"@/components/layout/page-header"[0m;
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { [33mTermClosureSimulationPanel[0m } [36mfrom[0m [32m"@/components/terms/term-closure-simulation-panel"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m [36mimport[0m { requireRouteAccess } [36mfrom[0m [32m"@/lib/auth"[0m;
+  [90m4 |[0m [36mimport[0m { getTermClosureRunHistory } [36mfrom[0m [32m"@/lib/terms/closure-queries"[0m;
+  [90m5 |[0m [36mimport[0m { getCurrentAcademicTerm } [36mfrom[0m [32m"@/lib/terms/queries"[0m;
+
+Import map: aliased to relative './src/components/terms/term-closure-simulation-panel' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/app/(panel)/sistem/donem-sonlandirma/page.tsx:2:1
+Module not found: Can't resolve '@/components/terms/term-closure-simulation-panel'
+  [90m1 |[0m [36mimport[0m { [33mPageHeader[0m } [36mfrom[0m [32m"@/components/layout/page-header"[0m;
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { [33mTermClosureSimulationPanel[0m } [36mfrom[0m [32m"@/components/terms/term-closure-simulation-panel"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m [36mimport[0m { requireRouteAccess } [36mfrom[0m [32m"@/lib/auth"[0m;
+  [90m4 |[0m [36mimport[0m { getTermClosureRunHistory } [36mfrom[0m [32m"@/lib/terms/closure-queries"[0m;
+  [90m5 |[0m [36mimport[0m { getCurrentAcademicTerm } [36mfrom[0m [32m"@/lib/terms/queries"[0m;
+
+Import map: aliased to relative './src/components/terms/term-closure-simulation-panel' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+[browser] AuthApiError: Invalid Refresh Token: Refresh Token Not Found

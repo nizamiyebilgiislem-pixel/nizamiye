@@ -8,6 +8,7 @@ import { requireAuth } from "@/lib/auth";
 import { buildAuditActor, createAuditLog } from "@/lib/audit/log";
 import { canEditStudentEvaluations } from "@/lib/evaluations/permissions";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { requireAcademicTermWritable } from "@/lib/terms/guards";
 import { getStudentById } from "@/lib/students/queries";
 
 const optionalScore = z.preprocess((value) => {
@@ -52,6 +53,12 @@ export async function saveEvaluationAction(formData: FormData) {
   if (!student) redirect("/kanaat-sistemi/kanaat-girisi?error=not-found");
   if (!canEditStudentEvaluations(profile, student, student.course_class)) {
     redirect(`/kanaat-sistemi/kanaat-girisi/${student.id}?error=unauthorized`);
+  }
+
+  try {
+    await requireAcademicTermWritable(parsed.data.term_id);
+  } catch {
+    redirect(`/kanaat-sistemi/kanaat-girisi/${student.id}?error=term-closed`);
   }
 
   const supabase = await createSupabaseServerClient();

@@ -273,9 +273,10 @@ export function logAiAttempt(params: LogAiAttemptParams) {
   const info = parseAiError(params.error, params.timeoutMs);
   const status = params.status ?? info.status ?? "none";
   const responseBody = params.responseBody ?? info.responseBody ?? "none";
+  const safeResponseBody = process.env.NODE_ENV === "production" && responseBody !== "none" ? "redacted" : responseBody;
 
   console.error(
-    `[AI ERROR]\nprovider=${AI_PROVIDER}\nmodel=${params.model}\nstatus=${status}\nmessage=${info.message}\nresponseBody=${responseBody}\nrequestId=${params.requestId ?? "none"}`,
+    `[AI ERROR]\nprovider=${AI_PROVIDER}\nmodel=${params.model}\nstatus=${status}\nmessage=${info.message}\nresponseBody=${safeResponseBody}\nrequestId=${params.requestId ?? "none"}`,
   );
 }
 

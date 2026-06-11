@@ -10,6 +10,7 @@ import { canEditInfirmaryRecord } from "@/lib/infirmary/permissions";
 import { canManageInfirmary } from "@/lib/module-assignments/permissions";
 import { getInfirmaryRecordById } from "@/lib/infirmary/queries";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { assertDateWithinAcademicTerm, requireCurrentAcademicTermWritable } from "@/lib/terms/guards";
 import { getStudentById } from "@/lib/students/queries";
 
 const text = z.preprocess((value) => (typeof value === "string" && value.trim() === "" ? null : value), z.string().nullable());
@@ -41,6 +42,14 @@ export async function createInfirmaryRecordAction(formData: FormData) {
   const student = await getStudentById(parsed.data.student_id);
   if (!student) redirect("/revir/yeni?error=not-found");
   if (!canEditInfirmaryRecord(profile, student, student.course_class) && !(await canManageInfirmary(profile))) redirect("/revir/yeni?error=unauthorized");
+
+  try {
+    const currentTerm = await requireCurrentAcademicTermWritable();
+    assertDateWithinAcademicTerm(parsed.data.record_date, currentTerm, "Revir kaydı aktif dönem dışında oluşturulamaz.");
+  } catch {
+    redirect("/revir/yeni?error=term-closed");
+  }
+
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.from("infirmary_records").insert({
     student_id: student.id,
@@ -91,6 +100,14 @@ export async function updateInfirmaryRecordAction(formData: FormData) {
   const record = await getInfirmaryRecordById(parsed.data.id);
   if (!record?.student) redirect("/revir/kayitlar?error=not-found");
   if (!canEditInfirmaryRecord(profile, record.student, record.course_class) && !(await canManageInfirmary(profile))) redirect(`/revir/${record.id}?error=unauthorized`);
+
+  try {
+    const currentTerm = await requireCurrentAcademicTermWritable();
+    assertDateWithinAcademicTerm(parsed.data.record_date, currentTerm, "Revir kaydı kapalı dönem içinde güncellenemez.");
+  } catch {
+    redirect(`/revir/${record.id}?error=term-closed`);
+  }
+
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from("infirmary_records").update({
     record_date: parsed.data.record_date,

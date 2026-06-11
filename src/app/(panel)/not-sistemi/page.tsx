@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 export default async function GradesDashboardPage() {
   const { profile } = await requireAuth();
   const summary = await getGradeDashboardSummary(profile);
+  const canManageAcademicTerms = profile.role === "admin" || profile.role === "genel_mudur";
 
   return (
     <div className="space-y-6">
@@ -33,7 +34,11 @@ export default async function GradesDashboardPage() {
       </Card>
       <div className="flex flex-wrap gap-2">
         <Link href="/not-sistemi/dersler" className={cn(buttonVariants({ variant: "secondary" }))}>Dersler</Link>
-        <Link href="/not-sistemi/donemler" className={cn(buttonVariants({ variant: "secondary" }))}>Dönemler</Link>
+        {canManageAcademicTerms ? (
+          <Link href="/sistem/donem-yonetimi" className={cn(buttonVariants({ variant: "secondary" }))}>Dönem Yönetimi</Link>
+        ) : (
+          <Link href="/not-sistemi/donemler" className={cn(buttonVariants({ variant: "secondary" }))}>Dönemler</Link>
+        )}
         {profile.role !== "destek_birim_muduru" ? <Link href="/not-sistemi/not-girisi" className={cn(buttonVariants())}>Not Girişi</Link> : null}
         <Link href="/egitim-planlama" className={cn(buttonVariants({ variant: "outline" }))}>Eğitim Planlama</Link>
       </div>

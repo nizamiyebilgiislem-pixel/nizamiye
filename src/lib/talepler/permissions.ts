@@ -2,7 +2,7 @@ import type { ProfileRow, TalepRow } from "@/types/database";
 import type { UserRole } from "@/types/rbac";
 
 const talepCreatorRoles: UserRole[] = [
-  "admin", "genel_mudur", "bolum_muduru", "rehberlik", "destek_birim_muduru",
+  "admin", "genel_mudur", "bolum_muduru", "destek_birim_muduru",
 ];
 
 export function canViewTalepler(profile: ProfileRow) {
@@ -30,7 +30,6 @@ export function canViewTalep(profile: ProfileRow, talep: TalepRow): boolean {
   if (talep.requested_by === profile.id) return true;
   if (profile.role === "bolum_muduru" && profile.department_id && talep.requested_unit === profile.department_id) return true;
   if (profile.role === "destek_birim_muduru" && talep.requested_unit === "destek") return true;
-  if (profile.role === "muhasebe" && talep.requested_unit === "muhasebe") return true;
   return false;
 }
 

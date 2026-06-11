@@ -8,6 +8,7 @@ import { requireAuth } from "@/lib/auth";
 import { canManageStudentProfileEntries } from "@/lib/student-profile/permissions";
 import { getStudentById } from "@/lib/students/queries";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { requireAcademicTermWritable } from "@/lib/terms/guards";
 
 const emptyToNull = z.preprocess((value) => {
   if (typeof value !== "string") return value;
@@ -44,6 +45,14 @@ export async function addStudentProfileNoteAction(formData: FormData) {
     redirect(`/talebeler/${student.id}?error=unauthorized`);
   }
 
+  if (parsed.data.term_id) {
+    try {
+      await requireAcademicTermWritable(parsed.data.term_id);
+    } catch {
+      redirect(`/talebeler/${student.id}?error=term-closed`);
+    }
+  }
+
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from("student_profile_notes").insert({
     student_id: student.id,
@@ -73,6 +82,14 @@ export async function addStudentBookAction(formData: FormData) {
   if (!student) redirect("/talebeler?error=not-found");
   if (!canManageStudentProfileEntries(profile, student.course_class)) {
     redirect(`/talebeler/${student.id}?error=unauthorized`);
+  }
+
+  if (parsed.data.term_id) {
+    try {
+      await requireAcademicTermWritable(parsed.data.term_id);
+    } catch {
+      redirect(`/talebeler/${student.id}?error=term-closed`);
+    }
   }
 
   const supabase = await createSupabaseServerClient();

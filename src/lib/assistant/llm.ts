@@ -200,6 +200,13 @@ type LogErrorParams = {
 };
 
 function logAiRequestStart(params: LogStartParams) {
+  if (process.env.NODE_ENV === "production") {
+    console.log(
+      `[AI REQUEST START]\nprovider=${AI_PROVIDER}\nmodel=${params.model}\nquestionLength=${params.questionLength}\nrequestId=${params.requestId}`,
+    );
+    return;
+  }
+
   console.log(
     `[AI REQUEST START]\nprovider=${AI_PROVIDER}\nuserId=${params.userId}\nmodel=${params.model}\nquestionLength=${params.questionLength}\nrequestId=${params.requestId}`,
   );
@@ -212,6 +219,13 @@ function logAiRequestEnd(params: LogEndParams) {
 }
 
 function logAiError(params: LogErrorParams) {
+  if (process.env.NODE_ENV === "production") {
+    console.error(
+      `[AI ERROR]\nprovider=${AI_PROVIDER}\nmodel=${params.model}\nstatus=${params.status ?? "none"}\nmessage=${params.message}\nresponseBody=${params.responseBody ? "redacted" : "none"}\nrequestId=${params.requestId}`,
+    );
+    return;
+  }
+
   console.error(
     `[AI ERROR]\nprovider=${AI_PROVIDER}\nmodel=${params.model}\nstatus=${params.status ?? "none"}\nmessage=${params.message}\nresponseBody=${params.responseBody ?? "none"}\nrequestId=${params.requestId}`,
   );

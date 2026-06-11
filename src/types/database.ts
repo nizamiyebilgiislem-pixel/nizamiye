@@ -3,6 +3,9 @@ import type { ProfileRole, StudentStatus } from "@/types/rbac";
 export type Timestamp = string;
 export type DateString = string;
 export type AcademicTermStatus = "draft" | "active" | "closed" | "archived";
+export type TermClosureRunStatus = "pending" | "running" | "completed" | "failed";
+export type ArchiveExportType = "student_pdf" | "term_csv" | "department_csv" | "class_csv";
+export type ArchiveExportStatus = "pending" | "processing" | "completed" | "failed";
 export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 
 type TableDefinition<Row> = {
@@ -254,12 +257,78 @@ export type StudentTermSnapshotRow = {
   student_status: string | null;
   grade_average: number | null;
   evaluation_summary: JsonValue | null;
+  attendance_summary: JsonValue | null;
+  infirmary_summary: JsonValue | null;
   total_grades: number;
   total_evaluations: number;
   total_infirmary_records: number;
   snapshot_data: JsonValue | null;
   created_at: Timestamp;
   created_by: string | null;
+};
+
+export type SnapshotSummary = {
+  activeStudentCount: number;
+  departmentCount: number;
+  classCount: number;
+  gradeCount: number;
+  evaluationCount: number;
+  attendanceSessionCount: number;
+  attendanceRecordCount: number;
+  infirmaryRecordCount: number;
+  guidanceRecordCount: number;
+  activeDormitoryAssignmentCount: number;
+  openTaskCount: number;
+  openTalepCount: number;
+  openLibraryLoanCount: number;
+  plannedLiveSessionCount: number;
+};
+
+export type TermSimulationResult = SnapshotSummary & {
+  termId: string;
+  termName: string;
+  generatedAt: Timestamp;
+  dateRange: {
+    startDate: DateString | null;
+    endDate: DateString | null;
+  };
+  warnings: string[];
+  blockers: string[];
+};
+
+export type TermClosureRunRow = {
+  id: string;
+  term_id: string;
+  status: TermClosureRunStatus;
+  started_at: Timestamp | null;
+  completed_at: Timestamp | null;
+  failed_at: Timestamp | null;
+  started_by: string | null;
+  completed_by: string | null;
+  simulation_result: JsonValue | null;
+  summary_json: JsonValue | null;
+  error_message: string | null;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+};
+
+export type ArchiveExportRow = {
+  id: string;
+  export_type: ArchiveExportType;
+  status: ArchiveExportStatus;
+  scope_type: string | null;
+  scope_id: string | null;
+  term_id: string | null;
+  created_by: string | null;
+  created_at: Timestamp;
+  completed_at: Timestamp | null;
+  file_name: string | null;
+  file_size: number | null;
+  storage_bucket: string;
+  storage_path: string | null;
+  content_type: string | null;
+  error_message: string | null;
+  metadata: JsonValue | null;
 };
 
 export type AttendanceType = "daily" | "fajr" | "dhuhr" | "asr" | "maghrib" | "isha";
@@ -615,6 +684,8 @@ export type Database = {
       student_profile_notes: TableDefinition<StudentProfileNoteRow>;
       student_books: TableDefinition<StudentBookRow>;
       student_term_snapshots: TableDefinition<StudentTermSnapshotRow>;
+      term_closure_runs: TableDefinition<TermClosureRunRow>;
+      archive_exports: TableDefinition<ArchiveExportRow>;
       audit_logs: TableDefinition<AuditLogRow>;
       attendance_sessions: TableDefinition<AttendanceSessionRow>;
       attendance_records: TableDefinition<AttendanceRecordRow>;

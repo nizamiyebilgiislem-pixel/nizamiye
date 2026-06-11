@@ -43,6 +43,17 @@ export const auditActionLabels: Record<string, string> = {
   announcement_updated: "Duyuru güncellendi",
   assistant_question_asked: "POLA AI sorgusu yapıldı",
   assistant_history_cleared: "POLA AI sohbet geçmişi silindi",
+  term_created: "Dönem oluşturuldu",
+  term_activated: "Dönem aktif edildi",
+  term_viewed: "Dönem görüntülendi",
+  term_updated: "Dönem güncellendi",
+  term_closed: "Dönem kapatıldı",
+  term_snapshot_created: "Dönem snapshot'ı oluşturuldu",
+  term_closure_failed: "Dönem sonlandırma başarısız",
+  term_closure_completed: "Dönem sonlandırma tamamlandı",
+  archive_export_created: "Arşiv export oluşturuldu",
+  archive_export_downloaded: "Arşiv export indirildi",
+  archive_export_failed: "Arşiv export başarısız",
 };
 
 export const auditActionOptions = [
@@ -75,6 +86,9 @@ export const auditEntityTypeLabels: Record<string, string> = {
   guidance_activity_participant: "Etkinlik Katılımcısı",
   announcement: "Duyuru",
   assistant: "POLA AI",
+  academic_term: "Akademik Dönem",
+  term_closure_run: "Dönem Kapanış Operasyonu",
+  archive_export: "Arşiv Export",
 };
 
 export const auditEntityTypeOptions = [

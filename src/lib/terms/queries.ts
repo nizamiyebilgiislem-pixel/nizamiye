@@ -46,15 +46,28 @@ export async function getAcademicTermById(id: string) {
 
 export async function getStudentTermSnapshots(studentId: string) {
   const supabase = await createSupabaseServerClient();
-  const [{ data: snapshots, error }, { data: terms }, { data: departments }, { data: classes }] = await Promise.all([
-    supabase.from("student_term_snapshots").select("*").eq("student_id", studentId).order("created_at", { ascending: false }),
-    supabase.from("academic_terms").select("*"),
-    supabase.from("departments").select("*"),
-    supabase.from("classes").select("*"),
-  ]);
+  const { data: snapshots, error } = await supabase.from("student_term_snapshots").select("*").eq("student_id", studentId).order("created_at", { ascending: false });
 
   if (error) {
     throw new Error("Dönem geçmişi alınamadı.");
+  }
+
+  if (!snapshots || snapshots.length === 0) {
+    return [] as StudentTermSnapshotWithRelations[];
+  }
+
+  const termIds = uniqueValues(snapshots.map((snapshot) => snapshot.term_id));
+  const departmentIds = uniqueValues(snapshots.map((snapshot) => snapshot.department_id));
+  const classIds = uniqueValues(snapshots.map((snapshot) => snapshot.class_id));
+
+  const [{ data: terms, error: termsError }, { data: departments, error: departmentsError }, { data: classes, error: classesError }] = await Promise.all([
+    supabase.from("academic_terms").select("*").in("id", termIds),
+    departmentIds.length > 0 ? supabase.from("departments").select("id,name").in("id", departmentIds) : Promise.resolve({ data: [], error: null }),
+    classIds.length > 0 ? supabase.from("classes").select("id,name").in("id", classIds) : Promise.resolve({ data: [], error: null }),
+  ]);
+
+  if (termsError || departmentsError || classesError) {
+    throw new Error("Dönem geçmişi ilişki verileri alınamadı.");
   }
 
   const termMap = new Map((terms ?? []).map((term) => [term.id, term]));
@@ -67,6 +80,10 @@ export async function getStudentTermSnapshots(studentId: string) {
     department: snapshot.department_id ? departmentMap.get(snapshot.department_id) ?? null : null,
     classRow: snapshot.class_id ? classMap.get(snapshot.class_id) ?? null : null,
   }));
+}
+
+function uniqueValues(values: Array<string | null | undefined>) {
+  return Array.from(new Set(values.filter((value): value is string => Boolean(value))));
 }
 
 export type StudentTermSnapshotWithRelations = StudentTermSnapshotRow & {

@@ -1,13 +1,15 @@
 import type { UserRole } from "@/types/rbac";
 
 const staffRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca"];
+const guidanceDashboardRoles: UserRole[] = [...staffRoles, "rehberlik", "destek_birim_muduru"];
 const staffAndSupportRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "destek_birim_muduru"];
 const managerRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru"];
 const topManagerRoles: UserRole[] = ["admin", "genel_mudur"];
 const parentManagerRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "destek_birim_muduru"];
 const allRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "veli", "destek_birim_muduru"];
-const assistantRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "rehberlik", "kutuphane_gorevlisi", "destek_birim_muduru", "muhasebe"];
-const talepRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "rehberlik", "destek_birim_muduru"];
+const accountRoles: UserRole[] = [...allRoles, "muhasebe"];
+const assistantRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "kutuphane_gorevlisi", "destek_birim_muduru"];
+const talepRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "destek_birim_muduru"];
 const talepManageRoles: UserRole[] = ["admin", "genel_mudur"];
 const libraryStaffRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevlisi"];
 const libraryViewRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevlisi", "bolum_muduru", "hoca", "destek_birim_muduru"];
@@ -15,15 +17,18 @@ const guidanceStaffRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik"];
 const guidanceViewRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik", "bolum_muduru"];
 
 export const routePermissions: Record<string, UserRole[]> = {
-  "/dashboard": staffAndSupportRoles,
+  "/dashboard": guidanceDashboardRoles,
   "/veli": ["veli"],
-  "/hesabim": allRoles,
-  "/hesabim/profil": allRoles,
-  "/hesabim/guvenlik": allRoles,
-  "/veliler": parentManagerRoles,
+  "/hesabim": accountRoles,
+  "/hesabim/profil": accountRoles,
+  "/hesabim/guvenlik": accountRoles,
+  "/veliler": [...parentManagerRoles, "rehberlik"],
   "/veliler/yeni": managerRoles,
-  "/talebeler": staffAndSupportRoles,
+  "/veliler/[id]/duzenle": managerRoles,
+  "/veliler/[id]/talebeler": managerRoles,
+  "/talebeler": [...staffAndSupportRoles, "rehberlik"],
   "/talebeler/yeni": managerRoles,
+  "/talebeler/[id]/duzenle": staffRoles,
   "/talebeler/arsiv": managerRoles,
   "/talebeler/[id]/pdf": allRoles,
   "/talebeler/[id]/notlar/pdf": allRoles,
@@ -75,11 +80,15 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/raporlar/donem-sonu": allRoles,
   "/raporlar/yatakhane": staffAndSupportRoles,
   "/raporlar/kutuphane": libraryViewRoles,
-  "/raporlar/rehberlik": guidanceViewRoles,
+  "/raporlar/rehberlik": [...guidanceViewRoles, "rehberlik"],
   "/raporlar/gorevler": staffAndSupportRoles,
   "/raporlar/talepler": talepRoles,
   "/raporlar/evraklar": staffAndSupportRoles,
   "/audit-log": topManagerRoles,
+  "/sistem/arsiv-merkezi": topManagerRoles,
+  "/sistem/donem-yonetimi": topManagerRoles,
+  "/sistem/donem-yonetimi/[id]": topManagerRoles,
+  "/sistem/donem-sonlandirma": topManagerRoles,
   "/kullanicilar": topManagerRoles,
   "/kullanicilar/yeni": topManagerRoles,
   "/kullanicilar/[id]/duzenle": topManagerRoles,
@@ -97,7 +106,7 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/kutuphane/dokumanlar/yeni": libraryStaffRoles,
   "/kutuphane/kategoriler": libraryStaffRoles,
   "/kutuphane/raporlar": libraryViewRoles,
-  "/rehberlik": guidanceViewRoles,
+  "/rehberlik": [...guidanceViewRoles, "rehberlik"],
   "/rehberlik/gorusmeler": guidanceViewRoles,
   "/rehberlik/gorusmeler/yeni": guidanceStaffRoles,
   "/rehberlik/gorusmeler/[id]": guidanceViewRoles,
@@ -153,6 +162,7 @@ export function getRouteAllowedRoles(pathname: string) {
 }
 
 export function getDefaultPathForRole(role: UserRole) {
+  if (role === "muhasebe") return "/hesabim";
   return role === "veli" ? "/veli" : "/dashboard";
 }
 

@@ -17,6 +17,10 @@ export function canViewStudent(profile: ProfileRow, courseClass: Pick<ClassRow, 
     return true;
   }
 
+  if (profile.role === "rehberlik") {
+    return true;
+  }
+
   if (profile.role === "bolum_muduru" || profile.role === "hoca") {
     return Boolean(profile.department_id && courseClass?.department_id === profile.department_id);
   }

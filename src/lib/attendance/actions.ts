@@ -9,6 +9,7 @@ import { attendanceTypeLabels, attendanceTypes } from "@/lib/attendance/constant
 import { canManageAttendance, canManageAttendanceClass } from "@/lib/attendance/permissions";
 import { getAttendanceSessionDetail } from "@/lib/attendance/queries";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { assertDateWithinAcademicTerm, requireCurrentAcademicTermWritable } from "@/lib/terms/guards";
 import type { AttendanceRecordStatus, AttendanceType, ClassRow, StudentRow } from "@/types/database";
 
 function parseAttendanceType(value: FormDataEntryValue | null): AttendanceType {
@@ -38,6 +39,13 @@ export async function createAttendanceSessionAction(formData: FormData) {
 
   if (!canManageAttendanceClass(profile, classRow as ClassRow)) {
     redirect("/yoklama?error=unauthorized");
+  }
+
+  try {
+    const currentTerm = await requireCurrentAcademicTermWritable();
+    assertDateWithinAcademicTerm(attendanceDate, currentTerm, "Yoklama tarihi aktif dönem dışında.");
+  } catch {
+    redirect("/yoklama?error=term-closed");
   }
 
   const existing = await getExistingSessionId(classId, attendanceDate, attendanceType);
@@ -133,6 +141,13 @@ export async function updateAttendanceSessionAction(formData: FormData) {
 
   if (!detail) {
     redirect("/yoklama?error=not-found");
+  }
+
+  try {
+    const currentTerm = await requireCurrentAcademicTermWritable();
+    assertDateWithinAcademicTerm(detail.session.attendance_date, currentTerm, "Bu yoklama oturumu kapalı dönem içinde yer alıyor.");
+  } catch {
+    redirect("/yoklama?error=term-closed");
   }
 
   const admin = createSupabaseAdminClient();

@@ -36,8 +36,10 @@ import { getStudentGradeSummary } from "@/lib/grades/queries";
 import { canEditStudentGrades } from "@/lib/grades/permissions";
 import { getInfirmaryRecordsByStudent } from "@/lib/infirmary/queries";
 import { canEditInfirmaryRecord } from "@/lib/infirmary/permissions";
+import { canViewInfirmaryRecords } from "@/lib/infirmary/permissions";
 import { canManageInfirmary } from "@/lib/module-assignments/permissions";
 import { getAttendanceStudentSummary } from "@/lib/attendance/queries";
+import { canViewAttendance } from "@/lib/attendance/permissions";
 import { linkExistingParentToStudentAction } from "@/lib/parents/actions";
 import { canBindParentFromStudentDetail } from "@/lib/parents/permissions";
 import { getParentProfilesByStudentId, getParentSelectionOptionsForStudent } from "@/lib/parents/queries";
@@ -85,11 +87,15 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
   const availableParents = canManageParents ? await getParentSelectionOptionsForStudent(profile, student.id) : [];
   const termSnapshots = await getStudentTermSnapshots(student.id);
   const canViewDormitory = canViewDormitoryForStudents(profile, student.department?.id ?? null);
+  const canViewAttendanceTab = canViewAttendance(profile);
+  const canViewInfirmaryTab = canViewInfirmaryRecords(profile, student.course_class);
+  const canViewAuditTab = profile.role !== "rehberlik";
   const dormitoryAssignment = canViewDormitory ? await getStudentActiveAssignment(student.id) : null;
   const dormitoryHistory = canViewDormitory ? await getStudentAssignmentHistory(student.id) : [];
   const canViewLib = canViewLibrary(profile);
   const studentLoans = canViewLib ? await getStudentLoans(student.id) : [];
   const canViewGuid = canViewGuidance(profile) && await canViewGuidanceForStudent(profile, { course_class_id: student.course_class?.id ?? null, department_id: student.department?.id ?? null });
+  const infirmaryRecordsForOverview = profile.role === "rehberlik" ? [] : infirmaryRecords;
 
   return (
     <div className="space-y-6">
@@ -101,7 +107,7 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
             title={student.full_name}
             description={`${student.guardian_phone ?? "Veli telefonu yok"}`}
           />
-          {student.course_class?.id ? (
+          {student.course_class?.id && profile.role !== "rehberlik" ? (
             <Link
               href={`/siniflar/${student.course_class.id}`}
               className="text-sm font-medium text-[#093657] hover:underline"
@@ -153,14 +159,14 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
           <TabsTrigger value="egitim">Eğitim Bilgileri</TabsTrigger>
           <TabsTrigger value="notlar">Notlar</TabsTrigger>
           <TabsTrigger value="kanaatler">Kanaatler</TabsTrigger>
-          <TabsTrigger value="revir">Revir</TabsTrigger>
+          {canViewInfirmaryTab && <TabsTrigger value="revir">Revir</TabsTrigger>}
           <TabsTrigger value="evraklar">Evraklar</TabsTrigger>
-          <TabsTrigger value="yoklama">Yoklama</TabsTrigger>
-          <TabsTrigger value="yatakhane">Yatakhane</TabsTrigger>
+          {canViewAttendanceTab && <TabsTrigger value="yoklama">Yoklama</TabsTrigger>}
+          {canViewDormitory && <TabsTrigger value="yatakhane">Yatakhane</TabsTrigger>}
           <TabsTrigger value="kutuphane">Kütüphane</TabsTrigger>
           {canViewGuid && <TabsTrigger value="rehberlik">Rehberlik</TabsTrigger>}
           <TabsTrigger value="donem-gecmisi">Dönem Geçmişi</TabsTrigger>
-          <TabsTrigger value="gecmis">Geçmiş</TabsTrigger>
+          {canViewAuditTab && <TabsTrigger value="gecmis">Geçmiş</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="profil">
@@ -168,7 +174,7 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
             student={student}
             gradeSummary={gradeSummary}
             evaluations={evaluations}
-            infirmaryRecords={infirmaryRecords}
+            infirmaryRecords={infirmaryRecordsForOverview}
             notes={profileEntries.notes}
             books={profileEntries.books}
             canEdit={canEditProfileEntries}
@@ -235,22 +241,28 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
         <TabsContent value="kanaatler">
           <EvaluationSummary evaluations={evaluations} studentId={student.id} canEdit={canEditEvaluations} />
         </TabsContent>
-        <TabsContent value="revir">
-          <StudentInfirmarySummary records={infirmaryRecords} studentId={student.id} canEdit={canEditInfirmary} />
-        </TabsContent>
+        {canViewInfirmaryTab && (
+          <TabsContent value="revir">
+            <StudentInfirmarySummary records={infirmaryRecords} studentId={student.id} canEdit={canEditInfirmary} />
+          </TabsContent>
+        )}
         <TabsContent value="evraklar">
           <StudentDocumentSummary documents={documents} studentId={student.id} canEdit={canEditDocuments} />
         </TabsContent>
-        <TabsContent value="yoklama">
-          <StudentAttendanceSummaryPanel summary={attendanceSummary} />
-        </TabsContent>
-        <TabsContent value="yatakhane">
-          {canViewDormitory ? (
-            <StudentDormitoryPanel activeAssignment={dormitoryAssignment} history={dormitoryHistory} />
-          ) : (
-            <PlaceholderCard />
-          )}
-        </TabsContent>
+        {canViewAttendanceTab && (
+          <TabsContent value="yoklama">
+            <StudentAttendanceSummaryPanel summary={attendanceSummary} />
+          </TabsContent>
+        )}
+        {canViewDormitory && (
+          <TabsContent value="yatakhane">
+            {canViewDormitory ? (
+              <StudentDormitoryPanel activeAssignment={dormitoryAssignment} history={dormitoryHistory} />
+            ) : (
+              <PlaceholderCard />
+            )}
+          </TabsContent>
+        )}
         <TabsContent value="kutuphane">
           {canViewLib ? (
             <StudentLibraryPanel loans={studentLoans} />
@@ -266,13 +278,15 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
         <TabsContent value="donem-gecmisi">
           <StudentTermHistoryPanel snapshots={termSnapshots} />
         </TabsContent>
-        <TabsContent value="gecmis">
-          <AuditTimeline
-            entries={auditLogs}
-            emptyText="Bu talebe için henüz işlem geçmişi yok."
-            detailBasePath="/audit-log"
-          />
-        </TabsContent>
+        {canViewAuditTab && (
+          <TabsContent value="gecmis">
+            <AuditTimeline
+              entries={auditLogs}
+              emptyText="Bu talebe için henüz işlem geçmişi yok."
+              detailBasePath="/audit-log"
+            />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );

@@ -148,6 +148,18 @@ async function getDepartmentById(id: string) {
 }
 
 function getAllowedClassIds(profile: ProfileRow, classes: ClassRow[], departmentId?: string) {
+  if (profile.role === "admin" || profile.role === "genel_mudur" || profile.role === "rehberlik") {
+    return classes
+      .filter((courseClass) => {
+        if (departmentId && courseClass.department_id !== departmentId) {
+          return false;
+        }
+
+        return true;
+      })
+      .map((courseClass) => courseClass.id);
+  }
+
   return classes
     .filter((courseClass) => {
       if (departmentId && courseClass.department_id !== departmentId) {
@@ -155,6 +167,10 @@ function getAllowedClassIds(profile: ProfileRow, classes: ClassRow[], department
       }
 
       if (profile.role === "admin" || profile.role === "genel_mudur") {
+        return true;
+      }
+
+      if (profile.role === "rehberlik") {
         return true;
       }
 

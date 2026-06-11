@@ -37,6 +37,10 @@ export function canViewParentDetail(profile: ProfileRow, visibleLinkedStudentCou
     return true;
   }
 
+  if (profile.role === "rehberlik") {
+    return visibleLinkedStudentCount > 0;
+  }
+
   if (profile.role === "bolum_muduru" || profile.role === "hoca") {
     return visibleLinkedStudentCount > 0;
   }

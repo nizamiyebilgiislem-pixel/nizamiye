@@ -274,6 +274,10 @@ function filterClassesForParentManagement(profile: ProfileRow, classes: ClassRow
     return classes;
   }
 
+  if (profile.role === "rehberlik") {
+    return classes;
+  }
+
   if (profile.role === "bolum_muduru") {
     return classes.filter((classRow) => classRow.department_id === profile.department_id);
   }

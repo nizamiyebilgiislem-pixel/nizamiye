@@ -882,3 +882,44 @@
  GET /asistan 200 in 75ms (next.js: 6ms, application-code: 69ms)
  POST /asistan 200 in 1635ms (next.js: 4ms, application-code: 1631ms)
   └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 1620ms src/lib/assistant/messages.ts
+ GET /asistan 200 in 10ms (next.js: 4ms, application-code: 6ms)
+ GET /asistan 200 in 1278ms (next.js: 3ms, application-code: 1275ms)
+ POST /asistan 200 in 1260ms (next.js: 5ms, application-code: 1256ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 1248ms src/lib/assistant/messages.ts
+  Reload env: .env.local
+✓ Compiled in 1689ms
+ GET /asistan 200 in 509ms (next.js: 136ms, application-code: 372ms)
+ GET /asistan 200 in 289ms (next.js: 6ms, application-code: 283ms)
+ GET /asistan 200 in 222ms (next.js: 7ms, application-code: 214ms)
+ GET /asistan 200 in 222ms (next.js: 34ms, application-code: 188ms)
+ GET /asistan 200 in 222ms (next.js: 61ms, application-code: 161ms)
+ POST /asistan 200 in 1901ms (next.js: 4ms, application-code: 1896ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 1888ms src/lib/assistant/messages.ts
+  Reload env: .env.local
+ GET /asistan 200 in 218ms (next.js: 128ms, application-code: 89ms)
+ POST /asistan 200 in 1189ms (next.js: 5ms, application-code: 1185ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 1174ms src/lib/assistant/messages.ts
+✓ Compiled in 424ms
+✓ Compiled in 121ms
+ GET /sistem/donem-sonlandirma 307 in 1341ms (next.js: 1106ms, application-code: 235ms)
+ GET /login 200 in 344ms (next.js: 137ms, application-code: 208ms)
+ GET /sistem/donem-sonlandirma 307 in 97ms (next.js: 3ms, application-code: 94ms)
+ GET /login 200 in 58ms (next.js: 3ms, application-code: 55ms)
+✓ Compiled in 211ms
+✓ Compiled in 402ms
+✓ Compiled in 125ms
+✓ Compiled in 107ms
+✓ Compiled in 118ms
+✓ Compiled in 117ms
+✓ Compiled in 112ms
+ GET / 307 in 211ms (next.js: 81ms, application-code: 130ms)
+ GET /dashboard 307 in 1871ms (next.js: 177ms, application-code: 1694ms)
+ GET /login 200 in 550ms (next.js: 32ms, application-code: 518ms)
+ GET /dashboard 200 in 5.6s (next.js: 4ms, application-code: 5.6s)
+ GET /dashboard 200 in 5.9s (next.js: 5ms, application-code: 5.9s)
+ GET /sistem/donem-sonlandirma 200 in 1787ms (next.js: 146ms, application-code: 1642ms)
+ POST /sistem/donem-sonlandirma 200 in 1732ms (next.js: 3ms, application-code: 1728ms)
+  └─ ƒ runTermClosureSimulationAction() in 1718ms src/lib/terms/closure-actions.ts
+ POST /auth/logout 303 in 731ms (next.js: 148ms, application-code: 583ms)
+ GET /login 200 in 65ms (next.js: 4ms, application-code: 61ms)
+[?25h

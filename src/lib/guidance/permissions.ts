@@ -1,13 +1,7 @@
-import { hasModuleAssignment } from "@/lib/module-assignments/queries";
 import type { ProfileRow } from "@/types/database";
 
-function isGuidanceManager(profile: ProfileRow) {
-  return ["admin", "genel_mudur", "rehberlik"].includes(profile.role);
-}
-
 export async function canManageGuidance(profile: ProfileRow) {
-  if (isGuidanceManager(profile)) return true;
-  return hasModuleAssignment(profile.id, "guidance");
+  return ["admin", "genel_mudur", "rehberlik"].includes(profile.role);
 }
 
 export function canViewGuidance(profile: ProfileRow) {
@@ -19,8 +13,7 @@ export function canViewGuidanceAsParent(profile: ProfileRow) {
 }
 
 export async function canViewPrivateNotes(profile: ProfileRow) {
-  if (isGuidanceManager(profile)) return true;
-  return hasModuleAssignment(profile.id, "guidance");
+  return ["admin", "genel_mudur", "rehberlik"].includes(profile.role);
 }
 
 export async function canManageInterviews(profile: ProfileRow) {
@@ -42,5 +35,4 @@ export async function canManageActivities(profile: ProfileRow) {
 export function canViewGuidanceReports(profile: ProfileRow) {
   return canViewGuidance(profile);
 }
-
 

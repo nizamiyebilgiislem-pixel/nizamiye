@@ -1,10 +1,8 @@
-import { hasModuleAssignment } from "@/lib/module-assignments/queries";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { ProfileRow } from "@/types/database";
 
 export async function isGuidanceUnrestricted(profile: ProfileRow) {
-  if (["admin", "genel_mudur", "rehberlik"].includes(profile.role)) return true;
-  return hasModuleAssignment(profile.id, "guidance");
+  return ["admin", "genel_mudur", "rehberlik"].includes(profile.role);
 }
 
 export function requiresGuidanceScoping(profile: ProfileRow) {

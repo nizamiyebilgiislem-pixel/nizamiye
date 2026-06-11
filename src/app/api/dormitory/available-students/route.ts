@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getCurrentProfile } from "@/lib/auth";
+import { getAvailableStudentsScope } from "@/lib/dormitory/available-students-permissions";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type StudentBrief = {
@@ -10,20 +11,21 @@ type StudentBrief = {
 
 export async function GET() {
   const profile = await getCurrentProfile();
+  const scope = getAvailableStudentsScope(profile);
 
-  if (!profile) {
-    return NextResponse.json({ students: [] });
+  if (!scope.allowed) {
+    return NextResponse.json({ error: "forbidden", students: [] }, { status: 403 });
   }
 
   const supabase = await createSupabaseServerClient();
 
   let activeStudents: StudentBrief[] = [];
 
-  if (profile.role === "bolum_muduru" && profile.department_id) {
+  if (scope.kind === "department") {
     const { data: classes } = await supabase
       .from("classes")
       .select("id")
-      .eq("department_id", profile.department_id);
+      .eq("department_id", scope.departmentId);
 
     const classIds = (classes ?? []).map((c) => c.id);
 
