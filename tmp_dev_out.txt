@@ -801,3 +801,6 @@
  GET /dashboard 200 in 4.8s (next.js: 4ms, application-code: 4.8s)
  GET /login 200 in 71ms (next.js: 4ms, application-code: 67ms)
  GET /login 200 in 37ms (next.js: 3ms, application-code: 33ms)
+✓ Compiled in 154ms
+✓ Compiled in 114ms
+✓ Compiled in 286ms
