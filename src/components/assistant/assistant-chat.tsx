@@ -193,18 +193,6 @@ export function AssistantChat({ profile }: AssistantChatProps) {
       <Card className="flex flex-1 flex-col overflow-hidden">
         <CardContent className="flex flex-1 flex-col p-0">
           <div className="flex items-center justify-end gap-2 border-b border-[#e5e7eb] px-4 py-2">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={handleClearMessages}
-              disabled={!historyLoaded || pending || clearing || !hasPersistedMessages}
-              className="gap-1 text-xs text-[#6b7280]"
-              title="Sohbet geçmişini sil"
-            >
-              <Trash2 className="size-3.5" />
-              {clearing ? "Siliniyor" : "Sohbeti Temizle"}
-            </Button>
             {speechSupported && (
               <Button
                 variant="ghost"
@@ -291,6 +279,17 @@ export function AssistantChat({ profile }: AssistantChatProps) {
                   {listening ? <MicOff className="size-4" /> : <Mic className="size-4" />}
                 </Button>
               )}
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={handleClearMessages}
+                disabled={!historyLoaded || pending || clearing || !hasPersistedMessages}
+                title="Sohbet geçmişini sil"
+                aria-label="Sohbet geçmişini sil"
+              >
+                <Trash2 className="size-4" />
+              </Button>
               <input
                 type="text"
                 value={input}

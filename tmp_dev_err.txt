@@ -657,3 +657,62 @@ Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
   code: 'refresh_token_not_found'
 }
 [browser] AuthApiError: Invalid Refresh Token: Refresh Token Not Found
+[browser] Uncaught Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <RedirectErrorBoundary router={{...}}>
+      <InnerLayoutRouter url="/asistan" tree={[...]} params={{}} cacheNode={{rsc:{...}, ...}} segmentPath={[...]} ...>
+        <SegmentViewNode type="page" pagePath="(panel)/as...">
+          <SegmentTrieNode>
+          <AsistanPage>
+            <div>
+              <div>
+              <AssistantChat profile={{id:"0c6db8...", ...}}>
+                <div className="flex h-[ca...">
+                  <Card className="flex flex-...">
+                    <div data-slot="card" data-size="default" className={"group/ca..."}>
+                      <CardContent className="flex flex-...">
+                        <div data-slot="card-content" className="flex flex-...">
+                          <div className="flex items...">
+                            <Button variant="ghost" size="sm" onClick={function onClick} className="gap-1 text...">
+                              <Button data-slot="button" className={"group/bu..."} onClick={function onClick}>
++                               <button
++                                 type="button"
++                                 onClick={function}
++                                 onMouseDown={function}
++                                 onKeyDown={function}
++                                 onKeyUp={function}
++                                 onPointerDown={function}
++                                 tabIndex={0}
++                                 disabled={false}
++                                 data-slot="button"
++                                 ref={function}
++                                 className={"group/button inline-flex shrink-0 items-center justify-center border bo..."}
++                               >
+                          ...
+        ...
+      ...
+
+    at <unknown> (https://react.dev/link/hydration-mismatch)
+    at button (<anonymous>)
+    at Button (src/components/ui/button.tsx:50:5)
+    at AssistantChat (src/components/assistant/assistant-chat.tsx:197:15)
+    at AsistanPage (src\app\(panel)\asistan\page.tsx:20:7)
+  48 | }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  49 |   return (
+> 50 |     <ButtonPrimitive
+     |     ^
+  51 |       data-slot="button"
+  52 |       className={cn(buttonVariants({ variant, size, className }))}
+  53 |       {...props}
+[AI] provider=groq model=llama-3.3-70b-versatile status=429 timeout=none retry=false attempt=1 fallback=false response_body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01ktv3gxe1f7tsr5tesq29jz03` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 97533, Requested 2713. Please try again in 3m32.543999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}

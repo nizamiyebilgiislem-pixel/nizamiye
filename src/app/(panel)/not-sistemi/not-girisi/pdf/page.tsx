@@ -4,12 +4,11 @@ import { redirect } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { requireAuth } from "@/lib/auth";
-import { canEditStudentCourseGrade } from "@/lib/education/permissions";
 import { getAcademicTerms } from "@/lib/terms/queries";
 import { logPdfGenerated } from "@/lib/reports/actions";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
-import type { ClassCourseRow, ClassRow, CourseRow, DepartmentRow, GradeRow, ProfileRow } from "@/types/database";
+import type { ClassCourseRow, CourseRow, GradeRow, ProfileRow } from "@/types/database";
 import type { StudentRow } from "@/types/database";
 
 type Props = {
@@ -102,7 +101,7 @@ export default async function ClassGradesPdfPage({ searchParams }: Props) {
         ) : (
           <div className="space-y-8">
             {students.map((student) => {
-              const courseSummaries = buildCourseSummaries(student, classCourses, gradeMap, profile);
+              const courseSummaries = buildCourseSummaries(student, classCourses, gradeMap);
               const generalAverage = calculateGeneralAverage(courseSummaries.map((c) => c.average));
               return (
                 <Card key={student.id} className="break-inside-avoid">
@@ -218,7 +217,6 @@ function buildCourseSummaries(
   student: StudentRow,
   classCourses: Array<ClassCourseRow & { course: CourseRow | null; exam_types: Array<{ id: string; name: string; weight: number }>; teacher: ProfileRow | null }>,
   gradeMap: Map<string, GradeRow>,
-  profile: ProfileRow,
 ): CourseGradeSummary[] {
   return classCourses.map((cc) => {
     const course = cc.course;

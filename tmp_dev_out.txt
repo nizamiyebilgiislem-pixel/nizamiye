@@ -804,3 +804,44 @@
 ✓ Compiled in 154ms
 ✓ Compiled in 114ms
 ✓ Compiled in 286ms
+ GET / 307 in 234ms (next.js: 77ms, application-code: 157ms)
+ GET /dashboard 307 in 354ms (next.js: 99ms, application-code: 255ms)
+ GET /login 200 in 176ms (next.js: 30ms, application-code: 146ms)
+ GET /login 200 in 133ms (next.js: 92ms, application-code: 40ms)
+ GET /dashboard 200 in 4.2s (next.js: 66ms, application-code: 4.2s)
+ GET /dashboard 200 in 4.6s (next.js: 4ms, application-code: 4.6s)
+ GET /asistan 200 in 944ms (next.js: 140ms, application-code: 803ms)
+ POST /asistan 200 in 1018ms (next.js: 9ms, application-code: 1009ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 986ms src/lib/assistant/messages.ts
+ POST /asistan 200 in 984ms (next.js: 5ms, application-code: 979ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 967ms src/lib/assistant/messages.ts
+ POST /asistan 200 in 2.1s (next.js: 4ms, application-code: 2.1s)
+  └─ ƒ clearMessages() in 2049ms src/lib/assistant/messages.ts
+✓ Compiled in 2.1s
+ GET /asistan 200 in 632ms (next.js: 113ms, application-code: 519ms)
+ GET /asistan 200 in 253ms (next.js: 9ms, application-code: 244ms)
+ GET /asistan 200 in 252ms (next.js: 32ms, application-code: 219ms)
+ GET /asistan 200 in 20.0s (next.js: 1065ms, application-code: 18.9s)
+ GET /asistan 200 in 592ms (next.js: 9ms, application-code: 582ms)
+ GET /asistan 200 in 495ms (next.js: 48ms, application-code: 446ms)
+ GET /asistan 200 in 497ms (next.js: 9ms, application-code: 488ms)
+ GET /asistan 200 in 321ms (next.js: 29ms, application-code: 291ms)
+ GET /asistan 200 in 436ms (next.js: 4ms, application-code: 432ms)
+ GET /asistan 200 in 440ms (next.js: 8ms, application-code: 432ms)
+ GET /asistan 200 in 372ms (next.js: 6ms, application-code: 366ms)
+ GET /asistan 200 in 370ms (next.js: 61ms, application-code: 309ms)
+ GET /asistan 200 in 345ms (next.js: 27ms, application-code: 318ms)
+ GET /asistan 200 in 520ms (next.js: 5ms, application-code: 515ms)
+ GET /asistan 200 in 231ms (next.js: 8ms, application-code: 223ms)
+ GET /asistan 200 in 417ms (next.js: 8ms, application-code: 409ms)
+ GET /asistan 200 in 463ms (next.js: 61ms, application-code: 401ms)
+ GET /asistan 200 in 538ms (next.js: 6ms, application-code: 532ms)
+ GET /asistan 200 in 100ms (next.js: 9ms, application-code: 92ms)
+ GET /asistan 200 in 2.2s (next.js: 185ms, application-code: 2.0s)
+ POST /asistan 200 in 1107ms (next.js: 10ms, application-code: 1097ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 1079ms src/lib/assistant/messages.ts
+ POST /asistan 200 in 1003ms (next.js: 4ms, application-code: 999ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 991ms src/lib/assistant/messages.ts
+[assistant:context] collected in 2164ms
+ POST /asistan 200 in 4.3s (next.js: 4ms, application-code: 4.3s)
+  └─ ƒ askAssistant("merhaba nasılsın") in 4279ms src/lib/assistant/actions.ts
