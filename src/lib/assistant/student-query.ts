@@ -1,5 +1,27 @@
-import type { ProfileRow } from "@/types/database";
+import type {
+  AttendanceRecordRow,
+  DormitoryAssignmentRow,
+  LibraryLoanRow,
+  ProfileRow,
+  StudentProfileNoteRow,
+} from "@/types/database";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+
+type DormitoryAssignmentWithDormitory = DormitoryAssignmentRow & {
+  dormitory: { name: string } | null;
+};
+
+type AttendanceRecordWithSession = AttendanceRecordRow & {
+  session: { attendance_date?: string; attendance_type?: string } | null;
+};
+
+type LibraryLoanWithBook = LibraryLoanRow & {
+  book: { title: string } | null;
+};
+
+type StudentProfileNoteWithAuthor = StudentProfileNoteRow & {
+  created_by_profile: { full_name: string } | null;
+};
 
 export type StudentProfileReport = {
   found: boolean;
@@ -265,11 +287,12 @@ async function getDormitoryInfo(
     .select("*, dormitory:dormitory_id(name)")
     .eq("student_id", studentId)
     .eq("status", "active")
-    .maybeSingle();
+    .maybeSingle()
+    .returns<DormitoryAssignmentWithDormitory | null>();
 
   if (!assignment) return null;
 
-  const dormName = (assignment.dormitory as { name: string } | null)?.name ?? "Bilinmeyen Yatakhane";
+  const dormName = assignment.dormitory?.name ?? "Bilinmeyen Yatakhane";
   return `  🏠 ${dormName} (${assignment.start_date ? new Date(assignment.start_date).toLocaleDateString("tr-TR") : "?"} - ${assignment.end_date ? new Date(assignment.end_date).toLocaleDateString("tr-TR") : "Devam ediyor"})`;
 }
 
@@ -282,7 +305,8 @@ async function getAttendanceSummary(
     .select("*, session:session_id(attendance_date, attendance_type)")
     .eq("student_id", studentId)
     .order("created_at", { ascending: false })
-    .limit(50);
+    .limit(50)
+    .returns<AttendanceRecordWithSession[]>();
 
   if (!records || records.length === 0) return [];
 
@@ -297,7 +321,7 @@ async function getAttendanceSummary(
   ];
 
   const lastRecord = records[0];
-  const sessionDate = (lastRecord.session as { attendance_date?: string } | null)?.attendance_date ?? "?";
+  const sessionDate = lastRecord.session?.attendance_date ?? "?";
   lines.push(`  Son durum: ${lastRecord.status === "present" ? "Mevcut" : lastRecord.status === "absent" ? "Devamsız" : lastRecord.status === "excused" ? "Özürlü" : "Geç"} (${sessionDate})`);
 
   return lines;
@@ -312,19 +336,21 @@ async function getLibraryLoans(
     .select("*, book:book_id(title)")
     .eq("student_id", studentId)
     .order("created_at", { ascending: false })
-    .limit(10);
+    .limit(10)
+    .returns<LibraryLoanWithBook[]>();
 
   if (!loans || loans.length === 0) return [];
 
-  const activeLoans = loans.filter((l) => l.status === "active" || l.status === "borrowed");
-  const overdueLoans = loans.filter((l) => l.status === "overdue");
+  const today = new Date().toISOString().slice(0, 10);
+  const activeLoans = loans.filter((l) => l.status === "borrowed");
+  const overdueLoans = activeLoans.filter((l) => l.due_date && l.due_date < today);
   const returnedLoans = loans.filter((l) => l.status === "returned");
 
   const lines: string[] = [];
   if (activeLoans.length > 0) {
     lines.push(`  📚 Aktif ödünç: ${activeLoans.length} kitap`);
     for (const l of activeLoans.slice(0, 3)) {
-      const title = (l.book as { title: string } | null)?.title ?? "Bilinmeyen";
+      const title = l.book?.title ?? "Bilinmeyen";
       lines.push(`    • ${title}`);
     }
   }
@@ -349,13 +375,14 @@ async function getProfileNotes(
     .select("*, created_by_profile:created_by(full_name)")
     .eq("student_id", studentId)
     .order("created_at", { ascending: false })
-    .limit(10);
+    .limit(10)
+    .returns<StudentProfileNoteWithAuthor[]>();
 
   if (!notes || notes.length === 0) return [];
 
   const lines: string[] = [];
   for (const n of notes) {
-    const authorName = (n.created_by_profile as { full_name: string } | null)?.full_name ?? "Bilinmeyen";
+    const authorName = n.created_by_profile?.full_name ?? "Bilinmeyen";
     lines.push(`  📝 ${authorName}: ${n.note}`);
   }
   return lines;

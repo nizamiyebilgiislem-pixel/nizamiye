@@ -23,7 +23,7 @@ export async function createModuleAssignmentAction(_previousState: unknown, form
     return { error: "Kullanıcı ve modül seçilmelidir." };
   }
 
-  if (!["guidance", "library", "infirmary"].includes(moduleKey)) {
+  if (!["guidance", "library", "infirmary", "assistant"].includes(moduleKey)) {
     return { error: "Geçersiz modül." };
   }
 

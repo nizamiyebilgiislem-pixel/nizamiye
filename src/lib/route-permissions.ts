@@ -6,6 +6,7 @@ const managerRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru"];
 const topManagerRoles: UserRole[] = ["admin", "genel_mudur"];
 const parentManagerRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "destek_birim_muduru"];
 const allRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "veli", "destek_birim_muduru"];
+const assistantRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "rehberlik", "kutuphane_gorevlisi", "destek_birim_muduru", "muhasebe"];
 const talepRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "rehberlik", "destek_birim_muduru"];
 const talepManageRoles: UserRole[] = ["admin", "genel_mudur"];
 const libraryStaffRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevlisi"];
@@ -128,7 +129,7 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/canli-oturumlar/[id]": staffAndSupportRoles,
   "/canli-oturumlar/[id]/duzenle": staffAndSupportRoles,
   "/canli-oturumlar/[id]/katil": staffAndSupportRoles,
-  "/asistan": staffRoles,
+  "/asistan": assistantRoles,
 };
 
 export const roleLabels: Record<UserRole, string> = {

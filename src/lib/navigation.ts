@@ -20,6 +20,7 @@ const topManagerRoles: UserRole[] = ["admin", "genel_mudur"];
 const managerRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru"];
 const parentManagerRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "destek_birim_muduru"];
 const allRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "veli", "destek_birim_muduru"];
+const assistantRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "rehberlik", "kutuphane_gorevlisi", "destek_birim_muduru", "muhasebe"];
 const libraryRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevlisi", "bolum_muduru", "hoca", "destek_birim_muduru"];
 const guidanceRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik", "bolum_muduru"];
 const talepRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "rehberlik", "destek_birim_muduru"];
@@ -30,7 +31,7 @@ export const moduleGroups: NavigationGroup[] = [
     label: "Genel",
     items: [
       { label: "Dashboard", href: "/dashboard", iconKey: "dashboard", allowedRoles: staffRoles },
-      { label: "POLA AI", href: "/asistan", iconKey: "assistant", allowedRoles: staffRoles },
+      { label: "POLA AI", href: "/asistan", iconKey: "assistant", allowedRoles: assistantRoles, moduleKey: "assistant" },
       { label: "Veli Paneli", href: "/veli", iconKey: "home", allowedRoles: ["veli"] },
       { label: "Hesabım", href: "/hesabim", iconKey: "user", allowedRoles: allRoles },
       { label: "Talebeler", href: "/talebeler", iconKey: "students", allowedRoles: staffRoles },

@@ -5,10 +5,11 @@ import { ModuleAssignmentManager } from "./module-assignment-manager";
 export default async function ModuleAssignmentsPage() {
   const { profile } = await requireRole(["admin", "genel_mudur"]);
 
-  const [guidanceAssignees, libraryAssignees, infirmaryAssignees, assignableProfiles] = await Promise.all([
+  const [guidanceAssignees, libraryAssignees, infirmaryAssignees, assistantAssignees, assignableProfiles] = await Promise.all([
     getModuleAssignees("guidance"),
     getModuleAssignees("library"),
     getModuleAssignees("infirmary"),
+    getModuleAssignees("assistant"),
     getAssignableModuleProfiles(),
   ]);
 
@@ -17,7 +18,7 @@ export default async function ModuleAssignmentsPage() {
       <div>
         <h1 className="text-lg font-semibold text-[#093657]">Modül Yetkilileri</h1>
         <p className="text-sm text-muted-foreground">
-          Rehberlik, kütüphane ve revir modülleri için yetkili personel atayın.
+          Rehberlik, kütüphane, revir ve POLA AI modülleri için yetkili personel atayın.
         </p>
       </div>
 
@@ -48,6 +49,16 @@ export default async function ModuleAssignmentsPage() {
         profiles={assignableProfiles}
         assignActionLabel="Revir Yetkilisi Ata"
         emptyMessage="Henüz revir yetkilisi atanmamış."
+        profile={profile}
+      />
+
+      <ModuleAssignmentManager
+        moduleKey="assistant"
+        moduleLabel="POLA AI"
+        assignees={assistantAssignees}
+        profiles={assignableProfiles}
+        assignActionLabel="POLA AI Yetkilisi Ata"
+        emptyMessage="Henüz POLA AI yetkilisi atanmamış."
         profile={profile}
       />
     </div>
