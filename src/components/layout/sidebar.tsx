@@ -18,6 +18,7 @@ import {
   ShieldAlert,
   School,
   Settings,
+  Sparkles,
   Stethoscope,
   User,
   Users,
@@ -56,6 +57,7 @@ const iconMap: Record<string, typeof Circle> = {
   talepler: MessageSquare,
   tasks: ListChecks,
   video: Video,
+  assistant: Sparkles,
 };
 
 type SidebarProps = {

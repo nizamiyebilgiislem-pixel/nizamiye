@@ -572,6 +572,14 @@ export type LiveSessionRow = {
   updated_at: Timestamp;
 };
 
+export type AssistantMessageRow = {
+  id: string;
+  profile_id: string;
+  role: "user" | "assistant";
+  content: string;
+  created_at: Timestamp;
+};
+
 export type LiveSessionParticipantRow = {
   id: string;
   session_id: string;
@@ -626,6 +634,7 @@ export type Database = {
       guidance_activity_participants: TableDefinition<GuidanceActivityParticipantRow>;
       live_sessions: TableDefinition<LiveSessionRow>;
       live_session_participants: TableDefinition<LiveSessionParticipantRow>;
+      assistant_messages: TableDefinition<AssistantMessageRow>;
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

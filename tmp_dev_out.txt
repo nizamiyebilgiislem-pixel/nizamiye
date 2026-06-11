@@ -360,3 +360,429 @@
  GET /not-sistemi/not-girisi 200 in 3.8s (next.js: 3ms, application-code: 3.8s)
  GET /not-sistemi/not-girisi 200 in 2.4s (next.js: 3ms, application-code: 2.4s)
 ✓ Compiled in 136ms
+ GET / 307 in 140ms (next.js: 39ms, application-code: 101ms)
+ GET /dashboard 200 in 4.8s (next.js: 54ms, application-code: 4.8s)
+ GET /canli-oturumlar 200 in 1817ms (next.js: 16ms, application-code: 1801ms)
+ GET /canli-oturumlar/7eb31113-5e53-4495-9d38-dc1bb26ed1b3 200 in 1753ms (next.js: 38ms, application-code: 1715ms)
+ GET /canli-oturumlar/7eb31113-5e53-4495-9d38-dc1bb26ed1b3/katil 200 in 2.2s (next.js: 114ms, application-code: 2.1s)
+✓ Compiled in 269ms
+✓ Compiled in 158ms
+ GET / 307 in 155ms (next.js: 53ms, application-code: 102ms)
+ GET /dashboard 200 in 5.6s (next.js: 121ms, application-code: 5.4s)
+ GET /dashboard 200 in 4.4s (next.js: 3ms, application-code: 4.4s)
+ GET /asistan 200 in 2.3s (next.js: 813ms, application-code: 1462ms)
+ POST /asistan 200 in 1117ms (next.js: 3ms, application-code: 1113ms)
+  └─ ƒ askAssistant("yoklama alındmımı", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 1102ms src/lib/assistant/actions.ts
+ GET /talebeler 200 in 3.6s (next.js: 65ms, application-code: 3.5s)
+ GET /siniflar 200 in 2.9s (next.js: 45ms, application-code: 2.8s)
+ GET /asistan 200 in 1425ms (next.js: 3ms, application-code: 1422ms)
+ POST /asistan 200 in 392ms (next.js: 4ms, application-code: 389ms)
+  └─ ƒ askAssistant("proje 1 sınıfı yoklaması alındımı", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 381ms src/lib/assistant/actions.ts
+ POST /asistan 200 in 430ms (next.js: 3ms, application-code: 427ms)
+  └─ ƒ askAssistant("proje bölümünde proje 1 sınıfı", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 419ms src/lib/assistant/actions.ts
+ POST /asistan 200 in 3.1s (next.js: 5ms, application-code: 3.1s)
+  └─ ƒ askAssistant("Bugün revir kaydı var mı?", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 1921ms src/lib/assistant/actions.ts
+ POST /asistan 200 in 2.1s (next.js: 3ms, application-code: 2.1s)
+  └─ ƒ askAssistant("Bugünün özeti nedir", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2132ms src/lib/assistant/actions.ts
+ POST /asistan 200 in 408ms (next.js: 3ms, application-code: 405ms)
+  └─ ƒ askAssistant("arapça bölümü sınıfları listelermisin", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 397ms src/lib/assistant/actions.ts
+ POST /asistan 200 in 15ms (next.js: 4ms, application-code: 11ms)
+  └─ ƒ askAssistant("mevcut tüm sınfların isimlerini listelermisin", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 0ms src/lib/assistant/actions.ts
+✓ Compiled in 317ms
+✓ Compiled in 231ms
+ GET /asistan 200 in 217ms (next.js: 101ms, application-code: 115ms)
+ GET /asistan 200 in 647ms (next.js: 185ms, application-code: 462ms)
+ GET /asistan 200 in 288ms (next.js: 6ms, application-code: 282ms)
+ GET /asistan 200 in 220ms (next.js: 35ms, application-code: 184ms)
+ GET /asistan 200 in 222ms (next.js: 10ms, application-code: 212ms)
+ GET /asistan 200 in 222ms (next.js: 64ms, application-code: 158ms)
+ GET /asistan 200 in 2.1s (next.js: 5ms, application-code: 2.1s)
+ POST /asistan 200 in 398ms (next.js: 3ms, application-code: 395ms)
+  └─ ƒ askAssistant("merhaba nasılsın", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 361ms src/lib/assistant/actions.ts
+  Reload env: .env.local
+ GET / 307 in 145ms (next.js: 45ms, application-code: 100ms)
+ GET /dashboard 200 in 4.0s (next.js: 55ms, application-code: 4.0s)
+ GET /asistan 200 in 724ms (next.js: 9ms, application-code: 715ms)
+ POST /asistan 200 in 2.3s (next.js: 3ms, application-code: 2.3s)
+  └─ ƒ askAssistant("merhaba nasılsın", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2268ms src/lib/assistant/actions.ts
+ POST /asistan 200 in 428ms (next.js: 3ms, application-code: 425ms)
+  └─ ƒ askAssistant("mevcut bölüm ve sınıfları listelermisin", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 418ms src/lib/assistant/actions.ts
+ POST /asistan 200 in 2.4s (next.js: 3ms, application-code: 2.4s)
+  └─ ƒ askAssistant("kimsin", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2350ms src/lib/assistant/actions.ts
+ POST /asistan 200 in 2.7s (next.js: 3ms, application-code: 2.7s)
+  └─ ƒ askAssistant("neler yapabilirsin asistan modu ile", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2687ms src/lib/assistant/actions.ts
+ POST /asistan 200 in 438ms (next.js: 4ms, application-code: 434ms)
+  └─ ƒ askAssistant("sınıf bilgileri lütfen", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 427ms src/lib/assistant/actions.ts
+✓ Compiled in 336ms
+ GET /asistan 500 in 401ms (next.js: 200ms, application-code: 202ms)
+ GET /asistan 500 in 93ms (next.js: 78ms, application-code: 15ms)
+ GET /asistan 500 in 29ms (next.js: 19ms, application-code: 10ms)
+ GET /asistan 500 in 59ms (next.js: 49ms, application-code: 10ms)
+ GET /asistan 500 in 64ms (next.js: 50ms, application-code: 13ms)
+ GET /asistan 500 in 62ms (next.js: 52ms, application-code: 11ms)
+ GET /asistan 500 in 59ms (next.js: 48ms, application-code: 11ms)
+ GET /asistan 500 in 59ms (next.js: 48ms, application-code: 11ms)
+✓ Compiled in 111ms
+ GET /asistan 200 in 1874ms (next.js: 3ms, application-code: 1870ms)
+✓ Compiled in 115ms
+ GET /asistan 200 in 184ms (next.js: 93ms, application-code: 91ms)
+ GET /asistan 200 in 179ms (next.js: 106ms, application-code: 72ms)
+✓ Compiled in 116ms
+ GET /asistan 200 in 245ms (next.js: 94ms, application-code: 152ms)
+ GET /asistan 200 in 70ms (next.js: 5ms, application-code: 65ms)
+✓ Compiled in 114ms
+ GET /asistan 200 in 267ms (next.js: 105ms, application-code: 163ms)
+ GET /asistan 200 in 92ms (next.js: 6ms, application-code: 87ms)
+✓ Compiled in 115ms
+ GET /asistan 200 in 301ms (next.js: 151ms, application-code: 150ms)
+ GET /asistan 200 in 79ms (next.js: 6ms, application-code: 73ms)
+✓ Compiled in 116ms
+ GET /asistan 200 in 344ms (next.js: 136ms, application-code: 207ms)
+ GET /asistan 200 in 116ms (next.js: 8ms, application-code: 108ms)
+✓ Compiled in 106ms
+ GET /asistan 200 in 279ms (next.js: 136ms, application-code: 144ms)
+ GET /asistan 200 in 71ms (next.js: 7ms, application-code: 64ms)
+✓ Compiled in 108ms
+ GET /asistan 200 in 296ms (next.js: 146ms, application-code: 150ms)
+ GET /asistan 200 in 82ms (next.js: 6ms, application-code: 75ms)
+ GET /hesabim 200 in 1354ms (next.js: 49ms, application-code: 1305ms)
+ GET /asistan 200 in 724ms (next.js: 3ms, application-code: 721ms)
+[assistant:context] collected in 2009ms
+ POST /asistan 200 in 2.4s (next.js: 3ms, application-code: 2.4s)
+  └─ ƒ askAssistant("merhaba nasılsın", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2363ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1718ms
+ POST /asistan 200 in 2.1s (next.js: 5ms, application-code: 2.0s)
+  └─ ƒ askAssistant("arapça bölümü mevcut sınıfları listelermisin", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2043ms src/lib/assistant/actions.ts
+[assistant:context] collected in 2083ms
+ POST /asistan 200 in 2.6s (next.js: 3ms, application-code: 2.6s)
+  └─ ƒ askAssistant("bölümleri listele ve mevcut bölümlerde oluşmus sınıf isimlerini listele", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2588ms src/lib/assistant/actions.ts
+ GET /bolumler 200 in 1820ms (next.js: 49ms, application-code: 1771ms)
+ GET /asistan 200 in 812ms (next.js: 3ms, application-code: 809ms)
+[assistant:context] collected in 2001ms
+ POST /asistan 200 in 2.6s (next.js: 3ms, application-code: 2.6s)
+  └─ ƒ askAssistant("arapça bölümündeki sınıfları listelermisin", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2585ms src/lib/assistant/actions.ts
+ GET /siniflar 200 in 1601ms (next.js: 16ms, application-code: 1586ms)
+ GET /asistan 200 in 936ms (next.js: 4ms, application-code: 932ms)
+[assistant:context] collected in 1902ms
+ POST /asistan 200 in 2.5s (next.js: 3ms, application-code: 2.5s)
+  └─ ƒ askAssistant("öğrenci eklemesi yapabilirmisin", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2488ms src/lib/assistant/actions.ts
+[assistant:context] collected in 2436ms
+ POST /asistan 200 in 2.7s (next.js: 3ms, application-code: 2.7s)
+  └─ ƒ askAssistant("veli oluşturabilirmisin", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2723ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1845ms
+ POST /asistan 200 in 2.8s (next.js: 3ms, application-code: 2.8s)
+  └─ ƒ askAssistant("ders programı oluşturabilirmisin", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2793ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1793ms
+ POST /asistan 200 in 2.2s (next.js: 3ms, application-code: 2.2s)
+  └─ ƒ askAssistant("proje 1", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2226ms src/lib/assistant/actions.ts
+[assistant:context] collected in 2199ms
+ POST /asistan 200 in 2.6s (next.js: 4ms, application-code: 2.6s)
+  └─ ƒ askAssistant("evet pazartesi nahiv dersi 0800-1000 sadece bu olacak", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2632ms src/lib/assistant/actions.ts
+ GET /egitim-planlama 200 in 1452ms (next.js: 46ms, application-code: 1406ms)
+ GET /egitim-planlama/ders-programi/a838af62-05d7-4757-9487-5c9b4c3f3355 200 in 3.4s (next.js: 745ms, application-code: 2.7s)
+ GET /asistan 200 in 1077ms (next.js: 3ms, application-code: 1074ms)
+[assistant:context] collected in 1937ms
+ POST /asistan 200 in 2.4s (next.js: 4ms, application-code: 2.4s)
+  └─ ƒ askAssistant("merhaba nasılsın", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2386ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1871ms
+ POST /asistan 200 in 2.2s (next.js: 3ms, application-code: 2.2s)
+  └─ ƒ askAssistant("kantincimiz eyyüphan hiç iyi çalışmıyor", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2191ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1913ms
+ POST /asistan 200 in 2.3s (next.js: 4ms, application-code: 2.3s)
+  └─ ƒ askAssistant("eyyüpcan tercan hakkında bilgi verirmisin", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2275ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1917ms
+ POST /asistan 200 in 2.8s (next.js: 4ms, application-code: 2.8s)
+  └─ ƒ askAssistant("ders notları nasıl", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2777ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1786ms
+ POST /asistan 200 in 2.1s (next.js: 3ms, application-code: 2.1s)
+  └─ ƒ askAssistant("sınav notları nasıl", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2053ms src/lib/assistant/actions.ts
+✓ Compiled in 123ms
+ GET /asistan 200 in 305ms (next.js: 155ms, application-code: 150ms)
+ GET /asistan 200 in 80ms (next.js: 9ms, application-code: 71ms)
+✓ Compiled in 173ms
+ GET /asistan 200 in 511ms (next.js: 151ms, application-code: 361ms)
+ GET /asistan 200 in 262ms (next.js: 9ms, application-code: 253ms)
+ GET /asistan 200 in 185ms (next.js: 36ms, application-code: 149ms)
+ GET /asistan 200 in 187ms (next.js: 6ms, application-code: 181ms)
+ GET /asistan 200 in 3.1s (next.js: 7ms, application-code: 3.1s)
+ GET /asistan 200 in 4.5s (next.js: 160ms, application-code: 4.4s)
+ GET /asistan 200 in 3.5s (next.js: 156ms, application-code: 3.3s)
+ GET /asistan 200 in 3.1s (next.js: 76ms, application-code: 3.0s)
+✓ Compiled in 112ms
+ GET /asistan 200 in 957ms (next.js: 142ms, application-code: 815ms)
+ GET /asistan 200 in 731ms (next.js: 4ms, application-code: 727ms)
+ GET /asistan 200 in 701ms (next.js: 98ms, application-code: 603ms)
+ GET /asistan 200 in 493ms (next.js: 92ms, application-code: 401ms)
+ GET /asistan 200 in 496ms (next.js: 7ms, application-code: 489ms)
+ GET /asistan 200 in 497ms (next.js: 36ms, application-code: 461ms)
+ GET /asistan 200 in 497ms (next.js: 65ms, application-code: 433ms)
+ GET /asistan 200 in 3.9s (next.js: 675ms, application-code: 3.2s)
+ GET /asistan 200 in 2.2s (next.js: 1470ms, application-code: 696ms)
+ GET /asistan 200 in 576ms (next.js: 15ms, application-code: 560ms)
+ GET /asistan 200 in 518ms (next.js: 41ms, application-code: 477ms)
+ GET /asistan 200 in 519ms (next.js: 72ms, application-code: 446ms)
+ GET /asistan 200 in 522ms (next.js: 9ms, application-code: 513ms)
+ GET /asistan 200 in 105ms (next.js: 5ms, application-code: 100ms)
+ POST /asistan 200 in 885ms (next.js: 24ms, application-code: 861ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 851ms src/lib/assistant/messages.ts
+ POST /asistan 200 in 335ms (next.js: 6ms, application-code: 329ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 321ms src/lib/assistant/messages.ts
+✓ Compiled in 116ms
+ GET /asistan 200 in 367ms (next.js: 140ms, application-code: 228ms)
+ GET /asistan 200 in 106ms (next.js: 6ms, application-code: 100ms)
+ POST /asistan 200 in 516ms (next.js: 125ms, application-code: 391ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 383ms src/lib/assistant/messages.ts
+✓ Compiled in 109ms
+ GET /asistan 200 in 400ms (next.js: 138ms, application-code: 263ms)
+ GET /asistan 200 in 111ms (next.js: 6ms, application-code: 105ms)
+ POST /asistan 200 in 400ms (next.js: 5ms, application-code: 395ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 387ms src/lib/assistant/messages.ts
+✓ Compiled in 113ms
+ GET /asistan 200 in 363ms (next.js: 138ms, application-code: 225ms)
+ GET /asistan 200 in 102ms (next.js: 5ms, application-code: 97ms)
+ POST /asistan 200 in 341ms (next.js: 5ms, application-code: 336ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 325ms src/lib/assistant/messages.ts
+✓ Compiled in 117ms
+ GET /asistan 200 in 261ms (next.js: 132ms, application-code: 129ms)
+ POST /asistan 200 in 541ms (next.js: 4ms, application-code: 536ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 527ms src/lib/assistant/messages.ts
+ GET /asistan 200 in 11ms (next.js: 4ms, application-code: 7ms)
+ GET /asistan 200 in 1786ms (next.js: 3ms, application-code: 1783ms)
+ POST /asistan 200 in 352ms (next.js: 4ms, application-code: 348ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 334ms src/lib/assistant/messages.ts
+[assistant:context] collected in 2737ms
+ POST /asistan 200 in 5.0s (next.js: 3ms, application-code: 5.0s)
+  └─ ƒ askAssistant("nasılsın", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3966ms src/lib/assistant/actions.ts
+ POST /asistan 200 in 334ms (next.js: 5ms, application-code: 329ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 321ms src/lib/assistant/messages.ts
+[assistant:context] collected in 1941ms
+ POST /asistan 200 in 3.4s (next.js: 14ms, application-code: 3.4s)
+  └─ ƒ askAssistant("nasılsın", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3333ms src/lib/assistant/actions.ts
+[assistant:context] collected in 2078ms
+ POST /asistan 200 in 3.3s (next.js: 4ms, application-code: 3.3s)
+  └─ ƒ askAssistant("hava durumu nasıl", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3284ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1894ms
+ POST /asistan 200 in 3.9s (next.js: 4ms, application-code: 3.9s)
+  └─ ƒ askAssistant("erzurum", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3916ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1849ms
+ POST /asistan 200 in 3.5s (next.js: 4ms, application-code: 3.5s)
+  └─ ƒ askAssistant("ne yapmam gerekir", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3499ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1881ms
+ POST /asistan 200 in 3.2s (next.js: 3ms, application-code: 3.2s)
+  └─ ƒ askAssistant("kimsin", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3150ms src/lib/assistant/actions.ts
+✓ Compiled in 114ms
+ GET /asistan 200 in 288ms (next.js: 141ms, application-code: 146ms)
+ GET /asistan 200 in 72ms (next.js: 5ms, application-code: 67ms)
+ POST /asistan 200 in 604ms (next.js: 5ms, application-code: 599ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 589ms src/lib/assistant/messages.ts
+ GET /asistan 200 in 16ms (next.js: 6ms, application-code: 10ms)
+ GET /asistan 200 in 1082ms (next.js: 4ms, application-code: 1078ms)
+ POST /asistan 200 in 420ms (next.js: 36ms, application-code: 385ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 338ms src/lib/assistant/messages.ts
+[assistant:context] collected in 1921ms
+ POST /asistan 200 in 3.1s (next.js: 4ms, application-code: 3.1s)
+  └─ ƒ askAssistant("merhaba nasılsın", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3069ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1802ms
+ POST /asistan 200 in 3.6s (next.js: 3ms, application-code: 3.6s)
+  └─ ƒ askAssistant("bu gün çok mutsuzum bazı öğrencilerim ile tartıştım", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3550ms src/lib/assistant/actions.ts
+[assistant:context] collected in 2306ms
+ POST /asistan 200 in 3.5s (next.js: 3ms, application-code: 3.5s)
+  └─ ƒ askAssistant("kimsin", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3466ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1731ms
+ POST /asistan 200 in 3.2s (next.js: 3ms, application-code: 3.2s)
+  └─ ƒ askAssistant("eyyüpcan tercan hakkında ne söyleyebilirsin", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3233ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1838ms
+ POST /asistan 200 in 3.1s (next.js: 3ms, application-code: 3.1s)
+  └─ ƒ askAssistant("sınav notları nasıl", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3120ms src/lib/assistant/actions.ts
+[assistant:context] collected in 2001ms
+ POST /asistan 200 in 3.4s (next.js: 3ms, application-code: 3.4s)
+  └─ ƒ askAssistant("enes tekin tanıyormusun", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3405ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1746ms
+ POST /asistan 200 in 3.3s (next.js: 4ms, application-code: 3.2s)
+  └─ ƒ askAssistant("tanıdığın öğrenci ve personel isimleri nelerdir", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3240ms src/lib/assistant/actions.ts
+[assistant:context] collected in 2079ms
+ POST /asistan 200 in 3.3s (next.js: 5ms, application-code: 3.3s)
+  └─ ƒ askAssistant("günün sözü söylermisin", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3327ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1759ms
+ POST /asistan 200 in 3.4s (next.js: 4ms, application-code: 3.4s)
+  └─ ƒ askAssistant("ilim ile ilgili", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3430ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1902ms
+ POST /asistan 200 in 3.7s (next.js: 3ms, application-code: 3.7s)
+  └─ ƒ askAssistant("ilim ile ilgili sözler bir kaç tane", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3658ms src/lib/assistant/actions.ts
+[assistant:context] collected in 3170ms
+ POST /asistan 200 in 4.8s (next.js: 3ms, application-code: 4.7s)
+  └─ ƒ askAssistant("şaun mevcut derslermiz neler", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 4742ms src/lib/assistant/actions.ts
+[assistant:context] collected in 2088ms
+ POST /asistan 200 in 3.3s (next.js: 4ms, application-code: 3.3s)
+  └─ ƒ askAssistant("emin nusret kimdir", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3331ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1762ms
+ POST /asistan 200 in 3.0s (next.js: 4ms, application-code: 3.0s)
+  └─ ƒ askAssistant("yasin miroğlu kimdir", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2977ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1818ms
+ POST /asistan 200 in 3.2s (next.js: 4ms, application-code: 3.2s)
+  └─ ƒ askAssistant("bilgileri mevcut mu", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3198ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1976ms
+ POST /asistan 200 in 3.4s (next.js: 4ms, application-code: 3.3s)
+  └─ ƒ askAssistant("namaz vakiitleri", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3340ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1867ms
+ POST /asistan 200 in 3.0s (next.js: 3ms, application-code: 3.0s)
+  └─ ƒ askAssistant("hangi şehrrin", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3007ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1904ms
+ POST /asistan 200 in 3.2s (next.js: 3ms, application-code: 3.2s)
+  └─ ƒ askAssistant("erzurumda hava durumu nasıl", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3230ms src/lib/assistant/actions.ts
+[assistant:context] collected in 2263ms
+ POST /asistan 200 in 3.4s (next.js: 5ms, application-code: 3.4s)
+  └─ ƒ askAssistant("proje bölümünde kaç öğrenci var", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3429ms src/lib/assistant/actions.ts
+✓ Compiled in 111ms
+ GET /asistan 200 in 316ms (next.js: 149ms, application-code: 167ms)
+ GET /asistan 200 in 79ms (next.js: 6ms, application-code: 73ms)
+ POST /asistan 200 in 773ms (next.js: 5ms, application-code: 768ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 752ms src/lib/assistant/messages.ts
+✓ Compiled in 111ms
+ GET /asistan 200 in 234ms (next.js: 134ms, application-code: 100ms)
+ GET /asistan 200 in 76ms (next.js: 14ms, application-code: 62ms)
+ POST /asistan 200 in 400ms (next.js: 5ms, application-code: 394ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 384ms src/lib/assistant/messages.ts
+✓ Compiled in 98ms
+ GET /asistan 200 in 215ms (next.js: 131ms, application-code: 85ms)
+ POST /asistan 200 in 436ms (next.js: 5ms, application-code: 432ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 422ms src/lib/assistant/messages.ts
+✓ Compiled in 107ms
+ GET /asistan 200 in 583ms (next.js: 141ms, application-code: 441ms)
+ GET /asistan 200 in 340ms (next.js: 34ms, application-code: 306ms)
+ POST /asistan 200 in 399ms (next.js: 6ms, application-code: 394ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 385ms src/lib/assistant/messages.ts
+ GET /asistan 200 in 878ms (next.js: 408ms, application-code: 470ms)
+ GET /asistan 200 in 395ms (next.js: 4ms, application-code: 391ms)
+ GET /asistan 200 in 460ms (next.js: 10ms, application-code: 450ms)
+ GET /asistan 200 in 461ms (next.js: 46ms, application-code: 415ms)
+ GET /asistan 200 in 461ms (next.js: 103ms, application-code: 358ms)
+ GET /asistan 200 in 463ms (next.js: 75ms, application-code: 388ms)
+ GET /asistan 200 in 491ms (next.js: 5ms, application-code: 486ms)
+ GET /asistan 200 in 420ms (next.js: 7ms, application-code: 413ms)
+ GET /asistan 200 in 409ms (next.js: 65ms, application-code: 345ms)
+ GET /asistan 200 in 416ms (next.js: 35ms, application-code: 380ms)
+ GET /asistan 200 in 418ms (next.js: 7ms, application-code: 411ms)
+ GET /asistan 200 in 416ms (next.js: 195ms, application-code: 221ms)
+ GET /asistan 200 in 87ms (next.js: 5ms, application-code: 81ms)
+ POST /asistan 200 in 475ms (next.js: 58ms, application-code: 417ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 408ms src/lib/assistant/messages.ts
+[assistant:context] collected in 3370ms
+ POST /asistan 200 in 4.7s (next.js: 6ms, application-code: 4.7s)
+  └─ ƒ askAssistant("nasılsın", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 4722ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1878ms
+ POST /asistan 200 in 3.2s (next.js: 3ms, application-code: 3.2s)
+  └─ ƒ askAssistant("bunu söylermisin baybie i love you", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3196ms src/lib/assistant/actions.ts
+[assistant:context] collected in 2493ms
+ POST /asistan 200 in 5.2s (next.js: 3ms, application-code: 5.2s)
+  └─ ƒ askAssistant("soru sormuyorum sadece verdiğim yazıyı ingilizce okumanı istiyorum İ LOVE YOU", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 5151ms src/lib/assistant/actions.ts
+ GET /asistan 200 in 9ms (next.js: 3ms, application-code: 6ms)
+ GET /asistan 200 in 929ms (next.js: 3ms, application-code: 926ms)
+ POST /asistan 200 in 340ms (next.js: 4ms, application-code: 336ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 329ms src/lib/assistant/messages.ts
+ GET /asistan 200 in 1412ms (next.js: 4ms, application-code: 1408ms)
+ POST /asistan 200 in 339ms (next.js: 6ms, application-code: 333ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 323ms src/lib/assistant/messages.ts
+ POST /asistan 200 in 330ms (next.js: 3ms, application-code: 327ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 320ms src/lib/assistant/messages.ts
+✓ Compiled in 117ms
+✓ Compiled in 117ms
+✓ Compiled in 106ms
+✓ Compiled in 116ms
+✓ Compiled in 109ms
+✓ Compiled in 285ms
+✓ Compiled in 107ms
+✓ Compiled in 109ms
+✓ Compiled in 107ms
+✓ Compiled in 107ms
+✓ Compiled in 119ms
+✓ Compiled in 108ms
+✓ Compiled in 113ms
+✓ Compiled in 103ms
+✓ Compiled in 110ms
+✓ Compiled in 107ms
+✓ Compiled in 105ms
+✓ Compiled in 111ms
+✓ Compiled in 112ms
+✓ Compiled in 123ms
+✓ Compiled in 154ms
+✓ Compiled in 110ms
+✓ Compiled in 118ms
+✓ Compiled in 116ms
+✓ Compiled in 125ms
+✓ Compiled in 116ms
+✓ Compiled in 115ms
+ GET / 307 in 674ms (next.js: 70ms, application-code: 604ms)
+ GET /dashboard 307 in 2.1s (next.js: 181ms, application-code: 1888ms)
+ GET /login 200 in 619ms (next.js: 76ms, application-code: 543ms)
+ GET /dashboard 200 in 4.1s (next.js: 8ms, application-code: 4.1s)
+ GET /dashboard 200 in 4.9s (next.js: 4ms, application-code: 4.9s)
+ GET /asistan 200 in 1036ms (next.js: 131ms, application-code: 906ms)
+ POST /asistan 200 in 359ms (next.js: 5ms, application-code: 354ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 342ms src/lib/assistant/messages.ts
+ POST /asistan 200 in 321ms (next.js: 3ms, application-code: 318ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 310ms src/lib/assistant/messages.ts
+[assistant:context] collected in 2139ms
+ POST /asistan 200 in 3.6s (next.js: 4ms, application-code: 3.6s)
+  └─ ƒ askAssistant("nasılsın", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3628ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1723ms
+ POST /asistan 200 in 3.4s (next.js: 4ms, application-code: 3.4s)
+  └─ ƒ askAssistant("eyyüpcan tercan hakkında bilgi verir misin", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3350ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1784ms
+ POST /asistan 200 in 3.6s (next.js: 4ms, application-code: 3.6s)
+  └─ ƒ askAssistant("namaz vakitleri", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3560ms src/lib/assistant/actions.ts
+ POST /asistan 200 in 797ms (next.js: 4ms, application-code: 793ms)
+  └─ ƒ askAssistant("hava durumu", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 786ms src/lib/assistant/actions.ts
+ POST /asistan 200 in 948ms (next.js: 4ms, application-code: 944ms)
+  └─ ƒ askAssistant("ankara için hava durumu", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 936ms src/lib/assistant/actions.ts
+[assistant:context] collected in 2011ms
+ POST /asistan 200 in 3.3s (next.js: 3ms, application-code: 3.3s)
+  └─ ƒ askAssistant("kimsin", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3336ms src/lib/assistant/actions.ts
+[assistant:context] collected in 2281ms
+ POST /asistan 200 in 3.4s (next.js: 4ms, application-code: 3.4s)
+  └─ ƒ askAssistant("çok iyisin", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3421ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1714ms
+ POST /asistan 200 in 3.3s (next.js: 3ms, application-code: 3.3s)
+  └─ ƒ askAssistant("bu gün çok üzgünüm talebem eyyüpcan ile ttartıştım", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3301ms src/lib/assistant/actions.ts
+[assistant:context] collected in 2011ms
+ POST /asistan 200 in 3.3s (next.js: 4ms, application-code: 3.3s)
+  └─ ƒ askAssistant("bu gün üzgünüm ali yorulmaz ile tartıştım", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3315ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1720ms
+ POST /asistan 200 in 3.0s (next.js: 3ms, application-code: 3.0s)
+  └─ ƒ askAssistant("o beni sinir ediyor", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3002ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1900ms
+ POST /asistan 200 in 3.5s (next.js: 4ms, application-code: 3.5s)
+  └─ ƒ askAssistant("en yakın doğum günü olan talebe", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3531ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1841ms
+ POST /asistan 200 in 3.3s (next.js: 4ms, application-code: 3.3s)
+  └─ ƒ askAssistant("emin kimdir", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3293ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1794ms
+ POST /asistan 200 in 3.2s (next.js: 4ms, application-code: 3.2s)
+  └─ ƒ askAssistant("numarası varmı", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3207ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1745ms
+ POST /asistan 200 in 3.0s (next.js: 4ms, application-code: 3.0s)
+  └─ ƒ askAssistant("emin beyin numarası varmı", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2983ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1986ms
+ POST /asistan 200 in 3.5s (next.js: 3ms, application-code: 3.5s)
+  └─ ƒ askAssistant("yasin hocanın numarası varmı", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3514ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1817ms
+ POST /asistan 200 in 3.0s (next.js: 4ms, application-code: 3.0s)
+  └─ ƒ askAssistant("hangi hocaların numarası var", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 2968ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1717ms
+ POST /asistan 200 in 3.1s (next.js: 4ms, application-code: 3.1s)
+  └─ ƒ askAssistant("bu gün için değil sistemi tara ve numarası olan bir hocayı söyle", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3107ms src/lib/assistant/actions.ts
+ GET /hocalar 200 in 1458ms (next.js: 56ms, application-code: 1402ms)
+ GET /asistan 200 in 744ms (next.js: 3ms, application-code: 741ms)
+ POST /asistan 200 in 334ms (next.js: 7ms, application-code: 328ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 319ms src/lib/assistant/messages.ts
+ POST /asistan 200 in 326ms (next.js: 3ms, application-code: 323ms)
+  └─ ƒ getMessages({"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 315ms src/lib/assistant/messages.ts
+[assistant:context] collected in 1823ms
+ POST /asistan 200 in 3.0s (next.js: 3ms, application-code: 3.0s)
+  └─ ƒ askAssistant("yasim miroğlu iletişim numarası nedir", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3021ms src/lib/assistant/actions.ts
+[assistant:context] collected in 2180ms
+ POST /asistan 200 in 3.3s (next.js: 3ms, application-code: 3.3s)
+  └─ ƒ askAssistant("yasin mir oğlu kimdir", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3336ms src/lib/assistant/actions.ts
+[assistant:context] collected in 1829ms
+ POST /asistan 200 in 3.2s (next.js: 3ms, application-code: 3.2s)
+  └─ ƒ askAssistant("yasin miroğlu iletişim numarası nedir", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3180ms src/lib/assistant/actions.ts

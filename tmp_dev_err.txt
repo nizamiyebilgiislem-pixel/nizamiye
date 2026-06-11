@@ -108,3 +108,491 @@
   147 | ...             {s.creator && <span>Oluşturan: {s.creator.full_name}</span>}
   148 | ...             {s.department && <span className="rounded bg-muted/50 px-1 py-0.5">{s.dep...
   149 | ...             <span>{s.participant_count}/{s.max_participants} katılımcı</span> (src/app/(panel)
+[assistant:llm] Error: GROQ_API_KEY ortam değişkeni bulunamadı.
+    at getClient (src\lib\assistant\llm.ts:13:13)
+    at askLLM (src\lib\assistant\llm.ts:22:20)
+    at askAssistant (src\lib\assistant\actions.ts:17:16)
+  11 |     const apiKey = process.env.GROQ_API_KEY;
+  12 |     if (!apiKey) {
+> 13 |       throw new Error("GROQ_API_KEY ortam değişkeni bulunamadı.");
+     |             ^
+  14 |     }
+  15 |     groqClient = new Groq({ apiKey });
+  16 |   }
+⨯ ./src/lib/assistant/llm.ts:3:1
+Export buildContextPrompt doesn't exist in target module
+  [90m1 |[0m [36mimport[0m [33mGroq[0m [36mfrom[0m [32m"groq-sdk"[0m;
+  [90m2 |[0m
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { buildSystemPrompt, buildContextPrompt, buildContextualData } [36mfrom[0m [32m"./llm-prompt"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [36mtype[0m { [33mIntentResult[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m5 |[0m [36mimport[0m [36mtype[0m { [33mProfileRow[0m } [36mfrom[0m [32m"@/types/database"[0m;
+  [90m6 |[0m
+
+The export buildContextPrompt was not found in module [project]/src/lib/assistant/llm-prompt.ts [app-rsc] (ecmascript).
+Did you mean to import buildContextualData?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/lib/assistant/llm.ts
+    ./src/lib/assistant/actions.ts
+
+
+⨯ ./src/lib/assistant/llm.ts:3:1
+Export buildContextPrompt doesn't exist in target module
+  [90m1 |[0m [36mimport[0m [33mGroq[0m [36mfrom[0m [32m"groq-sdk"[0m;
+  [90m2 |[0m
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { buildSystemPrompt, buildContextPrompt, buildContextualData } [36mfrom[0m [32m"./llm-prompt"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [36mtype[0m { [33mIntentResult[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m5 |[0m [36mimport[0m [36mtype[0m { [33mProfileRow[0m } [36mfrom[0m [32m"@/types/database"[0m;
+  [90m6 |[0m
+
+The export buildContextPrompt was not found in module [project]/src/lib/assistant/llm-prompt.ts [app-rsc] (ecmascript).
+Did you mean to import buildContextualData?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/lib/assistant/llm.ts
+    ./src/lib/assistant/actions.ts
+
+
+[browser] Uncaught Error: ./src/lib/assistant/llm.ts:3:1
+Export buildContextPrompt doesn't exist in target module
+  1 | import Groq from "groq-sdk";
+  2 |
+> 3 | import { buildSystemPrompt, buildContextPrompt, buildContextualData } from "./llm-prompt";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import type { IntentResult } from "./types";
+  5 | import type { ProfileRow } from "@/types/database";
+  6 |
+
+The export buildContextPrompt was not found in module [project]/src/lib/assistant/llm-prompt.ts [app-rsc] (ecmascript).
+Did you mean to import buildContextualData?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/lib/assistant/llm.ts
+    ./src/lib/assistant/actions.ts
+
+
+    at <unknown> (Error: ./src/lib/assistant/llm.ts:3:1)
+    at <unknown> (Error: (./src/lib/assistant/llm.ts:3:1)
+⨯ ./src/lib/assistant/llm.ts:3:1
+Export buildContextPrompt doesn't exist in target module
+  [90m1 |[0m [36mimport[0m [33mGroq[0m [36mfrom[0m [32m"groq-sdk"[0m;
+  [90m2 |[0m
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { buildSystemPrompt, buildContextPrompt, buildContextualData } [36mfrom[0m [32m"./llm-prompt"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [36mtype[0m { [33mIntentResult[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m5 |[0m [36mimport[0m [36mtype[0m { [33mProfileRow[0m } [36mfrom[0m [32m"@/types/database"[0m;
+  [90m6 |[0m
+
+The export buildContextPrompt was not found in module [project]/src/lib/assistant/llm-prompt.ts [app-rsc] (ecmascript).
+Did you mean to import buildContextualData?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/lib/assistant/llm.ts
+    ./src/lib/assistant/actions.ts
+
+
+⨯ ./src/lib/assistant/llm.ts:3:1
+Export buildContextPrompt doesn't exist in target module
+  [90m1 |[0m [36mimport[0m [33mGroq[0m [36mfrom[0m [32m"groq-sdk"[0m;
+  [90m2 |[0m
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { buildSystemPrompt, buildContextPrompt, buildContextualData } [36mfrom[0m [32m"./llm-prompt"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [36mtype[0m { [33mIntentResult[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m5 |[0m [36mimport[0m [36mtype[0m { [33mProfileRow[0m } [36mfrom[0m [32m"@/types/database"[0m;
+  [90m6 |[0m
+
+The export buildContextPrompt was not found in module [project]/src/lib/assistant/llm-prompt.ts [app-rsc] (ecmascript).
+Did you mean to import buildContextualData?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/lib/assistant/llm.ts
+    ./src/lib/assistant/actions.ts
+
+
+[browser] Uncaught Error: ./src/lib/assistant/llm.ts:3:1
+Export buildContextPrompt doesn't exist in target module
+  1 | import Groq from "groq-sdk";
+  2 |
+> 3 | import { buildSystemPrompt, buildContextPrompt, buildContextualData } from "./llm-prompt";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import type { IntentResult } from "./types";
+  5 | import type { ProfileRow } from "@/types/database";
+  6 |
+
+The export buildContextPrompt was not found in module [project]/src/lib/assistant/llm-prompt.ts [app-rsc] (ecmascript).
+Did you mean to import buildContextualData?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/lib/assistant/llm.ts
+    ./src/lib/assistant/actions.ts
+
+
+    at <unknown> (Error: ./src/lib/assistant/llm.ts:3:1)
+    at <unknown> (Error: (./src/lib/assistant/llm.ts:3:1)
+⨯ ./src/lib/assistant/llm.ts:3:1
+Export buildContextPrompt doesn't exist in target module
+  [90m1 |[0m [36mimport[0m [33mGroq[0m [36mfrom[0m [32m"groq-sdk"[0m;
+  [90m2 |[0m
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { buildSystemPrompt, buildContextPrompt, buildContextualData } [36mfrom[0m [32m"./llm-prompt"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [36mtype[0m { [33mIntentResult[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m5 |[0m [36mimport[0m [36mtype[0m { [33mProfileRow[0m } [36mfrom[0m [32m"@/types/database"[0m;
+  [90m6 |[0m
+
+The export buildContextPrompt was not found in module [project]/src/lib/assistant/llm-prompt.ts [app-rsc] (ecmascript).
+Did you mean to import buildContextualData?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/lib/assistant/llm.ts
+    ./src/lib/assistant/actions.ts
+
+
+[browser] Uncaught Error: ./src/lib/assistant/llm.ts:3:1
+Export buildContextPrompt doesn't exist in target module
+  1 | import Groq from "groq-sdk";
+  2 |
+> 3 | import { buildSystemPrompt, buildContextPrompt, buildContextualData } from "./llm-prompt";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import type { IntentResult } from "./types";
+  5 | import type { ProfileRow } from "@/types/database";
+  6 |
+
+The export buildContextPrompt was not found in module [project]/src/lib/assistant/llm-prompt.ts [app-rsc] (ecmascript).
+Did you mean to import buildContextualData?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/lib/assistant/llm.ts
+    ./src/lib/assistant/actions.ts
+
+
+    at <unknown> (Error: ./src/lib/assistant/llm.ts:3:1)
+    at <unknown> (Error: (./src/lib/assistant/llm.ts:3:1)
+⨯ ./src/lib/assistant/llm.ts:3:1
+Export buildContextPrompt doesn't exist in target module
+  [90m1 |[0m [36mimport[0m [33mGroq[0m [36mfrom[0m [32m"groq-sdk"[0m;
+  [90m2 |[0m
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { buildSystemPrompt, buildContextPrompt, buildContextualData } [36mfrom[0m [32m"./llm-prompt"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [36mtype[0m { [33mIntentResult[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m5 |[0m [36mimport[0m [36mtype[0m { [33mProfileRow[0m } [36mfrom[0m [32m"@/types/database"[0m;
+  [90m6 |[0m
+
+The export buildContextPrompt was not found in module [project]/src/lib/assistant/llm-prompt.ts [app-rsc] (ecmascript).
+Did you mean to import buildContextualData?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/lib/assistant/llm.ts
+    ./src/lib/assistant/actions.ts
+
+
+[browser] Uncaught Error: ./src/lib/assistant/llm.ts:3:1
+Export buildContextPrompt doesn't exist in target module
+  1 | import Groq from "groq-sdk";
+  2 |
+> 3 | import { buildSystemPrompt, buildContextPrompt, buildContextualData } from "./llm-prompt";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import type { IntentResult } from "./types";
+  5 | import type { ProfileRow } from "@/types/database";
+  6 |
+
+The export buildContextPrompt was not found in module [project]/src/lib/assistant/llm-prompt.ts [app-rsc] (ecmascript).
+Did you mean to import buildContextualData?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/lib/assistant/llm.ts
+    ./src/lib/assistant/actions.ts
+
+
+    at <unknown> (Error: ./src/lib/assistant/llm.ts:3:1)
+    at <unknown> (Error: (./src/lib/assistant/llm.ts:3:1)
+⨯ ./src/lib/assistant/llm.ts:3:1
+Export buildContextPrompt doesn't exist in target module
+  [90m1 |[0m [36mimport[0m [33mGroq[0m [36mfrom[0m [32m"groq-sdk"[0m;
+  [90m2 |[0m
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { buildSystemPrompt, buildContextPrompt, buildContextualData } [36mfrom[0m [32m"./llm-prompt"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [36mtype[0m { [33mIntentResult[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m5 |[0m [36mimport[0m [36mtype[0m { [33mProfileRow[0m } [36mfrom[0m [32m"@/types/database"[0m;
+  [90m6 |[0m
+
+The export buildContextPrompt was not found in module [project]/src/lib/assistant/llm-prompt.ts [app-rsc] (ecmascript).
+Did you mean to import buildContextualData?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/lib/assistant/llm.ts
+    ./src/lib/assistant/actions.ts
+
+
+[browser] Uncaught Error: ./src/lib/assistant/llm.ts:3:1
+Export buildContextPrompt doesn't exist in target module
+  1 | import Groq from "groq-sdk";
+  2 |
+> 3 | import { buildSystemPrompt, buildContextPrompt, buildContextualData } from "./llm-prompt";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import type { IntentResult } from "./types";
+  5 | import type { ProfileRow } from "@/types/database";
+  6 |
+
+The export buildContextPrompt was not found in module [project]/src/lib/assistant/llm-prompt.ts [app-rsc] (ecmascript).
+Did you mean to import buildContextualData?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/lib/assistant/llm.ts
+    ./src/lib/assistant/actions.ts
+
+
+    at <unknown> (Error: ./src/lib/assistant/llm.ts:3:1)
+    at <unknown> (Error: (./src/lib/assistant/llm.ts:3:1)
+⨯ ./src/lib/assistant/llm.ts:3:1
+Export buildContextPrompt doesn't exist in target module
+  [90m1 |[0m [36mimport[0m [33mGroq[0m [36mfrom[0m [32m"groq-sdk"[0m;
+  [90m2 |[0m
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { buildSystemPrompt, buildContextPrompt, buildContextualData } [36mfrom[0m [32m"./llm-prompt"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [36mtype[0m { [33mIntentResult[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m5 |[0m [36mimport[0m [36mtype[0m { [33mProfileRow[0m } [36mfrom[0m [32m"@/types/database"[0m;
+  [90m6 |[0m
+
+The export buildContextPrompt was not found in module [project]/src/lib/assistant/llm-prompt.ts [app-rsc] (ecmascript).
+Did you mean to import buildContextualData?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/lib/assistant/llm.ts
+    ./src/lib/assistant/actions.ts
+
+
+[browser] Uncaught Error: ./src/lib/assistant/llm.ts:3:1
+Export buildContextPrompt doesn't exist in target module
+  1 | import Groq from "groq-sdk";
+  2 |
+> 3 | import { buildSystemPrompt, buildContextPrompt, buildContextualData } from "./llm-prompt";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import type { IntentResult } from "./types";
+  5 | import type { ProfileRow } from "@/types/database";
+  6 |
+
+The export buildContextPrompt was not found in module [project]/src/lib/assistant/llm-prompt.ts [app-rsc] (ecmascript).
+Did you mean to import buildContextualData?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/lib/assistant/llm.ts
+    ./src/lib/assistant/actions.ts
+
+
+    at <unknown> (Error: ./src/lib/assistant/llm.ts:3:1)
+    at <unknown> (Error: (./src/lib/assistant/llm.ts:3:1)
+⨯ ./src/lib/assistant/llm.ts:3:1
+Export buildContextPrompt doesn't exist in target module
+  [90m1 |[0m [36mimport[0m [33mGroq[0m [36mfrom[0m [32m"groq-sdk"[0m;
+  [90m2 |[0m
+[31m[1m>[0m [90m3 |[0m [36mimport[0m { buildSystemPrompt, buildContextPrompt, buildContextualData } [36mfrom[0m [32m"./llm-prompt"[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [36mtype[0m { [33mIntentResult[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m5 |[0m [36mimport[0m [36mtype[0m { [33mProfileRow[0m } [36mfrom[0m [32m"@/types/database"[0m;
+  [90m6 |[0m
+
+The export buildContextPrompt was not found in module [project]/src/lib/assistant/llm-prompt.ts [app-rsc] (ecmascript).
+Did you mean to import buildContextualData?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/lib/assistant/llm.ts
+    ./src/lib/assistant/actions.ts
+
+
+[browser] Uncaught Error: ./src/lib/assistant/llm.ts:3:1
+Export buildContextPrompt doesn't exist in target module
+  1 | import Groq from "groq-sdk";
+  2 |
+> 3 | import { buildSystemPrompt, buildContextPrompt, buildContextualData } from "./llm-prompt";
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import type { IntentResult } from "./types";
+  5 | import type { ProfileRow } from "@/types/database";
+  6 |
+
+The export buildContextPrompt was not found in module [project]/src/lib/assistant/llm-prompt.ts [app-rsc] (ecmascript).
+Did you mean to import buildContextualData?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/lib/assistant/llm.ts
+    ./src/lib/assistant/actions.ts
+
+
+    at <unknown> (Error: ./src/lib/assistant/llm.ts:3:1)
+    at <unknown> (Error: (./src/lib/assistant/llm.ts:3:1)
+Error [AuthRefreshDiscardedError]: Refresh result discarded: session state changed mid-flight (e.g., concurrent signOut)
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 409,
+  code: undefined
+}
+Error [AuthRefreshDiscardedError]: Refresh result discarded: session state changed mid-flight (e.g., concurrent signOut)
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 409,
+  code: undefined
+}
+Error [AuthRefreshDiscardedError]: Refresh result discarded: session state changed mid-flight (e.g., concurrent signOut)
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 409,
+  code: undefined
+}
+Error [AuthRefreshDiscardedError]: Refresh result discarded: session state changed mid-flight (e.g., concurrent signOut)
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 409,
+  code: undefined
+}
+[browser] Uncaught Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <RedirectErrorBoundary router={{...}}>
+      <InnerLayoutRouter url="/asistan" tree={[...]} params={{}} cacheNode={{rsc:{...}, ...}} segmentPath={[...]} ...>
+        <SegmentViewNode type="page" pagePath="(panel)/as...">
+          <SegmentTrieNode>
+          <AsistanPage>
+            <div>
+              <div>
+              <AssistantChat profile={{id:"0c6db8...", ...}}>
+                <div className="flex h-[ca...">
+                  <Card className="flex flex-...">
+                    <div data-slot="card" data-size="default" className={"group/ca..."}>
+                      <CardContent className="flex flex-...">
+                        <div data-slot="card-content" className="flex flex-...">
+                          <div className="flex items...">
+                            <Button variant="ghost" size="sm" onClick={function onClick} className="gap-1 text...">
+                              <Button data-slot="button" className={"group/bu..."} onClick={function onClick}>
++                               <button
++                                 type="button"
++                                 onClick={function}
++                                 onMouseDown={function}
++                                 onKeyDown={function}
++                                 onKeyUp={function}
++                                 onPointerDown={function}
++                                 tabIndex={0}
++                                 disabled={false}
++                                 data-slot="button"
++                                 ref={function}
++                                 className={"group/button inline-flex shrink-0 items-center justify-center border bo..."}
++                               >
+                          ...
+        ...
+      ...
+
+    at <unknown> (https://react.dev/link/hydration-mismatch)
+    at button (<anonymous>)
+    at Button (src/components/ui/button.tsx:50:5)
+    at AssistantChat (src/components/assistant/assistant-chat.tsx:176:15)
+    at AsistanPage (src\app\(panel)\asistan\page.tsx:20:7)
+  48 | }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  49 |   return (
+> 50 |     <ButtonPrimitive
+     |     ^
+  51 |       data-slot="button"
+  52 |       className={cn(buttonVariants({ variant, size, className }))}
+  53 |       {...props}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+Error [AuthApiError]: Invalid Refresh Token: Refresh Token Not Found
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 400,
+  code: 'refresh_token_not_found'
+}
+[browser] AuthApiError: Invalid Refresh Token: Refresh Token Not Found
