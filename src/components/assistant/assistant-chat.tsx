@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Bot, User, Volume2, VolumeX, Mic, MicOff } from "lucide-react";
+import { Send, Bot, User, Volume2, VolumeX, Mic, MicOff, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { askAssistant } from "@/lib/assistant/actions";
-import { getMessages } from "@/lib/assistant/messages";
+import { clearMessages, getMessages } from "@/lib/assistant/messages";
 import { AssistantSuggestions } from "./assistant-suggestions";
 import type { Message } from "@/lib/assistant/types";
 import type { ProfileRow } from "@/types/database";
@@ -63,6 +63,15 @@ const recognitionSupported =
   typeof window !== "undefined" &&
   ("SpeechRecognition" in window || "webkitSpeechRecognition" in window);
 
+function getWelcomeMessage(profile: ProfileRow): Message {
+  return {
+    id: "welcome",
+    role: "assistant",
+    content: `Merhaba ${profile.full_name.split(" ")[0]}! 👋 Ben POLA AI, size nasıl yardımcı olabilirim?`,
+    timestamp: new Date(),
+  };
+}
+
 export function AssistantChat({ profile }: AssistantChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -70,20 +79,15 @@ export function AssistantChat({ profile }: AssistantChatProps) {
   const [ttsEnabled, setTtsEnabled] = useState(false);
   const [listening, setListening] = useState(false);
   const [historyLoaded, setHistoryLoaded] = useState(false);
+  const [clearing, setClearing] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
+  const hasPersistedMessages = messages.some((message) => message.id !== "welcome");
 
   useEffect(() => {
     getMessages(profile).then((msgs) => {
       if (msgs.length === 0) {
-        msgs = [
-          {
-            id: "welcome",
-            role: "assistant",
-            content: `Merhaba ${profile.full_name.split(" ")[0]}! 👋 Ben POLA AI, size nasıl yardımcı olabilirim?`,
-            timestamp: new Date(),
-          },
-        ];
+        msgs = [getWelcomeMessage(profile)];
       }
       setMessages(msgs);
       setHistoryLoaded(true);
@@ -116,7 +120,7 @@ export function AssistantChat({ profile }: AssistantChatProps) {
     setPending(true);
 
     try {
-      const result = await askAssistant(q, profile);
+      const result = await askAssistant(q);
 
       const assistantMsg: Message = {
         id: crypto.randomUUID(),
@@ -167,11 +171,40 @@ export function AssistantChat({ profile }: AssistantChatProps) {
     setListening(false);
   }
 
+  async function handleClearMessages() {
+    if (pending || clearing || !hasPersistedMessages) return;
+    const confirmed = window.confirm("POLA AI sohbet geçmişinizi silmek istiyor musunuz?");
+    if (!confirmed) return;
+
+    setClearing(true);
+    try {
+      const result = await clearMessages();
+      if (result.success) {
+        setMessages([getWelcomeMessage(profile)]);
+        window.speechSynthesis?.cancel();
+      }
+    } finally {
+      setClearing(false);
+    }
+  }
+
   return (
     <div className="flex h-[calc(100vh-10rem)] flex-col">
       <Card className="flex flex-1 flex-col overflow-hidden">
         <CardContent className="flex flex-1 flex-col p-0">
           <div className="flex items-center justify-end gap-2 border-b border-[#e5e7eb] px-4 py-2">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handleClearMessages}
+              disabled={!historyLoaded || pending || clearing || !hasPersistedMessages}
+              className="gap-1 text-xs text-[#6b7280]"
+              title="Sohbet geçmişini sil"
+            >
+              <Trash2 className="size-3.5" />
+              {clearing ? "Siliniyor" : "Sohbeti Temizle"}
+            </Button>
             {speechSupported && (
               <Button
                 variant="ghost"

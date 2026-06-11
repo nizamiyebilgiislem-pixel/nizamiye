@@ -1,5 +1,6 @@
 import type { ProfileRow } from "@/types/database";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { getAssistantVisibleClasses, getAssistantVisibleClassIds } from "./access";
 import { executeIntent } from "./queries";
 import { getWeather } from "./weather";
 import { getPrayerTimes } from "./prayer-times";
@@ -60,11 +61,9 @@ VERITABANI TABLOLARI (referans):
 - library_loans: id, book_id, student_id, due_date, status (kitap odunc)`;
 }
 
-async function getClassesData(): Promise<string> {
+async function getClassesData(profile: ProfileRow): Promise<string> {
   const supabase = createSupabaseAdminClient();
-  const { data: classes } = await supabase
-    .from("classes")
-    .select("id, name, class_teacher_id");
+  const classes = await getAssistantVisibleClasses(profile);
 
   if (!classes || classes.length === 0) return "Sınıf bulunamadı.";
 
@@ -96,27 +95,42 @@ async function getClassesData(): Promise<string> {
     .join("\n");
 }
 
-async function getDepartmentsData(): Promise<string> {
+async function getDepartmentsData(profile: ProfileRow): Promise<string> {
   const supabase = createSupabaseAdminClient();
-  const { data } = await supabase.from("departments").select("name").order("name");
+  let query = supabase.from("departments").select("id, name").order("name");
+
+  if (profile.role !== "admin" && profile.role !== "genel_mudur") {
+    if (!profile.department_id) return "Bölüm bulunamadı.";
+    query = query.eq("id", profile.department_id);
+  }
+
+  const { data } = await query;
   return (data ?? []).map((d) => `- ${d.name}`).join("\n");
 }
 
-async function getRecentStudents(): Promise<string> {
+async function getRecentStudents(profile: ProfileRow): Promise<string> {
   const supabase = createSupabaseAdminClient();
-  const { data } = await supabase
+  const visibleClassIds = await getAssistantVisibleClassIds(profile);
+
+  if (visibleClassIds?.length === 0) return "Son kayıt yok.";
+
+  let query = supabase
     .from("students")
     .select("full_name, course_class_id")
     .order("created_at", { ascending: false })
     .limit(5);
 
+  if (visibleClassIds) query = query.in("course_class_id", visibleClassIds);
+
+  const { data } = await query;
+
   if (!data || data.length === 0) return "Son kayıt yok.";
 
-  const classIds = [...new Set(data.map((s) => s.course_class_id).filter(Boolean) as string[])];
+  const studentClassIds = [...new Set(data.map((s) => s.course_class_id).filter(Boolean) as string[])];
   const { data: classes } = await supabase
     .from("classes")
     .select("id, name")
-    .in("id", classIds);
+    .in("id", studentClassIds);
 
   const classNameMap = new Map(classes?.map((c) => [c.id, c.name]) ?? []);
   return data
@@ -124,10 +138,16 @@ async function getRecentStudents(): Promise<string> {
     .join("\n");
 }
 
-async function getTodayScheduleSummary(): Promise<string> {
+async function getTodayScheduleSummary(profile: ProfileRow): Promise<string> {
   const supabase = createSupabaseAdminClient();
+  const visibleClassIds = await getAssistantVisibleClassIds(profile);
 
-  const { data: classCourses } = await supabase.from("class_courses").select("id, course_id, class_id");
+  if (visibleClassIds?.length === 0) return "Ders programı verisi yok.";
+
+  let classCourseQuery = supabase.from("class_courses").select("id, course_id, class_id");
+  if (visibleClassIds) classCourseQuery = classCourseQuery.in("class_id", visibleClassIds);
+
+  const { data: classCourses } = await classCourseQuery;
   if (!classCourses || classCourses.length === 0) return "Ders programı verisi yok.";
 
   const courseIds = [...new Set(classCourses.map((cc) => cc.course_id))];
@@ -170,21 +190,40 @@ async function getTodayScheduleSummary(): Promise<string> {
   return lines.slice(0, 30).join("\n") + (lines.length > 30 ? "\n..." : "");
 }
 
-async function getTodayBirthdays(): Promise<string> {
+async function getTodayBirthdays(profile: ProfileRow): Promise<string> {
   const supabase = createSupabaseAdminClient();
+  const classIds = await getAssistantVisibleClassIds(profile);
   const today = new Date();
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const day = String(today.getDate()).padStart(2, "0");
 
-  const { data: students } = await supabase
+  let studentQuery = supabase
     .from("students")
     .select("full_name, course_class_id")
     .filter("birth_date", "like", `%-${month}-${day}`);
 
-  const { data: profiles } = await supabase
+  if (classIds?.length === 0) {
+    studentQuery = studentQuery.eq("course_class_id", "00000000-0000-0000-0000-000000000000");
+  } else if (classIds) {
+    studentQuery = studentQuery.in("course_class_id", classIds);
+  }
+
+  const { data: students } = await studentQuery;
+
+  let profileQuery = supabase
     .from("profiles")
     .select("full_name")
     .filter("birth_date", "like", `%-${month}-${day}`);
+
+  if (profile.role !== "admin" && profile.role !== "genel_mudur") {
+    if (!profile.department_id) {
+      profileQuery = profileQuery.eq("id", profile.id);
+    } else {
+      profileQuery = profileQuery.eq("department_id", profile.department_id);
+    }
+  }
+
+  const { data: profiles } = await profileQuery;
 
   const parts: string[] = [];
   if (students && students.length > 0) {
@@ -215,15 +254,15 @@ export async function buildContextualData(profile: ProfileRow): Promise<string> 
     executeIntent("library_overdue", profile, {}),
     executeIntent("live_session_today", profile, {}).catch(() => ({ answer: "" })),
     executeIntent("announcements_active", profile, {}),
-    getClassesData(),
-    getDepartmentsData(),
-    getRecentStudents(),
-    getTodayScheduleSummary(),
+    getClassesData(profile),
+    getDepartmentsData(profile),
+    getRecentStudents(profile),
+    getTodayScheduleSummary(profile),
     getWeather(),
     getPrayerTimes(),
     getExchangeRates(),
     getTodayInfo(),
-    getTodayBirthdays(),
+    getTodayBirthdays(profile),
   ]);
 
   const quote = getDailyQuote();

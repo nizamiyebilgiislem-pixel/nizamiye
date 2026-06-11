@@ -1,5 +1,6 @@
 import type { ProfileRow } from "@/types/database";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { getAssistantVisibleClassIds } from "./access";
 import type { IntentId, IntentResult } from "./types";
 import { getWeather } from "./weather";
 import { getPrayerTimes } from "./prayer-times";
@@ -10,14 +11,23 @@ function getTurkeyDate(): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Istanbul" }).format(new Date());
 }
 
-export async function handleAttendanceToday(_profile: ProfileRow): Promise<IntentResult> {
+export async function handleAttendanceToday(profile: ProfileRow): Promise<IntentResult> {
   const supabase = createSupabaseAdminClient();
   const today = getTurkeyDate();
+  const classIds = await getAssistantVisibleClassIds(profile);
 
-  const { count } = await supabase
+  if (classIds?.length === 0) {
+    return { answer: "Bu işlem için yetkiniz bulunmamaktadır. Yetki işlemleri için Emin Nusret Polat ile iletişime geçebilirsiniz." };
+  }
+
+  let query = supabase
     .from("attendance_sessions")
     .select("*", { count: "exact", head: true })
     .eq("attendance_date", today);
+
+  if (classIds) query = query.in("class_id", classIds);
+
+  const { count } = await query;
 
   if (count && count > 0) {
     return { answer: `✅ Bugün ${count} sınıfta yoklama alınmış.` };
@@ -31,12 +41,17 @@ export async function handleAttendanceClass(profile: ProfileRow, className: stri
 
   const { data: cls } = await supabase
     .from("classes")
-    .select("id, name")
+    .select("id, name, department_id, class_teacher_id")
     .ilike("name", `%${className}%`)
     .maybeSingle();
 
   if (!cls) {
     return { answer: `"${className}" adında bir sınıf bulamadım.` };
+  }
+
+  const classIds = await getAssistantVisibleClassIds(profile);
+  if (classIds && !classIds.includes(cls.id)) {
+    return { answer: "Bu işlem için yetkiniz bulunmamaktadır. Yetki işlemleri için Emin Nusret Polat ile iletişime geçebilirsiniz." };
   }
 
   const { count } = await supabase
@@ -63,15 +78,24 @@ export async function handleInfirmaryToday(profile: ProfileRow): Promise<IntentR
   return { answer: "❌ Bugün henüz revir kaydı yok." };
 }
 
-export async function handleStudentNewToday(_profile: ProfileRow): Promise<IntentResult> {
+export async function handleStudentNewToday(profile: ProfileRow): Promise<IntentResult> {
   const supabase = createSupabaseAdminClient();
   const today = getTurkeyDate();
+  const classIds = await getAssistantVisibleClassIds(profile);
 
-  const { count } = await supabase
+  if (classIds?.length === 0) {
+    return { answer: "Bu işlem için yetkiniz bulunmamaktadır. Yetki işlemleri için Emin Nusret Polat ile iletişime geçebilirsiniz." };
+  }
+
+  let query = supabase
     .from("students")
     .select("*", { count: "exact", head: true })
     .gte("created_at", `${today}T00:00:00`)
     .lte("created_at", `${today}T23:59:59`);
+
+  if (classIds) query = query.in("course_class_id", classIds);
+
+  const { count } = await query;
 
   if (count && count > 0) {
     return { answer: `✅ Bugün ${count} yeni öğrenci kaydı yapılmış.` };
@@ -90,6 +114,11 @@ export async function handleScheduleClass(profile: ProfileRow, className: string
 
   if (!cls) {
     return { answer: `"${className}" adında bir sınıf bulamadım.` };
+  }
+
+  const visibleClassIds = await getAssistantVisibleClassIds(profile);
+  if (visibleClassIds && !visibleClassIds.includes(cls.id)) {
+    return { answer: "Bu işlem için yetkiniz bulunmamaktadır. Yetki işlemleri için Emin Nusret Polat ile iletişime geçebilirsiniz." };
   }
 
   const dayNames: Record<number, string> = {
@@ -168,6 +197,10 @@ export async function handleLiveSessionToday(profile: ProfileRow): Promise<Inten
 }
 
 export async function handleLibraryOverdue(_profile: ProfileRow): Promise<IntentResult> {
+  if (!["admin", "genel_mudur", "kutuphane_gorevlisi", "bolum_muduru", "hoca", "destek_birim_muduru"].includes(_profile.role)) {
+    return { answer: "Bu işlem için yetkiniz bulunmamaktadır. Yetki işlemleri için Emin Nusret Polat ile iletişime geçebilirsiniz." };
+  }
+
   const { getLibraryDashboardData } = await import("@/lib/library/queries");
   const data = await getLibraryDashboardData();
 

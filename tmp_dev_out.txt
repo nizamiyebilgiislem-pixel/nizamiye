@@ -786,3 +786,18 @@
 [assistant:context] collected in 1829ms
  POST /asistan 200 in 3.2s (next.js: 3ms, application-code: 3.2s)
   └─ ƒ askAssistant("yasin miroğlu iletişim numarası nedir", {"address":null,"auth_user_id":"07f44917-60c1-4409-8c66-a0d111292694","biography":null,"...":"14 items not stringified"}) in 3180ms src/lib/assistant/actions.ts
+                                            ✓ Compiled in 189ms
+✓ Compiled in 16ms
+✓ Compiled in 114ms
+✓ Compiled in 118ms
+✓ Compiled in 108ms
+✓ Compiled in 107ms
+✓ Compiled in 429ms
+ GET / 307 in 224ms (next.js: 96ms, application-code: 128ms)
+ GET /dashboard 307 in 3.0s (next.js: 184ms, application-code: 2.8s)
+ GET /login 200 in 803ms (next.js: 194ms, application-code: 610ms)
+ GET /dashboard 200 in 4.1s (next.js: 4ms, application-code: 4.1s)
+ GET /asistan 200 in 319ms (next.js: 141ms, application-code: 179ms)
+ GET /dashboard 200 in 4.8s (next.js: 4ms, application-code: 4.8s)
+ GET /login 200 in 71ms (next.js: 4ms, application-code: 67ms)
+ GET /login 200 in 37ms (next.js: 3ms, application-code: 33ms)

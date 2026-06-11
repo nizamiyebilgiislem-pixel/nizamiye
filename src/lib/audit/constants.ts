@@ -41,6 +41,8 @@ export const auditActionLabels: Record<string, string> = {
   guidance_activity_completed: "Etkinlik tamamlandı",
   announcement_created: "Duyuru oluşturuldu",
   announcement_updated: "Duyuru güncellendi",
+  assistant_question_asked: "POLA AI sorgusu yapıldı",
+  assistant_history_cleared: "POLA AI sohbet geçmişi silindi",
 };
 
 export const auditActionOptions = [
@@ -72,6 +74,7 @@ export const auditEntityTypeLabels: Record<string, string> = {
   guidance_activity: "Etkinlik",
   guidance_activity_participant: "Etkinlik Katılımcısı",
   announcement: "Duyuru",
+  assistant: "POLA AI",
 };
 
 export const auditEntityTypeOptions = [

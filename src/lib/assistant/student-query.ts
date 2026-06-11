@@ -6,6 +6,7 @@ import type {
   StudentProfileNoteRow,
 } from "@/types/database";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { canViewAssistantStudent, getAssistantVisibleClassIds } from "./access";
 
 type DormitoryAssignmentWithDormitory = DormitoryAssignmentRow & {
   dormitory: { name: string } | null;
@@ -40,20 +41,44 @@ export async function getStudentFullReport(
     .ilike("full_name", `%${studentName}%`)
     .limit(5);
 
-  if (!students || students.length === 0) {
-    const { data: allStudents } = await supabase
+  const visibleStudents = [];
+  for (const student of students ?? []) {
+    if (await canViewAssistantStudent(profile, student)) {
+      visibleStudents.push(student);
+    }
+  }
+
+  if (visibleStudents.length === 0) {
+    const visibleClassIds = await getAssistantVisibleClassIds(profile);
+    let fallbackQuery = supabase
       .from("students")
       .select("full_name, course_class_id")
+      .eq("status", "active")
       .limit(20);
+
+    if (visibleClassIds?.length === 0) {
+      return {
+        found: false,
+        summary: "Bu işlem için yetkiniz bulunmamaktadır. Yetki işlemleri için Emin Nusret Polat ile iletişime geçebilirsiniz.",
+      };
+    }
+
+    if (visibleClassIds) {
+      fallbackQuery = fallbackQuery.in("course_class_id", visibleClassIds);
+    }
+
+    const { data: allStudents } = await fallbackQuery;
 
     const names = (allStudents ?? []).map((s) => s.full_name).slice(0, 10);
     return {
       found: false,
-      summary: `"${studentName}" adında bir öğrenci bulamadım. Kayıtlı öğrencilerden bazıları:\n${names.map((n) => `  • ${n}`).join("\n")}`,
+      summary: students && students.length > 0
+        ? "Bu talebe için yetkiniz bulunmamaktadır. Yetki işlemleri için Emin Nusret Polat ile iletişime geçebilirsiniz."
+        : `"${studentName}" adında bir öğrenci bulamadım. Yetki alanınızdaki talebelerden bazıları:\n${names.map((n) => `  • ${n}`).join("\n")}`,
     };
   }
 
-  const student = students[0];
+  const student = visibleStudents[0];
   const lines: string[] = [
     `=== ${student.full_name} - KAPSAMLI TALEBE RAPORU ===`,
     `Öğrenci No: ${student.identity_number ?? "Belirtilmemiş"}`,
