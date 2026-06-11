@@ -23,82 +23,104 @@ const sessionSelectFields = `
 `;
 
 export async function getSessions(profile: ProfileRow): Promise<SessionRowWithRelations[]> {
-  const supabase = createSupabaseAdminClient();
+  try {
+    const supabase = createSupabaseAdminClient();
 
-  let query = supabase
-    .from("live_sessions")
-    .select(sessionSelectFields)
-    .order("start_time", { ascending: false });
+    let query = supabase
+      .from("live_sessions")
+      .select(sessionSelectFields)
+      .order("start_time", { ascending: false });
 
-  if (!["admin", "genel_mudur"].includes(profile.role)) {
-    if (profile.role === "bolum_muduru" && profile.department_id) {
-      query = query.or(
-        `department_id.eq.${profile.department_id},created_by.eq.${profile.id}`,
-      );
-    } else {
-      query = query.or(
-        `created_by.eq.${profile.id},live_session_participants.profile_id.eq.${profile.id}`,
-      );
+    if (!["admin", "genel_mudur"].includes(profile.role)) {
+      if (profile.role === "bolum_muduru" && profile.department_id) {
+        query = query.eq("department_id", profile.department_id);
+      } else {
+        query = query.eq("created_by", profile.id);
+      }
     }
-  }
 
-  const { data } = await query;
-  return ((data ?? []) as unknown as SessionRowWithRelations[]).map(
-    (s) => ({
-      ...s,
-      participant_count: s.participants?.length ?? 0,
-    }),
-  );
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("getSessions error:", error);
+      return [];
+    }
+
+    return ((data ?? []) as unknown as SessionRowWithRelations[]).map(
+      (s) => ({
+        ...s,
+        participant_count: s.participants?.length ?? 0,
+      }),
+    );
+  } catch (e) {
+    console.error("getSessions exception:", e);
+    return [];
+  }
 }
 
 export async function getSessionById(id: string) {
-  const supabase = createSupabaseAdminClient();
+  try {
+    const supabase = createSupabaseAdminClient();
 
-  const { data: session } = await supabase
-    .from("live_sessions")
-    .select(sessionSelectFields)
-    .eq("id", id)
-    .single();
+    const { data: session, error } = await supabase
+      .from("live_sessions")
+      .select(sessionSelectFields)
+      .eq("id", id)
+      .single();
 
-  if (!session) return null;
+    if (error || !session) {
+      console.error("getSessionById error:", error);
+      return null;
+    }
 
-  return {
-    ...(session as unknown as SessionRowWithRelations),
-    participant_count: (session as unknown as SessionRowWithRelations).participants?.length ?? 0,
-  } as SessionRowWithRelations;
+    return {
+      ...(session as unknown as SessionRowWithRelations),
+      participant_count: (session as unknown as SessionRowWithRelations).participants?.length ?? 0,
+    } as SessionRowWithRelations;
+  } catch (e) {
+    console.error("getSessionById exception:", e);
+    return null;
+  }
 }
 
 export async function getUpcomingSessions(profile: ProfileRow) {
-  const supabase = createSupabaseAdminClient();
-  const now = new Date().toISOString();
+  try {
+    const supabase = createSupabaseAdminClient();
+    const now = new Date().toISOString();
 
-  let query = supabase
-    .from("live_sessions")
-    .select(sessionSelectFields)
-    .gte("start_time", now)
-    .neq("status", "cancelled")
-    .order("start_time", { ascending: true })
-    .limit(10);
+    let query = supabase
+      .from("live_sessions")
+      .select(sessionSelectFields)
+      .gte("start_time", now)
+      .neq("status", "cancelled")
+      .order("start_time", { ascending: true })
+      .limit(10);
 
-  if (!["admin", "genel_mudur"].includes(profile.role)) {
-    if (profile.role === "bolum_muduru" && profile.department_id) {
-      query = query.or(
-        `department_id.eq.${profile.department_id},created_by.eq.${profile.id}`,
-      );
-    } else {
-      query = query.or(
-        `created_by.eq.${profile.id},live_session_participants.profile_id.eq.${profile.id}`,
-      );
+    if (!["admin", "genel_mudur"].includes(profile.role)) {
+      if (profile.role === "bolum_muduru" && profile.department_id) {
+        query = query.eq("department_id", profile.department_id);
+      } else {
+        query = query.eq("created_by", profile.id);
+      }
     }
-  }
 
-  const { data } = await query;
-  return ((data ?? []) as unknown as SessionRowWithRelations[]).map(
-    (s) => ({
-      ...s,
-      participant_count: s.participants?.length ?? 0,
-    }),
-  );
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("getUpcomingSessions error:", error);
+      return [];
+    }
+
+    return ((data ?? []) as unknown as SessionRowWithRelations[]).map(
+      (s) => ({
+        ...s,
+        participant_count: s.participants?.length ?? 0,
+      }),
+    );
+  } catch (e) {
+    console.error("getUpcomingSessions exception:", e);
+    return [];
+  }
 }
 
 export async function getSessionCounts(profile: ProfileRow) {
@@ -119,34 +141,44 @@ export async function getSessionCounts(profile: ProfileRow) {
 }
 
 export async function getLiveSessionDashboardData(profile: ProfileRow) {
-  const supabase = createSupabaseAdminClient();
-  const now = new Date().toISOString();
+  try {
+    const supabase = createSupabaseAdminClient();
+    const now = new Date().toISOString();
 
-  let query = supabase
-    .from("live_sessions")
-    .select("id, title, start_time, status, session_type, room_name, created_by", {
-      count: "exact",
-    })
-    .gte("start_time", now)
-    .neq("status", "cancelled")
-    .order("start_time", { ascending: true })
-    .limit(5);
+    let query = supabase
+      .from("live_sessions")
+      .select("id, title, start_time, status, session_type, room_name, created_by", {
+        count: "exact",
+      })
+      .gte("start_time", now)
+      .neq("status", "cancelled")
+      .order("start_time", { ascending: true })
+      .limit(5);
 
-  if (!["admin", "genel_mudur"].includes(profile.role)) {
-    if (profile.role === "bolum_muduru" && profile.department_id) {
-      query = query.eq("department_id", profile.department_id);
-    } else {
-      query = query.eq("created_by", profile.id);
+    if (!["admin", "genel_mudur"].includes(profile.role)) {
+      if (profile.role === "bolum_muduru" && profile.department_id) {
+        query = query.eq("department_id", profile.department_id);
+      } else {
+        query = query.eq("created_by", profile.id);
+      }
     }
+
+    const { data, count, error } = await query;
+
+    if (error) {
+      console.error("getLiveSessionDashboardData error:", error);
+      return { upcomingSessions: [], upcomingCount: 0 };
+    }
+
+    return {
+      upcomingSessions: (data ?? []) as Pick<
+        LiveSessionRow,
+        "id" | "title" | "start_time" | "status" | "session_type" | "room_name" | "created_by"
+      >[],
+      upcomingCount: count ?? 0,
+    };
+  } catch (e) {
+    console.error("getLiveSessionDashboardData exception:", e);
+    return { upcomingSessions: [], upcomingCount: 0 };
   }
-
-  const { data, count } = await query;
-
-  return {
-    upcomingSessions: (data ?? []) as Pick<
-      LiveSessionRow,
-      "id" | "title" | "start_time" | "status" | "session_type" | "room_name" | "created_by"
-    >[],
-    upcomingCount: count ?? 0,
-  };
 }

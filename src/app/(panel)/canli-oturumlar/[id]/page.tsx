@@ -49,7 +49,6 @@ export default async function OturumDetayPage({ params }: { params: Promise<{ id
   const isCancellable = session.status !== "completed" && session.status !== "cancelled";
 
   const sc = statusColors[session.status] ?? "";
-  const jitsiUrl = `https://meet.jit.si/${session.room_name}`;
 
   return (
     <div className="space-y-6">
@@ -92,13 +91,13 @@ export default async function OturumDetayPage({ params }: { params: Promise<{ id
                 <InfoRow
                   icon={<CalendarDays className="size-3.5" />}
                   label="Başlangıç"
-                  value={new Date(session.start_time).toLocaleDateString("tr-TR", { dateStyle: "long", timeStyle: "short" })}
+                  value={new Date(session.start_time).toLocaleString("tr-TR", { dateStyle: "long", timeStyle: "short" })}
                 />
                 {session.end_time && (
                   <InfoRow
                     icon={<CalendarDays className="size-3.5" />}
                     label="Bitiş"
-                    value={new Date(session.end_time).toLocaleDateString("tr-TR", { dateStyle: "long", timeStyle: "short" })}
+                    value={new Date(session.end_time).toLocaleString("tr-TR", { dateStyle: "long", timeStyle: "short" })}
                   />
                 )}
                 <InfoRow
@@ -158,14 +157,12 @@ export default async function OturumDetayPage({ params }: { params: Promise<{ id
           {(session.status === "planned" || session.status === "active") && (
             <Card className="border-emerald-200 bg-emerald-50">
               <CardContent className="p-4">
-                <a
-                  href={jitsiUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href={`/canli-oturumlar/${id}/katil`}
                   className={cn(buttonVariants({ className: "w-full" }))}
                 >
                   <ExternalLink className="mr-1.5 size-4" /> Toplantıya Katıl
-                </a>
+                </Link>
                 <p className="mt-2 text-center text-[10px] text-emerald-700">
                   Oda: {session.room_name}
                 </p>

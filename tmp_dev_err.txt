@@ -1,0 +1,110 @@
+⨯ TypeError: Invalid option : timeStyle
+    at Date1.toLocaleDateString (<anonymous>)
+    at <unknown> (src\app\(panel)\canli-oturumlar\page.tsx:146:53)
+    at Array.map (<anonymous>)
+    at CanliOturumlarPage (src\app\(panel)\canli-oturumlar\page.tsx:120:29)
+  144 | ...           )}
+  145 | ...           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] tex...
+> 146 | ...             <span>{new Date(s.start_time).toLocaleDateString("tr-TR", { dateStyle: "s...
+      |                                               ^
+  147 | ...             {s.creator && <span>Oluşturan: {s.creator.full_name}</span>}
+  148 | ...             {s.department && <span className="rounded bg-muted/50 px-1 py-0.5">{s.dep...
+  149 | ...             <span>{s.participant_count}/{s.max_participants} katılımcı</span> {
+  digest: '1809534826'
+}
+[browser] TypeError: Invalid option : timeStyle
+    at Date1.toLocaleDateString (<anonymous>:1:33)
+    at <anonymous> (src\app\(panel)\canli-oturumlar\page.tsx:146:53)
+    at Array.map (<anonymous>:1:18)
+    at CanliOturumlarPage (src\app\(panel)\canli-oturumlar\page.tsx:120:29)
+  144 | ...           )}
+  145 | ...           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] tex...
+> 146 | ...             <span>{new Date(s.start_time).toLocaleDateString("tr-TR", { dateStyle: "s...
+      |                                               ^
+  147 | ...             {s.creator && <span>Oluşturan: {s.creator.full_name}</span>}
+  148 | ...             {s.department && <span className="rounded bg-muted/50 px-1 py-0.5">{s.dep...
+  149 | ...             <span>{s.participant_count}/{s.max_participants} katılımcı</span> (src/app/(panel)
+[browser] TypeError: Invalid option : timeStyle
+    at Date1.toLocaleDateString (<anonymous>:1:33)
+    at <anonymous> (src\app\(panel)\canli-oturumlar\page.tsx:146:53)
+    at Array.map (<anonymous>:1:18)
+    at CanliOturumlarPage (src\app\(panel)\canli-oturumlar\page.tsx:120:29)
+  144 | ...           )}
+  145 | ...           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] tex...
+> 146 | ...             <span>{new Date(s.start_time).toLocaleDateString("tr-TR", { dateStyle: "s...
+      |                                               ^
+  147 | ...             {s.creator && <span>Oluşturan: {s.creator.full_name}</span>}
+  148 | ...             {s.department && <span className="rounded bg-muted/50 px-1 py-0.5">{s.dep...
+  149 | ...             <span>{s.participant_count}/{s.max_participants} katılımcı</span> (src/app/(panel)
+[browser] TypeError: Invalid option : timeStyle
+    at Date1.toLocaleDateString (<anonymous>:1:33)
+    at <anonymous> (src\app\(panel)\canli-oturumlar\page.tsx:146:53)
+    at Array.map (<anonymous>:1:18)
+    at CanliOturumlarPage (src\app\(panel)\canli-oturumlar\page.tsx:120:29)
+  144 | ...           )}
+  145 | ...           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] tex...
+> 146 | ...             <span>{new Date(s.start_time).toLocaleDateString("tr-TR", { dateStyle: "s...
+      |                                               ^
+  147 | ...             {s.creator && <span>Oluşturan: {s.creator.full_name}</span>}
+  148 | ...             {s.department && <span className="rounded bg-muted/50 px-1 py-0.5">{s.dep...
+  149 | ...             <span>{s.participant_count}/{s.max_participants} katılımcı</span> (src/app/(panel)
+[browser] TypeError: Invalid option : timeStyle
+    at Date1.toLocaleDateString (<anonymous>:1:33)
+    at <anonymous> (src\app\(panel)\canli-oturumlar\page.tsx:146:53)
+    at Array.map (<anonymous>:1:18)
+    at CanliOturumlarPage (src\app\(panel)\canli-oturumlar\page.tsx:120:29)
+  144 | ...           )}
+  145 | ...           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] tex...
+> 146 | ...             <span>{new Date(s.start_time).toLocaleDateString("tr-TR", { dateStyle: "s...
+      |                                               ^
+  147 | ...             {s.creator && <span>Oluşturan: {s.creator.full_name}</span>}
+  148 | ...             {s.department && <span className="rounded bg-muted/50 px-1 py-0.5">{s.dep...
+  149 | ...             <span>{s.participant_count}/{s.max_participants} katılımcı</span> (src/app/(panel)
+[browser] TypeError: Invalid option : timeStyle
+    at Date1.toLocaleDateString (<anonymous>:1:33)
+    at <anonymous> (src\app\(panel)\canli-oturumlar\page.tsx:146:53)
+    at Array.map (<anonymous>:1:18)
+    at CanliOturumlarPage (src\app\(panel)\canli-oturumlar\page.tsx:120:29)
+  144 | ...           )}
+  145 | ...           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] tex...
+> 146 | ...             <span>{new Date(s.start_time).toLocaleDateString("tr-TR", { dateStyle: "s...
+      |                                               ^
+  147 | ...             {s.creator && <span>Oluşturan: {s.creator.full_name}</span>}
+  148 | ...             {s.department && <span className="rounded bg-muted/50 px-1 py-0.5">{s.dep...
+  149 | ...             <span>{s.participant_count}/{s.max_participants} katılımcı</span> (src/app/(panel)
+[browser] TypeError: Invalid option : timeStyle
+    at Date1.toLocaleDateString (<anonymous>:1:33)
+    at <anonymous> (src\app\(panel)\canli-oturumlar\page.tsx:146:53)
+    at Array.map (<anonymous>:1:18)
+    at CanliOturumlarPage (src\app\(panel)\canli-oturumlar\page.tsx:120:29)
+  144 | ...           )}
+  145 | ...           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] tex...
+> 146 | ...             <span>{new Date(s.start_time).toLocaleDateString("tr-TR", { dateStyle: "s...
+      |                                               ^
+  147 | ...             {s.creator && <span>Oluşturan: {s.creator.full_name}</span>}
+  148 | ...             {s.department && <span className="rounded bg-muted/50 px-1 py-0.5">{s.dep...
+  149 | ...             <span>{s.participant_count}/{s.max_participants} katılımcı</span> (src/app/(panel)
+[browser] TypeError: Invalid option : timeStyle
+    at Date1.toLocaleDateString (<anonymous>:1:33)
+    at <anonymous> (src\app\(panel)\canli-oturumlar\page.tsx:146:53)
+    at Array.map (<anonymous>:1:18)
+    at CanliOturumlarPage (src\app\(panel)\canli-oturumlar\page.tsx:120:29)
+  144 | ...           )}
+  145 | ...           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] tex...
+> 146 | ...             <span>{new Date(s.start_time).toLocaleDateString("tr-TR", { dateStyle: "s...
+      |                                               ^
+  147 | ...             {s.creator && <span>Oluşturan: {s.creator.full_name}</span>}
+  148 | ...             {s.department && <span className="rounded bg-muted/50 px-1 py-0.5">{s.dep...
+  149 | ...             <span>{s.participant_count}/{s.max_participants} katılımcı</span> (src/app/(panel)
+[browser] TypeError: Invalid option : timeStyle
+    at Date1.toLocaleDateString (<anonymous>:1:33)
+    at <anonymous> (src\app\(panel)\canli-oturumlar\page.tsx:146:53)
+    at Array.map (<anonymous>:1:18)
+    at CanliOturumlarPage (src\app\(panel)\canli-oturumlar\page.tsx:120:29)
+  144 | ...           )}
+  145 | ...           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] tex...
+> 146 | ...             <span>{new Date(s.start_time).toLocaleDateString("tr-TR", { dateStyle: "s...
+      |                                               ^
+  147 | ...             {s.creator && <span>Oluşturan: {s.creator.full_name}</span>}
+  148 | ...             {s.department && <span className="rounded bg-muted/50 px-1 py-0.5">{s.dep...
+  149 | ...             <span>{s.participant_count}/{s.max_participants} katılımcı</span> (src/app/(panel)

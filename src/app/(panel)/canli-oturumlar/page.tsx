@@ -143,7 +143,7 @@ export default async function CanliOturumlarPage({
                       <p className="line-clamp-1 text-sm text-muted-foreground">{s.description}</p>
                     )}
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-                      <span>{new Date(s.start_time).toLocaleDateString("tr-TR", { dateStyle: "short", timeStyle: "short" })}</span>
+                      <span>{new Date(s.start_time).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })}</span>
                       {s.creator && <span>Oluşturan: {s.creator.full_name}</span>}
                       {s.department && <span className="rounded bg-muted/50 px-1 py-0.5">{s.department.name}</span>}
                       <span>{s.participant_count}/{s.max_participants} katılımcı</span>

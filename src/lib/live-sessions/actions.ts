@@ -319,6 +319,20 @@ export async function joinSessionAction(_previousState: unknown, formData: FormD
   return { success: true };
 }
 
+export async function markAttendedAction(sessionId: string, profileId: string) {
+  const supabase = createSupabaseAdminClient();
+
+  const { error } = await supabase
+    .from("live_session_participants")
+    .update({ status: "attended" })
+    .eq("session_id", sessionId)
+    .eq("profile_id", profileId);
+
+  if (error) {
+    console.error("markAttended error:", error);
+  }
+}
+
 export async function leaveSessionAction(_previousState: unknown, formData: FormData) {
   const { profile } = await requireAuth();
 

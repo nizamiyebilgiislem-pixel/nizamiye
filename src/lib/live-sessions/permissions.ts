@@ -27,3 +27,10 @@ export function canDeleteSession(profile: ProfileRow, session: LiveSessionRow) {
 export function canJoinSession(profile: ProfileRow) {
   return sessionCreatorRoles.includes(profile.role as typeof sessionCreatorRoles[number]);
 }
+
+export function canViewMeeting(profile: ProfileRow, session: LiveSessionRow, participantIds: string[]) {
+  if (["admin", "genel_mudur"].includes(profile.role)) return true;
+  if (session.created_by === profile.id) return true;
+  if (participantIds.includes(profile.id)) return true;
+  return false;
+}
