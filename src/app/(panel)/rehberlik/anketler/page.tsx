@@ -9,6 +9,7 @@ import { closeSurveyAction } from "@/lib/guidance/actions";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { cn } from "@/lib/utils";
 
 const statusLabels: Record<string, string> = { draft: "Taslak", active: "Aktif", closed: "Kapalı" };
@@ -62,7 +63,7 @@ export default async function AnketlerPage() {
                           <Link href={`/rehberlik/anketler/${s.id}`} className="text-xs font-medium text-[#093657] hover:underline">Detay</Link>
                           {s.status === "active" && (
                             <form action={closeSurveyAction.bind(null, s.id) as unknown as (formData: FormData) => void}>
-                              <button type="submit" className="text-xs font-medium text-red-600 hover:underline">Kapat</button>
+                              <FormSubmitButton className="text-xs font-medium text-red-600 hover:underline">Kapat</FormSubmitButton>
                             </form>
                           )}
                           {s.status !== "draft" && (

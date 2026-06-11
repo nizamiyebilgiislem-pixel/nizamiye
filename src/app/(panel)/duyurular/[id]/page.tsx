@@ -9,7 +9,8 @@ import { getAnnouncementById } from "@/lib/duyurular/queries";
 import { deleteAnnouncementAction } from "@/lib/duyurular/actions";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { cn } from "@/lib/utils";
 
 const roleLabels: Record<string, string> = { admin: "Admin", genel_mudur: "Genel Müdür", bolum_muduru: "Bölüm Müdürü", hoca: "Hoca" };
@@ -32,7 +33,7 @@ export default async function DuyuruDetayPage({ params }: { params: Promise<{ id
       <PageHeader
         eyebrow="Duyurular"
         title={announcement.title}
-        actions={canManage ? <div className="flex gap-2"><Link href={`/duyurular/${id}/duzenle`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}><Pencil className="mr-1.5 size-4" /> Düzenle</Link><form action={deleteAnnouncementAction.bind(null, id) as unknown as (formData: FormData) => void}><Button type="submit" variant="destructive" size="sm"><Trash2 className="mr-1.5 size-4" /> Sil</Button></form></div> : undefined}
+        actions={canManage ? <div className="flex gap-2"><Link href={`/duyurular/${id}/duzenle`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}><Pencil className="mr-1.5 size-4" /> Düzenle</Link><form action={deleteAnnouncementAction.bind(null, id) as unknown as (formData: FormData) => void}><FormSubmitButton variant="destructive" size="sm"><Trash2 className="mr-1.5 size-4" /> Sil</FormSubmitButton></form></div> : undefined}
       />
 
       <Card>

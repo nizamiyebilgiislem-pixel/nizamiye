@@ -9,7 +9,7 @@ import { getFollowUpById } from "@/lib/guidance/queries";
 import { completeFollowUpAction, cancelFollowUpAction } from "@/lib/guidance/actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 
 const statusLabels: Record<string, string> = { planned: "Planlandı", completed: "Tamamlandı", cancelled: "İptal" };
 const statusColors: Record<string, "default" | "secondary" | "destructive"> = { planned: "secondary", completed: "default", cancelled: "destructive" };
@@ -83,14 +83,14 @@ export default async function TakipDetayPage({ params }: { params: Promise<{ id:
       {canManage && followUp.status === "planned" && (
         <div className="flex gap-3">
           <form action={completeFollowUpAction.bind(null, followUp.id) as unknown as (formData: FormData) => void}>
-            <Button type="submit" variant="default">
+            <FormSubmitButton variant="default">
               <CheckCircle className="mr-1.5 size-4" /> Tamamlandı Olarak İşaretle
-            </Button>
+            </FormSubmitButton>
           </form>
           <form action={cancelFollowUpAction.bind(null, followUp.id) as unknown as (formData: FormData) => void}>
-            <Button type="submit" variant="destructive">
+            <FormSubmitButton variant="destructive">
               <XCircle className="mr-1.5 size-4" /> İptal Et
-            </Button>
+            </FormSubmitButton>
           </form>
         </div>
       )}

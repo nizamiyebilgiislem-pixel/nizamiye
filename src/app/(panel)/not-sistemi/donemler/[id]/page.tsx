@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { CalendarClock, CheckCircle2, Lock, ArrowLeft } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAuth } from "@/lib/auth";
 import { canManageGradeSettings } from "@/lib/grades/permissions";
@@ -68,10 +69,10 @@ export default async function TermDetailPage({ params, searchParams }: TermDetai
             <>
               <form action={setCurrentTermAction}>
                 <input type="hidden" name="id" value={term.id} />
-                <Button type="submit" variant="secondary" disabled={term.status === "closed" || term.status === "archived" || term.is_current}>
+                <FormSubmitButton variant="secondary">
                   <CheckCircle2 className="size-4" aria-hidden="true" />
                   Aktif Yap
-                </Button>
+                </FormSubmitButton>
               </form>
               <Link href={`/not-sistemi/donemler/${term.id}/kapat`} className={cn(buttonVariants({ variant: "outline" }))}>
                 <Lock className="size-4" aria-hidden="true" />

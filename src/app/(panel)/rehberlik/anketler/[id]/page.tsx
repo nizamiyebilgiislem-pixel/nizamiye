@@ -10,7 +10,8 @@ import { deleteSurveyAction } from "@/lib/guidance/actions";
 import { SurveyQuestionEditor } from "@/components/guidance/survey-question-editor";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { cn } from "@/lib/utils";
 
 export default async function AnketDetayPage({ params }: { params: Promise<{ id: string }> }) {
@@ -31,7 +32,7 @@ export default async function AnketDetayPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Rehberlik" title={survey.title} description={survey.description ?? ""} actions={canManage ? <div className="flex gap-2"><Link href={`/rehberlik/anketler/${id}/sonuclar`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>Sonuçlar</Link><form action={deleteSurveyAction.bind(null, id) as unknown as (formData: FormData) => void}><Button type="submit" variant="destructive" size="sm"><Trash2 className="mr-1.5 size-4" /> Sil</Button></form></div> : undefined} />
+      <PageHeader eyebrow="Rehberlik" title={survey.title} description={survey.description ?? ""} actions={canManage ? <div className="flex gap-2"><Link href={`/rehberlik/anketler/${id}/sonuclar`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>Sonuçlar</Link><form action={deleteSurveyAction.bind(null, id) as unknown as (formData: FormData) => void}><FormSubmitButton variant="destructive" size="sm"><Trash2 className="mr-1.5 size-4" /> Sil</FormSubmitButton></form></div> : undefined} />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card><CardHeader className="pb-2"><CardTitle className="text-xs text-muted-foreground font-medium">Durum</CardTitle></CardHeader><CardContent><Badge variant={statusColors[survey.status] ?? "outline"}>{statusLabels[survey.status] ?? survey.status}</Badge></CardContent></Card>

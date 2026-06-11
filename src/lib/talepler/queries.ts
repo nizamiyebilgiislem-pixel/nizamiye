@@ -61,36 +61,38 @@ export async function getUnitLabel(value: string): Promise<string> {
   return data?.name ?? value;
 }
 
-export async function getTalepler(profile: ProfileRow): Promise<TalepWithProfiles[]> {
+export async function getTalepler(profile: ProfileRow, page?: number, pageSize = 20): Promise<{ data: TalepWithProfiles[]; count: number }> {
   const supabase = createSupabaseAdminClient();
   const selectFields = "*, requester:requested_by(id, full_name), assignee:assigned_to(id, full_name), target:target_person(id, full_name)";
 
-  if (["admin", "genel_mudur"].includes(profile.role)) {
-    const { data } = await supabase
-      .from("talepler")
-      .select(selectFields)
-      .order("created_at", { ascending: false });
-    return (data ?? []) as unknown as TalepWithProfiles[];
-  }
-
-  const handlerUnits: string[] = [];
-  if (profile.role === "destek_birim_muduru") handlerUnits.push("destek");
-  if (profile.role === "muhasebe") handlerUnits.push("muhasebe");
-  if (profile.role === "bolum_muduru" && profile.department_id) handlerUnits.push(profile.department_id);
-
-  const query = supabase
+  let query = supabase
     .from("talepler")
-    .select(selectFields)
+    .select(selectFields, { count: "exact" })
     .order("created_at", { ascending: false });
 
-  if (handlerUnits.length > 0) {
-    const unitFilters = handlerUnits.map((u) => `requested_unit.eq.${u}`).join(",");
-    const { data } = await query.or(`requested_by.eq.${profile.id},or(${unitFilters})`);
-    return (data ?? []) as unknown as TalepWithProfiles[];
+  if (["admin", "genel_mudur"].includes(profile.role)) {
+    // No additional filters needed
+  } else {
+    const handlerUnits: string[] = [];
+    if (profile.role === "destek_birim_muduru") handlerUnits.push("destek");
+    if (profile.role === "muhasebe") handlerUnits.push("muhasebe");
+    if (profile.role === "bolum_muduru" && profile.department_id) handlerUnits.push(profile.department_id);
+
+    if (handlerUnits.length > 0) {
+      const unitFilters = handlerUnits.map((u) => `requested_unit.eq.${u}`).join(",");
+      query = query.or(`requested_by.eq.${profile.id},or(${unitFilters})`);
+    } else {
+      query = query.eq("requested_by", profile.id);
+    }
   }
 
-  const { data } = await query.eq("requested_by", profile.id);
-  return (data ?? []) as unknown as TalepWithProfiles[];
+  if (page !== undefined) {
+    const from = (page - 1) * pageSize;
+    query = query.range(from, from + pageSize - 1);
+  }
+
+  const { data, count } = await query;
+  return { data: (data ?? []) as unknown as TalepWithProfiles[], count: count ?? 0 };
 }
 
 export async function getRecentTalepler(profile: ProfileRow, limit = 5): Promise<TalepWithProfiles[]> {
@@ -138,7 +140,7 @@ export async function getTalepById(id: string): Promise<TalepWithProfiles | null
 }
 
 export async function getTalepCounts(profile: ProfileRow) {
-  const talepler = await getTalepler(profile);
+  const { data: talepler } = await getTalepler(profile);
 
   return {
     total: talepler.length,

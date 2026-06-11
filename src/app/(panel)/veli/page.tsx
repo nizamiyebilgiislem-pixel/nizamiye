@@ -37,25 +37,37 @@ export default async function ParentPanelPage() {
 
   const surveys = await getSurveysForParent(profile.id);
 
-  const studentDepartments = new Set<string>();
-  for (const student of students) {
-    if (student.course_class_id) {
+  const classResults = await Promise.all(
+    students.map(async (student) => {
+      if (!student.course_class_id) return null;
       const cls = await getClassById(student.course_class_id);
-      if (cls) {
-        const dept = await getDepartmentById(cls.department_id);
-        if (dept) studentDepartments.add(dept.id);
-      }
-    }
-  }
+      if (!cls) return null;
+      const dept = await getDepartmentById(cls.department_id);
+      return dept?.id ?? null;
+    }),
+  );
+  const studentDepartments = new Set(classResults.filter((id): id is string => id !== null));
 
   const activitiesByDept: Record<string, Awaited<ReturnType<typeof getDepartmentActivities>>> = {};
-  for (const deptId of studentDepartments) {
-    activitiesByDept[deptId] = await getDepartmentActivities(deptId);
+  const deptActivities = await Promise.all(
+    [...studentDepartments].map(async (deptId) => {
+      const activities = await getDepartmentActivities(deptId);
+      return { deptId, activities };
+    }),
+  );
+  for (const { deptId, activities } of deptActivities) {
+    activitiesByDept[deptId] = activities;
   }
 
+  const interviewResults = await Promise.all(
+    students.map(async (student) => {
+      const interviews = await getStudentInterviewsForParent(student.id);
+      return { studentId: student.id, interviews };
+    }),
+  );
   const studentInterviews: Record<string, Awaited<ReturnType<typeof getStudentInterviewsForParent>>> = {};
-  for (const student of students) {
-    studentInterviews[student.id] = await getStudentInterviewsForParent(student.id);
+  for (const { studentId, interviews } of interviewResults) {
+    studentInterviews[studentId] = interviews;
   }
 
   const profiles = await Promise.all(

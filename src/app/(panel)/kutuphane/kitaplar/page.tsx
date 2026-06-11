@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus, Search } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
+import { Pagination } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -13,27 +14,30 @@ import { getBooks, getActiveCategories } from "@/lib/library/queries";
 import { cn } from "@/lib/utils";
 
 type Props = {
-  searchParams: Promise<{ search?: string; category_id?: string; is_active?: string; available?: string }>;
+  searchParams: Promise<{ search?: string; category_id?: string; is_active?: string; available?: string; page?: string }>;
 };
 
 export default async function KitaplarPage({ searchParams }: Props) {
   const { profile } = await requireAuth();
   const filters = await searchParams;
+  const page = Number(filters.page) || 1;
 
   if (!canViewLibrary(profile)) {
     return <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Bu sayfaya erişim yetkiniz bulunmamaktadır.</div>;
   }
 
-  const [books, categories] = await Promise.all([
+  const [{ books, totalCount }, categories] = await Promise.all([
     getBooks(profile, {
       search: filters.search,
       category_id: filters.category_id,
       is_active: filters.is_active !== "false",
       available: filters.available === "true",
-    }),
+    }, page),
     getActiveCategories(),
   ]);
 
+  const pageSize = 20;
+  const totalPages = Math.ceil(totalCount / pageSize);
   const canManage = await canManageBooks(profile);
 
   return (
@@ -143,6 +147,8 @@ export default async function KitaplarPage({ searchParams }: Props) {
           </TableBody>
         </Table>
       </Card>
+
+      <Pagination currentPage={page} totalPages={totalPages} basePath="/kutuphane/kitaplar" searchParams={filters} />
     </div>
   );
 }

@@ -10,7 +10,7 @@ import { DormitoryDashboardCard } from "@/components/dormitory/dormitory-dashboa
 import { LibraryDashboardCard } from "@/components/library/library-dashboard-card";
 import { GuidanceDashboardCard } from "@/components/guidance/guidance-dashboard-card";
 import { TaskDashboardCard } from "@/components/tasks/task-dashboard-card";
-import { TalepDashboardCard } from "@/components/talepler/talep-dashboard-card";
+
 import { PageHeader } from "@/components/layout/page-header";
 import { ReportShortcutCard } from "@/components/reports/report-shortcut-card";
 import { StudentAvatar } from "@/components/students/student-avatar";
@@ -24,7 +24,7 @@ import { getGuidanceDashboardData } from "@/lib/guidance/queries";
 import { getLibraryDashboardData } from "@/lib/library/queries";
 import { getActiveTerms } from "@/lib/terms/queries";
 import { getTaskCounts } from "@/lib/tasks/queries";
-import { getTalepCounts, getRecentTalepler } from "@/lib/talepler/queries";
+
 import type { ProfileRow } from "@/types/database";
 
 const metricIcons: Record<string, ComponentType<{ className?: string; "aria-hidden"?: boolean }>> = {

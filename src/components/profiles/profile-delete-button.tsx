@@ -2,7 +2,7 @@
 
 import { Trash2 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { deleteUserProfileAction } from "@/lib/profiles/actions";
 
 type ProfileDeleteButtonProps = {
@@ -20,14 +20,13 @@ export function ProfileDeleteButton({ profileId, profileName }: ProfileDeleteBut
   return (
     <form action={deleteUserProfileAction} onSubmit={handleSubmit}>
       <input type="hidden" name="id" value={profileId} />
-      <Button
-        type="submit"
+      <FormSubmitButton
         variant="outline"
         size="sm"
         className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
       >
         <Trash2 className="mr-1.5 size-4" /> Sil
-      </Button>
+      </FormSubmitButton>
     </form>
   );
 }

@@ -10,7 +10,8 @@ import { getActivityById } from "@/lib/guidance/queries";
 import { updateActivityAction, addActivityParticipantsAction, removeActivityParticipantAction, deleteActivityAction } from "@/lib/guidance/actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { cn } from "@/lib/utils";
 
 const typeLabels: Record<string, string> = { trip: "Gezi", seminar: "Seminer", meeting: "Toplantı", sports: "Spor", cultural: "Kültürel", activity: "Aktivite" };
@@ -37,7 +38,7 @@ export default async function EtkinlikDetayPage({ params }: { params: Promise<{ 
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Rehberlik" title={activity.title} description={activity.description ?? ""} actions={canManage ? <div className="flex gap-2"><Link href={`/rehberlik/etkinlikler/${id}/duzenle`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}><Pencil className="mr-1.5 size-4" /> Düzenle</Link><form action={deleteActivityAction.bind(null, id) as unknown as (formData: FormData) => void}><Button type="submit" variant="destructive" size="sm"><Trash2 className="mr-1.5 size-4" /> Sil</Button></form></div> : undefined} />
+      <PageHeader eyebrow="Rehberlik" title={activity.title} description={activity.description ?? ""} actions={canManage ? <div className="flex gap-2"><Link href={`/rehberlik/etkinlikler/${id}/duzenle`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}><Pencil className="mr-1.5 size-4" /> Düzenle</Link><form action={deleteActivityAction.bind(null, id) as unknown as (formData: FormData) => void}><FormSubmitButton variant="destructive" size="sm"><Trash2 className="mr-1.5 size-4" /> Sil</FormSubmitButton></form></div> : undefined} />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card><CardHeader className="pb-2"><CardTitle className="text-xs text-muted-foreground font-medium">Tür</CardTitle></CardHeader><CardContent><Badge variant="secondary">{typeLabels[activity.activity_type] ?? activity.activity_type}</Badge></CardContent></Card>
@@ -81,7 +82,7 @@ export default async function EtkinlikDetayPage({ params }: { params: Promise<{ 
                     </Badge>
                     {canManage && activity.status !== "completed" && (
                       <form action={removeActivityParticipantAction.bind(null, p.id) as unknown as (formData: FormData) => void}>
-                        <button type="submit" className="text-muted-foreground hover:text-red-600"><Trash2 className="size-4" /></button>
+                        <FormSubmitButton className="text-muted-foreground hover:text-red-600"><Trash2 className="size-4" /></FormSubmitButton>
                       </form>
                     )}
                   </div>
@@ -114,9 +115,9 @@ export default async function EtkinlikDetayPage({ params }: { params: Promise<{ 
                   </label>
                 ))}
               </div>
-              <Button type="submit" size="sm">
+              <FormSubmitButton size="sm">
                 <Plus className="mr-1.5 size-4" /> Katılımcıları Ekle
-              </Button>
+              </FormSubmitButton>
               <input type="hidden" name="participant_type" value="student" />
             </form>
           </CardContent>
@@ -136,9 +137,9 @@ export default async function EtkinlikDetayPage({ params }: { params: Promise<{ 
             <input type="hidden" name="start_time" value={activity.start_time ?? ""} />
             <input type="hidden" name="end_time" value={activity.end_time ?? ""} />
             <input type="hidden" name="responsible_profile_id" value={activity.responsible_profile_id ?? ""} />
-            <Button type="submit" variant="default">
+            <FormSubmitButton variant="default">
               <UserCheck className="mr-1.5 size-4" /> Tamamlandı Olarak İşaretle
-            </Button>
+            </FormSubmitButton>
           </form>
           <form action={updateActivityAction.bind(null, undefined) as unknown as (formData: FormData) => void}>
             <input type="hidden" name="id" value={activity.id} />
@@ -151,9 +152,9 @@ export default async function EtkinlikDetayPage({ params }: { params: Promise<{ 
             <input type="hidden" name="start_time" value={activity.start_time ?? ""} />
             <input type="hidden" name="end_time" value={activity.end_time ?? ""} />
             <input type="hidden" name="responsible_profile_id" value={activity.responsible_profile_id ?? ""} />
-            <Button type="submit" variant="destructive">
+            <FormSubmitButton variant="destructive">
               <UserX className="mr-1.5 size-4" /> İptal Et
-            </Button>
+            </FormSubmitButton>
           </form>
         </div>
       )}

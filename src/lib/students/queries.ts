@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { archivedStudentStatuses } from "@/lib/students/constants";
 import type { ClassRow, DepartmentRow, ProfileRow, StudentRow } from "@/types/database";
@@ -14,7 +15,7 @@ export type StudentListFilters = {
   archived?: boolean;
 };
 
-export async function getDepartments() {
+export const getDepartments = cache(async () => {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("departments")
@@ -27,9 +28,9 @@ export async function getDepartments() {
   }
 
   return data;
-}
+});
 
-export async function getClassesForProfile(profile: ProfileRow) {
+export const getClassesForProfile = cache(async (profile: ProfileRow) => {
   const supabase = await createSupabaseServerClient();
   let query = supabase.from("classes").select("*").eq("is_active", true).order("name", { ascending: true });
 
@@ -44,16 +45,21 @@ export async function getClassesForProfile(profile: ProfileRow) {
   }
 
   return data;
-}
+});
 
-export async function getStudentsForProfile(profile: ProfileRow, filters: StudentListFilters = {}) {
+export async function getStudentsForProfile(
+  profile: ProfileRow,
+  filters: StudentListFilters = {},
+  page?: number,
+  pageSize = 20,
+) {
   const supabase = await createSupabaseServerClient();
   const classes = await getClassesForProfile(profile);
   const departments = await getDepartments();
   const classMap = new Map(classes.map((courseClass) => [courseClass.id, courseClass]));
   const departmentMap = new Map(departments.map((department) => [department.id, department]));
 
-  let query = supabase.from("students").select("*").order("full_name", { ascending: true });
+  let query = supabase.from("students").select("*", { count: "exact" }).order("full_name", { ascending: true });
 
   if (filters.archived) {
     query = query.in("status", archivedStudentStatuses);
@@ -73,21 +79,27 @@ export async function getStudentsForProfile(profile: ProfileRow, filters: Studen
   const allowedClassIds = getAllowedClassIds(profile, classes, filters.departmentId);
 
   if (allowedClassIds.length === 0) {
-    return { students: [], classes, departments };
+    return { students: [], classes, departments, totalCount: 0 };
   }
 
   query = query.in("course_class_id", allowedClassIds);
 
-  const { data, error } = await query;
+  if (page !== undefined) {
+    const from = (page - 1) * pageSize;
+    query = query.range(from, from + pageSize - 1);
+  }
+
+  const { data, error, count } = await query;
 
   if (error) {
     throw new Error("Talebeler alınamadı.");
   }
 
   return {
-    students: data.map((student) => attachRelations(student, classMap, departmentMap)),
+    students: (data ?? []).map((student) => attachRelations(student, classMap, departmentMap)),
     classes,
     departments,
+    totalCount: count ?? 0,
   };
 }
 

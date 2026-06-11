@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { requireRole } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getSurveyById, getParentStudentIds } from "@/lib/guidance/queries";
@@ -98,7 +99,7 @@ export default async function VeliAnketPage({ params }: { params: Promise<{ id: 
             ))}
 
             <div className="flex items-center gap-2">
-              <button type="submit" className={cn(buttonVariants(), "cursor-pointer")}>Anketi Gönder</button>
+              <FormSubmitButton className="cursor-pointer">Anketi Gönder</FormSubmitButton>
               <Link href="/veli" className={cn(buttonVariants({ variant: "outline" }))}>İptal</Link>
             </div>
           </form>

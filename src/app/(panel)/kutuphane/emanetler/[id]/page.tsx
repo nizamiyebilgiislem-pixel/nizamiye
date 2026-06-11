@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { buttonVariants, Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { requireAuth } from "@/lib/auth";
 import { canManageLoans, canViewLibrary } from "@/lib/library/permissions";
 import { getLoanById } from "@/lib/library/queries";
@@ -94,11 +95,11 @@ export default async function EmanetDetayPage({ params }: Props) {
         <div className="flex flex-wrap gap-3">
           <form action={returnLoanAction.bind(null, undefined) as unknown as (formData: FormData) => Promise<void>}>
             <input type="hidden" name="loan_id" value={loan.id} />
-            <Button type="submit" variant="default">Teslim Al</Button>
+            <FormSubmitButton variant="default">Teslim Al</FormSubmitButton>
           </form>
           <form action={markLoanLostAction.bind(null, undefined) as unknown as (formData: FormData) => Promise<void>}>
             <input type="hidden" name="loan_id" value={loan.id} />
-            <Button type="submit" variant="destructive">Kayıp İşaretle</Button>
+            <FormSubmitButton variant="destructive">Kayıp İşaretle</FormSubmitButton>
           </form>
         </div>
       )}

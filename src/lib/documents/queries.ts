@@ -34,7 +34,7 @@ export async function getDocumentsDashboardSummary(profile: ProfileRow) {
   };
 }
 
-export async function getDocumentsForProfile(profile: ProfileRow, filters: DocumentFilters) {
+export async function getDocumentsForProfile(profile: ProfileRow, filters: DocumentFilters, page?: number, pageSize = 20) {
   const supabase = await createSupabaseServerClient();
   const [{ data: departments }, { data: classes }, { data: students }, { data: profiles }] = await Promise.all([
     supabase.from("departments").select("*").eq("is_active", true).order("name", { ascending: true }),
@@ -56,9 +56,9 @@ export async function getDocumentsForProfile(profile: ProfileRow, filters: Docum
     return true;
   });
   const visibleStudentIds = visibleStudents.map((student) => student.id);
-  if (visibleStudentIds.length === 0) return { documents: [], departments: visibleDepartments, classes: visibleClasses };
+  if (visibleStudentIds.length === 0) return { documents: [], departments: visibleDepartments, classes: visibleClasses, totalCount: 0 };
 
-  let query = supabase.from("student_documents").select("*").in("student_id", visibleStudentIds).order("created_at", { ascending: false });
+  let query = supabase.from("student_documents").select("*", { count: "exact" }).in("student_id", visibleStudentIds).order("created_at", { ascending: false });
   if (filters.documentType) query = query.eq("document_type", filters.documentType);
   if (filters.dateFrom) query = query.gte("created_at", `${filters.dateFrom}T00:00:00`);
   if (filters.dateTo) query = query.lte("created_at", `${filters.dateTo}T23:59:59`);
@@ -66,7 +66,11 @@ export async function getDocumentsForProfile(profile: ProfileRow, filters: Docum
     const term = `%${filters.search.trim()}%`;
     query = query.or(`document_type.ilike.${term},file_url.ilike.${term}`);
   }
-  const { data, error } = await query;
+  if (page !== undefined) {
+    const from = (page - 1) * pageSize;
+    query = query.range(from, from + pageSize - 1);
+  }
+  const { data, error, count } = await query;
   if (error) throw new Error("Evrak kayıtları alınamadı.");
 
   const studentMap = new Map(visibleStudents.map((student) => [student.id, student]));
@@ -80,7 +84,7 @@ export async function getDocumentsForProfile(profile: ProfileRow, filters: Docum
       [document.student?.full_name, document.document_type, document.file_url].some((value) => value?.toLocaleLowerCase("tr-TR").includes(term)),
     );
   }
-  return { documents, departments: visibleDepartments, classes: visibleClasses };
+  return { documents, departments: visibleDepartments, classes: visibleClasses, totalCount: count ?? 0 };
 }
 
 export async function getDocumentById(id: string) {

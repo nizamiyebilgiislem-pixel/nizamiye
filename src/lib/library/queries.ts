@@ -68,11 +68,11 @@ export async function getCategoryById(id: string) {
   return data as unknown as LibraryCategoryRow;
 }
 
-export async function getBooks(profile: ProfileRow, filters?: { search?: string; category_id?: string; is_active?: boolean; available?: boolean }) {
+export async function getBooks(profile: ProfileRow, filters?: { search?: string; category_id?: string; is_active?: boolean; available?: boolean }, page?: number, pageSize = 20) {
   const supabase = await createSupabaseServerClient();
   let query = supabase
     .from("library_books")
-    .select("*, category:category_id(id, name)")
+    .select("*, category:category_id(id, name)", { count: "exact" })
     .order("title", { ascending: true });
 
   if (filters?.search) {
@@ -92,13 +92,18 @@ export async function getBooks(profile: ProfileRow, filters?: { search?: string;
     query = query.gt("available_count", 0);
   }
 
-  const { data, error } = await query;
+  if (page !== undefined) {
+    const from = (page - 1) * pageSize;
+    query = query.range(from, from + pageSize - 1);
+  }
+
+  const { data, error, count } = await query;
 
   if (error) {
     throw new Error("Kitaplar alınamadı.");
   }
 
-  return data as unknown as BookWithCategory[];
+  return { books: data as unknown as BookWithCategory[], totalCount: count ?? 0 };
 }
 
 export async function getBookById(id: string) {
@@ -116,11 +121,11 @@ export async function getBookById(id: string) {
   return data as unknown as BookWithCategory;
 }
 
-export async function getLoans(profile: ProfileRow, filters?: { status?: string; overdue?: boolean; student_id?: string; profile_id?: string; book_id?: string }) {
+export async function getLoans(profile: ProfileRow, filters?: { status?: string; overdue?: boolean; student_id?: string; profile_id?: string; book_id?: string }, page?: number, pageSize = 20) {
   const supabase = await createSupabaseServerClient();
   let query = supabase
     .from("library_loans")
-    .select("*, book:book_id(id, title, author), student:student_id(id, full_name), profile:profile_id(id, full_name), given_by_profile:given_by(id, full_name), received_by_profile:received_by(id, full_name)")
+    .select("*, book:book_id(id, title, author), student:student_id(id, full_name), profile:profile_id(id, full_name), given_by_profile:given_by(id, full_name), received_by_profile:received_by(id, full_name)", { count: "exact" })
     .order("created_at", { ascending: false });
 
   if (filters?.status) {
@@ -144,13 +149,18 @@ export async function getLoans(profile: ProfileRow, filters?: { status?: string;
     query = query.eq("book_id", filters.book_id);
   }
 
-  const { data, error } = await query;
+  if (page !== undefined) {
+    const from = (page - 1) * pageSize;
+    query = query.range(from, from + pageSize - 1);
+  }
+
+  const { data, error, count } = await query;
 
   if (error) {
     throw new Error("Emanetler alınamadı.");
   }
 
-  return data as unknown as LoanWithRelations[];
+  return { loans: data as unknown as LoanWithRelations[], totalCount: count ?? 0 };
 }
 
 export async function getLoanById(id: string) {

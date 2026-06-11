@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
+import { Pagination } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,25 +13,28 @@ import { getLoans } from "@/lib/library/queries";
 import { cn } from "@/lib/utils";
 
 type Props = {
-  searchParams: Promise<{ status?: string; overdue?: string; student_id?: string; profile_id?: string; book_id?: string }>;
+  searchParams: Promise<{ status?: string; overdue?: string; student_id?: string; profile_id?: string; book_id?: string; page?: string }>;
 };
 
 export default async function EmanetlerPage({ searchParams }: Props) {
   const { profile } = await requireAuth();
   const filters = await searchParams;
+  const page = Number(filters.page) || 1;
 
   if (!canViewLibrary(profile)) {
     return <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Bu sayfaya erişim yetkiniz bulunmamaktadır.</div>;
   }
 
-  const loans = await getLoans(profile, {
+  const { loans, totalCount } = await getLoans(profile, {
     status: filters.status,
     overdue: filters.overdue === "true" ? true : undefined,
     student_id: filters.student_id,
     profile_id: filters.profile_id,
     book_id: filters.book_id,
-  });
+  }, page);
 
+  const pageSize = 20;
+  const totalPages = Math.ceil(totalCount / pageSize);
   const canManage = await canManageLoans(profile);
   const today = new Date().toISOString().split("T")[0];
 
@@ -128,6 +132,8 @@ export default async function EmanetlerPage({ searchParams }: Props) {
           </TableBody>
         </Table>
       </Card>
+
+      <Pagination currentPage={page} totalPages={totalPages} basePath="/kutuphane/emanetler" searchParams={filters} />
     </div>
   );
 }

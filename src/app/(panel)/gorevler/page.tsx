@@ -19,7 +19,7 @@ export default async function GorevlerPage({
   const params = await searchParams;
   const activeTab = params.tab ?? "hepsi";
 
-  const tasks = await getTasks(profile);
+  const { data: tasks } = await getTasks(profile);
   const counts = await getTaskCounts(profile);
   const canCreate = canCreateTask(profile);
 

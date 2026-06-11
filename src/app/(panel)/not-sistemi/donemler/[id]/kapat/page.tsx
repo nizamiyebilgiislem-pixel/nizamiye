@@ -8,7 +8,8 @@ import { canManageGradeSettings } from "@/lib/grades/permissions";
 import { getAcademicTermById } from "@/lib/terms/queries";
 import { getTermClosurePreview } from "@/lib/terms/snapshots";
 import { PageHeader } from "@/components/layout/page-header";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -83,10 +84,10 @@ export default async function CloseTermPage({ params, searchParams }: CloseTermP
           </div>
           <form action={closeTermAction}>
             <input type="hidden" name="id" value={term.id} />
-            <Button type="submit" className="bg-[#093657] text-white hover:bg-[#082b46]">
+            <FormSubmitButton className="bg-[#093657] text-white hover:bg-[#082b46]">
               <Lock className="size-4" aria-hidden="true" />
               Dönemi Kapat ve Arşivle
-            </Button>
+            </FormSubmitButton>
           </form>
         </CardContent>
       </Card>

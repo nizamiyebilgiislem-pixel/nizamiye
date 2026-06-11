@@ -19,37 +19,32 @@ const attachmentSelectFields = `
   uploader:uploaded_by(id, full_name)
 `;
 
-export async function getTasks(profile: ProfileRow) {
+export async function getTasks(profile: ProfileRow, page?: number, pageSize = 20): Promise<{ data: TaskRowWithProfiles[]; count: number }> {
   const supabase = createSupabaseAdminClient();
 
   const role = profile.role;
 
-  if (["admin", "genel_mudur"].includes(role)) {
-    const { data } = await supabase
-      .from("tasks")
-      .select(taskSelectFields)
-      .eq("is_active", true)
-      .order("created_at", { ascending: false });
-    return (data ?? []) as unknown as TaskRowWithProfiles[];
-  }
-
-  if (role === "bolum_muduru" && profile.department_id) {
-    const { data } = await supabase
-      .from("tasks")
-      .select(taskSelectFields)
-      .eq("is_active", true)
-      .or(`department_id.eq.${profile.department_id},assigned_by.eq.${profile.id},assigned_to.eq.${profile.id}`)
-      .order("created_at", { ascending: false });
-    return (data ?? []) as unknown as TaskRowWithProfiles[];
-  }
-
-  const { data } = await supabase
+  let query = supabase
     .from("tasks")
-    .select(taskSelectFields)
+    .select(taskSelectFields, { count: "exact" })
     .eq("is_active", true)
-    .or(`assigned_to.eq.${profile.id},assigned_by.eq.${profile.id}`)
     .order("created_at", { ascending: false });
-  return (data ?? []) as unknown as TaskRowWithProfiles[];
+
+  if (["admin", "genel_mudur"].includes(role)) {
+    // No additional filters needed
+  } else if (role === "bolum_muduru" && profile.department_id) {
+    query = query.or(`department_id.eq.${profile.department_id},assigned_by.eq.${profile.id},assigned_to.eq.${profile.id}`);
+  } else {
+    query = query.or(`assigned_to.eq.${profile.id},assigned_by.eq.${profile.id}`);
+  }
+
+  if (page !== undefined) {
+    const from = (page - 1) * pageSize;
+    query = query.range(from, from + pageSize - 1);
+  }
+
+  const { data, count } = await query;
+  return { data: (data ?? []) as unknown as TaskRowWithProfiles[], count: count ?? 0 };
 }
 
 export async function getTaskById(id: string) {
@@ -112,7 +107,7 @@ export async function getAssignableProfiles(currentProfile: ProfileRow) {
 }
 
 export async function getTaskCounts(profile: ProfileRow) {
-  const tasks = await getTasks(profile);
+  const { data: tasks } = await getTasks(profile);
 
   const now = new Date();
   const todayStr = now.toISOString().slice(0, 10);

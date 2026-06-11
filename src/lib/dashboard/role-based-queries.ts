@@ -93,14 +93,14 @@ export async function getDepartmentManagerDashboardData(profile: ProfileRow): Pr
   }
 
   const [departmentResult, classesResult, studentsResult, profilesResult, evaluationsResult, sessionsResult, taleplerResult, activeTermsResult] = await Promise.all([
-    supabase.from("departments").select("*").eq("id", departmentId).maybeSingle(),
-    supabase.from("classes").select("*").eq("department_id", departmentId).order("name", { ascending: true }),
-    supabase.from("students").select("*").eq("status", "active").order("created_at", { ascending: false }),
-    supabase.from("profiles").select("*").eq("department_id", departmentId).eq("is_active", true),
-    supabase.from("student_evaluations").select("*"),
-    supabase.from("attendance_sessions").select("*").eq("attendance_date", today),
+    supabase.from("departments").select("id, name, is_active").eq("id", departmentId).maybeSingle(),
+    supabase.from("classes").select("id, name, department_id, is_active, class_teacher_id").eq("department_id", departmentId).order("name", { ascending: true }),
+    supabase.from("students").select("id, full_name, status, course_class_id").eq("status", "active").order("created_at", { ascending: false }),
+    supabase.from("profiles").select("id, full_name, role, department_id").eq("department_id", departmentId).eq("is_active", true),
+    supabase.from("student_evaluations").select("id, student_id, term_id"),
+    supabase.from("attendance_sessions").select("id, class_id, attendance_type, attendance_date").eq("attendance_date", today),
     supabase.from("talepler").select("id, status").or(`requested_unit.eq.${departmentId},requested_by.eq.${profile.id}`),
-    supabase.from("academic_terms").select("*").eq("is_active", true).order("created_at", { ascending: false }),
+    supabase.from("academic_terms").select("id, name, is_active").eq("is_active", true).order("created_at", { ascending: false }),
   ]);
 
   const department = departmentResult.data;
@@ -143,7 +143,7 @@ export async function getDepartmentManagerDashboardData(profile: ProfileRow): Pr
   const openTalepCount = talepler.filter((t) => !["tamamlandi", "iptal_edildi", "reddedildi"].includes(t.status)).length;
 
   return {
-    department,
+    department: department as DepartmentRow | null,
     active_student_count: activeStudents.length,
     active_class_count: activeClasses.length,
     active_teacher_count: hocaProfiles.length,
@@ -160,12 +160,12 @@ export async function getClassTeacherDashboardData(profile: ProfileRow): Promise
   const today = getTodayDateString();
 
   const [classesResult, departmentsResult, evaluationsResult, sessionsResult, scheduleResult, activeTermsResult] = await Promise.all([
-    supabase.from("classes").select("*").eq("class_teacher_id", profile.id).order("name", { ascending: true }),
-    supabase.from("departments").select("*"),
-    supabase.from("student_evaluations").select("*"),
-    supabase.from("attendance_sessions").select("*").eq("attendance_date", today),
-    supabase.from("weekly_schedule_slots").select("*"),
-    supabase.from("academic_terms").select("*").eq("is_active", true).order("created_at", { ascending: false }),
+    supabase.from("classes").select("id, name, department_id, is_active, class_teacher_id").eq("class_teacher_id", profile.id).order("name", { ascending: true }),
+    supabase.from("departments").select("id, name"),
+    supabase.from("student_evaluations").select("id, student_id, term_id"),
+    supabase.from("attendance_sessions").select("id, class_id, attendance_type, attendance_date").eq("attendance_date", today),
+    supabase.from("weekly_schedule_slots").select("id, class_id"),
+    supabase.from("academic_terms").select("id, name, is_active").eq("is_active", true).order("created_at", { ascending: false }),
   ]);
 
   const classes = classesResult.data ?? [];
@@ -183,7 +183,7 @@ export async function getClassTeacherDashboardData(profile: ProfileRow): Promise
 
   const { data: students } = await supabase
     .from("students")
-    .select("*")
+    .select("id, full_name, status, photo_url, course_class_id")
     .eq("status", "active")
     .in("course_class_id", [...classIds]);
 
@@ -218,7 +218,7 @@ export async function getClassTeacherDashboardData(profile: ProfileRow): Promise
   return {
     classes: dashboardClasses,
     students: classStudents.map((s) => ({
-      ...s,
+      ...(s as StudentRow),
       department_name: s.course_class_id ? departmentMap.get(classes.find((c) => c.id === s.course_class_id)?.department_id ?? "")?.name ?? null : null,
     })),
     today_date: today,
@@ -230,11 +230,11 @@ export async function getCourseTeacherDashboardData(profile: ProfileRow): Promis
   const today = getTodayDateString();
 
   const [classCoursesResult, coursesResult, classesResult, departmentsResult, scheduleResult] = await Promise.all([
-    supabase.from("class_courses").select("*").eq("teacher_id", profile.id).eq("is_active", true),
-    supabase.from("courses").select("*"),
-    supabase.from("classes").select("*"),
-    supabase.from("departments").select("*"),
-    supabase.from("weekly_schedule_slots").select("*"),
+    supabase.from("class_courses").select("id, course_id, class_id, teacher_id, is_active").eq("teacher_id", profile.id).eq("is_active", true),
+    supabase.from("courses").select("id, name"),
+    supabase.from("classes").select("id, name, department_id"),
+    supabase.from("departments").select("id, name"),
+    supabase.from("weekly_schedule_slots").select("id, class_id, class_course_id"),
   ]);
 
   const classCourses = classCoursesResult.data ?? [];
@@ -266,7 +266,7 @@ export async function getCourseTeacherDashboardData(profile: ProfileRow): Promis
 
   return {
     courses: teacherCourses,
-    today_schedule: todaySchedule,
+    today_schedule: todaySchedule as WeeklyScheduleSlotRow[],
     today_date: today,
   };
 }

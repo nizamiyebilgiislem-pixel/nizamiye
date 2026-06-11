@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { AcademicTermRow, StudentTermSnapshotRow } from "@/types/database";
 
@@ -12,10 +13,10 @@ export async function getAcademicTerms() {
   return data;
 }
 
-export async function getActiveTerms() {
+export const getActiveTerms = cache(async () => {
   const terms = await getAcademicTerms();
   return terms.filter((term) => term.is_active);
-}
+});
 
 export async function getCurrentAcademicTerm() {
   const supabase = await createSupabaseServerClient();

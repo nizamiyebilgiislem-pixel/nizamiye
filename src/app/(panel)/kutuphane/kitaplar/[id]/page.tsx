@@ -30,7 +30,7 @@ export default async function KitapDetayPage({ params }: Props) {
     notFound();
   }
 
-  const loans = await getLoans(profile, { book_id: id });
+  const { loans } = await getLoans(profile, { book_id: id });
 
   const canManage = await canManageBooks(profile);
   const inLoan = book.total_count - book.available_count;

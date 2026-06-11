@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { canViewDepartment } from "@/lib/classes/permissions";
 import type { ClassRow, DepartmentRow, ProfileRow, StudentRow } from "@/types/database";
@@ -142,7 +143,7 @@ export async function getClassesForProfile(profile: ProfileRow, filters: ClassLi
   return { classes: rows, departments, teachers };
 }
 
-export async function getClassById(id: string) {
+export const getClassById = cache(async (id: string) => {
   const supabase = await createSupabaseServerClient();
   const { data: classRow, error } = await supabase.from("classes").select("*").eq("id", id).maybeSingle();
 
@@ -169,7 +170,7 @@ export async function getClassById(id: string) {
     active_student_count: students.length,
     students,
   };
-}
+});
 
 export async function getTeachersByDepartment(departmentId: string) {
   const supabase = await createSupabaseServerClient();

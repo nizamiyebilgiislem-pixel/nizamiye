@@ -140,11 +140,21 @@ export async function getActiveSurveys(profile: ProfileRow, limit = 5): Promise<
 
   const { data } = await query;
   const surveys = (data ?? []) as unknown as (GuidanceSurveyRow & { question_count: { count: number } })[];
-  return await Promise.all(surveys.map(async (s) => ({
+  const surveyIds = surveys.map((s) => s.id);
+  let responseQuery = supabase.from("guidance_survey_responses").select("survey_id");
+  if (surveyIds.length > 0) {
+    responseQuery = responseQuery.in("survey_id", surveyIds);
+  }
+  const { data: allResponses } = await responseQuery;
+  const responseCounts: Record<string, number> = {};
+  for (const r of allResponses ?? []) {
+    responseCounts[r.survey_id] = (responseCounts[r.survey_id] ?? 0) + 1;
+  }
+  return surveys.map((s) => ({
     ...s,
     question_count: s.question_count?.count ?? 0,
-    response_count: (await supabase.from("guidance_survey_responses").select("*", { count: "exact", head: true }).eq("survey_id", s.id)).count ?? 0,
-  })));
+    response_count: responseCounts[s.id] ?? 0,
+  }));
 }
 
 export async function getPlannedActivities(profile: ProfileRow, limit = 5): Promise<ActivityWithRelations[]> {
@@ -162,10 +172,20 @@ export async function getPlannedActivities(profile: ProfileRow, limit = 5): Prom
 
   const { data } = await query;
   const activities = (data ?? []) as unknown as (GuidanceActivityRow & { responsible_profile: { id: string; full_name: string } | null })[];
-  return await Promise.all(activities.map(async (a) => ({
+  const activityIds = activities.map((a) => a.id);
+  let participantQuery = supabase.from("guidance_activity_participants").select("activity_id");
+  if (activityIds.length > 0) {
+    participantQuery = participantQuery.in("activity_id", activityIds);
+  }
+  const { data: allParticipants } = await participantQuery;
+  const participantCounts: Record<string, number> = {};
+  for (const p of allParticipants ?? []) {
+    participantCounts[p.activity_id] = (participantCounts[p.activity_id] ?? 0) + 1;
+  }
+  return activities.map((a) => ({
     ...a,
-    participant_count: (await supabase.from("guidance_activity_participants").select("*", { count: "exact", head: true }).eq("activity_id", a.id)).count ?? 0,
-  })));
+    participant_count: participantCounts[a.id] ?? 0,
+  }));
 }
 
 export type InterviewFilters = {
@@ -319,11 +339,21 @@ export async function getSurveys(profile?: ProfileRow | null): Promise<SurveyWit
 
   const { data } = await query;
   const surveys = (data ?? []) as unknown as (GuidanceSurveyRow & { question_count: { count: number } })[];
-  return await Promise.all(surveys.map(async (s) => ({
+  const surveyIds = surveys.map((s) => s.id);
+  let responseQuery = supabase.from("guidance_survey_responses").select("survey_id");
+  if (surveyIds.length > 0) {
+    responseQuery = responseQuery.in("survey_id", surveyIds);
+  }
+  const { data: allResponses } = await responseQuery;
+  const responseCounts: Record<string, number> = {};
+  for (const r of allResponses ?? []) {
+    responseCounts[r.survey_id] = (responseCounts[r.survey_id] ?? 0) + 1;
+  }
+  return surveys.map((s) => ({
     ...s,
     question_count: s.question_count?.count ?? 0,
-    response_count: (await supabase.from("guidance_survey_responses").select("*", { count: "exact", head: true }).eq("survey_id", s.id)).count ?? 0,
-  })));
+    response_count: responseCounts[s.id] ?? 0,
+  }));
 }
 
 export async function getSurveyById(id: string): Promise<(GuidanceSurveyRow & { questions: GuidanceSurveyQuestionRow[] }) | null> {
@@ -358,14 +388,21 @@ export async function getSurveyResults(surveyId: string) {
   const responseIds = (responses ?? []).map((r) => r.id);
   const totalResponses = responseIds.length;
 
-  const results = await Promise.all(survey.questions.map(async (question) => {
-    const { data: answers } = await supabase
-      .from("guidance_survey_answers")
-      .select("*")
-      .eq("question_id", question.id)
-      .in("response_id", responseIds.length > 0 ? responseIds : [""]);
+  let allAnswersQuery = supabase.from("guidance_survey_answers").select("question_id, answer_text, answer_number, response_id");
+  if (responseIds.length > 0) {
+    allAnswersQuery = allAnswersQuery.in("response_id", responseIds);
+  } else {
+    allAnswersQuery = allAnswersQuery.in("response_id", [""]);
+  }
+  const { data: allAnswers } = await allAnswersQuery;
+  const answersByQuestion: Record<string, NonNullable<typeof allAnswers>> = {};
+  for (const answer of allAnswers ?? []) {
+    if (!answersByQuestion[answer.question_id]) answersByQuestion[answer.question_id] = [];
+    answersByQuestion[answer.question_id]!.push(answer);
+  }
 
-    const answerList = answers ?? [];
+  const results = survey.questions.map((question) => {
+    const answerList = answersByQuestion[question.id] ?? [];
 
     let result: Record<string, unknown> = {};
 
@@ -393,7 +430,7 @@ export async function getSurveyResults(surveyId: string) {
     }
 
     return { question, result };
-  }));
+  });
 
   return { survey, totalResponses, results };
 }
@@ -419,10 +456,20 @@ export async function getActivities(profile?: ProfileRow | null, filters?: { sta
 
   const { data } = await query;
   const activities = (data ?? []) as unknown as (GuidanceActivityRow & { responsible_profile: { id: string; full_name: string } | null })[];
-  return await Promise.all(activities.map(async (a) => ({
+  const activityIds = activities.map((a) => a.id);
+  let participantQuery = supabase.from("guidance_activity_participants").select("activity_id");
+  if (activityIds.length > 0) {
+    participantQuery = participantQuery.in("activity_id", activityIds);
+  }
+  const { data: allParticipants } = await participantQuery;
+  const participantCounts: Record<string, number> = {};
+  for (const p of allParticipants ?? []) {
+    participantCounts[p.activity_id] = (participantCounts[p.activity_id] ?? 0) + 1;
+  }
+  return activities.map((a) => ({
     ...a,
-    participant_count: (await supabase.from("guidance_activity_participants").select("*", { count: "exact", head: true }).eq("activity_id", a.id)).count ?? 0,
-  })));
+    participant_count: participantCounts[a.id] ?? 0,
+  }));
 }
 
 export type ActivityWithResponsible = GuidanceActivityRow & {
@@ -505,10 +552,21 @@ export async function getStudentActivities(studentId: string, profile?: ProfileR
     .in("id", activityIds)
     .order("activity_date", { ascending: false });
 
-  return await Promise.all(((activities ?? []) as unknown as (GuidanceActivityRow & { responsible_profile: { id: string; full_name: string } | null })[]).map(async (a) => ({
+  const activityList = (activities ?? []) as unknown as (GuidanceActivityRow & { responsible_profile: { id: string; full_name: string } | null })[];
+  const activityIdList = activityList.map((a) => a.id);
+  let participantQuery = supabase.from("guidance_activity_participants").select("activity_id");
+  if (activityIdList.length > 0) {
+    participantQuery = participantQuery.in("activity_id", activityIdList);
+  }
+  const { data: allParticipants } = await participantQuery;
+  const participantCounts: Record<string, number> = {};
+  for (const p of allParticipants ?? []) {
+    participantCounts[p.activity_id] = (participantCounts[p.activity_id] ?? 0) + 1;
+  }
+  return activityList.map((a) => ({
     ...a,
-    participant_count: (await supabase.from("guidance_activity_participants").select("*", { count: "exact", head: true }).eq("activity_id", a.id)).count ?? 0,
-  })));
+    participant_count: participantCounts[a.id] ?? 0,
+  }));
 }
 
 export async function getSurveysForParent(profileId: string): Promise<SurveyWithCount[]> {
@@ -541,11 +599,21 @@ export async function getSurveysForParent(profileId: string): Promise<SurveyWith
     || (s.target_scope === "department" && s.department_id && departmentIds.has(s.department_id))
   );
 
-  return await Promise.all(relevant.map(async (s) => ({
+  const surveyIds = relevant.map((s) => s.id);
+  let responseQuery = supabase.from("guidance_survey_responses").select("survey_id");
+  if (surveyIds.length > 0) {
+    responseQuery = responseQuery.in("survey_id", surveyIds);
+  }
+  const { data: allResponses } = await responseQuery;
+  const responseCounts: Record<string, number> = {};
+  for (const r of allResponses ?? []) {
+    responseCounts[r.survey_id] = (responseCounts[r.survey_id] ?? 0) + 1;
+  }
+  return relevant.map((s) => ({
     ...s,
     question_count: s.question_count?.count ?? 0,
-    response_count: (await supabase.from("guidance_survey_responses").select("*", { count: "exact", head: true }).eq("survey_id", s.id)).count ?? 0,
-  })));
+    response_count: responseCounts[s.id] ?? 0,
+  }));
 }
 
 export async function getParentStudentIds(profileId: string): Promise<string[]> {
@@ -575,8 +643,18 @@ export async function getDepartmentActivities(departmentId: string): Promise<(Gu
     .order("activity_date", { ascending: false });
 
   const activities = data ?? [];
-  return await Promise.all(activities.map(async (a) => ({
+  const activityIds = activities.map((a) => a.id);
+  let participantQuery = supabase.from("guidance_activity_participants").select("activity_id");
+  if (activityIds.length > 0) {
+    participantQuery = participantQuery.in("activity_id", activityIds);
+  }
+  const { data: allParticipants } = await participantQuery;
+  const participantCounts: Record<string, number> = {};
+  for (const p of allParticipants ?? []) {
+    participantCounts[p.activity_id] = (participantCounts[p.activity_id] ?? 0) + 1;
+  }
+  return activities.map((a) => ({
     ...a,
-    participant_count: (await supabase.from("guidance_activity_participants").select("*", { count: "exact", head: true }).eq("activity_id", a.id)).count ?? 0,
-  })));
+    participant_count: participantCounts[a.id] ?? 0,
+  }));
 }

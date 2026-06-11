@@ -12,6 +12,7 @@ import { getTaskById } from "@/lib/tasks/queries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { cn } from "@/lib/utils";
 import { statusLabels, statusColors, priorityLabels, priorityColors } from "@/types/tasks";
 import type { TaskStatus } from "@/types/tasks";
@@ -277,16 +278,14 @@ function QuickStatusButton({ taskId, status, label }: { taskId: string; status: 
       formData.set("status", status);
       await updateTaskStatusAction(null, formData);
     }}>
-      <button
-        type="submit"
-        className={cn(
-          buttonVariants({ variant: "outline", size: "xs" }),
-          "w-full justify-start text-xs",
-        )}
+      <FormSubmitButton
+        variant="outline"
+        size="xs"
+        className="w-full justify-start text-xs"
       >
         {status === "completed" ? "✓ " : status === "cancelled" ? "✕ " : "▶ "}
         {label}
-      </button>
+      </FormSubmitButton>
     </form>
   );
 }

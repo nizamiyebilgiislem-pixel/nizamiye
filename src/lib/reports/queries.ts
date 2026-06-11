@@ -157,7 +157,7 @@ export type TaskReportRow = {
 };
 
 export async function getTaskReportData(profile: ProfileRow) {
-  const tasks = await getTasks(profile);
+  const { data: tasks } = await getTasks(profile);
   const supabase = await createSupabaseServerClient();
   const { data: profiles } = await supabase.from("profiles").select("*");
   const profileMap = new Map((profiles ?? []).map((p) => [p.id, p]));

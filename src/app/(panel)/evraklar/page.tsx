@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import { DocumentErrorMessage } from "@/components/documents/document-error-message";
 import { DocumentList } from "@/components/documents/document-list";
 import { PageHeader } from "@/components/layout/page-header";
+import { Pagination } from "@/components/ui/pagination";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAuth } from "@/lib/auth";
@@ -11,15 +12,18 @@ import { documentTypes } from "@/lib/documents/constants";
 import { getDocumentsDashboardSummary, getDocumentsForProfile } from "@/lib/documents/queries";
 import { cn } from "@/lib/utils";
 
-type DocumentsPageProps = { searchParams: Promise<{ q?: string; department?: string; class?: string; type?: string; from?: string; to?: string; error?: string }> };
+type DocumentsPageProps = { searchParams: Promise<{ q?: string; department?: string; class?: string; type?: string; from?: string; to?: string; error?: string; page?: string }> };
 
 export default async function DocumentsPage({ searchParams }: DocumentsPageProps) {
   const params = await searchParams;
   const { profile } = await requireAuth();
+  const page = Number(params.page) || 1;
   const [summary, list] = await Promise.all([
     getDocumentsDashboardSummary(profile),
-    getDocumentsForProfile(profile, { search: params.q, departmentId: params.department, classId: params.class, documentType: params.type, dateFrom: params.from, dateTo: params.to }),
+    getDocumentsForProfile(profile, { search: params.q, departmentId: params.department, classId: params.class, documentType: params.type, dateFrom: params.from, dateTo: params.to }, page),
   ]);
+  const pageSize = 20;
+  const totalPages = Math.ceil((list.totalCount ?? 0) / pageSize);
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -43,7 +47,7 @@ export default async function DocumentsPage({ searchParams }: DocumentsPageProps
         <button type="submit" className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">Filtrele</button>
       </form></CardContent></Card>
       <div><h2 className="mb-3 text-lg font-semibold">Son Eklenen 10 Evrak</h2><DocumentList documents={summary.latestDocuments} profile={profile} /></div>
-      <div><h2 className="mb-3 text-lg font-semibold">Evrak Listesi</h2>{list.documents.length > 0 ? <DocumentList documents={list.documents} profile={profile} /> : <p className="text-sm text-muted-foreground">Evrak bulunamadı.</p>}</div>
+      <div><h2 className="mb-3 text-lg font-semibold">Evrak Listesi</h2>{list.documents.length > 0 ? <><DocumentList documents={list.documents} profile={profile} /><Pagination currentPage={page} totalPages={totalPages} basePath="/evraklar" searchParams={params} /></> : <p className="text-sm text-muted-foreground">Evrak bulunamadı.</p>}</div>
     </div>
   );
 }

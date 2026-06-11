@@ -88,18 +88,18 @@ export async function getDashboardData(profile: ProfileRow): Promise<DashboardDa
     classCoursesResult,
     scheduleSlotsResult,
   ] = await Promise.all([
-    safeQuery(supabase.from("students").select("*").order("created_at", { ascending: false }), emptyResult.students),
-    safeQuery(supabase.from("profiles").select("*"), emptyResult.profiles),
-    safeQuery(supabase.from("departments").select("*").eq("is_active", true).order("name", { ascending: true }), emptyResult.departments),
-    safeQuery(supabase.from("classes").select("*").order("name", { ascending: true }), emptyResult.classes),
-    safeQuery(supabase.from("infirmary_records").select("*").order("record_date", { ascending: false }).limit(50), emptyResult.infirmaryRecords),
-    safeQuery(supabase.from("student_documents").select("*").order("created_at", { ascending: false }).limit(50), emptyResult.documents),
-    safeQuery(supabase.from("student_evaluations").select("*").order("created_at", { ascending: false }).limit(50), emptyResult.evaluations),
-    safeQuery(supabase.from("class_courses").select("*"), emptyResult.classCourses),
-    safeQuery(supabase.from("weekly_schedule_slots").select("*"), emptyResult.scheduleSlots),
+    safeQuery(supabase.from("students").select("id, full_name, status, photo_url, course_class_id, created_at").order("created_at", { ascending: false }), emptyResult.students),
+    safeQuery(supabase.from("profiles").select("id, full_name, role, department_id, is_active"), emptyResult.profiles),
+    safeQuery(supabase.from("departments").select("id, name, is_active").eq("is_active", true).order("name", { ascending: true }), emptyResult.departments),
+    safeQuery(supabase.from("classes").select("id, name, department_id, is_active, class_teacher_id").order("name", { ascending: true }), emptyResult.classes),
+    safeQuery(supabase.from("infirmary_records").select("id, student_id, record_date, complaint").order("record_date", { ascending: false }).limit(50), emptyResult.infirmaryRecords),
+    safeQuery(supabase.from("student_documents").select("id, student_id, document_type, created_at").order("created_at", { ascending: false }).limit(50), emptyResult.documents),
+    safeQuery(supabase.from("student_evaluations").select("id, student_id, general_opinion, term_id, created_at").order("created_at", { ascending: false }).limit(50), emptyResult.evaluations),
+    safeQuery(supabase.from("class_courses").select("id, class_id, course_id, teacher_id, is_active"), emptyResult.classCourses),
+    safeQuery(supabase.from("weekly_schedule_slots").select("id, class_id, class_course_id"), emptyResult.scheduleSlots),
   ]);
 
-  const visibleDepartments = filterDepartments(departmentsResult.data, profile);
+  const visibleDepartments = filterDepartments(departmentsResult.data as DepartmentRow[], profile);
   const visibleDepartmentIds = new Set(visibleDepartments.map((department) => department.id));
   const visibleClasses = classesResult.data.filter((classRow) => visibleDepartmentIds.has(classRow.department_id));
   const visibleClassIds = new Set(visibleClasses.map((classRow) => classRow.id));
@@ -139,10 +139,10 @@ export async function getDashboardData(profile: ProfileRow): Promise<DashboardDa
       metric("scheduled-classes", "Programlı sınıf", scheduledClassIds.size, "Ders programı oluşturulmuş sınıflar."),
       metric("missing-teachers", "Hocası atanmamış ders", visibleClassCourses.filter((classCourse) => classCourse.is_active && !classCourse.teacher_id).length, "Aktif olup hocası seçilmemiş ders atamaları."),
     ],
-    latestStudents: visibleStudents.slice(0, 5).map((student) => attachStudentRelations(student, classMap, departmentMap)),
-    latestInfirmaryRecords: visibleInfirmaryRecords.slice(0, 5).map((record) => attachRecordRelations(record, studentMap, classMap, departmentMap)),
-    latestDocuments: visibleDocuments.slice(0, 5).map((document) => attachDocumentRelations(document, studentMap, classMap, departmentMap)),
-    latestEvaluations: visibleEvaluations.slice(0, 5).map((evaluation) => attachEvaluationRelations(evaluation, studentMap, classMap, departmentMap)),
+    latestStudents: visibleStudents.slice(0, 5).map((student) => attachStudentRelations(student as StudentRow, classMap as Map<string, ClassRow>, departmentMap as Map<string, DepartmentRow>)),
+    latestInfirmaryRecords: visibleInfirmaryRecords.slice(0, 5).map((record) => attachRecordRelations(record as InfirmaryRecordRow, studentMap as Map<string, StudentRow>, classMap as Map<string, ClassRow>, departmentMap as Map<string, DepartmentRow>)),
+    latestDocuments: visibleDocuments.slice(0, 5).map((document) => attachDocumentRelations(document as StudentDocumentRow, studentMap as Map<string, StudentRow>, classMap as Map<string, ClassRow>, departmentMap as Map<string, DepartmentRow>)),
+    latestEvaluations: visibleEvaluations.slice(0, 5).map((evaluation) => attachEvaluationRelations(evaluation as StudentEvaluationRow, studentMap as Map<string, StudentRow>, classMap as Map<string, ClassRow>, departmentMap as Map<string, DepartmentRow>)),
     departmentDistribution: visibleDepartments.map((department) => {
       const departmentClassIds = new Set(visibleClasses.filter((classRow) => classRow.department_id === department.id).map((classRow) => classRow.id));
       return {

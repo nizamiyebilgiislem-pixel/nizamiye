@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { canViewDepartment } from "@/lib/classes/permissions";
 import type { DepartmentRow, ProfileRow } from "@/types/database";
@@ -56,7 +57,7 @@ export async function getDepartmentSummaryById(profile: ProfileRow, id: string) 
   return departments.find((department) => department.id === id) ?? null;
 }
 
-export async function getDepartmentById(id: string) {
+export const getDepartmentById = cache(async (id: string) => {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.from("departments").select("*").eq("id", id).maybeSingle();
 
@@ -65,7 +66,7 @@ export async function getDepartmentById(id: string) {
   }
 
   return data ?? null;
-}
+});
 
 export async function canProfileViewDepartment(profile: ProfileRow, departmentId: string) {
   return canViewDepartment(profile, departmentId);
