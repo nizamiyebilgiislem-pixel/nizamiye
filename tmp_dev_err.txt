@@ -716,3 +716,125 @@ https://react.dev/link/hydration-mismatch
   52 |       className={cn(buttonVariants({ variant, size, className }))}
   53 |       {...props}
 [AI] provider=groq model=llama-3.3-70b-versatile status=429 timeout=none retry=false attempt=1 fallback=false response_body={"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01ktv3gxe1f7tsr5tesq29jz03` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 97533, Requested 2713. Please try again in 3m32.543999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+⨯ ./src/lib/assistant/llm.ts:4:1
+Export selectAiModelsForQuestion doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m { buildSystemPrompt, buildContextualData } [36mfrom[0m [32m"./llm-prompt"[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mAI_FALLBACK_MODEL[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mAI_PRIMARY_MODEL[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mAI_REQUEST_TIMEOUT_MS[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   getAiUserMessage,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   parseAiError,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   runAiModelWithRetryAndFallback,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   selectAiModelsForQuestion,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m } [36mfrom[0m [32m"./llm-reliability"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m13 |[0m [36mimport[0m [36mtype[0m { [33mIntentResult[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m14 |[0m [36mimport[0m [36mtype[0m { [33mProfileRow[0m } [36mfrom[0m [32m"@/types/database"[0m;
+  [90m15 |[0m
+
+The export selectAiModelsForQuestion was not found in module [project]/src/lib/assistant/llm-reliability.ts [app-rsc] (ecmascript).
+Did you mean to import normalizeAiQuestion?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/lib/assistant/llm.ts
+    ./src/lib/assistant/actions.ts
+
+
+⨯ ./src/lib/assistant/llm.ts:4:1
+Export selectAiModelsForQuestion doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m { buildSystemPrompt, buildContextualData } [36mfrom[0m [32m"./llm-prompt"[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mAI_FALLBACK_MODEL[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mAI_PRIMARY_MODEL[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mAI_REQUEST_TIMEOUT_MS[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   getAiUserMessage,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   parseAiError,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   runAiModelWithRetryAndFallback,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   selectAiModelsForQuestion,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m } [36mfrom[0m [32m"./llm-reliability"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m13 |[0m [36mimport[0m [36mtype[0m { [33mIntentResult[0m } [36mfrom[0m [32m"./types"[0m;
+  [90m14 |[0m [36mimport[0m [36mtype[0m { [33mProfileRow[0m } [36mfrom[0m [32m"@/types/database"[0m;
+  [90m15 |[0m
+
+The export selectAiModelsForQuestion was not found in module [project]/src/lib/assistant/llm-reliability.ts [app-rsc] (ecmascript).
+Did you mean to import normalizeAiQuestion?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/lib/assistant/llm.ts
+    ./src/lib/assistant/actions.ts
+
+
+[browser] Uncaught Error: ./src/lib/assistant/llm.ts:4:1
+Export selectAiModelsForQuestion doesn't exist in target module
+   2 |
+   3 | import { buildSystemPrompt, buildContextualData } from "./llm-prompt";
+>  4 | import {
+     | ^^^^^^^
+>  5 |   AI_FALLBACK_MODEL,
+     | ^^^^^^^^^^^^^^^^^^^^
+>  6 |   AI_PRIMARY_MODEL,
+     | ^^^^^^^^^^^^^^^^^^^
+>  7 |   AI_REQUEST_TIMEOUT_MS,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^
+>  8 |   getAiUserMessage,
+     | ^^^^^^^^^^^^^^^^^^^
+>  9 |   parseAiError,
+     | ^^^^^^^^^^^^^^^
+> 10 |   runAiModelWithRetryAndFallback,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 11 |   selectAiModelsForQuestion,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 12 | } from "./llm-reliability";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  13 | import type { IntentResult } from "./types";
+  14 | import type { ProfileRow } from "@/types/database";
+  15 |
+
+The export selectAiModelsForQuestion was not found in module [project]/src/lib/assistant/llm-reliability.ts [app-rsc] (ecmascript).
+Did you mean to import normalizeAiQuestion?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/lib/assistant/llm.ts
+    ./src/lib/assistant/actions.ts
+
+
+    at <unknown> (Error: ./src/lib/assistant/llm.ts:4:1)
+    at <unknown> (Error: (./src/lib/assistant/llm.ts:4:1)
+Error [AuthRefreshDiscardedError]: Refresh result discarded: session state changed mid-flight (e.g., concurrent signOut)
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 409,
+  code: undefined
+}
+Error [AuthRefreshDiscardedError]: Refresh result discarded: session state changed mid-flight (e.g., concurrent signOut)
+    at ignore-listed frames {
+  __isAuthError: true,
+  status: 409,
+  code: undefined
+}

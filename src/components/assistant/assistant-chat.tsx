@@ -82,6 +82,7 @@ export function AssistantChat({ profile }: AssistantChatProps) {
   const [clearing, setClearing] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
+  const submittingRef = useRef(false);
   const hasPersistedMessages = messages.some((message) => message.id !== "welcome");
 
   useEffect(() => {
@@ -112,8 +113,9 @@ export function AssistantChat({ profile }: AssistantChatProps) {
 
   async function handleSend(question: string) {
     const q = question.trim();
-    if (!q || pending) return;
+    if (!q || pending || submittingRef.current) return;
 
+    submittingRef.current = true;
     const userMsg: Message = { id: crypto.randomUUID(), role: "user", content: q, timestamp: new Date() };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
@@ -139,6 +141,7 @@ export function AssistantChat({ profile }: AssistantChatProps) {
       };
       setMessages((prev) => [...prev, errorMsg]);
     } finally {
+      submittingRef.current = false;
       setPending(false);
     }
   }

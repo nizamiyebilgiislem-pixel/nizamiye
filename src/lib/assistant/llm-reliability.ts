@@ -1,7 +1,12 @@
 export const AI_PROVIDER = "groq";
 export const AI_REQUEST_TIMEOUT_MS = 20_000;
-export const AI_PRIMARY_MODEL = "llama-3.3-70b-versatile";
-export const AI_FALLBACK_MODEL = "llama-3.1-8b-instant";
+export const AI_FAST_MODEL = "llama-3.1-8b-instant";
+export const AI_STRONG_MODEL = "llama-3.3-70b-versatile";
+export const AI_PRIMARY_MODEL = process.env.GROQ_MODEL ?? AI_STRONG_MODEL;
+export const AI_FALLBACK_MODEL = process.env.GROQ_FALLBACK_MODEL ?? AI_FAST_MODEL;
+export const AI_RATE_LIMIT_WINDOW_MS = 60_000;
+export const AI_RATE_LIMIT_MAX_REQUESTS = 3;
+export const AI_CACHE_TTL_MS = 120_000;
 
 export type AiErrorKind =
   | "configuration"
@@ -22,9 +27,8 @@ export type AiErrorInfo = {
 
 type LogAiAttemptParams = {
   model: string;
-  attempt: number;
-  retry: boolean;
   fallback: boolean;
+  requestId?: string;
   status?: number;
   responseBody?: string;
   timeoutMs?: number;
@@ -36,33 +40,77 @@ export type RunAiModelParams<T> = {
   fallbackModel?: string;
   callModel: (model: string) => Promise<T>;
   logAttempt?: (params: LogAiAttemptParams) => void;
+  requestId?: string;
 };
+
+export type AiRunResult<T> = {
+  result: T;
+  model: string;
+  fallbackUsed: boolean;
+};
+
+type RateLimitEntry = {
+  timestamps: number[];
+};
+
+type CacheEntry<T> = {
+  expiresAt: number;
+  value: T;
+};
+
+const rateLimitStore = new Map<string, RateLimitEntry>();
+const answerCache = new Map<string, CacheEntry<string>>();
 
 export async function runAiModelWithRetryAndFallback<T>({
   primaryModel = AI_PRIMARY_MODEL,
   fallbackModel = AI_FALLBACK_MODEL,
   callModel,
   logAttempt = logAiAttempt,
+  requestId,
 }: RunAiModelParams<T>): Promise<T> {
   try {
-    return await runAiModelWithRetry(primaryModel, callModel, false, logAttempt);
+    return await callModel(primaryModel);
   } catch (primaryError) {
     const error = parseAiError(primaryError);
+    logAttempt({
+      model: primaryModel,
+      fallback: false,
+      requestId,
+      status: error.status,
+      responseBody: error.responseBody,
+      timeoutMs: error.timeoutMs,
+      error: primaryError,
+    });
+
     if (!shouldUseFallbackModel(error)) {
       throw primaryError;
     }
 
-    return runAiModelWithRetry(fallbackModel, callModel, true, logAttempt);
+    try {
+      return await callModel(fallbackModel);
+    } catch (fallbackError) {
+      const fallbackInfo = parseAiError(fallbackError);
+      logAttempt({
+        model: fallbackModel,
+        fallback: true,
+        requestId,
+        status: fallbackInfo.status,
+        responseBody: fallbackInfo.responseBody,
+        timeoutMs: fallbackInfo.timeoutMs,
+        error: fallbackError,
+      });
+      throw fallbackError;
+    }
   }
 }
 
 export function getAiUserMessage(error: AiErrorInfo) {
   if (error.kind === "configuration") {
-    return "Yapay zeka yapılandırması eksik.";
+    return "Yapay zeka yapılandırması eksik veya hatalı.";
   }
 
   if (error.kind === "rate_limit") {
-    return "Yapay zeka kullanım limiti geçici olarak doldu.";
+    return "Yapay zeka kullanım limiti geçici olarak doldu. Lütfen biraz sonra tekrar deneyin.";
   }
 
   if (error.kind === "timeout") {
@@ -70,54 +118,59 @@ export function getAiUserMessage(error: AiErrorInfo) {
   }
 
   if (error.kind === "server") {
-    return "Yapay zeka servisinde geçici sorun oluştu.";
+    return "Yapay zeka servisinde geçici bir sorun oluştu. Lütfen tekrar deneyin.";
   }
 
   return "Yapay zeka servisine ulaşılamadı. Lütfen daha sonra tekrar deneyin.";
 }
 
-async function runAiModelWithRetry<T>(
-  model: string,
-  callModel: (model: string) => Promise<T>,
-  fallback: boolean,
-  logAttempt: (params: LogAiAttemptParams) => void,
-): Promise<T> {
+export async function runAiModelWithFallbackResult<T>(
+  params: RunAiModelParams<T>,
+): Promise<AiRunResult<T>> {
+  const primaryModel = params.primaryModel ?? AI_PRIMARY_MODEL;
+  const fallbackModel = params.fallbackModel ?? AI_FALLBACK_MODEL;
+
   try {
-    return await callModel(model);
-  } catch (firstError) {
-    const error = parseAiError(firstError);
-    const shouldRetry = shouldRetryAiError(error);
-    logAttempt({
-      model,
-      attempt: 1,
-      retry: shouldRetry,
-      fallback,
+    return {
+      result: await params.callModel(primaryModel),
+      model: primaryModel,
+      fallbackUsed: false,
+    };
+  } catch (primaryError) {
+    const error = parseAiError(primaryError);
+    (params.logAttempt ?? logAiAttempt)({
+      model: primaryModel,
+      fallback: false,
+      requestId: params.requestId,
       status: error.status,
       responseBody: error.responseBody,
       timeoutMs: error.timeoutMs,
-      error: firstError,
+      error: primaryError,
     });
 
-    if (!shouldRetry) {
-      throw firstError;
+    if (!shouldUseFallbackModel(error)) {
+      throw primaryError;
     }
-  }
 
-  try {
-    return await callModel(model);
-  } catch (retryError) {
-    const error = parseAiError(retryError);
-    logAttempt({
-      model,
-      attempt: 2,
-      retry: false,
-      fallback,
-      status: error.status,
-      responseBody: error.responseBody,
-      timeoutMs: error.timeoutMs,
-      error: retryError,
-    });
-    throw retryError;
+    try {
+      return {
+        result: await params.callModel(fallbackModel),
+        model: fallbackModel,
+        fallbackUsed: true,
+      };
+    } catch (fallbackError) {
+      const fallbackInfo = parseAiError(fallbackError);
+      (params.logAttempt ?? logAiAttempt)({
+        model: fallbackModel,
+        fallback: true,
+        requestId: params.requestId,
+        status: fallbackInfo.status,
+        responseBody: fallbackInfo.responseBody,
+        timeoutMs: fallbackInfo.timeoutMs,
+        error: fallbackError,
+      });
+      throw fallbackError;
+    }
   }
 }
 
@@ -131,7 +184,49 @@ export function shouldUseFallbackModel(error: AiErrorInfo) {
     return false;
   }
 
-  return shouldRetryAiError(error) || error.kind === "server" || error.kind === "unknown";
+  return shouldRetryAiError(error);
+}
+
+export function normalizeAiQuestion(question: string) {
+  return question.trim().toLocaleLowerCase("tr-TR").replace(/\s+/g, " ");
+}
+
+export function buildAiCacheKey(userId: string, question: string, role: string) {
+  return `${userId}:${role}:${normalizeAiQuestion(question)}`;
+}
+
+export function getCachedAiAnswer(cacheKey: string, now = Date.now()) {
+  const cached = answerCache.get(cacheKey);
+  if (!cached) return null;
+
+  if (cached.expiresAt <= now) {
+    answerCache.delete(cacheKey);
+    return null;
+  }
+
+  return cached.value;
+}
+
+export function setCachedAiAnswer(cacheKey: string, answer: string, now = Date.now()) {
+  answerCache.set(cacheKey, {
+    value: answer,
+    expiresAt: now + AI_CACHE_TTL_MS,
+  });
+}
+
+export function checkAiRateLimit(userId: string, now = Date.now()) {
+  const windowStart = now - AI_RATE_LIMIT_WINDOW_MS;
+  const entry = rateLimitStore.get(userId) ?? { timestamps: [] };
+  entry.timestamps = entry.timestamps.filter((timestamp) => timestamp > windowStart);
+
+  if (entry.timestamps.length >= AI_RATE_LIMIT_MAX_REQUESTS) {
+    rateLimitStore.set(userId, entry);
+    return false;
+  }
+
+  entry.timestamps.push(now);
+  rateLimitStore.set(userId, entry);
+  return true;
 }
 
 export function parseAiError(error: unknown, timeoutMs = AI_REQUEST_TIMEOUT_MS): AiErrorInfo {
@@ -178,10 +273,9 @@ export function logAiAttempt(params: LogAiAttemptParams) {
   const info = parseAiError(params.error, params.timeoutMs);
   const status = params.status ?? info.status ?? "none";
   const responseBody = params.responseBody ?? info.responseBody ?? "none";
-  const timeout = params.timeoutMs ? `${params.timeoutMs}ms` : "none";
 
   console.error(
-    `[AI] provider=${AI_PROVIDER} model=${params.model} status=${status} timeout=${timeout} retry=${params.retry} attempt=${params.attempt} fallback=${params.fallback} response_body=${responseBody}`,
+    `[AI ERROR]\nprovider=${AI_PROVIDER}\nmodel=${params.model}\nstatus=${status}\nmessage=${info.message}\nresponseBody=${responseBody}\nrequestId=${params.requestId ?? "none"}`,
   );
 }
 

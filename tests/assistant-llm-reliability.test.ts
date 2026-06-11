@@ -3,10 +3,13 @@ import assert from "node:assert/strict";
 
 import {
   AI_FALLBACK_MODEL,
+  AI_FAST_MODEL,
   AI_PRIMARY_MODEL,
+  AI_STRONG_MODEL,
   getAiUserMessage,
   parseAiError,
   runAiModelWithRetryAndFallback,
+  selectAiModelsForQuestion,
 } from "../src/lib/assistant/llm-reliability";
 
 function statusError(status: number) {
@@ -116,4 +119,20 @@ test("401 yapılandırma mesajına çevrilir ve retry yapmaz", async () => {
   const message = getAiUserMessage(parseAiError(statusError(401)));
   assert.equal(message, "Yapay zeka yapılandırması eksik.");
   assert.deepEqual(calls, [AI_PRIMARY_MODEL]);
+});
+
+test("kısa operasyonel sorularda hızlı model primary seçilir", () => {
+  const selection = selectAiModelsForQuestion("Bugün yoklama alındı mı?");
+
+  assert.equal(selection.primaryModel, AI_FAST_MODEL);
+  assert.equal(selection.fallbackModel, AI_STRONG_MODEL);
+  assert.equal(selection.reason, "fast_default");
+});
+
+test("analiz ve rapor sorularında güçlü model primary seçilir", () => {
+  const selection = selectAiModelsForQuestion("Ahmet talebe durumu için detaylı analiz raporu hazırla");
+
+  assert.equal(selection.primaryModel, AI_STRONG_MODEL);
+  assert.equal(selection.fallbackModel, AI_FAST_MODEL);
+  assert.equal(selection.reason, "strong_analysis");
 });
