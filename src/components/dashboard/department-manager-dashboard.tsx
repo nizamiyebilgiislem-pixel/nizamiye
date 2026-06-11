@@ -16,6 +16,7 @@ import { DormitoryDashboardCard } from "@/components/dormitory/dormitory-dashboa
 import { GuidanceDashboardCard } from "@/components/guidance/guidance-dashboard-card";
 import { TaskDashboardCard } from "@/components/tasks/task-dashboard-card";
 import { LibraryDashboardCard } from "@/components/library/library-dashboard-card";
+import { LiveSessionDashboardCard } from "@/components/live-sessions/live-session-dashboard-card";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAttendanceDashboardSummary } from "@/lib/attendance/queries";
@@ -24,12 +25,13 @@ import { getGuidanceDashboardData } from "@/lib/guidance/queries";
 import { getLibraryDashboardData } from "@/lib/library/queries";
 import { getActiveTerms } from "@/lib/terms/queries";
 import { getTaskCounts } from "@/lib/tasks/queries";
+import { getLiveSessionDashboardData } from "@/lib/live-sessions/queries";
 import type { ProfileRow } from "@/types/database";
 
 import { getDepartmentManagerDashboardData } from "@/lib/dashboard/role-based-queries";
 
 export async function DepartmentManagerDashboard({ profile }: { profile: ProfileRow }) {
-  const [data, attendanceSummary, dormitoryData, unassignedCount, libraryData, guidanceData, activeTerms, taskCounts] = await Promise.all([
+  const [data, attendanceSummary, dormitoryData, unassignedCount, libraryData, guidanceData, activeTerms, taskCounts, liveSessionData] = await Promise.all([
     getDepartmentManagerDashboardData(profile),
     getAttendanceDashboardSummary(profile),
     getDormitoryDashboardData(profile),
@@ -38,6 +40,7 @@ export async function DepartmentManagerDashboard({ profile }: { profile: Profile
     getGuidanceDashboardData(profile),
     getActiveTerms(),
     getTaskCounts(profile),
+    getLiveSessionDashboardData(profile),
   ]);
 
   const activeTerm = activeTerms[0] ?? null;
@@ -200,6 +203,7 @@ export async function DepartmentManagerDashboard({ profile }: { profile: Profile
           dueTodayCount={taskCounts.dueToday}
           completedCount={taskCounts.completed}
         />
+        <LiveSessionDashboardCard upcomingCount={liveSessionData.upcomingCount} />
       </div>
 
       <section className="space-y-2">

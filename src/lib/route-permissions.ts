@@ -123,6 +123,10 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/ders-sistemi": managerRoles,
   "/ders-sistemi/yeni": managerRoles,
   "/ders-sistemi/[id]/duzenle": managerRoles,
+  "/canli-oturumlar": staffAndSupportRoles,
+  "/canli-oturumlar/yeni": staffAndSupportRoles,
+  "/canli-oturumlar/[id]": staffAndSupportRoles,
+  "/canli-oturumlar/[id]/duzenle": staffAndSupportRoles,
 };
 
 export const roleLabels: Record<UserRole, string> = {

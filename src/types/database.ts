@@ -555,6 +555,33 @@ export type TaskAttachmentRow = {
   created_at: Timestamp;
 };
 
+export type LiveSessionRow = {
+  id: string;
+  title: string;
+  description: string | null;
+  session_type: "ogretmen_toplantisi" | "konuk_semineri" | "bolum_toplantisi" | "veli_gorusmesi" | "ozel_etkinlik";
+  room_name: string;
+  start_time: Timestamp;
+  end_time: Timestamp | null;
+  max_participants: number;
+  status: "planned" | "active" | "completed" | "cancelled";
+  created_by: string;
+  department_id: string | null;
+  notes: string | null;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+};
+
+export type LiveSessionParticipantRow = {
+  id: string;
+  session_id: string;
+  profile_id: string;
+  status: "invited" | "confirmed" | "declined" | "attended";
+  joined_at: Timestamp | null;
+  left_at: Timestamp | null;
+  created_at: Timestamp;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -597,6 +624,8 @@ export type Database = {
       guidance_survey_answers: TableDefinition<GuidanceSurveyAnswerRow>;
       guidance_activities: TableDefinition<GuidanceActivityRow>;
       guidance_activity_participants: TableDefinition<GuidanceActivityParticipantRow>;
+      live_sessions: TableDefinition<LiveSessionRow>;
+      live_session_participants: TableDefinition<LiveSessionParticipantRow>;
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

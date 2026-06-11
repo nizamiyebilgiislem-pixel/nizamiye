@@ -3,22 +3,25 @@ import { AlertTriangle, BookOpen, CheckCircle2, ClipboardList, FileText, Graduat
 
 import { StudentAvatar } from "@/components/students/student-avatar";
 import { StudentStatusBadge } from "@/components/students/student-status-badge";
+import { LiveSessionDashboardCard } from "@/components/live-sessions/live-session-dashboard-card";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/layout/page-header";
 import { getAttendanceDashboardSummary } from "@/lib/attendance/queries";
 import { getGuidanceDashboardData } from "@/lib/guidance/queries";
 import { getActiveTerms } from "@/lib/terms/queries";
 import { getTaskCounts } from "@/lib/tasks/queries";
+import { getLiveSessionDashboardData } from "@/lib/live-sessions/queries";
 import type { ProfileRow } from "@/types/database";
 
 import { getClassTeacherDashboardData } from "@/lib/dashboard/role-based-queries";
 
 export async function ClassTeacherDashboard({ profile }: { profile: ProfileRow }) {
-  const [data, activeTerms, taskCounts, guidanceData] = await Promise.all([
+  const [data, activeTerms, taskCounts, guidanceData, liveSessionData] = await Promise.all([
     getClassTeacherDashboardData(profile),
     getActiveTerms(),
     getTaskCounts(profile),
     getGuidanceDashboardData(profile),
+    getLiveSessionDashboardData(profile),
   ]);
 
   const activeTerm = activeTerms[0] ?? null;
@@ -87,6 +90,8 @@ export async function ClassTeacherDashboard({ profile }: { profile: ProfileRow }
           value={data.classes.filter((c) => c.has_schedule).length}
         />
       </div>
+
+      <LiveSessionDashboardCard upcomingCount={liveSessionData.upcomingCount} />
 
       {missingAttendanceClasses.length > 0 ? (
         <Card className="border-amber-200 bg-amber-50">

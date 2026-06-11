@@ -22,6 +22,7 @@ import {
   User,
   Users,
   UsersRound,
+  Video,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -54,6 +55,7 @@ const iconMap: Record<string, typeof Circle> = {
   user: User,
   talepler: MessageSquare,
   tasks: ListChecks,
+  video: Video,
 };
 
 type SidebarProps = {

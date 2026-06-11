@@ -51,6 +51,7 @@ export const moduleGroups: NavigationGroup[] = [
       { label: "Yatakhane Yönetimi", href: "/yatakhane", iconKey: "dormitory", allowedRoles: staffRoles },
       { label: "Revir Sistemi", href: "/revir", iconKey: "infirmary", allowedRoles: staffRoles, moduleKey: "infirmary" },
       { label: "Kütüphane", href: "/kutuphane", iconKey: "library", allowedRoles: libraryRoles, moduleKey: "library" },
+      { label: "Canlı Oturumlar", href: "/canli-oturumlar", iconKey: "video", allowedRoles: taskRoles },
       { label: "Rehberlik", href: "/rehberlik", iconKey: "guidance", allowedRoles: guidanceRoles, moduleKey: "guidance" },
     ],
   },

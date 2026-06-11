@@ -10,6 +10,7 @@ import { DormitoryDashboardCard } from "@/components/dormitory/dormitory-dashboa
 import { LibraryDashboardCard } from "@/components/library/library-dashboard-card";
 import { GuidanceDashboardCard } from "@/components/guidance/guidance-dashboard-card";
 import { TaskDashboardCard } from "@/components/tasks/task-dashboard-card";
+import { LiveSessionDashboardCard } from "@/components/live-sessions/live-session-dashboard-card";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { ReportShortcutCard } from "@/components/reports/report-shortcut-card";
@@ -24,6 +25,7 @@ import { getGuidanceDashboardData } from "@/lib/guidance/queries";
 import { getLibraryDashboardData } from "@/lib/library/queries";
 import { getActiveTerms } from "@/lib/terms/queries";
 import { getTaskCounts } from "@/lib/tasks/queries";
+import { getLiveSessionDashboardData } from "@/lib/live-sessions/queries";
 
 import type { ProfileRow } from "@/types/database";
 
@@ -35,7 +37,7 @@ const metricIcons: Record<string, ComponentType<{ className?: string; "aria-hidd
 };
 
 export async function AdminDashboard({ profile }: { profile: ProfileRow }) {
-  const [dashboard, departments, activeTerms, attendanceSummary, dormitoryData, unassignedCount, libraryData, guidanceData, taskCounts] = await Promise.all([
+  const [dashboard, departments, activeTerms, attendanceSummary, dormitoryData, unassignedCount, libraryData, guidanceData, taskCounts, liveSessionData] = await Promise.all([
     getDashboardData(profile),
     getDepartmentAnalyticsForProfile(profile),
     getActiveTerms(),
@@ -45,6 +47,7 @@ export async function AdminDashboard({ profile }: { profile: ProfileRow }) {
     getLibraryDashboardData(),
     getGuidanceDashboardData(profile),
     getTaskCounts(profile),
+    getLiveSessionDashboardData(profile),
   ]);
   const activeTerm = activeTerms[0] ?? null;
   const mainMetricKeys = new Set(["active-students", "teachers", "active-classes", "active-departments"]);
@@ -131,6 +134,7 @@ export async function AdminDashboard({ profile }: { profile: ProfileRow }) {
           dueTodayCount={taskCounts.dueToday}
           completedCount={taskCounts.completed}
         />
+        <LiveSessionDashboardCard upcomingCount={liveSessionData.upcomingCount} />
         <div className="space-y-3">
           <ReportShortcutCard
             title="PDF Merkezi"
