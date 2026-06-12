@@ -4,6 +4,7 @@ import { LogOut, Menu } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 
+import { AssistantLauncher } from "@/components/assistant/assistant-launcher";
 import { ProfileAvatar } from "@/components/profiles/profile-avatar";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ type PanelShellProps = {
 export function PanelShell({ children, navigationGroups, profile }: PanelShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const roleLabel = roleLabels[profile.role];
+  const canUseAssistant = ["admin", "genel_mudur", "bolum_muduru", "hoca", "kutuphane_gorevlisi", "destek_birim_muduru"].includes(profile.role);
 
   return (
     <div className="min-h-screen bg-[#f6f8fa] text-foreground">
@@ -78,6 +80,8 @@ export function PanelShell({ children, navigationGroups, profile }: PanelShellPr
           <main className={cn("flex-1 px-5 py-6 lg:px-8")}>{children}</main>
         </div>
       </div>
+
+      {canUseAssistant ? <AssistantLauncher profile={profile} /> : null}
     </div>
   );
 }

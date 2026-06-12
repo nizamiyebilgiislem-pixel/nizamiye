@@ -1,18 +1,21 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Bot, User, Volume2, VolumeX, Mic, MicOff, Trash2 } from "lucide-react";
+import { useState, useRef, useEffect, useCallback, useSyncExternalStore } from "react";
+import { Mic, MicOff, Send, Trash2, User, Volume2, VolumeX, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { askAssistant } from "@/lib/assistant/actions";
 import { clearMessages, getMessages } from "@/lib/assistant/messages";
 import { AssistantSuggestions } from "./assistant-suggestions";
+import { PolaAiAvatar } from "./pola-ai-avatar";
 import type { Message } from "@/lib/assistant/types";
 import type { ProfileRow } from "@/types/database";
 
 type AssistantChatProps = {
   profile: ProfileRow;
+  variant?: "page" | "panel";
+  onClose?: () => void;
 };
 
 declare global {
@@ -58,21 +61,32 @@ interface SpeechRecognitionErrorEvent extends Event {
   message: string;
 }
 
-const speechSupported = typeof window !== "undefined" && "speechSynthesis" in window;
-const recognitionSupported =
-  typeof window !== "undefined" &&
-  ("SpeechRecognition" in window || "webkitSpeechRecognition" in window);
-
-function getWelcomeMessage(profile: ProfileRow): Message {
+function getWelcomeMessage(): Message {
   return {
     id: "welcome",
     role: "assistant",
-    content: `Merhaba ${profile.full_name.split(" ")[0]}! 👋 Ben POLA AI, size nasıl yardımcı olabilirim?`,
+    content:
+      "Merhaba, ben Pola AI.\nNizamiye Öğrenci Bilgi Sistemi içerisinde size yardımcı olabilirim.",
     timestamp: new Date(),
   };
 }
 
-export function AssistantChat({ profile }: AssistantChatProps) {
+function subscribeToClientSnapshot() {
+  return () => {};
+}
+
+export function AssistantChat({ profile, variant = "page", onClose }: AssistantChatProps) {
+  const mounted = useSyncExternalStore(subscribeToClientSnapshot, () => true, () => false);
+  const speechSupported = useSyncExternalStore(
+    subscribeToClientSnapshot,
+    () => "speechSynthesis" in window,
+    () => false,
+  );
+  const recognitionSupported = useSyncExternalStore(
+    subscribeToClientSnapshot,
+    () => "SpeechRecognition" in window || "webkitSpeechRecognition" in window,
+    () => false,
+  );
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [pending, setPending] = useState(false);
@@ -84,13 +98,12 @@ export function AssistantChat({ profile }: AssistantChatProps) {
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
   const submittingRef = useRef(false);
   const hasPersistedMessages = messages.some((message) => message.id !== "welcome");
+  const isPanel = variant === "panel";
 
   useEffect(() => {
-    getMessages(profile).then((msgs) => {
-      if (msgs.length === 0) {
-        msgs = [getWelcomeMessage(profile)];
-      }
-      setMessages(msgs);
+    getMessages(profile).then((loadedMessages) => {
+      const nextMessages = loadedMessages.length === 0 ? [getWelcomeMessage()] : loadedMessages;
+      setMessages(nextMessages);
       setHistoryLoaded(true);
     });
   }, [profile]);
@@ -101,14 +114,14 @@ export function AssistantChat({ profile }: AssistantChatProps) {
 
   const speak = useCallback(
     (text: string) => {
-      if (!ttsEnabled || !speechSupported) return;
+      if (!mounted || !ttsEnabled || !speechSupported) return;
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text.replace(/[✅❌📋⚠️🕐🔄🎉🌙📌💡📢🤔🎯💪😄🔥👋]/g, ""));
+      const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = "tr-TR";
-      utterance.rate = 1.1;
+      utterance.rate = 1.05;
       window.speechSynthesis.speak(utterance);
     },
-    [ttsEnabled],
+    [mounted, speechSupported, ttsEnabled],
   );
 
   async function handleSend(question: string) {
@@ -147,7 +160,7 @@ export function AssistantChat({ profile }: AssistantChatProps) {
   }
 
   function startListening() {
-    if (!recognitionSupported) return;
+    if (!mounted || !recognitionSupported) return;
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
@@ -176,15 +189,17 @@ export function AssistantChat({ profile }: AssistantChatProps) {
 
   async function handleClearMessages() {
     if (pending || clearing || !hasPersistedMessages) return;
-    const confirmed = window.confirm("POLA AI sohbet geçmişinizi silmek istiyor musunuz?");
+    const confirmed = window.confirm("Pola AI sohbet geçmişini silmek istiyor musunuz?");
     if (!confirmed) return;
 
     setClearing(true);
     try {
       const result = await clearMessages();
       if (result.success) {
-        setMessages([getWelcomeMessage(profile)]);
-        window.speechSynthesis?.cancel();
+        setMessages([getWelcomeMessage()]);
+        if (mounted) {
+          window.speechSynthesis?.cancel();
+        }
       }
     } finally {
       setClearing(false);
@@ -192,45 +207,54 @@ export function AssistantChat({ profile }: AssistantChatProps) {
   }
 
   return (
-    <div className="flex h-[calc(100vh-10rem)] flex-col">
-      <Card className="flex flex-1 flex-col overflow-hidden">
+    <div className={isPanel ? "flex h-[min(70vh,40rem)] flex-col" : "flex h-[calc(100vh-10rem)] flex-col"}>
+      <Card className="flex flex-1 flex-col overflow-hidden border-[#dbe5ec] shadow-sm">
         <CardContent className="flex flex-1 flex-col p-0">
-          <div className="flex items-center justify-end gap-2 border-b border-[#e5e7eb] px-4 py-2">
-            {speechSupported && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setTtsEnabled((v) => !v)}
-                className="gap-1 text-xs text-[#6b7280]"
-              >
-                {ttsEnabled ? <Volume2 className="size-3.5" /> : <VolumeX className="size-3.5" />}
-                {ttsEnabled ? "Sesli Yanıt Açık" : "Sesli Yanıt Kapalı"}
-              </Button>
-            )}
+          <div className="flex items-center justify-between gap-3 border-b border-[#e5e7eb] bg-white px-4 py-3">
+            <div className="flex items-center gap-3">
+              <PolaAiAvatar size={44} className="shadow-[0_8px_20px_rgba(9,54,87,0.14)]" priority={isPanel} />
+              <div>
+                <p className="text-sm font-semibold text-[#093657]">Pola AI</p>
+                <p className="text-xs text-[#64748b]">Dijital Yardımcı</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1">
+              {mounted && speechSupported ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setTtsEnabled((value) => !value)}
+                  className="gap-1 text-xs text-[#6b7280]"
+                >
+                  {ttsEnabled ? <Volume2 className="size-3.5" /> : <VolumeX className="size-3.5" />}
+                  {ttsEnabled ? "Sesli Yanıt Açık" : "Sesli Yanıt Kapalı"}
+                </Button>
+              ) : null}
+
+              {isPanel && onClose ? (
+                <Button type="button" variant="ghost" size="icon-sm" onClick={onClose} aria-label="Pola AI panelini kapat">
+                  <X className="size-4" />
+                </Button>
+              ) : null}
+            </div>
           </div>
 
-          <div className="flex-1 space-y-4 overflow-y-auto p-4">
+          <div className="flex-1 space-y-4 overflow-y-auto bg-[#fbfcfd] p-4">
             {messages.map((msg) => (
               <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div
-                  className={`flex max-w-[80%] gap-3 ${
-                    msg.role === "user" ? "flex-row-reverse" : "flex-row"
-                  }`}
-                >
+                <div className={`flex max-w-[88%] gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
+                  {msg.role === "user" ? (
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#093657] text-white shadow-sm">
+                      <User className="size-4" />
+                    </div>
+                  ) : (
+                    <PolaAiAvatar size={36} className="shadow-[0_6px_14px_rgba(9,54,87,0.16)]" />
+                  )}
+
                   <div
-                    className={`flex size-8 shrink-0 items-center justify-center rounded-full ${
-                      msg.role === "user"
-                        ? "bg-[#093657] text-white"
-                        : "bg-[#eaf1f6] text-[#093657]"
-                    }`}
-                  >
-                    {msg.role === "user" ? <User className="size-4" /> : <Bot className="size-4" />}
-                  </div>
-                  <div
-                    className={`rounded-lg px-4 py-2.5 text-sm leading-relaxed whitespace-pre-line ${
-                      msg.role === "user"
-                        ? "bg-[#093657] text-white"
-                        : "border border-[#e5e7eb] bg-white"
+                    className={`rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-line shadow-sm ${
+                      msg.role === "user" ? "bg-[#093657] text-white" : "border border-[#e5e7eb] bg-white text-[#0f172a]"
                     }`}
                   >
                     {msg.content}
@@ -241,11 +265,9 @@ export function AssistantChat({ profile }: AssistantChatProps) {
 
             {pending && (
               <div className="flex justify-start">
-                <div className="flex max-w-[80%] gap-3">
-                  <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#eaf1f6] text-[#093657]">
-                    <Bot className="size-4" />
-                  </div>
-                  <div className="rounded-lg border border-[#e5e7eb] bg-white px-4 py-2.5 text-sm">
+                <div className="flex max-w-[88%] gap-3">
+                  <PolaAiAvatar size={36} className="shadow-[0_6px_14px_rgba(9,54,87,0.16)]" />
+                  <div className="rounded-2xl border border-[#e5e7eb] bg-white px-4 py-3 text-sm shadow-sm">
                     <span className="inline-flex gap-1">
                       <span className="size-1.5 animate-bounce rounded-full bg-[#093657]" />
                       <span className="size-1.5 animate-bounce rounded-full bg-[#093657] [animation-delay:0.1s]" />
@@ -256,32 +278,32 @@ export function AssistantChat({ profile }: AssistantChatProps) {
               </div>
             )}
 
-            {historyLoaded && messages.length === 1 && (
-              <AssistantSuggestions profile={profile} onSelect={handleSend} />
-            )}
+            {historyLoaded && messages.length === 1 ? <AssistantSuggestions profile={profile} onSelect={handleSend} /> : null}
 
             <div ref={bottomRef} />
           </div>
 
-          <div className="border-t border-[#e5e7eb] p-4">
+          <div className="border-t border-[#e5e7eb] bg-white p-4">
             <form
-              onSubmit={(e) => {
-                e.preventDefault();
+              onSubmit={(event) => {
+                event.preventDefault();
                 handleSend(input);
               }}
               className="flex gap-2"
             >
-              {recognitionSupported && (
+              {mounted && recognitionSupported ? (
                 <Button
                   type="button"
                   variant="outline"
                   size="icon"
                   onClick={listening ? stopListening : startListening}
                   className={listening ? "border-red-400 text-red-500" : ""}
+                  aria-label={listening ? "Sesli girişi durdur" : "Sesli giriş başlat"}
                 >
                   {listening ? <MicOff className="size-4" /> : <Mic className="size-4" />}
                 </Button>
-              )}
+              ) : null}
+
               <Button
                 type="button"
                 variant="outline"
@@ -293,15 +315,17 @@ export function AssistantChat({ profile }: AssistantChatProps) {
               >
                 <Trash2 className="size-4" />
               </Button>
+
               <input
                 type="text"
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={(event) => setInput(event.target.value)}
                 placeholder="Bir soru sorun..."
                 className="flex-1 rounded-md border border-[#d1dae3] bg-white px-4 py-2 text-sm outline-none focus:border-[#093657] focus:ring-1 focus:ring-[#093657]"
                 disabled={pending}
               />
-              <Button type="submit" size="icon" disabled={pending || !input.trim()}>
+
+              <Button type="submit" size="icon" disabled={pending || !input.trim()} aria-label="Mesaj gönder">
                 <Send className="size-4" />
               </Button>
             </form>
