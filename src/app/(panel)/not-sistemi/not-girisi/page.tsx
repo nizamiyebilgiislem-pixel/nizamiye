@@ -63,6 +63,12 @@ export default async function GradeEntryPage({ searchParams }: GradeEntryPagePro
     : profile.role === "hoca" && workspace.classes.length === 0
       ? "Yetkiniz olan ders/sınıf ataması bulunmadığı için not girişi yapamazsınız."
       : null;
+  const gradeEntryFormKey = [
+    workspace.selectedDepartmentId,
+    workspace.selectedClassId,
+    workspace.selectedClassCourseId,
+    workspace.selectedExamTypeId,
+  ].join(":");
 
   return (
     <div className="space-y-6">
@@ -137,7 +143,7 @@ export default async function GradeEntryPage({ searchParams }: GradeEntryPagePro
       ) : (
         <Card>
           <CardContent className="p-0">
-            <form action={saveClassCourseGradesAction} className="space-y-4 p-4">
+            <form key={gradeEntryFormKey} action={saveClassCourseGradesAction} className="space-y-4 p-4">
               <input type="hidden" name="department_id" value={workspace.selectedDepartmentId} />
               <input type="hidden" name="class_id" value={workspace.selectedClassId} />
               <input type="hidden" name="class_course_id" value={workspace.selectedClassCourseId} />
@@ -178,19 +184,20 @@ export default async function GradeEntryPage({ searchParams }: GradeEntryPagePro
                           min="0"
                           max="100"
                           step="0.01"
-                          defaultValue={student.existingGrade ?? ""}
+                          defaultValue=""
                           disabled={!workspace.canSubmit}
-                          placeholder="0 - 100"
+                          placeholder={student.existingGrade === null ? "0 - 100" : "Yeni not girin"}
                           className="min-w-28"
                         />
+                        <p className="mt-1 text-xs text-muted-foreground">Boş bırakılırsa bu öğrenci için yeni kayıt yapılmaz.</p>
                       </TableCell>
 
                       <TableCell className="whitespace-normal">
                         <Textarea
                           name={`note:${student.id}`}
-                          defaultValue={student.existingNote ?? ""}
+                          defaultValue=""
                           disabled={!workspace.canSubmit}
-                          placeholder="Açıklama ekleyin"
+                          placeholder={student.existingNote ? "Yeni açıklama ekleyin" : "Açıklama ekleyin"}
                           className="min-h-24 min-w-56"
                         />
                       </TableCell>
