@@ -35,7 +35,7 @@ export const moduleGroups: NavigationGroup[] = [
     label: "Genel",
     items: [
       { label: "Dashboard", href: "/dashboard", iconKey: "dashboard", allowedRoles: guidanceDashboardRoles },
-      { label: "POLA AI", href: "/asistan", iconKey: "assistant", allowedRoles: assistantRoles, moduleKey: "assistant" },
+      { label: "Nizam Aİ", href: "/asistan", iconKey: "assistant", allowedRoles: assistantRoles, moduleKey: "assistant" },
       { label: "Veli Paneli", href: "/veli", iconKey: "home", allowedRoles: ["veli"] },
       { label: "Hesabım", href: "/hesabim", iconKey: "user", allowedRoles: accountRoles },
       { label: "Talebeler", href: "/talebeler", iconKey: "students", allowedRoles: [...staffRoles, "rehberlik"] },

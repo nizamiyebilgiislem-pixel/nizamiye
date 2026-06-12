@@ -67,7 +67,7 @@ export async function clearMessages(): Promise<{ success: boolean; error?: strin
     ...buildAuditActor(profile),
     action: "assistant_history_cleared",
     entityType: "assistant",
-    title: "POLA AI sohbet geçmişi silindi",
+    title: "Nizam Aİ sohbet geçmişi silindi",
     description: `${count ?? 0} sohbet mesajı silindi.`,
     metadata: {
       deletedMessageCount: count ?? 0,

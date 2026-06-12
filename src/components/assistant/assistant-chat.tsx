@@ -66,7 +66,7 @@ function getWelcomeMessage(): Message {
     id: "welcome",
     role: "assistant",
     content:
-      "Merhaba, ben Pola AI.\nNizamiye Öğrenci Bilgi Sistemi içerisinde size yardımcı olabilirim.",
+      "Merhaba, ben Nizam Aİ.\nNizamiye Öğrenci Bilgi Sistemi içerisinde size yardımcı olabilirim.",
     timestamp: new Date(),
   };
 }
@@ -189,7 +189,7 @@ export function AssistantChat({ profile, variant = "page", onClose }: AssistantC
 
   async function handleClearMessages() {
     if (pending || clearing || !hasPersistedMessages) return;
-    const confirmed = window.confirm("Pola AI sohbet geçmişini silmek istiyor musunuz?");
+    const confirmed = window.confirm("Nizam Aİ sohbet geçmişini silmek istiyor musunuz?");
     if (!confirmed) return;
 
     setClearing(true);
@@ -214,7 +214,7 @@ export function AssistantChat({ profile, variant = "page", onClose }: AssistantC
             <div className="flex items-center gap-3">
               <PolaAiAvatar size={44} className="shadow-[0_8px_20px_rgba(9,54,87,0.14)]" priority={isPanel} />
               <div>
-                <p className="text-sm font-semibold text-[#093657]">Pola AI</p>
+                <p className="text-sm font-semibold text-[#093657]">Nizam Aİ</p>
                 <p className="text-xs text-[#64748b]">Dijital Yardımcı</p>
               </div>
             </div>
@@ -233,7 +233,7 @@ export function AssistantChat({ profile, variant = "page", onClose }: AssistantC
               ) : null}
 
               {isPanel && onClose ? (
-                <Button type="button" variant="ghost" size="icon-sm" onClick={onClose} aria-label="Pola AI panelini kapat">
+                <Button type="button" variant="ghost" size="icon-sm" onClick={onClose} aria-label="Nizam Aİ panelini kapat">
                   <X className="size-4" />
                 </Button>
               ) : null}

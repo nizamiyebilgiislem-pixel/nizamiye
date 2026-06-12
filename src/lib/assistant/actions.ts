@@ -9,6 +9,7 @@ import { executeIntent } from "./queries";
 import { askLLM } from "./llm";
 import { buildContextualData } from "./llm-prompt";
 import { saveMessage } from "./messages";
+import { findKnowledgeBaseAnswer } from "./knowledge-base";
 import type { IntentResult } from "./types";
 
 export async function askAssistant(question: string, _clientProfile?: ProfileRow): Promise<IntentResult> {
@@ -20,6 +21,20 @@ export async function askAssistant(question: string, _clientProfile?: ProfileRow
 
   await saveMessage(profile, "user", question);
 
+  const knowledgeBaseHit = await findKnowledgeBaseAnswer(question);
+  if (knowledgeBaseHit) {
+    const result = { answer: knowledgeBaseHit.answer };
+    await saveMessage(profile, "assistant", result.answer);
+    await logAssistantAsk(profile, question, "knowledge_base", 1, result.answer, {
+      knowledgeBaseHit: true,
+      knowledgeBaseEntryId: knowledgeBaseHit.id,
+      knowledgeBaseCategory: knowledgeBaseHit.category,
+      knowledgeBaseScore: knowledgeBaseHit.score,
+      source: "knowledge_base",
+    });
+    return result;
+  }
+
   const matched = matchIntent(question);
 
   let result: IntentResult;
@@ -28,7 +43,10 @@ export async function askAssistant(question: string, _clientProfile?: ProfileRow
     result = await executeIntent(matched.id, profile, matched.params);
     if (result.answer && !result.answer.includes("bulamadım")) {
       await saveMessage(profile, "assistant", result.answer);
-      await logAssistantAsk(profile, question, matched.id, matched.confidence, result.answer);
+      await logAssistantAsk(profile, question, matched.id, matched.confidence, result.answer, {
+        knowledgeBaseHit: false,
+        source: "intent",
+      });
       return result;
     }
   }
@@ -37,7 +55,10 @@ export async function askAssistant(question: string, _clientProfile?: ProfileRow
   result = await askLLM(question, profile, context);
 
   await saveMessage(profile, "assistant", result.answer);
-  await logAssistantAsk(profile, question, matched.id, matched.confidence, result.answer);
+  await logAssistantAsk(profile, question, matched.id, matched.confidence, result.answer, {
+    knowledgeBaseHit: false,
+    source: "llm",
+  });
   return result;
 }
 
@@ -47,17 +68,19 @@ async function logAssistantAsk(
   intentId: string,
   confidence: number,
   answer: string,
+  metadata: Record<string, unknown>,
 ) {
   await createAuditLog({
     ...buildAuditActor(profile),
     action: "assistant_question_asked",
     entityType: "assistant",
-    title: "POLA AI sorgusu yapıldı",
+    title: "Nizam Aİ sorgusu yapıldı",
     description: question.slice(0, 240),
     metadata: {
       intentId,
       confidence,
       answerPreview: answer.slice(0, 500),
+      ...metadata,
     },
   });
 }

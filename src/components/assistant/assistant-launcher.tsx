@@ -119,7 +119,7 @@ export function AssistantLauncher({ profile }: AssistantLauncherProps) {
           <button
             type="button"
             onClick={handleToggle}
-            aria-label={open ? "Pola AI Asistanını Kapat" : "Pola AI Asistanını Aç"}
+            aria-label={open ? "Nizam Aİ Asistanını Kapat" : "Nizam Aİ Asistanını Aç"}
             aria-pressed={open}
             className={cn(
               "group relative flex items-center rounded-full border border-white/60 bg-white/96 shadow-[0_16px_40px_rgba(9,54,87,0.22)] backdrop-blur transition duration-200 hover:scale-[1.03]",
@@ -135,7 +135,7 @@ export function AssistantLauncher({ profile }: AssistantLauncherProps) {
 
             {!preferences.compact ? (
               <span className="hidden pr-1 text-left sm:block">
-                <span className="block text-sm font-semibold text-[#093657]">Pola AI</span>
+                <span className="block text-sm font-semibold text-[#093657]">Nizam Aİ</span>
                 <span className="block text-xs text-[#64748b]">Dijital Yardımcı</span>
               </span>
             ) : null}
@@ -146,7 +146,7 @@ export function AssistantLauncher({ profile }: AssistantLauncherProps) {
               </span>
             ) : null}
 
-            <span className="sr-only">Pola AI sohbet panelini aç veya kapat</span>
+            <span className="sr-only">Nizam Aİ sohbet panelini aç veya kapat</span>
             {!preferences.compact ? <MessageSquareMore className="hidden size-4 text-[#64748b] sm:block" /> : null}
           </button>
 
@@ -154,7 +154,7 @@ export function AssistantLauncher({ profile }: AssistantLauncherProps) {
             <button
               type="button"
               onClick={handleSideToggle}
-              aria-label={isLeft ? "Pola AI asistanını sağ alta taşı" : "Pola AI asistanını sol alta taşı"}
+              aria-label={isLeft ? "Nizam Aİ asistanını sağ alta taşı" : "Nizam Aİ asistanını sol alta taşı"}
               title={isLeft ? "Sağa taşı" : "Sola taşı"}
               className="flex size-8 items-center justify-center rounded-full border border-[#d8e2ea] bg-white/95 text-[#093657] shadow-sm transition hover:bg-[#eef4f8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#093657]/25"
             >
@@ -163,7 +163,7 @@ export function AssistantLauncher({ profile }: AssistantLauncherProps) {
             <button
               type="button"
               onClick={handleCompactToggle}
-              aria-label={preferences.compact ? "Pola AI asistanını büyüt" : "Pola AI asistanını küçült"}
+              aria-label={preferences.compact ? "Nizam Aİ asistanını büyüt" : "Nizam Aİ asistanını küçült"}
               title={preferences.compact ? "Büyüt" : "Küçült"}
               className="flex size-8 items-center justify-center rounded-full border border-[#d8e2ea] bg-white/95 text-[#093657] shadow-sm transition hover:bg-[#eef4f8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#093657]/25"
             >

@@ -650,6 +650,18 @@ export type AssistantMessageRow = {
   created_at: Timestamp;
 };
 
+export type AiKnowledgeBaseRow = {
+  id: string;
+  category: string;
+  question: string;
+  answer: string;
+  keywords: string[];
+  priority: number;
+  is_active: boolean;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+};
+
 export type LiveSessionParticipantRow = {
   id: string;
   session_id: string;
@@ -707,6 +719,7 @@ export type Database = {
       live_sessions: TableDefinition<LiveSessionRow>;
       live_session_participants: TableDefinition<LiveSessionParticipantRow>;
       assistant_messages: TableDefinition<AssistantMessageRow>;
+      ai_knowledge_base: TableDefinition<AiKnowledgeBaseRow>;
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

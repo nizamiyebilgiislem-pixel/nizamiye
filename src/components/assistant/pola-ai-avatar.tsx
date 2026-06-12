@@ -21,7 +21,7 @@ export function PolaAiAvatar({ size = 56, className, priority = false }: PolaAiA
     >
       <Image
         src="/polaai (1).png"
-        alt="Pola AI avatarı"
+        alt="Nizam Aİ avatarı"
         fill
         sizes={`${size}px`}
         priority={priority}

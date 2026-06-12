@@ -18,7 +18,7 @@ export default async function ModuleAssignmentsPage() {
       <div>
         <h1 className="text-lg font-semibold text-[#093657]">Modül Yetkilileri</h1>
         <p className="text-sm text-muted-foreground">
-          Rehberlik, kütüphane, revir ve POLA AI modülleri için yetkili personel atayın.
+          Rehberlik, kütüphane, revir ve Nizam Aİ modülleri için yetkili personel atayın.
         </p>
       </div>
 
@@ -54,11 +54,11 @@ export default async function ModuleAssignmentsPage() {
 
       <ModuleAssignmentManager
         moduleKey="assistant"
-        moduleLabel="POLA AI"
+        moduleLabel="Nizam Aİ"
         assignees={assistantAssignees}
         profiles={assignableProfiles}
-        assignActionLabel="POLA AI Yetkilisi Ata"
-        emptyMessage="Henüz POLA AI yetkilisi atanmamış."
+        assignActionLabel="Nizam Aİ Yetkilisi Ata"
+        emptyMessage="Henüz Nizam Aİ yetkilisi atanmamış."
         profile={profile}
       />
     </div>
