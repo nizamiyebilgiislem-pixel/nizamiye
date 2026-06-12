@@ -9,11 +9,13 @@ export function canUseAssistant(profile: ProfileRow) {
     "hoca",
     "kutuphane_gorevlisi",
     "destek_birim_muduru",
+    "rehberlik",
+    "veli",
   ].includes(profile.role);
 }
 
 export function canViewAllAssistantData(profile: ProfileRow) {
-  return profile.role === "admin" || profile.role === "genel_mudur";
+  return profile.role === "admin" || profile.role === "genel_mudur" || profile.role === "rehberlik";
 }
 
 export async function getAssistantVisibleClasses(profile: ProfileRow): Promise<ClassRow[]> {
@@ -25,7 +27,7 @@ export async function getAssistantVisibleClasses(profile: ProfileRow): Promise<C
     return data ?? [];
   }
 
-  if (profile.role === "bolum_muduru" || profile.role === "rehberlik" || profile.role === "destek_birim_muduru") {
+  if (profile.role === "bolum_muduru" || profile.role === "destek_birim_muduru") {
     if (!profile.department_id) return [];
     const { data } = await query.eq("department_id", profile.department_id);
     return data ?? [];
@@ -45,6 +47,19 @@ export async function getAssistantVisibleClasses(profile: ProfileRow): Promise<C
     }
 
     const { data } = await query.or(filters.join(","));
+    return data ?? [];
+  }
+
+  if (profile.role === "veli") {
+    const { data: links } = await supabase.from("parent_student_links").select("student_id").eq("parent_profile_id", profile.id);
+    const studentIds = (links ?? []).map((link) => link.student_id);
+    if (studentIds.length === 0) return [];
+
+    const { data: students } = await supabase.from("students").select("course_class_id").in("id", studentIds);
+    const classIds = [...new Set((students ?? []).map((student) => student.course_class_id).filter(Boolean) as string[])];
+    if (classIds.length === 0) return [];
+
+    const { data } = await query.in("id", classIds);
     return data ?? [];
   }
 

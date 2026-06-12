@@ -7,6 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { askAssistant } from "@/lib/assistant/actions";
 import { clearMessages, getMessages } from "@/lib/assistant/messages";
+import {
+  getAssistantQuickCommandSummaryAction,
+  searchAssistantQuickCommandAction,
+  type AssistantQuickCommand,
+  type AssistantQuickSummaryType,
+} from "@/lib/assistant/quick-commands";
 import { AssistantSuggestions } from "./assistant-suggestions";
 import { PolaAiAvatar } from "./pola-ai-avatar";
 import type { Message } from "@/lib/assistant/types";
@@ -16,6 +22,73 @@ type AssistantChatProps = {
   profile: ProfileRow;
   variant?: "page" | "panel";
   onClose?: () => void;
+};
+
+type QuickCommandCardState = {
+  id: string;
+  command: AssistantQuickCommand;
+};
+
+type QuickSearchItem = {
+  id: string;
+  title: string;
+  subtitle?: string;
+  meta: string[];
+};
+
+type QuickSummary = {
+  title?: string;
+  lines: string[];
+  error?: string;
+};
+
+type QuickContext = {
+  command: AssistantQuickCommand;
+  item: QuickSearchItem;
+  summary?: QuickSummary;
+};
+
+const quickCommandLabels: Record<AssistantQuickCommand, string> = {
+  student: "Talebe",
+  department: "Bölüm",
+  class: "Sınıf",
+  dormitory: "Yatakhane",
+};
+
+const quickCommandPrompts: Record<AssistantQuickCommand, string> = {
+  student: "Kimi görüntülemek istiyorsunuz?",
+  department: "Hangi bölümü görüntülemek istiyorsunuz?",
+  class: "Hangi sınıfı görüntülemek istiyorsunuz?",
+  dormitory: "Hangi yatakhaneyi görüntülemek istiyorsunuz?",
+};
+
+const summaryOptions: Record<AssistantQuickCommand, Array<{ type: AssistantQuickSummaryType; label: string }>> = {
+  student: [
+    { type: "general", label: "Genel Bilgi" },
+    { type: "grades", label: "Not Özeti" },
+    { type: "attendance", label: "Yoklama Özeti" },
+    { type: "guidance", label: "Rehberlik Özeti" },
+    { type: "infirmary", label: "Revir Özeti" },
+    { type: "term_history", label: "Dönem Geçmişi" },
+  ],
+  department: [
+    { type: "general", label: "Bölüm Özeti" },
+    { type: "classes", label: "Sınıflar" },
+    { type: "students", label: "Öğrenciler" },
+    { type: "attendance", label: "Yoklama Özeti" },
+  ],
+  class: [
+    { type: "general", label: "Sınıf Özeti" },
+    { type: "students", label: "Öğrenci Listesi" },
+    { type: "attendance", label: "Yoklama Özeti" },
+    { type: "courses", label: "Dersler" },
+    { type: "grades", label: "Not Özeti" },
+  ],
+  dormitory: [
+    { type: "occupancy", label: "Doluluk Özeti" },
+    { type: "students", label: "Öğrenci Listesi" },
+    { type: "capacity", label: "Boş Kontenjan" },
+  ],
 };
 
 declare global {
@@ -94,11 +167,47 @@ export function AssistantChat({ profile, variant = "page", onClose }: AssistantC
   const [listening, setListening] = useState(false);
   const [historyLoaded, setHistoryLoaded] = useState(false);
   const [clearing, setClearing] = useState(false);
+  const [quickCards, setQuickCards] = useState<QuickCommandCardState[]>([]);
+  const [quickContext, setQuickContext] = useState<QuickContext | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
   const submittingRef = useRef(false);
   const hasPersistedMessages = messages.some((message) => message.id !== "welcome");
   const isPanel = variant === "panel";
+  const [mentionItems, setMentionItems] = useState<QuickSearchItem[]>([]);
+  const [mentionOpen, setMentionOpen] = useState(false);
+  const [mentionLoading, setMentionLoading] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const mention = getMentionQuery(input);
+
+    const timer = window.setTimeout(() => {
+      if (!mention || mention.query.length < 1) {
+        setMentionItems([]);
+        setMentionOpen(false);
+        setMentionLoading(false);
+        return;
+      }
+
+      setMentionOpen(true);
+      setMentionLoading(true);
+      searchAssistantQuickCommandAction("student", mention.query)
+        .then((result) => {
+          if (cancelled) return;
+          setMentionItems(result.items);
+        })
+        .finally(() => {
+          if (!cancelled) setMentionLoading(false);
+        });
+    }, mention ? 180 : 0);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [input]);
 
   useEffect(() => {
     getMessages(profile).then((loadedMessages) => {
@@ -110,7 +219,7 @@ export function AssistantChat({ profile, variant = "page", onClose }: AssistantC
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, quickCards.length]);
 
   const speak = useCallback(
     (text: string) => {
@@ -128,6 +237,18 @@ export function AssistantChat({ profile, variant = "page", onClose }: AssistantC
     const q = question.trim();
     if (!q || pending || submittingRef.current) return;
 
+    const quickCommand = parseQuickCommand(q);
+    if (quickCommand) {
+      const userMsg: Message = { id: crypto.randomUUID(), role: "user", content: q, timestamp: new Date() };
+      setMessages((prev) => [...prev, userMsg]);
+      setQuickCards((prev) => [...prev, { id: crypto.randomUUID(), command: quickCommand }]);
+      setInput("");
+      return;
+    }
+
+    const cleanQuestion = quickContext ? removeMentionFromQuestion(q, quickContext.item.title) : q;
+    const contextualQuestion = quickContext ? `${quickContext.item.title} hakkında: ${cleanQuestion}` : q;
+
     submittingRef.current = true;
     const userMsg: Message = { id: crypto.randomUUID(), role: "user", content: q, timestamp: new Date() };
     setMessages((prev) => [...prev, userMsg]);
@@ -135,7 +256,7 @@ export function AssistantChat({ profile, variant = "page", onClose }: AssistantC
     setPending(true);
 
     try {
-      const result = await askAssistant(q);
+      const result = await askAssistant(contextualQuestion);
 
       const assistantMsg: Message = {
         id: crypto.randomUUID(),
@@ -157,6 +278,22 @@ export function AssistantChat({ profile, variant = "page", onClose }: AssistantC
       submittingRef.current = false;
       setPending(false);
     }
+  }
+
+  function selectMentionItem(item: QuickSearchItem) {
+    const mention = getMentionQuery(input);
+    setQuickContext({ command: "student", item });
+    setMentionOpen(false);
+    setMentionItems([]);
+
+    if (!mention) {
+      setInput((value) => `${value.trim()} @${item.title} `.trimStart());
+      inputRef.current?.focus();
+      return;
+    }
+
+    setInput(`${input.slice(0, mention.start)}@${item.title} ${input.slice(mention.end).trimStart()}`);
+    inputRef.current?.focus();
   }
 
   function startListening() {
@@ -263,6 +400,25 @@ export function AssistantChat({ profile, variant = "page", onClose }: AssistantC
               </div>
             ))}
 
+            {quickCards.map((card) => (
+              <QuickCommandCard
+                key={card.id}
+                command={card.command}
+                onSelect={(context, closeAfterSelect = false) => {
+                  setQuickContext(context);
+                  if (closeAfterSelect) {
+                    setQuickCards((prev) => prev.filter((item) => item.id !== card.id));
+                    requestAnimationFrame(() => inputRef.current?.focus());
+                  }
+                }}
+                onSummary={(context) => {
+                  setQuickContext(context);
+                  setMessages((prev) => [...prev, quickSummaryToMessage(context.summary)]);
+                }}
+                onClose={() => setQuickCards((prev) => prev.filter((item) => item.id !== card.id))}
+              />
+            ))}
+
             {pending && (
               <div className="flex justify-start">
                 <div className="flex max-w-[88%] gap-3">
@@ -284,6 +440,42 @@ export function AssistantChat({ profile, variant = "page", onClose }: AssistantC
           </div>
 
           <div className="border-t border-[#e5e7eb] bg-white p-4">
+            {quickContext ? (
+              <div className="mb-2 flex flex-wrap items-center gap-2 rounded-lg border border-[#dbe5ec] bg-[#f8fafc] px-3 py-2 text-xs">
+                <span className="font-medium text-[#093657]">Bağlam:</span>
+                <span className="rounded-full bg-[#093657] px-2 py-0.5 text-white">@{quickContext.item.title}</span>
+                <button
+                  type="button"
+                  onClick={() => setQuickContext(null)}
+                  className="ml-auto rounded-md px-2 py-1 text-[#64748b] hover:bg-white"
+                >
+                  Temizle
+                </button>
+              </div>
+            ) : null}
+
+            {mentionOpen ? (
+              <div className="mb-2 max-h-56 overflow-y-auto rounded-xl border border-[#dbe5ec] bg-white p-2 text-sm shadow-lg">
+                {mentionLoading ? <div className="px-3 py-2 text-xs text-[#64748b]">Talebeler aranıyor...</div> : null}
+                {!mentionLoading && mentionItems.length === 0 ? (
+                  <div className="px-3 py-2 text-xs text-[#64748b]">Talebe bulunamadı.</div>
+                ) : null}
+                {!mentionLoading
+                  ? mentionItems.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => selectMentionItem(item)}
+                        className="block w-full rounded-lg px-3 py-2 text-left hover:bg-[#f8fafc]"
+                      >
+                        <span className="block font-medium text-[#0f172a]">@{item.title}</span>
+                        <span className="block text-xs text-[#64748b]">{[item.subtitle, ...item.meta].filter(Boolean).join(" / ")}</span>
+                      </button>
+                    ))
+                  : null}
+              </div>
+            ) : null}
+
             <form
               onSubmit={(event) => {
                 event.preventDefault();
@@ -317,10 +509,11 @@ export function AssistantChat({ profile, variant = "page", onClose }: AssistantC
               </Button>
 
               <input
+                ref={inputRef}
                 type="text"
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
-                placeholder="Bir soru sorun..."
+                placeholder={quickContext ? `${quickContext.item.title} için devam sorusu sorun...` : "@talebe adı veya bir soru yazın..."}
                 className="flex-1 rounded-md border border-[#d1dae3] bg-white px-4 py-2 text-sm outline-none focus:border-[#093657] focus:ring-1 focus:ring-[#093657]"
                 disabled={pending}
               />
@@ -332,6 +525,211 @@ export function AssistantChat({ profile, variant = "page", onClose }: AssistantC
           </div>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+function quickSummaryToMessage(summary?: QuickSummary): Message {
+  return {
+    id: crypto.randomUUID(),
+    role: "assistant",
+    content: summary?.error
+      ? summary.error
+      : `${summary?.title ?? "Hızlı Özet"}\n${(summary?.lines ?? []).join("\n")}`,
+    timestamp: new Date(),
+  };
+}
+
+function parseQuickCommand(value: string): AssistantQuickCommand | null {
+  const command = value.trim().toLocaleLowerCase("tr-TR");
+  if (["/talebe", "/öğrenci", "/ogrenci"].includes(command)) return "student";
+  if (["/bolum", "/bölüm"].includes(command)) return "department";
+  if (["/sinif", "/sınıf"].includes(command)) return "class";
+  if (command === "/yatakhane") return "dormitory";
+  return null;
+}
+
+function getMentionQuery(value: string) {
+  const atIndex = value.lastIndexOf("@");
+  if (atIndex < 0) return null;
+
+  const afterMention = value.slice(atIndex + 1);
+  if (afterMention.includes("\n")) return null;
+
+  return {
+    start: atIndex,
+    end: value.length,
+    query: afterMention.trim(),
+  };
+}
+
+function removeMentionFromQuestion(question: string, name: string) {
+  return question.replaceAll(`@${name}`, "").replace(/\s+/g, " ").trim() || "Genel bilgi ver.";
+}
+
+function QuickCommandCard({
+  command,
+  onSelect,
+  onSummary,
+  onClose,
+}: {
+  command: AssistantQuickCommand;
+  onSelect: (context: QuickContext, closeAfterSelect?: boolean) => void;
+  onSummary: (context: QuickContext) => void;
+  onClose: () => void;
+}) {
+  const [query, setQuery] = useState("");
+  const [items, setItems] = useState<QuickSearchItem[]>([]);
+  const [selectedItem, setSelectedItem] = useState<QuickSearchItem | null>(null);
+  const [summary, setSummary] = useState<QuickSummary | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const timer = window.setTimeout(() => {
+      setLoading(true);
+      setError(null);
+      searchAssistantQuickCommandAction(command, query)
+        .then((result) => {
+          if (cancelled) return;
+          setItems(result.items);
+          setError(result.error ?? null);
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+    }, 180);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [command, query]);
+
+  async function loadSummary(type: AssistantQuickSummaryType) {
+    if (!selectedItem) return;
+    setSummaryLoading(true);
+    setSummary(null);
+    try {
+      const result = await getAssistantQuickCommandSummaryAction(command, selectedItem.id, type);
+      setSummary(result);
+      onSummary({ command, item: selectedItem, summary: result });
+    } finally {
+      setSummaryLoading(false);
+    }
+  }
+
+  return (
+    <div className="flex justify-start">
+      <div className="flex max-w-[96%] gap-3">
+        <PolaAiAvatar size={36} className="shadow-[0_6px_14px_rgba(9,54,87,0.16)]" />
+        <div className="max-h-[min(62vh,34rem)] w-[min(34rem,100%)] overflow-y-auto rounded-2xl border border-[#dbe5ec] bg-white p-4 text-sm shadow-sm">
+          <div className="mb-3 flex items-start justify-between gap-3">
+            <div>
+              <p className="font-semibold text-[#093657]">{quickCommandLabels[command]} Seçici</p>
+              <p className="text-xs text-[#64748b]">{quickCommandPrompts[command]}</p>
+            </div>
+            <button type="button" onClick={onClose} className="rounded-md px-2 py-1 text-xs text-[#64748b] hover:bg-[#eef4f8]">
+              Kapat
+            </button>
+          </div>
+
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => {
+              setQuery(event.target.value);
+              setSelectedItem(null);
+              setSummary(null);
+            }}
+            placeholder="Ara..."
+            className="mb-3 h-9 w-full rounded-md border border-[#d1dae3] px-3 text-sm outline-none focus:border-[#093657] focus:ring-1 focus:ring-[#093657]"
+          />
+
+          {error ? <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">{error}</div> : null}
+          {loading ? <div className="rounded-md bg-[#f8fafc] p-3 text-xs text-[#64748b]">Sonuçlar yükleniyor...</div> : null}
+
+          {!loading && !error ? (
+            <div className="max-h-64 space-y-2 overflow-y-auto">
+              {items.length === 0 ? (
+                <div className="rounded-md bg-[#f8fafc] p-3 text-xs text-[#64748b]">Sonuç bulunamadı.</div>
+              ) : (
+                items.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedItem(item);
+                      setSummary(null);
+                      onSelect({ command, item });
+                    }}
+                    onDoubleClick={() => {
+                      setSelectedItem(item);
+                      setSummary(null);
+                      onSelect({ command, item }, true);
+                    }}
+                    className={`w-full rounded-lg border p-3 text-left transition ${
+                      selectedItem?.id === item.id ? "border-[#093657] bg-[#eef4f8]" : "border-[#e5e7eb] hover:bg-[#f8fafc]"
+                    }`}
+                  >
+                    <span className="block font-medium text-[#0f172a]">{item.title}</span>
+                    {item.subtitle ? <span className="block text-xs text-[#64748b]">{item.subtitle}</span> : null}
+                    <span className="mt-2 flex flex-wrap gap-1">
+                      {item.meta.map((meta) => (
+                        <span key={meta} className="rounded-full bg-[#edf3f7] px-2 py-0.5 text-[11px] text-[#47677d]">
+                          {meta}
+                        </span>
+                      ))}
+                    </span>
+                    <span className="mt-2 block text-xs font-medium text-[#093657]">
+                      Seç, sohbete bağla ve özet seçeneklerini göster
+                    </span>
+                  </button>
+                ))
+              )}
+            </div>
+          ) : null}
+
+          {selectedItem ? (
+            <div className="mt-4 border-t border-[#e5e7eb] pt-3">
+              <div className="mb-2 rounded-md bg-[#eef4f8] px-3 py-2">
+                <p className="text-xs font-medium text-[#093657]">Seçili kayıt: {selectedItem.title}</p>
+                <p className="text-xs text-[#64748b]">
+                  Sohbet bağlamına eklendi. Aşağıdan devam sorusu yazabilir veya hızlı özet seçebilirsiniz.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {summaryOptions[command].map((option) => (
+                  <Button key={option.type} type="button" variant="outline" size="xs" onClick={() => loadSummary(option.type)} disabled={summaryLoading}>
+                    {option.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {summaryLoading ? <div className="mt-3 rounded-md bg-[#f8fafc] p-3 text-xs text-[#64748b]">Özet hazırlanıyor...</div> : null}
+          {summary ? (
+            <div className="mt-3 rounded-lg border border-[#dbe5ec] bg-[#fbfcfd] p-3">
+              {summary.error ? (
+                <p className="text-sm text-amber-800">{summary.error}</p>
+              ) : (
+                <>
+                  <p className="mb-2 font-semibold text-[#093657]">{summary.title}</p>
+                  <ul className="space-y-1 text-sm text-[#334155]">
+                    {summary.lines.map((line) => (
+                      <li key={line}>{line}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 }
