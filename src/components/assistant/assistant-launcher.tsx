@@ -14,22 +14,30 @@ type AssistantLauncherProps = {
 
 export function AssistantLauncher({ profile }: AssistantLauncherProps) {
   const [open, setOpen] = useState(false);
+  const [hasOpened, setHasOpened] = useState(false);
+
+  function handleToggle() {
+    setHasOpened(true);
+    setOpen((value) => !value);
+  }
 
   return (
     <>
-      <div
-        className="pointer-events-none fixed right-4 z-40 w-[min(calc(100vw-2rem),26rem)] sm:right-6"
-        style={{ bottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
-      >
+      {hasOpened ? (
         <div
-          className={cn(
-            "pointer-events-auto origin-bottom-right transition duration-200",
-            open ? "translate-y-0 scale-100 opacity-100" : "translate-y-3 scale-95 opacity-0",
-          )}
+          className="pointer-events-none fixed right-4 z-40 w-[min(calc(100vw-2rem),26rem)] sm:right-6"
+          style={{ bottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }}
         >
-          <AssistantChat profile={profile} variant="panel" onClose={() => setOpen(false)} />
+          <div
+            className={cn(
+              "pointer-events-auto origin-bottom-right transition duration-200",
+              open ? "translate-y-0 scale-100 opacity-100" : "translate-y-3 scale-95 opacity-0",
+            )}
+          >
+            <AssistantChat profile={profile} variant="panel" onClose={() => setOpen(false)} />
+          </div>
         </div>
-      </div>
+      ) : null}
 
       <div
         className="fixed right-4 z-50 sm:right-6"
@@ -37,7 +45,7 @@ export function AssistantLauncher({ profile }: AssistantLauncherProps) {
       >
         <button
           type="button"
-          onClick={() => setOpen((value) => !value)}
+          onClick={handleToggle}
           aria-label={open ? "Pola AI Asistanını Kapat" : "Pola AI Asistanını Aç"}
           aria-pressed={open}
           className={cn(

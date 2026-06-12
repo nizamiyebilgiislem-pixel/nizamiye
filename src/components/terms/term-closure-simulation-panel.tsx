@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState, useTransition } from "react";
+import { useActionState, useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { AlertTriangle, Ban, CalendarDays, CheckCircle2, Play, ShieldAlert, X } from "lucide-react";
@@ -39,6 +39,10 @@ const closureInitialState: TermClosureActionState = {
   success: false,
   error: "",
 };
+
+function subscribeToClientSnapshot() {
+  return () => {};
+}
 
 export function TermClosureSimulationPanel({
   activeTerm,
@@ -175,11 +179,13 @@ export function TermClosureSimulationPanel({
 }
 
 function ActiveTermCard({ activeTerm }: { activeTerm: AcademicTermRow | null }) {
+  const mounted = useSyncExternalStore(subscribeToClientSnapshot, () => true, () => false);
+
   if (!activeTerm) {
     return null;
   }
 
-  const elapsed = getElapsedDescription(activeTerm.start_date, activeTerm.end_date);
+  const elapsed = mounted ? getElapsedDescription(activeTerm.start_date, activeTerm.end_date) : "-";
 
   return (
     <Card>
@@ -501,7 +507,7 @@ function InfoTile({ label, value }: { label: string; value: string }) {
 
 function formatDate(value: string | null) {
   if (!value) return "-";
-  return new Intl.DateTimeFormat("tr-TR", { dateStyle: "medium" }).format(new Date(value));
+  return new Intl.DateTimeFormat("tr-TR", { dateStyle: "medium", timeZone: "Europe/Istanbul" }).format(new Date(value));
 }
 
 function formatDateTime(value: string | null) {
@@ -509,6 +515,7 @@ function formatDateTime(value: string | null) {
   return new Intl.DateTimeFormat("tr-TR", {
     dateStyle: "medium",
     timeStyle: "short",
+    timeZone: "Europe/Istanbul",
   }).format(new Date(value));
 }
 

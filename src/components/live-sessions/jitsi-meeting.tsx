@@ -24,6 +24,12 @@ const statusLabels: Record<string, string> = {
   cancelled: "İptal",
 };
 
+const sessionDateFormatter = new Intl.DateTimeFormat("tr-TR", {
+  dateStyle: "short",
+  timeStyle: "short",
+  timeZone: "Europe/Istanbul",
+});
+
 type JitsiMeetingProps = {
   session: SessionRowWithRelations;
   displayName: string;
@@ -158,18 +164,12 @@ export function JitsiMeeting({ session, displayName, fullScreen }: JitsiMeetingP
               </span>
               <span className="inline-flex items-center gap-1">
                 <CalendarDays className="size-3" />
-                {new Date(session.start_time).toLocaleString("tr-TR", {
-                  dateStyle: "short",
-                  timeStyle: "short",
-                })}
+                {sessionDateFormatter.format(new Date(session.start_time))}
               </span>
               {session.end_time && (
                 <span className="inline-flex items-center gap-1">
                   <Clock className="size-3" />
-                  {new Date(session.end_time).toLocaleString("tr-TR", {
-                    dateStyle: "short",
-                    timeStyle: "short",
-                  })}
+                  {sessionDateFormatter.format(new Date(session.end_time))}
                 </span>
               )}
               <span className="inline-flex items-center gap-1">
