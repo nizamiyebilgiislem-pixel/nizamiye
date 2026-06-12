@@ -1,5 +1,7 @@
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { canViewMeeting } from "@/lib/live-sessions/permissions";
 import type { ProfileRow, LiveSessionRow, LiveSessionParticipantRow } from "@/types/database";
+import type { UserRole } from "@/types/rbac";
 
 export type SessionRowWithRelations = LiveSessionRow & {
   creator: { id: string; full_name: string } | null;
@@ -9,8 +11,20 @@ export type SessionRowWithRelations = LiveSessionRow & {
 };
 
 export type ParticipantWithProfile = LiveSessionParticipantRow & {
-  profile: { id: string; full_name: string; photo_url: string | null };
+  profile: { id: string; full_name: string; photo_url: string | null; role?: UserRole };
 };
+
+export type LiveSessionParticipantOption = Pick<ProfileRow, "id" | "full_name" | "role" | "department_id">;
+
+const selectableParticipantRoles: UserRole[] = [
+  "admin",
+  "genel_mudur",
+  "bolum_muduru",
+  "hoca",
+  "rehberlik",
+  "destek_birim_muduru",
+  "kutuphane_gorevlisi",
+];
 
 const sessionSelectFields = `
   *,
@@ -46,12 +60,12 @@ export async function getSessions(profile: ProfileRow): Promise<SessionRowWithRe
       return [];
     }
 
-    return ((data ?? []) as unknown as SessionRowWithRelations[]).map(
-      (s) => ({
+    return ((data ?? []) as unknown as SessionRowWithRelations[])
+      .map((s) => ({
         ...s,
         participant_count: s.participants?.length ?? 0,
-      }),
-    );
+      }))
+      .filter((session) => canViewMeeting(profile, session, session.participants?.map((participant) => participant.profile_id) ?? []));
   } catch (e) {
     console.error("getSessions exception:", e);
     return [];
@@ -111,12 +125,12 @@ export async function getUpcomingSessions(profile: ProfileRow) {
       return [];
     }
 
-    return ((data ?? []) as unknown as SessionRowWithRelations[]).map(
-      (s) => ({
+    return ((data ?? []) as unknown as SessionRowWithRelations[])
+      .map((s) => ({
         ...s,
         participant_count: s.participants?.length ?? 0,
-      }),
-    );
+      }))
+      .filter((session) => canViewMeeting(profile, session, session.participants?.map((participant) => participant.profile_id) ?? []));
   } catch (e) {
     console.error("getUpcomingSessions exception:", e);
     return [];
@@ -170,15 +184,34 @@ export async function getLiveSessionDashboardData(profile: ProfileRow) {
       return { upcomingSessions: [], upcomingCount: 0 };
     }
 
+    const sessions = (data ?? []) as Pick<
+      LiveSessionRow,
+      "id" | "title" | "start_time" | "status" | "session_type" | "room_name" | "created_by" | "is_all_staff"
+    >[];
+
     return {
-      upcomingSessions: (data ?? []) as Pick<
-        LiveSessionRow,
-        "id" | "title" | "start_time" | "status" | "session_type" | "room_name" | "created_by"
-      >[],
+      upcomingSessions: sessions,
       upcomingCount: count ?? 0,
     };
   } catch (e) {
     console.error("getLiveSessionDashboardData exception:", e);
     return { upcomingSessions: [], upcomingCount: 0 };
   }
+}
+
+export async function getLiveSessionParticipantOptions(): Promise<LiveSessionParticipantOption[]> {
+  const supabase = createSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id, full_name, role, department_id")
+    .eq("is_active", true)
+    .in("role", selectableParticipantRoles)
+    .order("full_name", { ascending: true });
+
+  if (error) {
+    console.error("getLiveSessionParticipantOptions error:", error);
+    return [];
+  }
+
+  return (data ?? []) as LiveSessionParticipantOption[];
 }

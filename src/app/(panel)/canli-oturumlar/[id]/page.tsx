@@ -2,9 +2,10 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Pencil, User, CalendarDays, ExternalLink } from "lucide-react";
 
+import { CopyMeetingLinkButton } from "@/components/live-sessions/copy-meeting-link-button";
 import { PageHeader } from "@/components/layout/page-header";
 import { requireAuth } from "@/lib/auth";
-import { canEditSession, canDeleteSession, canJoinSession } from "@/lib/live-sessions/permissions";
+import { canEditSession, canDeleteSession, canJoinSession, canViewMeeting } from "@/lib/live-sessions/permissions";
 import { getSessionById } from "@/lib/live-sessions/queries";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,12 +42,26 @@ export default async function OturumDetayPage({ params }: { params: Promise<{ id
   const session = await getSessionById(id);
   if (!session) notFound();
 
+  const participantIds = session.participants?.map((participant) => participant.profile_id) ?? [];
+  const canOpenMeeting = canViewMeeting(profile, session, participantIds);
   const canEdit = canEditSession(profile, session);
   const canDelete = canDeleteSession(profile, session);
-  const canJoin = canJoinSession(profile);
+  const canJoin = canJoinSession(profile) && canOpenMeeting;
   const isCreator = session.created_by === profile.id;
   const isParticipant = session.participants?.some((p) => p.profile_id === profile.id);
   const isCancellable = session.status !== "completed" && session.status !== "cancelled";
+
+  if (!canOpenMeeting) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 py-20">
+        <h2 className="text-lg font-semibold">Erisim Yetkiniz Yok</h2>
+        <p className="text-sm text-muted-foreground">Bu oturumu goruntuleme yetkiniz bulunmamaktadir.</p>
+        <Link href="/canli-oturumlar" className={cn(buttonVariants({ variant: "outline" }))}>
+          <ArrowLeft className="mr-1.5 size-4" /> Oturumlara Don
+        </Link>
+      </div>
+    );
+  }
 
   const sc = statusColors[session.status] ?? "";
 
@@ -62,6 +77,7 @@ export default async function OturumDetayPage({ params }: { params: Promise<{ id
                 <Pencil className="mr-1.5 size-4" /> Düzenle
               </Link>
             ) : null}
+            <CopyMeetingLinkButton sessionId={id} />
           </div>
         }
       />
@@ -154,7 +170,7 @@ export default async function OturumDetayPage({ params }: { params: Promise<{ id
         </div>
 
         <div className="space-y-4">
-          {(session.status === "planned" || session.status === "active") && (
+          {canJoin && (session.status === "planned" || session.status === "active") && (
             <Card className="border-emerald-200 bg-emerald-50">
               <CardContent className="p-4">
                 <Link
@@ -166,6 +182,7 @@ export default async function OturumDetayPage({ params }: { params: Promise<{ id
                 <p className="mt-2 text-center text-[10px] text-emerald-700">
                   Oda: {session.room_name}
                 </p>
+                <CopyMeetingLinkButton sessionId={id} variant="secondary" className="mt-3 w-full" />
               </CardContent>
             </Card>
           )}

@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { SessionForm } from "@/components/live-sessions/session-form";
 import { requireAuth } from "@/lib/auth";
 import { canEditSession } from "@/lib/live-sessions/permissions";
+import { getLiveSessionParticipantOptions } from "@/lib/live-sessions/queries";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export default async function OturumDuzenlePage({ params }: { params: Promise<{ id: string }> }) {
@@ -28,11 +29,15 @@ export default async function OturumDuzenlePage({ params }: { params: Promise<{ 
     return <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Tamamlanmış veya iptal edilmiş oturum düzenlenemez.</div>;
   }
 
-  const { data: departments } = await supabase
-    .from("departments")
-    .select("id, name")
-    .eq("is_active", true)
-    .order("name", { ascending: true });
+  const [{ data: departments }, { data: participants }, participantOptions] = await Promise.all([
+    supabase
+      .from("departments")
+      .select("id, name")
+      .eq("is_active", true)
+      .order("name", { ascending: true }),
+    supabase.from("live_session_participants").select("profile_id").eq("session_id", session.id),
+    getLiveSessionParticipantOptions(),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -40,6 +45,8 @@ export default async function OturumDuzenlePage({ params }: { params: Promise<{ 
       <SessionForm
         session={session}
         departmentOptions={departments ?? []}
+        participantOptions={participantOptions}
+        initialParticipantIds={(participants ?? []).map((participant) => participant.profile_id)}
         currentProfileRole={profile.role}
       />
     </div>

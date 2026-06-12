@@ -37,6 +37,26 @@ export function canEditStudentGrades(
   return false;
 }
 
+export function canEditClassCourseGrades(
+  profile: ProfileRow,
+  courseClass: Pick<ClassRow, "department_id"> | null,
+  classCourse: Pick<ClassCourseRow, "teacher_id" | "is_active"> | null,
+) {
+  if (!courseClass || !classCourse?.is_active) {
+    return false;
+  }
+
+  if (profile.role === "admin" || profile.role === "genel_mudur") {
+    return true;
+  }
+
+  if (profile.role === "hoca") {
+    return Boolean(profile.department_id && profile.department_id === courseClass.department_id && classCourse.teacher_id === profile.id);
+  }
+
+  return false;
+}
+
 export function canViewStudentGrades(profile: ProfileRow, courseClass: Pick<ClassRow, "department_id"> | null) {
   if (profile.role === "admin" || profile.role === "genel_mudur") {
     return true;

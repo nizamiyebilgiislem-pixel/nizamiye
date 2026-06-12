@@ -28,6 +28,7 @@ const libraryRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevlisi",
 const guidanceRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik", "bolum_muduru"];
 const talepRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "destek_birim_muduru"];
 const taskRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "destek_birim_muduru", "kutuphane_gorevlisi"];
+const liveSessionRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "rehberlik", "destek_birim_muduru", "kutuphane_gorevlisi"];
 
 export const moduleGroups: NavigationGroup[] = [
   {
@@ -56,7 +57,7 @@ export const moduleGroups: NavigationGroup[] = [
       { label: "Yatakhane Yönetimi", href: "/yatakhane", iconKey: "dormitory", allowedRoles: staffRoles },
       { label: "Revir Sistemi", href: "/revir", iconKey: "infirmary", allowedRoles: staffRoles, moduleKey: "infirmary" },
       { label: "Kütüphane", href: "/kutuphane", iconKey: "library", allowedRoles: libraryRoles, moduleKey: "library" },
-      { label: "Canlı Oturumlar", href: "/canli-oturumlar", iconKey: "video", allowedRoles: taskRoles },
+      { label: "Canlı Oturumlar", href: "/canli-oturumlar", iconKey: "video", allowedRoles: liveSessionRoles },
       { label: "Rehberlik", href: "/rehberlik", iconKey: "guidance", allowedRoles: [...guidanceRoles, "rehberlik"] },
     ],
   },

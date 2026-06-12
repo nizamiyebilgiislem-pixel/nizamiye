@@ -15,6 +15,7 @@ const libraryStaffRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevl
 const libraryViewRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevlisi", "bolum_muduru", "hoca", "destek_birim_muduru"];
 const guidanceStaffRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik"];
 const guidanceViewRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik", "bolum_muduru"];
+const liveSessionRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "rehberlik", "destek_birim_muduru", "kutuphane_gorevlisi"];
 
 export const routePermissions: Record<string, UserRole[]> = {
   "/dashboard": guidanceDashboardRoles,
@@ -133,11 +134,11 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/ders-sistemi": managerRoles,
   "/ders-sistemi/yeni": managerRoles,
   "/ders-sistemi/[id]/duzenle": managerRoles,
-  "/canli-oturumlar": staffAndSupportRoles,
-  "/canli-oturumlar/yeni": staffAndSupportRoles,
-  "/canli-oturumlar/[id]": staffAndSupportRoles,
-  "/canli-oturumlar/[id]/duzenle": staffAndSupportRoles,
-  "/canli-oturumlar/[id]/katil": staffAndSupportRoles,
+  "/canli-oturumlar": liveSessionRoles,
+  "/canli-oturumlar/yeni": liveSessionRoles,
+  "/canli-oturumlar/[id]": liveSessionRoles,
+  "/canli-oturumlar/[id]/duzenle": liveSessionRoles,
+  "/canli-oturumlar/[id]/katil": liveSessionRoles,
   "/asistan": assistantRoles,
 };
 

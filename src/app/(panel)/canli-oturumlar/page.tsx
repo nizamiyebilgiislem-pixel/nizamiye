@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Plus, Video, Clock, CheckCircle2, XCircle, Calendar } from "lucide-react";
 
+import { CopyMeetingLinkButton } from "@/components/live-sessions/copy-meeting-link-button";
 import { PageHeader } from "@/components/layout/page-header";
 import { requireAuth } from "@/lib/auth";
 import { canCreateSession } from "@/lib/live-sessions/permissions";
@@ -122,16 +123,17 @@ export default async function CanliOturumlarPage({
             const isLive = s.status === "active";
 
             return (
-              <Link
+              <div
                 key={s.id}
-                href={`/canli-oturumlar/${s.id}`}
-                className="block rounded-lg border border-border bg-white p-4 transition-colors hover:border-[#093657]/30 hover:bg-muted/20"
+                className="rounded-lg border border-border bg-white p-4 transition-colors hover:border-[#093657]/30 hover:bg-muted/20"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0 flex-1 space-y-1.5">
                     <div className="flex items-center gap-2">
                       {isLive && <span className="size-2 shrink-0 rounded-full bg-emerald-500" title="Aktif" />}
-                      <h3 className="truncate text-sm font-medium">{s.title}</h3>
+                      <Link href={`/canli-oturumlar/${s.id}`} className="truncate text-sm font-medium text-[#093657] hover:underline">
+                        {s.title}
+                      </Link>
                       <span className={cn("inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] font-medium", statusColors[s.status] ?? "")}>
                         {statusLabels[s.status] ?? s.status}
                       </span>
@@ -152,8 +154,14 @@ export default async function CanliOturumlarPage({
                       )}
                     </div>
                   </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <CopyMeetingLinkButton sessionId={s.id} />
+                    <Link href={`/canli-oturumlar/${s.id}`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+                      Detay
+                    </Link>
+                  </div>
                 </div>
-              </Link>
+              </div>
             );
           })}
         </div>

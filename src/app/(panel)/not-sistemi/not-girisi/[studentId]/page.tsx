@@ -20,7 +20,6 @@ export default async function StudentGradeEntryPage({ params, searchParams }: St
   const student = await getStudentById(studentId);
   if (!student) notFound();
   if (!student.course_class) redirect("/not-sistemi/not-girisi?error=class");
-  if (!canEditStudentGrades(profile, student, student.course_class)) redirect(`/talebeler/${student.id}?error=unauthorized`);
 
   const summary = await getStudentGradeSummary(profile, student, query.term);
   const currentTerm = summary.terms.find((term) => term.is_current && term.status === "active") ?? null;

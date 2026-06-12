@@ -636,6 +636,7 @@ export type LiveSessionRow = {
   status: "planned" | "active" | "completed" | "cancelled";
   created_by: string;
   department_id: string | null;
+  is_all_staff: boolean;
   notes: string | null;
   created_at: Timestamp;
   updated_at: Timestamp;
