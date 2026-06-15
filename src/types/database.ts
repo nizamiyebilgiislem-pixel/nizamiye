@@ -662,6 +662,17 @@ export type AiKnowledgeBaseRow = {
   updated_at: Timestamp;
 };
 
+export type NotificationRow = {
+  id: string;
+  profile_id: string;
+  type: "info" | "success" | "warning" | "error" | "sms";
+  title: string;
+  message: string | null;
+  is_read: boolean;
+  sent_via: "app" | "sms" | "email" | null;
+  created_at: Timestamp;
+};
+
 export type LiveSessionParticipantRow = {
   id: string;
   session_id: string;
@@ -720,6 +731,7 @@ export type Database = {
       live_session_participants: TableDefinition<LiveSessionParticipantRow>;
       assistant_messages: TableDefinition<AssistantMessageRow>;
       ai_knowledge_base: TableDefinition<AiKnowledgeBaseRow>;
+      notifications: TableDefinition<NotificationRow>;
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
