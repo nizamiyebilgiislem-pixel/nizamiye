@@ -44,12 +44,16 @@ export default async function SettingsPage() {
     {} as Record<string, number>,
   );
 
-  const moduleCounts = (moduleStats ?? []).reduce(
+  type ModuleAssignment = { module_key: string | null };
+  const typedModuleStats = (moduleStats ?? []) as ModuleAssignment[];
+
+  const moduleCounts = typedModuleStats.reduce<Record<string, number>>(
     (acc, m) => {
+      if (!m.module_key) return acc;
       acc[m.module_key] = (acc[m.module_key] || 0) + 1;
       return acc;
     },
-    {} as Record<string, number>,
+    {},
   );
 
   const roleLabels: Record<string, string> = {
