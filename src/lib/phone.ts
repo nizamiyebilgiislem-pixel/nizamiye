@@ -17,7 +17,7 @@ export function normalizeTurkishPhone(phone: string | null | undefined): string 
     return "+" + cleaned;
   }
 
-  if (cleaned.startsWith("0") && cleaned.length === 10) {
+  if (cleaned.startsWith("0") && cleaned.length === 11) {
     return "+90" + cleaned.slice(1);
   }
 

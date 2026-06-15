@@ -5,7 +5,7 @@ interface SMSRequest {
   message: string;
 }
 
-function normalizePhoneNumber(phone: string): string {
+function normalizePhoneNumber(phone: string): string | null {
   const cleaned = phone.replace(/[\s\-\(\)]/g, "");
 
   if (cleaned.startsWith("+90")) {
@@ -13,21 +13,22 @@ function normalizePhoneNumber(phone: string): string {
   }
 
   if (cleaned.startsWith("+")) {
-    if (cleaned.startsWith("+90")) {
-      return cleaned;
-    }
     return "+90" + cleaned.slice(1);
   }
 
-  if (cleaned.startsWith("90")) {
+  if (cleaned.startsWith("90") && cleaned.length === 11) {
     return "+" + cleaned;
   }
 
-  if (cleaned.startsWith("0")) {
+  if (cleaned.startsWith("0") && cleaned.length === 11) {
     return "+90" + cleaned.slice(1);
   }
 
-  return "+90" + cleaned;
+  if (cleaned.startsWith("5") && cleaned.length === 10) {
+    return "+90" + cleaned;
+  }
+
+  return null;
 }
 
 function maskPhoneNumber(phone: string): string {
@@ -69,6 +70,15 @@ Deno.serve(async (req: Request) => {
     }
 
     const cleanTo = normalizePhoneNumber(to);
+
+    if (!cleanTo) {
+      console.log(`[${requestId}] Invalid phone format: ${to}`);
+      return new Response(
+        JSON.stringify({ error: "Geçersiz telefon numarası formatı" }),
+        { status: 400, headers: { "Content-Type": "application/json" } },
+      );
+    }
+
     const maskedTo = maskPhoneNumber(cleanTo);
     const maskedFrom = maskPhoneNumber(from);
 
