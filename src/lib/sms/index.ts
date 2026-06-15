@@ -1,33 +1,10 @@
+import { normalizeTurkishPhone, maskPhone } from "@/lib/phone";
+
 export type SMSResult = {
   success: boolean;
   messageId?: string;
   error?: string;
 };
-
-function normalizePhoneNumber(phone: string): string {
-  const cleaned = phone.replace(/[\s\-\(\)]/g, "");
-
-  if (cleaned.startsWith("+90")) {
-    return cleaned;
-  }
-
-  if (cleaned.startsWith("+")) {
-    if (cleaned.startsWith("+90")) {
-      return cleaned;
-    }
-    return "+90" + cleaned.slice(1);
-  }
-
-  if (cleaned.startsWith("90")) {
-    return "+" + cleaned;
-  }
-
-  if (cleaned.startsWith("0")) {
-    return "+90" + cleaned.slice(1);
-  }
-
-  return "+90" + cleaned;
-}
 
 export async function sendSMS(to: string, message: string): Promise<SMSResult> {
   const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -35,7 +12,7 @@ export async function sendSMS(to: string, message: string): Promise<SMSResult> {
   const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
 
   if (!twilioAccountSid || !twilioAuthToken || !twilioPhoneNumber) {
-    console.warn("Twilio configuration missing. SMS not sent. Env vars check:", {
+    console.warn("Twilio configuration missing. SMS not sent.", {
       hasAccountSid: !!twilioAccountSid,
       hasAuthToken: !!twilioAuthToken,
       hasPhoneNumber: !!twilioPhoneNumber,
@@ -43,9 +20,14 @@ export async function sendSMS(to: string, message: string): Promise<SMSResult> {
     return { success: false, error: "SMS servisi yapılandırılmamış" };
   }
 
+  const cleanTo = normalizeTurkishPhone(to);
+  if (!cleanTo) {
+    console.error("Invalid phone number format:", to);
+    return { success: false, error: "Geçersiz telefon numarası formatı" };
+  }
+
   try {
-    const cleanTo = normalizePhoneNumber(to);
-    console.log("Sending SMS via Edge Function - to:", cleanTo.slice(0, 6) + "****");
+    console.log("Sending SMS via Edge Function - to:", maskPhone(cleanTo));
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/send-sms`, {
       method: "POST",

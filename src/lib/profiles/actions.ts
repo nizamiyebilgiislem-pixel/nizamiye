@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { requireAuth } from "@/lib/auth";
 import { buildAuditActor, createAuditLog } from "@/lib/audit/log";
+import { normalizeTurkishPhone } from "@/lib/phone";
 import {
   createAuthUserAccount,
   deleteAuthUserAccount,
@@ -185,7 +186,7 @@ async function createProfileAction(formData: FormData, source: "hocalar" | "kull
       auth_user_id: authUserId,
       full_name: parsed.data.full_name,
       email: parsed.data.email,
-      phone: parsed.data.phone,
+      phone: normalizeTurkishPhone(parsed.data.phone) ?? null,
       role: parsed.data.role,
       department_id: normalizeDepartmentId(parsed.data.role, parsed.data.department_id),
       is_active: parsed.data.is_active === "true",
@@ -558,7 +559,7 @@ async function persistProfileUpdate(
     .update({
       full_name: data.full_name,
       email: data.email,
-      phone: data.phone,
+      phone: normalizeTurkishPhone(data.phone) ?? null,
       role: data.role,
       department_id: normalizeDepartmentId(data.role, data.department_id),
       is_active: isActive,
