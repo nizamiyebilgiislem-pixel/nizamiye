@@ -1,4 +1,4 @@
-import twilio from "twilio";
+import twilio from "npm:twilio";
 
 interface SMSRequest {
   to: string;
