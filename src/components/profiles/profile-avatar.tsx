@@ -1,14 +1,16 @@
+import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type ProfileAvatarProps = {
   name: string;
   photoUrl?: string | null;
   size?: "default" | "sm" | "lg";
+  className?: string;
 };
 
-export function ProfileAvatar({ name, photoUrl, size = "default" }: ProfileAvatarProps) {
+export function ProfileAvatar({ name, photoUrl, size = "default", className }: ProfileAvatarProps) {
   return (
-    <Avatar size={size} className="rounded-md">
+    <Avatar size={size} className={cn("rounded-md", className)}>
       {photoUrl ? <AvatarImage src={photoUrl} alt={name} /> : null}
       <AvatarFallback className="rounded-md bg-secondary text-secondary-foreground">{getInitials(name)}</AvatarFallback>
     </Avatar>

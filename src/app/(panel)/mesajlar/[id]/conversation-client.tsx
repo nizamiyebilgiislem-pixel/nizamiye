@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useTransition } from "react";
 import Link from "next/link";
 import { ArrowLeft, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Avatar } from "@/components/ui/avatar";
+import { ProfileAvatar } from "@/components/profiles/profile-avatar";
 import { Button } from "@/components/ui/button";
 import { MessageInput } from "@/components/messages";
 import type { ProfileRow } from "@/types/database";
@@ -146,7 +146,7 @@ export function ConversationViewClient({
           Geri
         </Link>
         <div className="flex items-center gap-3 flex-1">
-          <Avatar name={otherProfile.full_name} size="md" />
+          <ProfileAvatar name={otherProfile.full_name} />
           <div>
             <h2 className="font-medium text-foreground">{otherProfile.full_name}</h2>
             <p className="text-xs text-muted-foreground capitalize">

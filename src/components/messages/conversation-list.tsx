@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { Avatar } from "@/components/ui/avatar";
-import type { ProfileRow } from "@/types/database";
+import { ProfileAvatar } from "@/components/profiles/profile-avatar";
 
 export type ConversationItem = {
   id: string;
-  profile: Pick<ProfileRow, "id" | "full_name" | "role">;
+  profile: {
+    id: string;
+    full_name: string;
+    role: string;
+  };
   lastMessage: string;
   lastMessageAt: string;
   unread: number;
@@ -96,9 +99,9 @@ export function ConversationList({ conversations, currentProfileId }: Conversati
           )}
         >
           <div className="relative">
-            <Avatar
+            <ProfileAvatar
               name={conv.profile.full_name}
-              size="md"
+              size="default"
               className="shrink-0"
             />
             {conv.unread > 0 && (

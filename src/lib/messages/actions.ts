@@ -67,10 +67,10 @@ export async function sendMessage(
       return { error: `Aylık SMS limitinizi doldurdunuz (${limit}/${limit})` };
     }
 
-    const smsResult = await sendSMS({
-      to: recipient.phone,
-      message: `[Nizamiye] ${sender.full_name}: ${message.slice(0, 160)}`,
-    });
+    const smsResult = await sendSMS(
+      recipient.phone,
+      `[Nizamiye] ${sender.full_name}: ${message.slice(0, 160)}`
+    );
 
     if (!smsResult.success) {
       smsFailed = true;

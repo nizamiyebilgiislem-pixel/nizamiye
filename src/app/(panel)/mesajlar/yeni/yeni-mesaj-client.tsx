@@ -43,6 +43,10 @@ export function YeniMesajClient({ recipients, currentProfileRole }: YeniMesajCli
 
   const canSendSms = currentProfileRole !== "veli";
 
+  const handleRecipientChange = (value: string | null) => {
+    if (value) setRecipientId(value);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!recipientId || !message.trim()) return;
@@ -97,7 +101,7 @@ export function YeniMesajClient({ recipients, currentProfileRole }: YeniMesajCli
       <div className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="recipient">Alıcı</Label>
-          <Select value={recipientId} onValueChange={setRecipientId} required>
+          <Select value={recipientId} onValueChange={handleRecipientChange} required>
             <SelectTrigger id="recipient" className="w-full">
               <SelectValue placeholder="Alıcı seçin..." />
             </SelectTrigger>
