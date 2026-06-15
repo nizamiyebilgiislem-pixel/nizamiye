@@ -29,9 +29,11 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    const cleanTo = to.replace(/\s+/g, "").replace(/^0/, "+90");
+
     const result = await client.messages.create({
       body: message,
-      to: to,
+      to: cleanTo,
       from: from,
     });
 

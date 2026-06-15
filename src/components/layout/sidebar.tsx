@@ -59,6 +59,7 @@ const iconMap: Record<string, typeof Circle> = {
   tasks: ListChecks,
   video: Video,
   assistant: Sparkles,
+  messages: MessageSquare,
 };
 
 type SidebarProps = {

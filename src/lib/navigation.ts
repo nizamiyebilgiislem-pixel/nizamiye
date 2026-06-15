@@ -29,6 +29,7 @@ const guidanceRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik", "bolum_m
 const talepRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "destek_birim_muduru"];
 const taskRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "destek_birim_muduru", "kutuphane_gorevlisi"];
 const liveSessionRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "rehberlik", "destek_birim_muduru", "kutuphane_gorevlisi"];
+const messagingRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "veli", "destek_birim_muduru"];
 
 export const moduleGroups: NavigationGroup[] = [
   {
@@ -43,6 +44,7 @@ export const moduleGroups: NavigationGroup[] = [
       { label: "Hocalar", href: "/hocalar", iconKey: "teachers", allowedRoles: staffRoles },
       { label: "Bölümler", href: "/bolumler", iconKey: "departments", allowedRoles: staffRoles },
       { label: "Sınıflar", href: "/siniflar", iconKey: "classes", allowedRoles: staffRoles },
+      { label: "Mesajlar", href: "/mesajlar", iconKey: "messages", allowedRoles: messagingRoles, moduleKey: "messaging" },
     ],
   },
   {

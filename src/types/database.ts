@@ -673,6 +673,26 @@ export type NotificationRow = {
   created_at: Timestamp;
 };
 
+export type MessageRow = {
+  id: string;
+  sender_profile_id: string;
+  recipient_profile_id: string;
+  subject: string | null;
+  message: string;
+  is_read: boolean;
+  read_at: Timestamp | null;
+  student_id: string | null;
+  sent_via: "app" | "sms" | null;
+  created_at: Timestamp;
+};
+
+export type MonthlySmsLimitRow = {
+  id: string;
+  profile_id: string;
+  year_month: string;
+  sms_count: number;
+};
+
 export type LiveSessionParticipantRow = {
   id: string;
   session_id: string;
@@ -732,6 +752,8 @@ export type Database = {
       assistant_messages: TableDefinition<AssistantMessageRow>;
       ai_knowledge_base: TableDefinition<AiKnowledgeBaseRow>;
       notifications: TableDefinition<NotificationRow>;
+      messages: TableDefinition<MessageRow>;
+      monthly_sms_limits: TableDefinition<MonthlySmsLimitRow>;
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
