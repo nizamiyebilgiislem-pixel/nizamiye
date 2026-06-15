@@ -130,6 +130,18 @@ async function createProfileAction(formData: FormData, source: "hocalar" | "kull
     redirect(`${yeniPath}?error=unauthorized`);
   }
 
+  if (profile.role === "bolum_muduru") {
+    if (parsed.data.role !== "hoca") {
+      redirect(`${yeniPath}?error=unauthorized`);
+    }
+    if (!profile.department_id) {
+      redirect(`${yeniPath}?error=department-missing`);
+    }
+    if (parsed.data.department_id !== profile.department_id) {
+      redirect(`${yeniPath}?error=department-forbidden`);
+    }
+  }
+
   const supabase = await createSupabaseServerClient();
   const { data: existing } = parsed.data.email
     ? await supabase.from("profiles").select("id").eq("email", parsed.data.email).maybeSingle()
@@ -276,6 +288,12 @@ export async function updateStaffProfileAction(formData: FormData) {
 
   if (!canAssignRole(profile, parsed.data.role) && profile.role !== "admin") {
     redirect(`/hocalar/${target.id}/duzenle?error=unauthorized`);
+  }
+
+  if (profile.role === "bolum_muduru") {
+    if (parsed.data.department_id && parsed.data.department_id !== profile.department_id) {
+      redirect(`/hocalar/${target.id}/duzenle?error=department-forbidden`);
+    }
   }
 
   const photoFile = getPhotoFile(formData);

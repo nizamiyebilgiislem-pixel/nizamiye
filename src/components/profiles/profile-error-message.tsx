@@ -17,6 +17,8 @@ const errorMessages: Record<string, string> = {
   "photo-upload": "Fotoğraf Supabase Storage alanına yüklenemedi. profile-photos bucket ve storage policy ayarlarını kontrol edin.",
   save: "Profil kaydı tamamlanamadı. Rol, bölüm ve iletişim bilgilerini kontrol edin.",
   "not-found": "Profil bulunamadı.",
+  "department-forbidden": "Bölüm müdürü sadece kendi bölümüne öğretmen ekleyebilir veya düzenleyebilir.",
+  "department-missing": "Bölüm müdürünün bölümü atanmamış. Lütfen sistem yöneticisine başvurun.",
 };
 
 export function ProfileErrorMessage({ error }: ProfileErrorMessageProps) {

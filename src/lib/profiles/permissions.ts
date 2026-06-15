@@ -4,7 +4,10 @@ import type { UserRole } from "@/types/rbac";
 export const staffProfileRoles: UserRole[] = ["genel_mudur", "bolum_muduru", "hoca"];
 
 export function canCreateStaffProfile(profile: ProfileRow) {
-  return profile.role === "admin" || profile.role === "genel_mudur";
+  if (profile.role === "admin" || profile.role === "genel_mudur") {
+    return true;
+  }
+  return profile.role === "bolum_muduru" && Boolean(profile.department_id);
 }
 
 export function canEditStaffProfile(profile: ProfileRow, target: ProfileRow) {
@@ -16,6 +19,14 @@ export function canEditStaffProfile(profile: ProfileRow, target: ProfileRow) {
     return target.role !== "admin" && target.role !== "genel_mudur";
   }
 
+  if (profile.role === "bolum_muduru") {
+    return (
+      target.role === "hoca" &&
+      Boolean(profile.department_id) &&
+      target.department_id === profile.department_id
+    );
+  }
+
   return false;
 }
 
@@ -24,7 +35,10 @@ export function canViewStaffProfile(profile: ProfileRow, target: ProfileRow) {
     return true;
   }
 
-  if ((profile.role === "bolum_muduru" || profile.role === "hoca") && target.role === "hoca") {
+  if (profile.role === "bolum_muduru" || profile.role === "hoca") {
+    if (target.role !== "hoca") {
+      return false;
+    }
     return Boolean(profile.department_id && target.department_id === profile.department_id);
   }
 
@@ -50,6 +64,10 @@ export function getCreatableRoles(profile: ProfileRow): UserRole[] {
 
   if (profile.role === "genel_mudur") {
     return ["bolum_muduru", "hoca", "destek_birim_muduru"];
+  }
+
+  if (profile.role === "bolum_muduru") {
+    return ["hoca"];
   }
 
   return [];

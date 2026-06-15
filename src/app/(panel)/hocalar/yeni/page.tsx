@@ -1,11 +1,13 @@
+import { redirect } from "next/navigation";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { ProfileErrorMessage } from "@/components/profiles/profile-error-message";
 import { ProfileForm } from "@/components/profiles/profile-form";
-import { requireRole } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
 import { createStaffProfileAction } from "@/lib/profiles/actions";
-import { getCreatableRoles } from "@/lib/profiles/permissions";
+import { canCreateStaffProfile, getCreatableRoles } from "@/lib/profiles/permissions";
 import { getDepartmentsForProfiles } from "@/lib/profiles/queries";
 
 type NewTeacherPageProps = {
@@ -14,16 +16,22 @@ type NewTeacherPageProps = {
 
 export default async function NewTeacherPage({ searchParams }: NewTeacherPageProps) {
   const params = await searchParams;
-  const { profile } = await requireRole(["admin", "genel_mudur"]);
+  const { profile } = await requireAuth();
+
+  if (!canCreateStaffProfile(profile)) {
+    redirect("/hocalar?error=unauthorized");
+  }
+
   const departments = await getDepartmentsForProfiles(profile);
   const roleOptions = getCreatableRoles(profile);
+  const isDepartmentManager = profile.role === "bolum_muduru";
 
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="Hocalar"
         title="Yeni Profil"
-        description="Hoca, bölüm müdürü veya genel müdür profili oluşturun; isterseniz aynı anda Auth hesabı da açın."
+        description={isDepartmentManager ? "Kendi bölümünüz için hoca profili oluşturun." : "Hoca, bölüm müdürü veya genel müdür profili oluşturun; isterseniz aynı anda Auth hesabı da açın."}
       />
       <ProfileErrorMessage error={params.error} />
       <Card>
@@ -36,7 +44,8 @@ export default async function NewTeacherPage({ searchParams }: NewTeacherPagePro
             departments={departments}
             roleOptions={roleOptions}
             mode="create"
-            enableAuthFields
+            enableAuthFields={!isDepartmentManager}
+            currentProfile={profile}
           />
         </CardContent>
       </Card>

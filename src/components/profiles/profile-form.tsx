@@ -16,6 +16,7 @@ type ProfileFormProps = {
   initialValues?: ProfileRow;
   assignedClassCount?: number;
   enableAuthFields?: boolean;
+  currentProfile?: ProfileRow;
 };
 
 export function ProfileForm({
@@ -26,10 +27,15 @@ export function ProfileForm({
   initialValues,
   assignedClassCount = 0,
   enableAuthFields = false,
+  currentProfile,
 }: ProfileFormProps) {
   const [role, setRole] = useState<UserRole>(initialValues?.role ?? roleOptions[0] ?? "hoca");
   const [createAuth, setCreateAuth] = useState(mode === "create" && enableAuthFields);
   const requiresDepartment = role === "hoca" || role === "bolum_muduru";
+  const isDepartmentManager = currentProfile?.role === "bolum_muduru";
+  const effectiveDepartmentId = isDepartmentManager && currentProfile?.department_id
+    ? currentProfile.department_id
+    : (initialValues?.department_id ?? "");
   const showInactiveWarning = assignedClassCount > 0;
   const roleSelectOptions = useMemo(() => {
     if (initialValues && !roleOptions.includes(initialValues.role)) {
@@ -76,21 +82,30 @@ export function ProfileForm({
         </label>
         <label className="grid gap-2 text-sm font-medium">
           Bölüm
-          <select
-            name="department_id"
-            required={requiresDepartment}
-            defaultValue={initialValues?.department_id ?? ""}
-            disabled={!requiresDepartment}
-            className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-ring disabled:opacity-60"
-          >
-            <option value="">Bölüm yok</option>
-            {departments.map((department) => (
-              <option key={department.id} value={department.id}>
-                {department.name}
-              </option>
-            ))}
-          </select>
-          {!requiresDepartment ? <input type="hidden" name="department_id" value="" /> : null}
+          {isDepartmentManager ? (
+            <>
+              <input type="hidden" name="department_id" value={effectiveDepartmentId} />
+              <div className="flex h-10 items-center rounded-md border border-input bg-muted px-3 text-sm text-muted-foreground">
+                {departments.find((d) => d.id === effectiveDepartmentId)?.name ?? "Kendi bölümünüz"}
+              </div>
+            </>
+          ) : (
+            <select
+              name="department_id"
+              required={requiresDepartment}
+              defaultValue={initialValues?.department_id ?? ""}
+              disabled={!requiresDepartment}
+              className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-ring disabled:opacity-60"
+            >
+              <option value="">Bölüm yok</option>
+              {departments.map((department) => (
+                <option key={department.id} value={department.id}>
+                  {department.name}
+                </option>
+              ))}
+            </select>
+          )}
+          {!requiresDepartment && !isDepartmentManager ? <input type="hidden" name="department_id" value="" /> : null}
         </label>
         <label className="grid gap-2 text-sm font-medium">
           Durum

@@ -31,7 +31,13 @@ export default async function EditTeacherPage({ params, searchParams }: EditTeac
     getDepartmentsForProfiles(profile),
     getAssignedClassCount(target.id),
   ]);
-  const roleOptions = getCreatableRoles(profile);
+
+  let roleOptions = getCreatableRoles(profile);
+  const isDepartmentManager = profile.role === "bolum_muduru";
+
+  if (isDepartmentManager) {
+    roleOptions = ["hoca"];
+  }
 
   return (
     <div className="space-y-6">
@@ -49,6 +55,7 @@ export default async function EditTeacherPage({ params, searchParams }: EditTeac
             mode="edit"
             initialValues={target}
             assignedClassCount={assignedClassCount}
+            currentProfile={profile}
           />
         </CardContent>
       </Card>
