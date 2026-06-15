@@ -31,7 +31,7 @@ export async function ClassTeacherDashboard({ profile }: { profile: ProfileRow }
       <div className="space-y-6">
         <PageHeader
           eyebrow="Sınıf Hocası"
-          title="Dashboard"
+          title="Yönetim Paneli"
           description="Sınıfınızın güncel durumunu izleyin."
         />
         <Card className="border-[#093657]/10 bg-white">

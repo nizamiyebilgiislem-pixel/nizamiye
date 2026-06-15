@@ -57,7 +57,7 @@ export async function AdminDashboard({ profile }: { profile: ProfileRow }) {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Yönetim"
-        title="Dashboard"
+        title="Yönetim Paneli"
         description="Bölüm durumu, doluluk, başarı ve operasyon kayıtlarını tek ekranda izleyin."
       />
 

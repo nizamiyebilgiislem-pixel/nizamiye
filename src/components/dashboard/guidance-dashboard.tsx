@@ -20,7 +20,7 @@ export async function GuidanceDashboard({ profile }: { profile: ProfileRow }) {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Rehberlik"
-        title="Dashboard"
+        title="Yönetim Paneli"
         description="Tüm öğrencileri görüntüleyin, rehberlik kayıtlarını yönetin ve takipleri izleyin."
       />
 

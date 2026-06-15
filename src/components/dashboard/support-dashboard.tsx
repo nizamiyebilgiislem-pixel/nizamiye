@@ -17,7 +17,7 @@ export async function SupportDashboard({ profile }: { profile: ProfileRow }) {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Destek Birimi"
-        title="Dashboard"
+        title="Yönetim Paneli"
         description="Talepleri, görevleri ve sistem kayıtlarını salt okunur izleyin."
       />
 

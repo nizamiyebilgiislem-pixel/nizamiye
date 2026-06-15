@@ -8,7 +8,7 @@ export function DefaultDashboard({ profile }: { profile: ProfileRow }) {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Dashboard"
+        eyebrow="Yönetim Paneli"
         title="Hoş Geldiniz"
         description="Nizamiye Öğrenci Yönetim Sistemi."
       />
