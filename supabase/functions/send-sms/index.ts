@@ -8,23 +8,31 @@ interface SMSRequest {
 function normalizePhoneNumber(phone: string): string {
   const cleaned = phone.replace(/[\s\-\(\)]/g, "");
 
-  if (cleaned.startsWith("+")) {
+  if (cleaned.startsWith("+90")) {
     return cleaned;
+  }
+
+  if (cleaned.startsWith("+")) {
+    if (cleaned.startsWith("+90")) {
+      return cleaned;
+    }
+    return "+90" + cleaned.slice(1);
+  }
+
+  if (cleaned.startsWith("90")) {
+    return "+" + cleaned;
   }
 
   if (cleaned.startsWith("0")) {
     return "+90" + cleaned.slice(1);
   }
 
-  return "+" + cleaned;
+  return "+90" + cleaned;
 }
 
 function maskPhoneNumber(phone: string): string {
   if (phone.length < 4) return "****";
-  const visible = phone.slice(-4);
-  const prefix = phone.startsWith("+") ? "+" : "";
-  const maskedPart = phone.replace(/\d(?=\d{4})/g, "*");
-  return maskedPart.slice(0, -4) + visible;
+  return phone.slice(0, 4) + "****" + phone.slice(-4);
 }
 
 function maskSid(sid: string): string {

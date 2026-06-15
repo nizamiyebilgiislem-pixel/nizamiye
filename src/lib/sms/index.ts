@@ -7,15 +7,26 @@ export type SMSResult = {
 function normalizePhoneNumber(phone: string): string {
   const cleaned = phone.replace(/[\s\-\(\)]/g, "");
 
-  if (cleaned.startsWith("+")) {
+  if (cleaned.startsWith("+90")) {
     return cleaned;
+  }
+
+  if (cleaned.startsWith("+")) {
+    if (cleaned.startsWith("+90")) {
+      return cleaned;
+    }
+    return "+90" + cleaned.slice(1);
+  }
+
+  if (cleaned.startsWith("90")) {
+    return "+" + cleaned;
   }
 
   if (cleaned.startsWith("0")) {
     return "+90" + cleaned.slice(1);
   }
 
-  return "+" + cleaned;
+  return "+90" + cleaned;
 }
 
 export async function sendSMS(to: string, message: string): Promise<SMSResult> {
