@@ -29,11 +29,11 @@ export default async function LoginPage() {
         <div className="mb-8 flex flex-col items-center text-center">
           <div className="mb-6">
             <Image
-              src="/logo.png"
+              src="/logobeyaz.png"
               alt="Nizamiye"
-              width={120}
-              height={120}
-              className="size-[120px] object-contain drop-shadow-lg"
+              width={140}
+              height={80}
+              className="h-20 w-auto object-contain"
               priority
             />
           </div>

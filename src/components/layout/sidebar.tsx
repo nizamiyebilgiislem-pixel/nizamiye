@@ -84,10 +84,8 @@ export function Sidebar({ groups, isOpen, onClose }: SidebarProps) {
         )}
       >
         {/* Logo and brand header */}
-        <div className="flex h-16 items-center gap-3 border-b border-[#ffffff15] px-5">
-          <div className="flex size-11 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-white/10">
-            <Image src="/logo.svg" alt="Nizamiye" width={32} height={32} className="size-8 object-contain" />
-          </div>
+<div className="flex h-16 items-center gap-3 border-b border-[#ffffff15] px-5">
+          <Image src="/logobeyaz.png" alt="Nizamiye" width={36} height={36} className="size-9 object-contain" />
           <div className="min-w-0 flex-1">
             <p className="truncate text-base font-semibold text-white">Nizamiye</p>
             <p className="truncate text-xs text-[#94c5dc]">Yönetim Paneli</p>
