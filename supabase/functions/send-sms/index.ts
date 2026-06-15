@@ -1,5 +1,3 @@
-import twilio from "npm:twilio";
-
 interface SMSRequest {
   to: string;
   message: string;
@@ -31,90 +29,113 @@ function normalizePhoneNumber(phone: string): string | null {
   return null;
 }
 
-function maskPhoneNumber(phone: string): string {
-  if (phone.length < 4) return "****";
-  return phone.slice(0, 4) + "****" + phone.slice(-4);
+function maskPhone(phone: string): string {
+  if (!phone || phone.length < 6) return "****";
+  return phone.slice(0, 5) + "******" + phone.slice(-2);
 }
 
 function maskSid(sid: string): string {
-  if (sid.length < 8) return "****";
+  if (!sid || sid.length < 8) return "****";
   return sid.slice(0, 4) + "..." + sid.slice(-4);
 }
-
-const client = twilio(
-  Deno.env.get("TWILIO_ACCOUNT_SID"),
-  Deno.env.get("TWILIO_AUTH_TOKEN"),
-);
 
 Deno.serve(async (req: Request) => {
   const requestId = crypto.randomUUID().slice(0, 8);
 
+  console.log(`[${requestId}] send-sms invoked`);
+  console.log(`[${requestId}] env check - hasSid: ${!!Deno.env.get("TWILIO_ACCOUNT_SID")}, hasToken: ${!!Deno.env.get("TWILIO_AUTH_TOKEN")}, hasPhone: ${!!Deno.env.get("TWILIO_PHONE_NUMBER")}`);
+
   try {
     const { to, message }: SMSRequest = await req.json();
 
+    console.log(`[${requestId}] body parsed - hasTo: ${!!to}, hasMessage: ${!!message}`);
+
     if (!to || !message) {
-      console.log(`[${requestId}] Missing params - to: ${!!to}, message: ${!!message}`);
       return new Response(
-        JSON.stringify({ error: "Telefon numarası ve mesaj gerekli" }),
+        JSON.stringify({ success: false, error: "Telefon numarası ve mesaj gerekli" }),
         { status: 400, headers: { "Content-Type": "application/json" } },
       );
     }
 
-    const from = Deno.env.get("TWILIO_PHONE_NUMBER");
-    if (!from) {
-      console.log(`[${requestId}] TWILIO_PHONE_NUMBER not configured`);
+    const accountSid = Deno.env.get("TWILIO_ACCOUNT_SID");
+    const authToken = Deno.env.get("TWILIO_AUTH_TOKEN");
+    const fromNumber = Deno.env.get("TWILIO_PHONE_NUMBER");
+
+    if (!accountSid || !authToken || !fromNumber) {
+      console.log(`[${requestId}] Twilio env not configured`);
       return new Response(
-        JSON.stringify({ error: "Twilio telefon numarası yapılandırılmamış" }),
+        JSON.stringify({ success: false, error: "Twilio yapılandırılmamış" }),
         { status: 500, headers: { "Content-Type": "application/json" } },
       );
     }
 
     const cleanTo = normalizePhoneNumber(to);
+    console.log(`[${requestId}] normalizedTo: ${cleanTo ? maskPhone(cleanTo) : "null"}`);
 
     if (!cleanTo) {
-      console.log(`[${requestId}] Invalid phone format: ${to}`);
       return new Response(
-        JSON.stringify({ error: "Geçersiz telefon numarası formatı" }),
+        JSON.stringify({ success: false, error: "Geçersiz telefon numarası formatı" }),
         { status: 400, headers: { "Content-Type": "application/json" } },
       );
     }
 
-    const maskedTo = maskPhoneNumber(cleanTo);
-    const maskedFrom = maskPhoneNumber(from);
+    const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
 
-    console.log(`[${requestId}] Sending SMS - to: ${maskedTo}, from: ${maskedFrom}, msgLen: ${message.length}`);
+    const formData = new URLSearchParams();
+    formData.append("To", cleanTo);
+    formData.append("From", fromNumber);
+    formData.append("Body", message);
 
-    const result = await client.messages.create({
-      body: message,
-      to: cleanTo,
-      from: from,
+    console.log(`[${requestId}] Calling Twilio API - to: ${maskPhone(cleanTo)}, from: ${maskPhone(fromNumber)}`);
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Authorization": "Basic " + btoa(`${accountSid}:${authToken}`),
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: formData.toString(),
     });
 
-    console.log(`[${requestId}] Success - sid: ${maskSid(result.sid)}, status: ${result.status}`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error(`[${requestId}] Twilio error:`, {
+        status: response.status,
+        code: data.code,
+        message: data.message,
+        moreInfo: data.more_info,
+      });
+
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "twilio-error",
+          status: response.status,
+          code: data.code,
+          message: data.message,
+        }),
+        { status: 500, headers: { "Content-Type": "application/json" } },
+      );
+    }
+
+    console.log(`[${requestId}] Success - sid: ${maskSid(data.sid)}, status: ${data.status}`);
 
     return new Response(
       JSON.stringify({
         success: true,
-        messageId: result.sid,
-        status: result.status,
+        sid: data.sid,
+        status: data.status,
       }),
       { status: 200, headers: { "Content-Type": "application/json" } },
     );
   } catch (error) {
-    const twilioError = error as { code?: number; message?: string; status?: number; moreInfo?: string };
+    console.error(`[${requestId}] Unexpected error:`, error);
 
-    console.error(`[${requestId}] Twilio error:`, {
-      code: twilioError.code,
-      status: twilioError.status,
-      message: twilioError.message,
-      moreInfo: twilioError.moreInfo,
-    });
-
-    const userMessage = "SMS gönderilemedi";
     return new Response(
       JSON.stringify({
-        error: userMessage,
-        code: twilioError.code,
+        success: false,
+        error: "Bilinmeyen hata",
       }),
       { status: 500, headers: { "Content-Type": "application/json" } },
     );
