@@ -56,6 +56,9 @@ export async function sendMessage(
     return { error: "Bu kişiye mesaj gönderme yetkiniz yok" };
   }
 
+  let smsFailed = false;
+  let smsErrorMessage = null;
+
   if (sendAsSms && recipient.phone) {
     const currentCount = await getSmsCountForMonth(supabase, sender.id);
     const limit = getSmsLimit(sender.role);
@@ -70,22 +73,27 @@ export async function sendMessage(
     });
 
     if (!smsResult.success) {
-      return { error: "SMS gönderilemedi: " + (smsResult.error ?? "Bilinmeyen hata") };
+      smsFailed = true;
+      smsErrorMessage = smsResult.error ?? "SMS servisi kullanılamıyor";
+    } else {
+      await incrementSmsCount(supabase, sender.id);
     }
-
-    await incrementSmsCount(supabase, sender.id);
-
-    await supabase.from("messages").insert({
-      sender_profile_id: sender.id,
-      recipient_profile_id: recipientId,
-      subject: subject ?? null,
-      message,
-      sent_via: "sms",
-      student_id: studentId ?? null,
-    });
-
-    return { success: true, via: "sms" };
   }
+
+  await supabase.from("messages").insert({
+    sender_profile_id: sender.id,
+    recipient_profile_id: recipientId,
+    subject: subject ?? null,
+    message,
+    sent_via: sendAsSms && !smsFailed ? "sms" : "app",
+    student_id: studentId ?? null,
+  });
+
+  if (smsFailed) {
+    return { success: true, via: "app", smsFailed: true, smsError: smsErrorMessage };
+  }
+
+  return { success: true, via: sendAsSms && !smsFailed ? "sms" : "app" };
 
   await supabase.from("messages").insert({
     sender_profile_id: sender.id,

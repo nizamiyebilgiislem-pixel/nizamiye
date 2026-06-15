@@ -3,10 +3,8 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Send, Phone } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Send, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -41,6 +39,7 @@ export function YeniMesajClient({ recipients, currentProfileRole }: YeniMesajCli
   const [message, setMessage] = useState("");
   const [sendAsSms, setSendAsSms] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [smsWarning, setSmsWarning] = useState<string | null>(null);
 
   const canSendSms = currentProfileRole !== "veli";
 
@@ -49,6 +48,7 @@ export function YeniMesajClient({ recipients, currentProfileRole }: YeniMesajCli
     if (!recipientId || !message.trim()) return;
 
     setError(null);
+    setSmsWarning(null);
     startTransition(async () => {
       const formData = new FormData();
       formData.append("recipientId", recipientId);
@@ -64,8 +64,16 @@ export function YeniMesajClient({ recipients, currentProfileRole }: YeniMesajCli
       if (data.error) {
         setError(data.error);
       } else {
-        router.push(`/mesajlar/${recipientId}`);
-        router.refresh();
+        if (data.smsFailed && data.smsError) {
+          setSmsWarning(`SMS gönderilemedi: ${data.smsError}. Mesajınız uygulama üzerinden iletildi.`);
+          setTimeout(() => {
+            router.push(`/mesajlar/${recipientId}`);
+            router.refresh();
+          }, 2000);
+        } else {
+          router.push(`/mesajlar/${recipientId}`);
+          router.refresh();
+        }
       }
     });
   };
@@ -77,6 +85,12 @@ export function YeniMesajClient({ recipients, currentProfileRole }: YeniMesajCli
       {error && (
         <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
+        </div>
+      )}
+
+      {smsWarning && (
+        <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+          ⚠️ {smsWarning}
         </div>
       )}
 

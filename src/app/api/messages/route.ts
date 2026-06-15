@@ -152,7 +152,12 @@ export async function POST(request: Request) {
       return Response.json({ error: result.error }, { status: 400 });
     }
 
-    return Response.json({ success: true, via: result.via });
+    return Response.json({
+      success: true,
+      via: result.via,
+      smsFailed: result.smsFailed ?? false,
+      smsError: result.smsError ?? null
+    });
   } catch {
     return Response.json({ error: "Internal error" }, { status: 500 });
   }
