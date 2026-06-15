@@ -37,7 +37,7 @@ export default async function LoginPage() {
               priority
             />
           </div>
-          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#093657]/50">Nizamiye Eğitim Kurumu</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#093657]/50">Nizamiye Eğitim Kurumları</p>
           <h1 className="mt-4 text-2xl font-bold tracking-tight text-[#093657]">Öğrenci Yönetim Sistemi</h1>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             Panele erişmek için yetkili hesabınızla giriş yapın.
@@ -52,7 +52,7 @@ export default async function LoginPage() {
         {/* Footer */}
         <div className="mt-8 text-center">
           <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} Nizamiye Eğitim Kurumu
+            &copy; {new Date().getFullYear()} Nizamiye Eğitim Kurumları
           </p>
         </div>
       </section>
