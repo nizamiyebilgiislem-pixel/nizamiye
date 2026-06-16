@@ -32,6 +32,7 @@ const participantRoleLabels: Record<UserRole, string> = {
   destek_birim_muduru: "Destek Birim Müdürü",
   kutuphane_gorevlisi: "Kütüphane Görevlisi",
   veli: "Veli",
+  sponsor: "Sponsor",
   muhasebe: "Muhasebe",
 };
 

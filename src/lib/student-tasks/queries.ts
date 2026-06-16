@@ -42,7 +42,7 @@ export async function getStudentTasks(
       ),
       assigned_by_profile:profiles!student_tasks_assigned_by_fkey(id, full_name)
     `, { count: "exact" })
-    .eq("status", filters.status ?? "pending")
+    .eq("status", (filters.status ?? "pending") as "pending" | "completed")
     .order("due_date", { ascending: true, nullsFirst: false });
 
   if (filters.student_id) {

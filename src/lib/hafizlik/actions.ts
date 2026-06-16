@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { requireAuth } from "@/lib/auth";
@@ -33,13 +34,13 @@ export async function updateHafizlikProgressAction(formData: FormData) {
 
   const parsed = updateProgressSchema.safeParse(rawData);
   if (!parsed.success) {
-    return { error: "Geçersiz veri." };
+    throw new Error("Geçersiz veri.");
   }
 
   const supabase = await createSupabaseServerClient();
   const permResult = await canManageHafizlikProgress(supabase, profile, parsed.data.student_id);
   if (permResult.error) {
-    return { error: permResult.error.message };
+    throw new Error(permResult.error.message);
   }
 
   const existingResult = await supabase
@@ -78,13 +79,13 @@ export async function updateHafizlikProgressAction(formData: FormData) {
   }
 
   if (result.error) {
-    return { error: result.error.message };
+    throw new Error(result.error.message);
   }
 
   await syncMemorizationScore(supabase, parsed.data.student_id, parsed.data.current_juz, parsed.data.current_page);
 
   revalidatePath(`/talebeler/${parsed.data.student_id}`);
-  return { success: true };
+  return;
 }
 
 async function syncMemorizationScore(supabase: SupabaseClient, studentId: string, currentJuz: number, currentPage: number) {
@@ -183,7 +184,7 @@ export async function getHafizlikStudentsForBulk(profileId: string) {
   };
 }
 
-export async function bulkUpdateHafizlikProgressAction(formData: FormData) {
+export async function bulkUpdateHafizlikProgressAction(formData: FormData): Promise<void> {
   const { profile } = await requireAuth();
 
   const studentIds = formData.getAll("student_ids") as string[];
@@ -194,8 +195,10 @@ export async function bulkUpdateHafizlikProgressAction(formData: FormData) {
   const teacher_note = formData.get("teacher_note");
 
   if (studentIds.length === 0) {
-    return { error: "Öğrenci seçilmedi." };
+    throw new Error("Öğrenci seçilmedi.");
   }
+
+  let updatedCount = 0;
 
   const supabase = await createSupabaseServerClient();
 

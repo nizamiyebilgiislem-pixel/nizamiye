@@ -101,7 +101,6 @@ export async function addStudentBookAction(formData: FormData) {
     read_date: parsed.data.read_date,
     note: parsed.data.note,
     created_by: profile.id,
-    updated_by: profile.id,
   });
 
   if (error) {

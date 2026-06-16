@@ -51,7 +51,7 @@ export async function createStudentTaskAction(formData: FormData) {
   const actor = buildAuditActor(profile);
 
   if (!canCreateStudentTask(profile)) {
-    return { error: "Bu işlem için yetkiniz yok." };
+    throw new Error("Bu işlem için yetkiniz yok.");
   }
 
   const rawData = {
@@ -64,21 +64,21 @@ export async function createStudentTaskAction(formData: FormData) {
 
   const parsed = createStudentTaskSchema.safeParse(rawData);
   if (!parsed.success) {
-    return { error: parsed.error.errors[0].message };
+    throw new Error(parsed.error.issues[0].message);
   }
 
   const supabase = await createSupabaseServerClient();
 
   const permResult = await canManageStudentTask(supabase, profile, parsed.data.student_id);
   if (permResult.error) {
-    return { error: permResult.error.message };
+    throw new Error(permResult.error.message);
   }
 
   const { data: student } = await supabase
     .from("students")
     .select("full_name, course_class:classes(class_teacher_id)")
     .eq("id", parsed.data.student_id)
-    .single();
+    .single() as { data: { full_name: string; course_class: { class_teacher_id: string } | null } | null };
 
   const { error } = await supabase.from("student_tasks").insert({
     student_id: parsed.data.student_id,
@@ -91,7 +91,7 @@ export async function createStudentTaskAction(formData: FormData) {
   });
 
   if (error) {
-    return { error: error.message };
+    throw new Error(error.message);
   }
 
   if (student?.course_class?.class_teacher_id) {
@@ -104,14 +104,14 @@ export async function createStudentTaskAction(formData: FormData) {
   }
 
   revalidatePath("/gorevler");
-  return { success: true };
+  return;
 }
 
 export async function completeStudentTaskAction(taskId: string) {
   const { profile } = await requireAuth();
 
   if (!canCreateStudentTask(profile)) {
-    return { error: "Bu işlem için yetkiniz yok." };
+    throw new Error("Bu işlem için yetkiniz yok.");
   }
 
   const supabase = await createSupabaseServerClient();
@@ -123,12 +123,12 @@ export async function completeStudentTaskAction(taskId: string) {
     .single();
 
   if (!task) {
-    return { error: "Görev bulunamadı." };
+    throw new Error("Görev bulunamadı.");
   }
 
   const permResult = await canManageStudentTask(supabase, profile, task.student_id);
   if (permResult.error) {
-    return { error: permResult.error.message };
+    throw new Error(permResult.error.message);
   }
 
   const { error } = await supabase
@@ -140,14 +140,14 @@ export async function completeStudentTaskAction(taskId: string) {
     .eq("id", taskId);
 
   if (error) {
-    return { error: error.message };
+    throw new Error(error.message);
   }
 
   const { data: student } = await supabase
     .from("students")
     .select("full_name, course_class:classes(class_teacher_id)")
     .eq("id", task.student_id)
-    .single();
+    .single() as { data: { full_name: string; course_class: { class_teacher_id: string } | null } | null };
 
   if (student?.course_class?.class_teacher_id) {
     await createStudentTaskNotification(
@@ -159,7 +159,7 @@ export async function completeStudentTaskAction(taskId: string) {
   }
 
   revalidatePath("/gorevler");
-  return { success: true };
+  return;
 }
 
 export async function deleteStudentTaskAction(taskId: string) {
@@ -174,11 +174,11 @@ export async function deleteStudentTaskAction(taskId: string) {
     .single();
 
   if (!task) {
-    return { error: "Görev bulunamadı." };
+    throw new Error("Görev bulunamadı.");
   }
 
   if (!canDeleteStudentTask(profile, task)) {
-    return { error: "Bu görevi silme yetkiniz yok." };
+    throw new Error("Bu görevi silme yetkiniz yok.");
   }
 
   const { error } = await supabase
@@ -187,18 +187,18 @@ export async function deleteStudentTaskAction(taskId: string) {
     .eq("id", taskId);
 
   if (error) {
-    return { error: error.message };
+    throw new Error(error.message);
   }
 
   revalidatePath("/gorevler");
-  return { success: true };
+  return;
 }
 
 export async function reassignStudentTaskAction(taskId: string, newStudentId: string) {
   const { profile } = await requireAuth();
 
   if (!canCreateStudentTask(profile)) {
-    return { error: "Bu işlem için yetkiniz yok." };
+    throw new Error("Bu işlem için yetkiniz yok.");
   }
 
   const supabase = await createSupabaseServerClient();
@@ -210,12 +210,12 @@ export async function reassignStudentTaskAction(taskId: string, newStudentId: st
     .single();
 
   if (!task) {
-    return { error: "Görev bulunamadı." };
+    throw new Error("Görev bulunamadı.");
   }
 
   const permResult = await canManageStudentTask(supabase, profile, task.student_id);
   if (permResult.error) {
-    return { error: permResult.error.message };
+    throw new Error(permResult.error.message);
   }
 
   const { error } = await supabase
@@ -224,11 +224,11 @@ export async function reassignStudentTaskAction(taskId: string, newStudentId: st
     .eq("id", taskId);
 
   if (error) {
-    return { error: error.message };
+    throw new Error(error.message);
   }
 
   revalidatePath("/gorevler");
-  return { success: true };
+  return;
 }
 
 export { taskTypeLabels };

@@ -27,7 +27,7 @@ export function BulkUpdateForm({
     progress: HafizlikProgressRow | null;
     teacherName: string | null;
   }>;
-  updateAction: (formData: FormData) => Promise<{ error?: string; success?: boolean; count?: number }>;
+  updateAction: (formData: FormData) => void | Promise<void>;
 }) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
@@ -196,7 +196,6 @@ export function BulkUpdateForm({
       <div className="flex justify-end">
         <FormSubmitButton
           pendingLabel="Güncelleniyor..."
-          disabled={selectedIds.size === 0}
         >
           {selectedIds.size > 0 ? `${selectedIds.size} Öğrenciyi Güncelle` : "Öğrenci Seçin"}
         </FormSubmitButton>

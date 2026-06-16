@@ -10,6 +10,19 @@ export type CourseBookProgressWithRelations = CourseBookProgressRow & {
   class: ClassRow;
 };
 
+export type CourseBookProgressWithCourseBook = CourseBookProgressRow & {
+  course_book: {
+    id: string;
+    title: string;
+    book_order: number;
+    course_id: string;
+    course: {
+      id: string;
+      name: string;
+    } | null;
+  } | null;
+};
+
 export async function getCourseBooks(courseId: string) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
@@ -87,7 +100,8 @@ export async function getClassesForCourse(courseId: string) {
     throw new Error("Sınıflar alınamadı.");
   }
 
-  return (classCourses ?? []).map((cc) => cc.class).filter(Boolean) as ClassRow[];
+  const result = classCourses as Array<{ class: ClassRow | null }> | null;
+  return (result ?? []).map((cc) => cc.class).filter((c): c is ClassRow => c !== null);
 }
 
 export async function getClassesForCourseBook(courseBookId: string) {
@@ -132,7 +146,7 @@ export async function getCourseBookProgressForClass(courseBookId: string, classI
   return data;
 }
 
-export async function getStudentCourseBookProgress(studentId: string) {
+export async function getStudentCourseBookProgress(studentId: string): Promise<StudentCourseBookProgress[]> {
   const supabase = await createSupabaseServerClient();
 
   const { data: student } = await supabase
@@ -158,7 +172,7 @@ export async function getStudentCourseBookProgress(studentId: string) {
     throw new Error("Öğrenci kitap ilerlemesi alınamadı.");
   }
 
-  return progress ?? [];
+  return (progress ?? []) as StudentCourseBookProgress[];
 }
 
-export type StudentCourseBookProgress = Awaited<ReturnType<typeof getStudentCourseBookProgress>>[number];
+export type StudentCourseBookProgress = CourseBookProgressWithCourseBook;

@@ -1,59 +1,61 @@
-import { BookOpen, CheckCircle2, Clock, XCircle } from "lucide-react";
+"use client"
 
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import type { StudentCourseBookProgress } from "@/lib/course-books/queries";
+import { BookOpen, CheckCircle2, Clock } from "lucide-react"
+
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
+import type { StudentCourseBookProgress } from "@/lib/course-books/queries"
 
 const statusIcons = {
   not_started: <Clock className="size-4 text-gray-400" />,
   ongoing: <BookOpen className="size-4 text-blue-500" />,
   completed: <CheckCircle2 className="size-4 text-green-500" />,
-};
+}
 
 const statusLabels = {
   not_started: "Başlanmadı",
   ongoing: "Devam Ediyor",
   completed: "Tamamlandı",
-};
+}
 
 const statusColors = {
   not_started: "bg-gray-100 text-gray-600",
   ongoing: "bg-blue-100 text-blue-700",
   completed: "bg-green-100 text-green-700",
-};
+}
 
 export function StudentCourseBooksPanel({
   progress,
   compact = false,
 }: {
-  progress: StudentCourseBookProgress[];
-  compact?: boolean;
+  progress: StudentCourseBookProgress[]
+  compact?: boolean
 }) {
   if (progress.length === 0) {
-    return null;
+    return null
   }
 
   const groupedByCourse = progress.reduce((acc, p) => {
-    const courseId = p.course_book?.course_id;
-    if (!courseId) return acc;
+    const courseId = p.course_book?.course_id
+    if (!courseId) return acc
     if (!acc[courseId]) {
       acc[courseId] = {
         courseName: p.course_book?.course?.name ?? "Bilinmeyen Ders",
         books: [],
-      };
+      }
     }
-    acc[courseId].books.push(p);
-    return acc;
-  }, {} as Record<string, { courseName: string; books: StudentCourseBookProgress[] }>);
+    acc[courseId].books.push(p)
+    return acc
+  }, {} as Record<string, { courseName: string; books: StudentCourseBookProgress[] }>)
 
   if (compact) {
     return (
       <div className="space-y-2">
         {Object.entries(groupedByCourse).slice(0, 3).map(([courseId, { courseName, books }]) => {
-          const currentBook = books.find((b) => b.status !== "completed") ?? books[books.length - 1];
-          const totalBooks = books.length;
-          const completedBooks = books.filter((b) => b.status === "completed").length;
+          const currentBook = books.find((b) => b.status !== "completed") ?? books[books.length - 1]
+          const totalBooks = books.length
+          const completedBooks = books.filter((b) => b.status === "completed").length
 
           return (
             <div key={courseId} className="flex items-center justify-between text-sm">
@@ -67,18 +69,18 @@ export function StudentCourseBooksPanel({
                 </Badge>
               </div>
             </div>
-          );
+          )
         })}
       </div>
-    );
+    )
   }
 
   return (
     <div className="space-y-4">
       {Object.entries(groupedByCourse).map(([courseId, { courseName, books }]) => {
-        const completedCount = books.filter((b) => b.status === "completed").length;
-        const totalBooks = books.length;
-        const currentBook = books.find((b) => b.status === "ongoing") ?? books.find((b) => b.status === "not_started") ?? books[books.length - 1];
+        const completedCount = books.filter((b) => b.status === "completed").length
+        const totalBooks = books.length
+        const currentBook = books.find((b) => b.status === "ongoing") ?? books.find((b) => b.status === "not_started") ?? books[books.length - 1]
 
         return (
           <div key={courseId} className="rounded-md border border-border p-3">
@@ -100,8 +102,8 @@ export function StudentCourseBooksPanel({
               </div>
             )}
           </div>
-        );
+        )
       })}
     </div>
-  );
+  )
 }

@@ -43,7 +43,7 @@ export async function createCourseBookAction(formData: FormData) {
 
   const parsed = createCourseBookSchema.safeParse(rawData);
   if (!parsed.success) {
-    return { error: parsed.error.errors[0].message };
+    throw new Error(parsed.error.issues[0].message);
   }
 
   const supabase = await createSupabaseServerClient();
@@ -55,7 +55,7 @@ export async function createCourseBookAction(formData: FormData) {
     .single();
 
   if (!canManageCourseBooks(profile, course?.department_id)) {
-    return { error: "Bu işlem için yetkiniz yok." };
+    throw new Error("Bu işlem için yetkiniz yok.");
   }
 
   const { error } = await supabase.from("course_books").insert({
@@ -67,7 +67,7 @@ export async function createCourseBookAction(formData: FormData) {
   });
 
   if (error) {
-    return { error: error.message };
+    throw new Error(error.message);
   }
 
   revalidatePath("/ders-sistemi");
@@ -87,7 +87,7 @@ export async function updateCourseBookAction(formData: FormData) {
 
   const parsed = updateCourseBookSchema.safeParse(rawData);
   if (!parsed.success) {
-    return { error: parsed.error.errors[0].message };
+    throw new Error(parsed.error.issues[0].message);
   }
 
   const supabase = await createSupabaseServerClient();
@@ -99,7 +99,7 @@ export async function updateCourseBookAction(formData: FormData) {
     .single();
 
   if (!book) {
-    return { error: "Kitap bulunamadı." };
+    throw new Error("Kitap bulunamadı.");
   }
 
   const { data: course } = await supabase
@@ -109,7 +109,7 @@ export async function updateCourseBookAction(formData: FormData) {
     .single();
 
   if (!canManageCourseBooks(profile, course?.department_id)) {
-    return { error: "Bu işlem için yetkiniz yok." };
+    throw new Error("Bu işlem için yetkiniz yok.");
   }
 
   const { error } = await supabase
@@ -123,7 +123,7 @@ export async function updateCourseBookAction(formData: FormData) {
     .eq("id", parsed.data.id);
 
   if (error) {
-    return { error: error.message };
+    throw new Error(error.message);
   }
 
   revalidatePath("/ders-sistemi");
@@ -142,7 +142,7 @@ export async function deleteCourseBookAction(bookId: string) {
     .single();
 
   if (!book) {
-    return { error: "Kitap bulunamadı." };
+    throw new Error("Kitap bulunamadı.");
   }
 
   const { data: course } = await supabase
@@ -152,7 +152,7 @@ export async function deleteCourseBookAction(bookId: string) {
     .single();
 
   if (!canManageCourseBooks(profile, course?.department_id)) {
-    return { error: "Bu işlem için yetkiniz yok." };
+    throw new Error("Bu işlem için yetkiniz yok.");
   }
 
   const { error } = await supabase
@@ -161,7 +161,7 @@ export async function deleteCourseBookAction(bookId: string) {
     .eq("id", bookId);
 
   if (error) {
-    return { error: error.message };
+    throw new Error(error.message);
   }
 
   revalidatePath("/ders-sistemi");
@@ -181,7 +181,7 @@ export async function updateCourseBookProgressAction(formData: FormData) {
 
   const parsed = updateProgressSchema.safeParse(rawData);
   if (!parsed.success) {
-    return { error: parsed.error.errors[0].message };
+    throw new Error(parsed.error.issues[0].message);
   }
 
   const supabase = await createSupabaseServerClient();
@@ -193,7 +193,7 @@ export async function updateCourseBookProgressAction(formData: FormData) {
     .single();
 
   if (!canManageCourseBookProgress(profile, classInfo?.department_id)) {
-    return { error: "Bu işlem için yetkiniz yok." };
+    throw new Error("Bu işlem için yetkiniz yok.");
   }
 
   const { data: existing } = await supabase
@@ -214,7 +214,7 @@ export async function updateCourseBookProgressAction(formData: FormData) {
       .eq("id", existing.id);
 
     if (error) {
-      return { error: error.message };
+      throw new Error(error.message);
     }
   } else {
     const { error } = await supabase.from("course_book_progress").insert({
@@ -226,13 +226,13 @@ export async function updateCourseBookProgressAction(formData: FormData) {
     });
 
     if (error) {
-      return { error: error.message };
+      throw new Error(error.message);
     }
   }
 
   revalidatePath("/ders-sistemi");
   revalidatePath(`/ders-sistemi/${parsed.data.course_book_id}`);
-  return { success: true };
+  return;
 }
 
 export async function startCourseBookAction(courseBookId: string, classId: string) {
@@ -247,7 +247,7 @@ export async function startCourseBookAction(courseBookId: string, classId: strin
     .single();
 
   if (!canManageCourseBookProgress(profile, classInfo?.department_id)) {
-    return { error: "Bu işlem için yetkiniz yok." };
+    throw new Error("Bu işlem için yetkiniz yok.");
   }
 
   const today = new Date().toISOString().split("T")[0];
@@ -269,7 +269,7 @@ export async function startCourseBookAction(courseBookId: string, classId: strin
       .eq("id", existing.id);
 
     if (error) {
-      return { error: error.message };
+      throw new Error(error.message);
     }
   } else {
     const { error } = await supabase.from("course_book_progress").insert({
@@ -280,12 +280,12 @@ export async function startCourseBookAction(courseBookId: string, classId: strin
     });
 
     if (error) {
-      return { error: error.message };
+      throw new Error(error.message);
     }
   }
 
   revalidatePath("/ders-sistemi");
-  return { success: true };
+  return;
 }
 
 export async function completeCourseBookAction(courseBookId: string, classId: string) {
@@ -300,7 +300,7 @@ export async function completeCourseBookAction(courseBookId: string, classId: st
     .single();
 
   if (!canManageCourseBookProgress(profile, classInfo?.department_id)) {
-    return { error: "Bu işlem için yetkiniz yok." };
+    throw new Error("Bu işlem için yetkiniz yok.");
   }
 
   const today = new Date().toISOString().split("T")[0];
@@ -322,7 +322,7 @@ export async function completeCourseBookAction(courseBookId: string, classId: st
       .eq("id", existing.id);
 
     if (error) {
-      return { error: error.message };
+      throw new Error(error.message);
     }
   } else {
     const { error } = await supabase.from("course_book_progress").insert({
@@ -333,10 +333,10 @@ export async function completeCourseBookAction(courseBookId: string, classId: st
     });
 
     if (error) {
-      return { error: error.message };
+      throw new Error(error.message);
     }
   }
 
   revalidatePath("/ders-sistemi");
-  return { success: true };
+  return;
 }

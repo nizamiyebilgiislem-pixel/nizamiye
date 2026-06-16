@@ -1,23 +1,22 @@
-"use client";
+"use client"
 
-import { FormSubmitButton } from "@/components/forms/form-submit-button";
-import { createCourseBookAction, updateCourseBookAction } from "@/lib/course-books/actions";
-import type { CourseBookRow } from "@/types/database";
+import { FormSubmitButton } from "@/components/forms/form-submit-button"
+import { createCourseBookAction, updateCourseBookAction } from "@/lib/course-books/actions"
+import type { CourseBookRow } from "@/types/database"
 
 export function CourseBookForm({
   courseId,
   book,
   onSuccess,
 }: {
-  courseId: string;
-  book?: CourseBookRow;
-  onSuccess?: () => void;
+  courseId: string
+  book?: CourseBookRow
+  onSuccess?: () => void
 }) {
   return (
     <form
       action={book ? updateCourseBookAction : createCourseBookAction}
       className="space-y-4"
-      onSuccess={onSuccess}
     >
       {book && <input type="hidden" name="id" value={book.id} />}
       <input type="hidden" name="course_id" value={courseId} />
@@ -76,5 +75,5 @@ export function CourseBookForm({
         </FormSubmitButton>
       </div>
     </form>
-  );
+  )
 }

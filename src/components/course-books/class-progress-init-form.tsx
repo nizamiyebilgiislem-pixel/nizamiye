@@ -1,36 +1,36 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Play } from "lucide-react";
+import { useState } from "react"
+import { Play } from "lucide-react"
 
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { FormSubmitButton } from "@/components/forms/form-submit-button";
-import { updateCourseBookProgressAction } from "@/lib/course-books/actions";
-import type { ClassRow } from "@/types/database";
+} from "@/components/ui/dialog"
+import { FormSubmitButton } from "@/components/forms/form-submit-button"
+import { updateCourseBookProgressAction } from "@/lib/course-books/actions"
+import type { ClassRow } from "@/types/database"
 
 export function ClassProgressInitForm({
   courseBookId,
   classes,
   existingProgressClassIds,
 }: {
-  courseBookId: string;
-  classes: ClassRow[];
-  existingProgressClassIds: string[];
+  courseBookId: string
+  classes: ClassRow[]
+  existingProgressClassIds: string[]
 }) {
-  const [open, setOpen] = useState(false);
-  const [selectedClassId, setSelectedClassId] = useState("");
+  const [open, setOpen] = useState(false)
+  const [selectedClassId, setSelectedClassId] = useState("")
 
-  const availableClasses = classes.filter((c) => !existingProgressClassIds.includes(c.id));
+  const availableClasses = classes.filter((c) => !existingProgressClassIds.includes(c.id))
 
   if (availableClasses.length === 0) {
-    return null;
+    return null
   }
 
   return (
@@ -44,13 +44,7 @@ export function ClassProgressInitForm({
         <DialogHeader>
           <DialogTitle>Kitap İlerlemesi Başlat</DialogTitle>
         </DialogHeader>
-        <form action={async (formData) => {
-          "use server";
-          const result = await updateCourseBookProgressAction(formData);
-          if (result?.success) {
-            setOpen(false);
-          }
-        }} className="space-y-4">
+        <form action={updateCourseBookProgressAction} className="space-y-4">
           <input type="hidden" name="course_book_id" value={courseBookId} />
           <input type="hidden" name="status" value="not_started" />
 
@@ -80,5 +74,5 @@ export function ClassProgressInitForm({
         </form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

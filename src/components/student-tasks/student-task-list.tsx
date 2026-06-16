@@ -1,33 +1,48 @@
-"use client";
+"use client"
 
-import Link from "next/link";
+import { useFormStatus } from "react-dom"
 
-import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { StudentAvatar } from "@/components/students/student-avatar";
-import { cn } from "@/lib/utils";
-import type { StudentTaskWithStudent } from "@/lib/student-tasks/queries";
-import { taskTypeLabels } from "@/lib/student-tasks/actions";
+import { Badge } from "@/components/ui/badge"
+import { buttonVariants } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { StudentAvatar } from "@/components/students/student-avatar"
+import { cn } from "@/lib/utils"
+import type { StudentTaskWithStudent } from "@/lib/student-tasks/queries"
+import { completeStudentTaskAction, taskTypeLabels } from "@/lib/student-tasks/actions"
 
 const statusLabels = {
   pending: "Bekliyor",
   completed: "Tamamlandı",
-};
+}
 
 const statusColors = {
   pending: "bg-yellow-100 text-yellow-800",
   completed: "bg-green-100 text-green-800",
-};
+}
+
+function CompleteButton({ taskId }: { taskId: string }) {
+  const { pending } = useFormStatus()
+  return (
+    <form action={() => completeStudentTaskAction(taskId)}>
+      <button
+        type="submit"
+        disabled={pending}
+        className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+      >
+        Tamamla
+      </button>
+    </form>
+  )
+}
 
 export function StudentTaskList({
   tasks,
   showStudent = true,
   emptyText = "Öğrenci görevi bulunamadı.",
 }: {
-  tasks: StudentTaskWithStudent[];
-  showStudent?: boolean;
-  emptyText?: string;
+  tasks: StudentTaskWithStudent[]
+  showStudent?: boolean
+  emptyText?: string
 }) {
   if (tasks.length === 0) {
     return (
@@ -36,13 +51,13 @@ export function StudentTaskList({
           {emptyText}
         </CardContent>
       </Card>
-    );
+    )
   }
 
   return (
     <div className="space-y-3">
       {tasks.map((task) => {
-        const isOverdue = task.due_date && task.status === "pending" && new Date(task.due_date) < new Date();
+        const isOverdue = task.due_date && task.status === "pending" && new Date(task.due_date) < new Date()
 
         return (
           <Card key={task.id} className={cn(isOverdue && "border-red-200")}>
@@ -88,22 +103,12 @@ export function StudentTaskList({
               </div>
 
               <div className="flex gap-2">
-                {task.status === "pending" && (
-                  <form action={async () => {
-                    "use server";
-                    const { completeStudentTaskAction } = await import("@/lib/student-tasks/actions");
-                    await completeStudentTaskAction(task.id);
-                  }}>
-                    <button type="submit" className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}>
-                      Tamamla
-                    </button>
-                  </form>
-                )}
+                {task.status === "pending" && <CompleteButton taskId={task.id} />}
               </div>
             </CardContent>
           </Card>
-        );
+        )
       })}
     </div>
-  );
+  )
 }

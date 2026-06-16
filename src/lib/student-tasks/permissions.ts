@@ -9,7 +9,7 @@ export function canCreateStudentTask(profile: ProfileRow) {
   return ["admin", "genel_mudur", "bolum_muduru", "hoca"].includes(profile.role);
 }
 
-export function canDeleteStudentTask(profile: ProfileRow, task?: StudentTaskRow) {
+export function canDeleteStudentTask(profile: ProfileRow, task?: Partial<StudentTaskRow>) {
   if (["admin", "genel_mudur"].includes(profile.role)) return true;
   if (task && task.assigned_by === profile.id) return true;
   return false;

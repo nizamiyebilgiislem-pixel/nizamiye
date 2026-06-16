@@ -63,7 +63,7 @@ export default async function SponsorPanelPage({ params, searchParams }: PagePro
       : null;
 
     const attendanceRate = attendanceSummary.student
-      ? Math.round((attendanceSummary.present / (attendanceSummary.present + attendanceSummary.excused + attendanceSummary.absent)) * 100)
+      ? Math.round((attendanceSummary.daily.presentCount / (attendanceSummary.daily.presentCount + attendanceSummary.daily.excusedCount + attendanceSummary.daily.absentCount)) * 100)
       : null;
 
     return {
@@ -80,7 +80,7 @@ export default async function SponsorPanelPage({ params, searchParams }: PagePro
       hafizlikProgress: hafizlikProgress.data,
       hafizlikPercentage,
       attendanceRate,
-      gradeAverage: gradeSummary?.overallAverage ?? null,
+      gradeAverage: gradeSummary?.generalAverage ?? null,
     };
   });
 

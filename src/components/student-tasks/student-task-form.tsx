@@ -1,24 +1,21 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-
-import { FormSubmitButton } from "@/components/forms/form-submit-button";
-import { createStudentTaskAction, taskTypeLabels } from "@/lib/student-tasks/actions";
+import { FormSubmitButton } from "@/components/forms/form-submit-button"
+import { createStudentTaskAction, taskTypeLabels } from "@/lib/student-tasks/actions"
 
 export function StudentTaskForm({
   students,
   onSuccess,
 }: {
   students: Array<{
-    id: string;
-    full_name: string;
-    photo_url: string | null;
-    course_class: { id: string; name: string };
-  }>;
-  onSuccess?: () => void;
+    id: string
+    full_name: string
+    photo_url: string | null
+    course_class: { id: string; name: string }
+  }>
+  onSuccess?: () => void
 }) {
-  const [selectedStudent, setSelectedStudent] = useState<string>("");
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split("T")[0]
 
   return (
     <form action={createStudentTaskAction} className="space-y-4">
@@ -28,14 +25,12 @@ export function StudentTaskForm({
           <select
             name="student_id"
             required
-            value={selectedStudent}
-            onChange={(e) => setSelectedStudent(e.target.value)}
             className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
           >
             <option value="">Öğrenci seçin</option>
             {students.map((student) => (
               <option key={student.id} value={student.id}>
-                {student.full_name} - {student.course_class.name}
+                {student.full_name} - {student.course_class?.name ?? "Sınıf yok"}
               </option>
             ))}
           </select>
@@ -89,5 +84,5 @@ export function StudentTaskForm({
         </FormSubmitButton>
       </div>
     </form>
-  );
+  )
 }

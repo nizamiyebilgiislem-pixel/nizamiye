@@ -34,7 +34,7 @@ export function HafizlikProgressPanel({
   studentId: string;
   progress: HafizlikProgressRow | null;
   canEdit: boolean;
-  updateAction: (formData: FormData) => Promise<{ error?: string; success?: boolean }>;
+  updateAction: (formData: FormData) => void | Promise<void>;
 }) {
   const [editing, setEditing] = useState(false);
 
