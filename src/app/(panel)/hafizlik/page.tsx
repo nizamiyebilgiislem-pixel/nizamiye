@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { AlertTriangle, Clock } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -108,6 +109,20 @@ export default async function HafizlikDashboardPage({ params, searchParams }: Ha
     return s.progress.status === "completed";
   }).length;
 
+  const today = new Date();
+  const in7Days = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+  const overdueStudents = studentsWithProgress.filter((s: any) => {
+    if (!s.progress?.target_completion_date || s.progress.status === "completed") return false;
+    return new Date(s.progress.target_completion_date) < today;
+  });
+
+  const approachingStudents = studentsWithProgress.filter((s: any) => {
+    if (!s.progress?.target_completion_date || s.progress.status === "completed") return false;
+    const targetDate = new Date(s.progress.target_completion_date);
+    return targetDate >= today && targetDate <= in7Days;
+  });
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -135,7 +150,7 @@ export default async function HafizlikDashboardPage({ params, searchParams }: Ha
             <p className="text-sm text-muted-foreground">Tamamlanan</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className={cn(overdueCount > 0 && "border-red-200")}>
           <CardContent className="pt-6">
             <div className={cn("text-2xl font-bold", overdueCount > 0 && "text-red-600")}>
               {overdueCount}
@@ -144,6 +159,80 @@ export default async function HafizlikDashboardPage({ params, searchParams }: Ha
           </CardContent>
         </Card>
       </div>
+
+      {overdueStudents.length > 0 && (
+        <Card className="border-red-200 bg-red-50">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2 text-red-900">
+              <AlertTriangle className="size-5" />
+              <CardTitle className="text-sm">Hedef Tarihi Geçen Öğrenciler</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {overdueStudents.map((student: any) => {
+                const daysOverdue = Math.ceil((today.getTime() - new Date(student.progress.target_completion_date).getTime()) / (1000 * 60 * 60 * 24));
+                return (
+                  <div key={student.id} className="flex items-center justify-between rounded-md border border-red-200 bg-white px-3 py-2">
+                    <div>
+                      <Link href={`/talebeler/${student.id}?tab=hafizlik`} className="font-medium text-red-900 hover:underline">
+                        {student.full_name}
+                      </Link>
+                      <span className="ml-2 text-sm text-red-700">
+                        {student.course_class?.name}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-red-600">
+                        {daysOverdue} gün geçmiş
+                      </span>
+                      <Badge variant="destructive">Gecikmiş</Badge>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {approachingStudents.length > 0 && (
+        <Card className="border-yellow-200 bg-yellow-50">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2 text-yellow-900">
+              <Clock className="size-5" />
+              <CardTitle className="text-sm">Hedef Tarihi Yaklaşan Öğrenciler (7 gün)</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {approachingStudents.map((student: any) => {
+                const daysLeft = Math.ceil((new Date(student.progress.target_completion_date).getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+                return (
+                  <div key={student.id} className="flex items-center justify-between rounded-md border border-yellow-200 bg-white px-3 py-2">
+                    <div>
+                      <Link href={`/talebeler/${student.id}?tab=hafizlik`} className="font-medium text-yellow-900 hover:underline">
+                        {student.full_name}
+                      </Link>
+                      <span className="ml-2 text-sm text-yellow-700">
+                        {student.course_class?.name}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-yellow-600">
+                        {daysLeft} gün kaldı
+                      </span>
+                      <Badge variant="outline" className="border-yellow-300 bg-yellow-100 text-yellow-800">
+                        Yaklaşıyor
+                      </Badge>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>
