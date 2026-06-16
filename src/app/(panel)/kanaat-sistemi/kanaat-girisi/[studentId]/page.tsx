@@ -10,6 +10,7 @@ import { requireAuth } from "@/lib/auth";
 import { canEditStudentEvaluations } from "@/lib/evaluations/permissions";
 import { getEvaluationForStudentAndTerm, getEvaluationTerms } from "@/lib/evaluations/queries";
 import { getStudentById } from "@/lib/students/queries";
+import { getHafizlikProgress } from "@/lib/hafizlik/actions";
 import { cn } from "@/lib/utils";
 
 type StudentEvaluationPageProps = {
@@ -30,6 +31,7 @@ export default async function StudentEvaluationPage({ params, searchParams }: St
   const selectedTermId = terms.some((term) => term.id === query.term) ? query.term : currentTermId;
   const selectedTerm = terms.find((term) => term.id === selectedTermId) ?? null;
   const evaluation = selectedTermId ? await getEvaluationForStudentAndTerm(student.id, selectedTermId) : null;
+  const hafizlikProgress = await getHafizlikProgress(student.id);
 
   return (
     <div className="space-y-6">
@@ -47,7 +49,14 @@ export default async function StudentEvaluationPage({ params, searchParams }: St
             <CardTitle>Kanaat Formu</CardTitle>
           </CardHeader>
           <CardContent>
-            <EvaluationForm studentId={student.id} terms={terms} selectedTermId={selectedTermId} evaluation={evaluation} readOnly={!selectedTerm || selectedTerm.status !== "active" || !selectedTerm.is_current} />
+            <EvaluationForm
+                studentId={student.id}
+                terms={terms}
+                selectedTermId={selectedTermId}
+                evaluation={evaluation}
+                readOnly={!selectedTerm || selectedTerm.status !== "active" || !selectedTerm.is_current}
+                hafizlikProgress={hafizlikProgress.data}
+              />
           </CardContent>
         </Card>
       ) : (

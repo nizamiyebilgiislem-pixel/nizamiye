@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { Pencil, Save } from "lucide-react";
+import { useState } from "react";
+import { FileText, Pencil, Save } from "lucide-react";
+import Link from "next/link";
 
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { HafizlikProgressRow } from "@/types/database";
 
 const JuzOptions = Array.from({ length: 30 }, (_, i) => i + 1);
@@ -152,12 +152,33 @@ export function HafizlikProgressPanel({
           <CardTitle>Hafızlık Takibi</CardTitle>
           <p className="mt-1 text-sm text-muted-foreground">Cüz ve sayfa bazlı hafızlık ilerlemesi.</p>
         </div>
-        {canEdit && (
-          <button onClick={() => setEditing(true)} className={buttonVariants({ variant: "outline" })}>
-            <Pencil className="mr-2 size-4" />
-            {progress ? "Düzenle" : "Başlat"}
-          </button>
-        )}
+        <div className="flex gap-2">
+          {progress && (
+            <Link
+              href={`/talebeler/${studentId}/hafizlik/pdf`}
+              target="_blank"
+              rel="noreferrer"
+              className={buttonVariants({ variant: "outline", size: "sm" })}
+            >
+              <FileText className="mr-2 size-4" />
+              PDF
+            </Link>
+          )}
+          {canEdit && (
+            <button onClick={() => setEditing(true)} className={buttonVariants({ variant: "outline", size: "sm" })}>
+              <Pencil className="mr-2 size-4" />
+              {progress ? "Düzenle" : "Başlat"}
+            </button>
+          )}
+          {canEdit && progress && (
+            <Link
+              href={`/kanaat-sistemi/kanaat-girisi/${studentId}`}
+              className={buttonVariants({ variant: "default", size: "sm" })}
+            >
+              Kanaat Güncelle
+            </Link>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         {progress ? (

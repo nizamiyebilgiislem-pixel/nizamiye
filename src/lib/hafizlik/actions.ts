@@ -7,6 +7,7 @@ import { requireAuth } from "@/lib/auth";
 import { buildAuditActor } from "@/lib/audit/log";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { canManageHafizlikProgress } from "@/lib/hafizlik/permissions";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 const updateProgressSchema = z.object({
   student_id: z.string().uuid(),
@@ -80,8 +81,44 @@ export async function updateHafizlikProgressAction(formData: FormData) {
     return { error: result.error.message };
   }
 
+  await syncMemorizationScore(supabase, parsed.data.student_id, parsed.data.current_juz, parsed.data.current_page);
+
   revalidatePath(`/talebeler/${parsed.data.student_id}`);
   return { success: true };
+}
+
+async function syncMemorizationScore(supabase: SupabaseClient, studentId: string, currentJuz: number, currentPage: number) {
+  const activeTermResult = await supabase
+    .from("academic_terms")
+    .select("id")
+    .eq("is_current", true)
+    .eq("status", "active")
+    .single();
+
+  if (!activeTermResult.data) {
+    return;
+  }
+
+  const evaluationResult = await supabase
+    .from("student_evaluations")
+    .select("id, memorization_score")
+    .eq("student_id", studentId)
+    .eq("term_id", activeTermResult.data.id)
+    .maybeSingle();
+
+  if (!evaluationResult.data) {
+    return;
+  }
+
+  const calculatedScore = Math.round(((currentJuz - 1) * 604 + currentPage) / 604 * 100);
+
+  await supabase
+    .from("student_evaluations")
+    .update({
+      memorization_score: calculatedScore,
+      updated_by: (await supabase.auth.getUser()).data.user?.id,
+    })
+    .eq("id", evaluationResult.data.id);
 }
 
 export async function getHafizlikProgress(studentId: string) {

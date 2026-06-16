@@ -157,6 +157,11 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
         <Link href={`/talebeler/${student.id}/revir/pdf`} target="_blank" rel="noreferrer" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
           Revir PDF
         </Link>
+        {canManageHafizlik && (
+          <Link href={`/talebeler/${student.id}/hafizlik/pdf`} target="_blank" rel="noreferrer" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+            Hafızlık PDF
+          </Link>
+        )}
       </div>
 
       <Tabs defaultValue="profil" className="space-y-4">
