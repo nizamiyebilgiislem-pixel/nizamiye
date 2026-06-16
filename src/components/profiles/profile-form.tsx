@@ -30,7 +30,7 @@ export function ProfileForm({
   currentProfile,
 }: ProfileFormProps) {
   const [role, setRole] = useState<UserRole>(initialValues?.role ?? roleOptions[0] ?? "hoca");
-  const [createAuth, setCreateAuth] = useState(mode === "create" && enableAuthFields);
+  const [createAuth, setCreateAuth] = useState(mode === "create");
   const requiresDepartment = role === "hoca" || role === "bolum_muduru";
   const isDepartmentManager = currentProfile?.role === "bolum_muduru";
   const effectiveDepartmentId = isDepartmentManager && currentProfile?.department_id
