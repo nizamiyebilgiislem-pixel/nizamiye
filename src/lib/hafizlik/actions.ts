@@ -136,3 +136,106 @@ export async function getHafizlikProgress(studentId: string) {
 
   return { data, error: null };
 }
+
+export async function getHafizlikStudentsForBulk(profileId: string) {
+  const supabase = await createSupabaseServerClient();
+
+  const { data: hafizlikDepartment } = await supabase
+    .from("departments")
+    .select("id, name")
+    .eq("slug", "hafizlik")
+    .single();
+
+  if (!hafizlikDepartment) {
+    return { students: [], department: null };
+  }
+
+  const { data: students } = await supabase
+    .from("students")
+    .select(`
+      id,
+      full_name,
+      course_class:classes!inner(id, name, department_id, class_teacher_id)
+    `)
+    .eq("status", "active")
+    .eq("course_class.department_id", hafizlikDepartment.id);
+
+  const { data: progress } = await supabase
+    .from("hafizlik_progress")
+    .select("*")
+    .in("student_id", (students ?? []).map((s: any) => s.id));
+
+  const { data: teachers } = await supabase
+    .from("profiles")
+    .select("id, full_name")
+    .in("id", (students ?? []).map((s: any) => s.course_class?.class_teacher_id).filter(Boolean));
+
+  const teacherMap = new Map((teachers ?? []).map((t: any) => [t.id, t.full_name]));
+  const progressMap = new Map((progress ?? []).map((p: any) => [p.student_id, p]));
+
+  return {
+    students: (students ?? []).map((s: any) => ({
+      ...s,
+      progress: progressMap.get(s.id) ?? null,
+      teacherName: teacherMap.get(s.course_class?.class_teacher_id) ?? null,
+    })),
+    department: hafizlikDepartment,
+  };
+}
+
+export async function bulkUpdateHafizlikProgressAction(formData: FormData) {
+  const { profile } = await requireAuth();
+
+  const studentIds = formData.getAll("student_ids") as string[];
+  const current_juz = formData.get("current_juz");
+  const current_page = formData.get("current_page");
+  const status = formData.get("status");
+  const target_completion_date = formData.get("target_completion_date");
+  const teacher_note = formData.get("teacher_note");
+
+  if (studentIds.length === 0) {
+    return { error: "Öğrenci seçilmedi." };
+  }
+
+  const supabase = await createSupabaseServerClient();
+
+  for (const studentId of studentIds) {
+    const permResult = await canManageHafizlikProgress(supabase, profile, studentId);
+    if (permResult.error) continue;
+
+    const existingResult = await supabase
+      .from("hafizlik_progress")
+      .select("*")
+      .eq("student_id", studentId)
+      .maybeSingle();
+
+    const upsertData = {
+      current_juz: Number(current_juz),
+      current_page: Number(current_page),
+      status: status as "learning" | "reviewing" | "completed",
+      target_completion_date: target_completion_date ? String(target_completion_date) : null,
+      teacher_note: teacher_note ? String(teacher_note) : null,
+      updated_by: profile.id,
+    };
+
+    if (existingResult.data) {
+      await supabase
+        .from("hafizlik_progress")
+        .update(upsertData)
+        .eq("id", existingResult.data.id);
+    } else {
+      await supabase
+        .from("hafizlik_progress")
+        .insert({
+          ...upsertData,
+          student_id: studentId,
+          created_by: profile.id,
+        });
+    }
+
+    await syncMemorizationScore(supabase, studentId, Number(current_juz), Number(current_page));
+  }
+
+  revalidatePath("/hafizlik");
+  redirect("/hafizlik/guncelle?success=" + studentIds.length);
+}

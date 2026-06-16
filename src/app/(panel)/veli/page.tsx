@@ -4,6 +4,7 @@ import { BookOpen, ClipboardCheck, FileText, HeartHandshake, CalendarDays } from
 import { PageHeader } from "@/components/layout/page-header";
 import { EvaluationSummary } from "@/components/evaluations/evaluation-summary";
 import { GradeSummary } from "@/components/grades/grade-summary";
+import { HafizlikPanel } from "@/components/hafizlik/hafizlik-panel";
 import { StudentInfirmarySummary } from "@/components/infirmary/infirmary-summary";
 import { StudentDocumentSummary } from "@/components/documents/student-document-summary";
 import { StudentDormitoryPanel } from "@/components/dormitory/student-dormitory-panel";
@@ -26,6 +27,7 @@ import { getDepartmentById } from "@/lib/departments/queries";
 import { getSurveysForParent, getStudentInterviewsForParent, getDepartmentActivities } from "@/lib/guidance/queries";
 import { getStudentLoans } from "@/lib/library/queries";
 import { getStudentAttendanceSummaryForParent } from "@/lib/attendance/queries";
+import { getHafizlikProgress } from "@/lib/hafizlik/actions";
 import { cn } from "@/lib/utils";
 
 const scopeLabels: Record<string, string> = { all_students: "Tüm Öğrenciler", department: "Bölüm", class: "Sınıf" };
@@ -72,7 +74,7 @@ export default async function ParentPanelPage() {
 
   const profiles = await Promise.all(
     students.map(async (student) => {
-      const [gradeSummary, evaluations, infirmaryRecords, profileEntries, documents, dormitoryAssignment, dormitoryHistory, libraryLoans, attendanceSummary] = await Promise.all([
+      const [gradeSummary, evaluations, infirmaryRecords, profileEntries, documents, dormitoryAssignment, dormitoryHistory, libraryLoans, attendanceSummary, hafizlikProgress] = await Promise.all([
         student.course_class ? getStudentGradeSummary(profile, student) : Promise.resolve(null),
         getEvaluationsByStudent(student.id),
         getInfirmaryRecordsByStudent(student.id),
@@ -82,9 +84,10 @@ export default async function ParentPanelPage() {
         getStudentAssignmentHistory(student.id),
         getStudentLoans(student.id),
         getStudentAttendanceSummaryForParent(student.id),
+        getHafizlikProgress(student.id),
       ]);
 
-      return { student, gradeSummary, evaluations, infirmaryRecords, profileEntries, documents, dormitoryAssignment, dormitoryHistory, libraryLoans, attendanceSummary };
+      return { student, gradeSummary, evaluations, infirmaryRecords, profileEntries, documents, dormitoryAssignment, dormitoryHistory, libraryLoans, attendanceSummary, hafizlikProgress: hafizlikProgress.data };
     }),
   );
 
@@ -157,7 +160,7 @@ export default async function ParentPanelPage() {
       )}
 
       {profiles.length > 0 ? (
-        profiles.map(({ student, gradeSummary, evaluations, infirmaryRecords, profileEntries, documents, dormitoryAssignment, dormitoryHistory, libraryLoans, attendanceSummary }) => {
+        profiles.map(({ student, gradeSummary, evaluations, infirmaryRecords, profileEntries, documents, dormitoryAssignment, dormitoryHistory, libraryLoans, attendanceSummary, hafizlikProgress }) => {
           const interviews = studentInterviews[student.id] ?? [];
           return (
             <div key={student.id} className="space-y-4">
@@ -172,6 +175,7 @@ export default async function ParentPanelPage() {
               />
               {gradeSummary ? <GradeSummary summary={gradeSummary} studentId={student.id} canEdit={false} /> : null}
               <EvaluationSummary evaluations={evaluations} studentId={student.id} canEdit={false} />
+              <HafizlikPanel studentName={student.full_name} progress={hafizlikProgress} />
 
               {interviews.length > 0 && (
                 <Card>
