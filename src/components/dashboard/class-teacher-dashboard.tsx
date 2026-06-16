@@ -4,6 +4,7 @@ import { AlertTriangle, BookOpen, CheckCircle2, ClipboardList, FileText, Graduat
 import { StudentAvatar } from "@/components/students/student-avatar";
 import { StudentStatusBadge } from "@/components/students/student-status-badge";
 import { LiveSessionDashboardCard } from "@/components/live-sessions/live-session-dashboard-card";
+import { TodayLessonLogsCard } from "@/components/dashboard/today-lesson-logs-card";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/layout/page-header";
 import { getAttendanceDashboardSummary } from "@/lib/attendance/queries";
@@ -92,6 +93,7 @@ export async function ClassTeacherDashboard({ profile }: { profile: ProfileRow }
       </div>
 
       <LiveSessionDashboardCard upcomingCount={liveSessionData.upcomingCount} />
+      <TodayLessonLogsCard maxItems={5} />
 
       {missingAttendanceClasses.length > 0 ? (
         <Card className="border-amber-200 bg-amber-50">

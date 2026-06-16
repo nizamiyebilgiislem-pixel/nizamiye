@@ -176,3 +176,36 @@ export async function getStudentCourseBookProgress(studentId: string): Promise<S
 }
 
 export type StudentCourseBookProgress = CourseBookProgressWithCourseBook;
+
+export async function getCourseBooksForTeacher(teacherId: string) {
+  const supabase = await createSupabaseServerClient();
+
+  const { data: classCourses, error } = await supabase
+    .from("class_courses")
+    .select("course_id")
+    .eq("teacher_id", teacherId)
+    .eq("is_active", true);
+
+  if (error) {
+    throw new Error("Ders kitapları alınamadı.");
+  }
+
+  const courseIds = (classCourses ?? []).map((cc) => cc.course_id);
+  if (courseIds.length === 0) {
+    return [];
+  }
+
+  const { data: books, error: booksError } = await supabase
+    .from("course_books")
+    .select("id, title, course_id")
+    .in("course_id", courseIds)
+    .eq("is_active", true)
+    .order("course_id")
+    .order("book_order");
+
+  if (booksError) {
+    throw new Error("Ders kitapları alınamadı.");
+  }
+
+  return books ?? [];
+}

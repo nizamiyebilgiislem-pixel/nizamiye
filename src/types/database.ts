@@ -677,6 +677,20 @@ export type StudentTaskRow = {
   updated_at: Timestamp;
 };
 
+export type DailyLessonLogRow = {
+  id: string;
+  class_course_id: string;
+  teacher_id: string;
+  lesson_date: DateString;
+  course_book_id: string | null;
+  started_page: number | null;
+  ended_page: number | null;
+  topics_covered: string;
+  notes: string | null;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+};
+
 export type LiveSessionRow = {
   id: string;
   title: string;
@@ -761,6 +775,7 @@ export type Database = {
     Tables: {
       talepler: TableDefinition<TalepRow>;
       student_tasks: TableDefinition<StudentTaskRow>;
+      daily_lesson_logs: TableDefinition<DailyLessonLogRow>;
       tasks: TableDefinition<TaskRow>;
       task_comments: TableDefinition<TaskCommentRow>;
       task_attachments: TableDefinition<TaskAttachmentRow>;

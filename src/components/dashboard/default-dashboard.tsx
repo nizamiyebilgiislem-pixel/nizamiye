@@ -2,6 +2,7 @@ import { LayoutDashboard } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { PageHeader } from "@/components/layout/page-header";
+import { TodayLessonLogsCard } from "@/components/dashboard/today-lesson-logs-card";
 import type { ProfileRow } from "@/types/database";
 
 export function DefaultDashboard({ profile }: { profile: ProfileRow }) {
@@ -25,6 +26,7 @@ export function DefaultDashboard({ profile }: { profile: ProfileRow }) {
           </div>
         </CardContent>
       </Card>
+      <TodayLessonLogsCard maxItems={5} />
     </div>
   );
 }

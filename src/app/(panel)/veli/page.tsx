@@ -13,6 +13,7 @@ import { StudentProfileOverview } from "@/components/students/student-profile-ov
 import { StudentLibraryPanel } from "@/components/library/student-library-panel";
 import { StudentAttendanceSummaryPanel } from "@/components/attendance/student-attendance-summary";
 import { StudentCourseBooksPanel } from "@/components/course-books/student-course-books-panel";
+import { TodayLessonLogsCard } from "@/components/dashboard/today-lesson-logs-card";
 import { StudentSelector } from "@/components/parents/student-selector";
 import { StudentQuickCard } from "@/components/parents/student-quick-card";
 import { StudentComparisonTable } from "@/components/parents/student-comparison-table";
@@ -210,6 +211,8 @@ export default async function ParentPanelPage({ params, searchParams }: PageProp
           </CardContent>
         </Card>
       )}
+
+      <TodayLessonLogsCard maxItems={5} />
 
       {profiles.length > 0 ? (
         <>

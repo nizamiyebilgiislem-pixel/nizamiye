@@ -11,6 +11,7 @@ import { LibraryDashboardCard } from "@/components/library/library-dashboard-car
 import { GuidanceDashboardCard } from "@/components/guidance/guidance-dashboard-card";
 import { TaskDashboardCard } from "@/components/tasks/task-dashboard-card";
 import { LiveSessionDashboardCard } from "@/components/live-sessions/live-session-dashboard-card";
+import { TodayLessonLogsCard } from "@/components/dashboard/today-lesson-logs-card";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { ReportShortcutCard } from "@/components/reports/report-shortcut-card";
@@ -135,6 +136,7 @@ export async function AdminDashboard({ profile }: { profile: ProfileRow }) {
           completedCount={taskCounts.completed}
         />
         <LiveSessionDashboardCard upcomingCount={liveSessionData.upcomingCount} />
+        <TodayLessonLogsCard maxItems={5} />
         <div className="space-y-3">
           <ReportShortcutCard
             title="PDF Merkezi"

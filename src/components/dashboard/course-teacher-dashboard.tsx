@@ -3,6 +3,7 @@ import { BookOpen, FileText, GraduationCap, ListChecks, School } from "lucide-re
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/layout/page-header";
+import { TodayLessonLogsCard } from "@/components/dashboard/today-lesson-logs-card";
 import { getActiveTerms } from "@/lib/terms/queries";
 import { getTaskCounts } from "@/lib/tasks/queries";
 import type { ProfileRow } from "@/types/database";
@@ -82,6 +83,8 @@ title="Yönetim Paneli"
           </CardContent>
         </Card>
       </div>
+
+      <TodayLessonLogsCard maxItems={5} />
 
       <section className="space-y-3">
         <h2 className="text-sm font-semibold text-[#093657]">Atandığım Dersler</h2>

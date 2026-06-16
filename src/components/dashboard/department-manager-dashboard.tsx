@@ -17,6 +17,7 @@ import { GuidanceDashboardCard } from "@/components/guidance/guidance-dashboard-
 import { TaskDashboardCard } from "@/components/tasks/task-dashboard-card";
 import { LibraryDashboardCard } from "@/components/library/library-dashboard-card";
 import { LiveSessionDashboardCard } from "@/components/live-sessions/live-session-dashboard-card";
+import { TodayLessonLogsCard } from "@/components/dashboard/today-lesson-logs-card";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAttendanceDashboardSummary } from "@/lib/attendance/queries";
@@ -204,6 +205,7 @@ export async function DepartmentManagerDashboard({ profile }: { profile: Profile
           completedCount={taskCounts.completed}
         />
         <LiveSessionDashboardCard upcomingCount={liveSessionData.upcomingCount} />
+        <TodayLessonLogsCard maxItems={5} />
       </div>
 
       <section className="space-y-2">
