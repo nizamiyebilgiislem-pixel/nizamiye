@@ -150,6 +150,7 @@ export const roleLabels: Record<UserRole, string> = {
   kutuphane_gorevlisi: "Kütüphane Görevlisi",
   rehberlik: "Rehberlik",
   veli: "Veli",
+  sponsor: "Sponsor",
   destek_birim_muduru: "Destek Birim Müdürü",
   muhasebe: "Muhasebe",
 };

@@ -220,7 +220,9 @@ export type ParentStudentLinkRow = {
   parent_profile_id: string;
   student_id: string;
   relation: string | null;
+  link_type: "veli" | "sponsor" | "both";
   created_at: Timestamp;
+  updated_at: Timestamp;
 };
 
 export type StudentProfileNoteRow = {

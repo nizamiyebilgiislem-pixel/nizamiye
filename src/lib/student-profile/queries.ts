@@ -47,10 +47,29 @@ export async function getStudentProfileEntries(studentId: string) {
 
 export async function getLinkedStudentIdsForParent(profileId: string) {
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.from("parent_student_links").select("student_id").eq("parent_profile_id", profileId);
+  const { data, error } = await supabase
+    .from("parent_student_links")
+    .select("student_id")
+    .eq("parent_profile_id", profileId)
+    .in("link_type", ["veli", "both"]);
 
   if (error) {
     throw new Error("Veli-talebe bağlantısı alınamadı.");
+  }
+
+  return (data ?? []).map((link) => link.student_id);
+}
+
+export async function getLinkedStudentIdsForSponsor(profileId: string) {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("parent_student_links")
+    .select("student_id")
+    .eq("parent_profile_id", profileId)
+    .in("link_type", ["sponsor", "both"]);
+
+  if (error) {
+    throw new Error("Sponsor-talebe bağlantısı alınamadı.");
   }
 
   return (data ?? []).map((link) => link.student_id);

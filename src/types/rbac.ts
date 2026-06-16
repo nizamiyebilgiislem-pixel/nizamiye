@@ -1,4 +1,4 @@
-export const activeRoles = ["admin", "genel_mudur", "bolum_muduru", "kutuphane_gorevlisi", "hoca", "veli", "rehberlik", "destek_birim_muduru"] as const;
+export const activeRoles = ["admin", "genel_mudur", "bolum_muduru", "kutuphane_gorevlisi", "hoca", "veli", "sponsor", "rehberlik", "destek_birim_muduru"] as const;
 export const legacyRoles = ["muhasebe"] as const;
 
 export const roles = activeRoles;

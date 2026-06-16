@@ -30,6 +30,7 @@ const talepRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "destek_
 const taskRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "destek_birim_muduru", "kutuphane_gorevlisi"];
 const liveSessionRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "rehberlik", "destek_birim_muduru", "kutuphane_gorevlisi"];
 const messagingRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "veli", "destek_birim_muduru"];
+const sponsorRoles: UserRole[] = ["sponsor"];
 
 export const moduleGroups: NavigationGroup[] = [
   {
@@ -38,6 +39,7 @@ export const moduleGroups: NavigationGroup[] = [
       { label: "Yönetim Paneli", href: "/dashboard", iconKey: "dashboard", allowedRoles: guidanceDashboardRoles },
       { label: "Nizam Aİ", href: "/asistan", iconKey: "assistant", allowedRoles: assistantRoles, moduleKey: "assistant" },
       { label: "Veli Paneli", href: "/veli", iconKey: "home", allowedRoles: ["veli"] },
+      { label: "Sponsor Paneli", href: "/sponsor", iconKey: "heart", allowedRoles: sponsorRoles },
       { label: "Hesabım", href: "/hesabim", iconKey: "user", allowedRoles: accountRoles },
       { label: "Talebeler", href: "/talebeler", iconKey: "students", allowedRoles: [...staffRoles, "rehberlik"] },
       { label: "Veliler", href: "/veliler", iconKey: "users", allowedRoles: [...parentManagerRoles, "rehberlik"] },
