@@ -19,7 +19,7 @@ export function canViewDepartmentGrades(profile: ProfileRow, departmentId: strin
 export function canEditStudentGrades(
   profile: ProfileRow,
   student: Pick<StudentRow, "status">,
-  _courseClass: Pick<ClassRow, "department_id" | "class_teacher_id"> | null,
+  courseClass: Pick<ClassRow, "department_id" | "class_teacher_id"> | null,
   classCourses: Array<Pick<ClassCourseRow, "teacher_id">> = [],
 ) {
   if (student.status !== "active") {
@@ -34,12 +34,16 @@ export function canEditStudentGrades(
     return classCourses.some((classCourse) => classCourse.teacher_id === profile.id);
   }
 
+  if (courseClass?.class_teacher_id === profile.id) {
+    return true;
+  }
+
   return false;
 }
 
 export function canEditClassCourseGrades(
   profile: ProfileRow,
-  courseClass: Pick<ClassRow, "department_id"> | null,
+  courseClass: Pick<ClassRow, "department_id" | "class_teacher_id"> | null,
   classCourse: Pick<ClassCourseRow, "teacher_id" | "is_active"> | null,
 ) {
   if (!courseClass || !classCourse?.is_active) {
@@ -52,6 +56,10 @@ export function canEditClassCourseGrades(
 
   if (profile.role === "hoca") {
     return Boolean(profile.department_id && profile.department_id === courseClass.department_id && classCourse.teacher_id === profile.id);
+  }
+
+  if (courseClass.class_teacher_id === profile.id) {
+    return true;
   }
 
   return false;
