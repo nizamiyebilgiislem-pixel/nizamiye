@@ -1,5 +1,6 @@
 "use client";
 
+import { Eye, EyeOff } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { FormSubmitButton } from "@/components/forms/form-submit-button";
@@ -173,16 +174,30 @@ function Field({
   type?: string;
   required?: boolean;
 }) {
+  const [showPassword, setShowPassword] = useState(false);
+  const isPassword = type === "password";
+
   return (
     <label className="grid gap-2 text-sm font-medium">
       {label}
-      <input
-        name={name}
-        type={type}
-        required={required}
-        defaultValue={value ?? ""}
-        className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-ring"
-      />
+      <div className="relative">
+        <input
+          name={name}
+          type={isPassword && showPassword ? "text" : type}
+          required={required}
+          defaultValue={value ?? ""}
+          className="h-10 w-full rounded-md border border-input bg-background px-3 pr-10 text-sm font-normal outline-none focus:border-ring"
+        />
+        {isPassword && (
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          >
+            {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+          </button>
+        )}
+      </div>
     </label>
   );
 }
