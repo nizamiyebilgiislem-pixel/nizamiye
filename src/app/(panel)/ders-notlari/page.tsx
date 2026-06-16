@@ -29,7 +29,7 @@ export default async function DailyLessonLogsPage({ searchParams }: PageProps) {
 
   const [myLogs, classCourses] = await Promise.all([
     getMyDailyLessonLogs(profile.id, 20),
-    profile.role === "hoca" ? getClassCoursesForTeacher(profile.id) : [],
+    ["hoca", "bolum_muduru"].includes(profile.role) ? getClassCoursesForTeacher(profile.id) : [],
   ]);
 
   const courseBooks = await getCourseBooksForTeacher(profile.id);
@@ -69,7 +69,7 @@ export default async function DailyLessonLogsPage({ searchParams }: PageProps) {
         </div>
       )}
 
-      {profile.role === "hoca" && (
+      {["hoca", "bolum_muduru"].includes(profile.role) && (
         <Card>
           <CardHeader>
             <CardTitle>Yeni Ders Notu Ekle</CardTitle>

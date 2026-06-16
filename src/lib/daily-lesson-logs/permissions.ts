@@ -2,7 +2,7 @@ import type { ProfileRow } from "@/types/database";
 
 export function canCreateDailyLessonLog(profile: ProfileRow) {
   if (!profile.is_active) return false;
-  return ["admin", "genel_mudur", "hoca"].includes(profile.role);
+  return ["admin", "genel_mudur", "hoca", "bolum_muduru"].includes(profile.role);
 }
 
 export function canViewDailyLessonLog(profile: ProfileRow) {
@@ -15,7 +15,7 @@ export function canViewDailyLessonLog(profile: ProfileRow) {
 export function canManageOwnDailyLessonLog(profile: ProfileRow, teacherId: string) {
   if (!profile.is_active) return false;
   if (["admin", "genel_mudur"].includes(profile.role)) return true;
-  if (profile.role === "hoca" && profile.id === teacherId) return true;
+  if (["hoca", "bolum_muduru"].includes(profile.role) && profile.id === teacherId) return true;
   return false;
 }
 
