@@ -124,7 +124,7 @@ export function ProfileForm({
           Bu profilde e-posta alanını güncellemek Supabase Auth giriş e-postasını bu fazda otomatik değiştirmez.
         </div>
       ) : null}
-      {enableAuthFields && mode === "create" ? (
+      {mode === "create" ? (
         <div className="space-y-4 rounded-md border border-border bg-background p-4">
           <label className="flex items-start gap-3 text-sm">
             <input
