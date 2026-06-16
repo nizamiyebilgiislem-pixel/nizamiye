@@ -91,7 +91,7 @@ export async function getEducationAssignmentData(profile: ProfileRow, classId: s
   const departmentId = classRow.department_id;
   const [coursesResult, teachersResult, classCoursesResult, slotsResult] = await Promise.all([
     supabase.from("courses").select("*").eq("department_id", departmentId).eq("is_active", true).order("name", { ascending: true }),
-    supabase.from("profiles").select("*").eq("department_id", departmentId).eq("role", "hoca").eq("is_active", true).order("full_name", { ascending: true }),
+    supabase.from("profiles").select("*").eq("department_id", departmentId).in("role", ["hoca", "bolum_muduru"]).eq("is_active", true).order("full_name", { ascending: true }),
     supabase.from("class_courses").select("*").eq("class_id", classId).order("created_at", { ascending: true }),
     supabase.from("weekly_schedule_slots").select("*").eq("class_id", classId),
   ]);
@@ -256,7 +256,7 @@ async function getVisibleEducationClasses(profile: ProfileRow) {
 
 async function getTeachersForEducation(profile: ProfileRow) {
   const supabase = await createSupabaseServerClient();
-  let query = supabase.from("profiles").select("*").eq("role", "hoca").eq("is_active", true).order("full_name", { ascending: true });
+  let query = supabase.from("profiles").select("*").in("role", ["hoca", "bolum_muduru"]).eq("is_active", true).order("full_name", { ascending: true });
 
   if (profile.role === "bolum_muduru" || profile.role === "hoca") {
     query = query.eq("department_id", profile.department_id ?? "");

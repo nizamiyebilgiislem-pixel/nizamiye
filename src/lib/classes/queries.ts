@@ -72,7 +72,7 @@ export async function getDepartmentSummaries(profile: ProfileRow): Promise<Depar
 
 export async function getTeachersForProfile(profile: ProfileRow, departmentId?: string) {
   const supabase = await createSupabaseServerClient();
-  let query = supabase.from("profiles").select("*").eq("role", "hoca").eq("is_active", true).order("full_name", { ascending: true });
+  let query = supabase.from("profiles").select("*").in("role", ["hoca", "bolum_muduru"]).eq("is_active", true).order("full_name", { ascending: true });
 
   if (departmentId) {
     query = query.eq("department_id", departmentId);
@@ -177,7 +177,7 @@ export async function getTeachersByDepartment(departmentId: string) {
   const { data, error } = await supabase
     .from("profiles")
     .select("*")
-    .eq("role", "hoca")
+    .in("role", ["hoca", "bolum_muduru"])
     .eq("is_active", true)
     .eq("department_id", departmentId)
     .order("full_name", { ascending: true });

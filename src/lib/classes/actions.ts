@@ -178,7 +178,7 @@ async function isTeacherInDepartment(teacherId: string, departmentId: string) {
     .from("profiles")
     .select("id")
     .eq("id", teacherId)
-    .eq("role", "hoca")
+    .in("role", ["hoca", "bolum_muduru"])
     .eq("is_active", true)
     .eq("department_id", departmentId)
     .maybeSingle();
