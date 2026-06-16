@@ -99,6 +99,28 @@ export type CourseRow = {
   updated_at: Timestamp;
 };
 
+export type CourseBookRow = {
+  id: string;
+  course_id: string;
+  title: string;
+  author: string | null;
+  book_order: number;
+  is_active: boolean;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+};
+
+export type CourseBookProgressRow = {
+  id: string;
+  course_book_id: string;
+  class_id: string;
+  started_at: DateString | null;
+  completed_at: DateString | null;
+  status: "not_started" | "ongoing" | "completed";
+  created_at: Timestamp;
+  updated_at: Timestamp;
+};
+
 export type ClassCourseRow = {
   id: string;
   class_id: string;
@@ -240,6 +262,8 @@ export type StudentBookRow = {
   id: string;
   student_id: string;
   term_id: string | null;
+  course_id: string | null;
+  course_book_id: string | null;
   title: string;
   author: string | null;
   read_date: DateString | null;
@@ -639,6 +663,20 @@ export type TaskAttachmentRow = {
   created_at: Timestamp;
 };
 
+export type StudentTaskRow = {
+  id: string;
+  student_id: string;
+  assigned_by: string;
+  title: string;
+  description: string | null;
+  task_type: string;
+  due_date: DateString | null;
+  status: "pending" | "completed";
+  completed_at: Timestamp | null;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+};
+
 export type LiveSessionRow = {
   id: string;
   title: string;
@@ -722,6 +760,7 @@ export type Database = {
   public: {
     Tables: {
       talepler: TableDefinition<TalepRow>;
+      student_tasks: TableDefinition<StudentTaskRow>;
       tasks: TableDefinition<TaskRow>;
       task_comments: TableDefinition<TaskCommentRow>;
       task_attachments: TableDefinition<TaskAttachmentRow>;
@@ -730,6 +769,8 @@ export type Database = {
       classes: TableDefinition<ClassRow>;
       students: TableDefinition<StudentRow>;
       courses: TableDefinition<CourseRow>;
+      course_books: TableDefinition<CourseBookRow>;
+      course_book_progress: TableDefinition<CourseBookProgressRow>;
       class_courses: TableDefinition<ClassCourseRow>;
       weekly_schedule_slots: TableDefinition<WeeklyScheduleSlotRow>;
       exam_types: TableDefinition<ExamTypeRow>;

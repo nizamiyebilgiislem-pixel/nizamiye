@@ -12,6 +12,7 @@ import { StudentDormitoryPanel } from "@/components/dormitory/student-dormitory-
 import { StudentProfileOverview } from "@/components/students/student-profile-overview";
 import { StudentLibraryPanel } from "@/components/library/student-library-panel";
 import { StudentAttendanceSummaryPanel } from "@/components/attendance/student-attendance-summary";
+import { StudentCourseBooksPanel } from "@/components/course-books/student-course-books-panel";
 import { StudentSelector } from "@/components/parents/student-selector";
 import { StudentQuickCard } from "@/components/parents/student-quick-card";
 import { StudentComparisonTable } from "@/components/parents/student-comparison-table";
@@ -32,6 +33,7 @@ import { getSurveysForParent, getStudentInterviewsForParent, getDepartmentActivi
 import { getStudentLoans } from "@/lib/library/queries";
 import { getStudentAttendanceSummaryForParent } from "@/lib/attendance/queries";
 import { getHafizlikProgress } from "@/lib/hafizlik/actions";
+import { getStudentCourseBookProgress } from "@/lib/course-books/queries";
 import { cn } from "@/lib/utils";
 
 type PageProps = {
@@ -51,7 +53,7 @@ export default async function ParentPanelPage({ params, searchParams }: PageProp
   const surveys = await getSurveysForParent(profile.id);
 
   const studentDataPromises = students.map(async (student) => {
-    const [gradeSummary, evaluations, infirmaryRecords, profileEntries, documents, dormitoryAssignment, dormitoryHistory, libraryLoans, attendanceSummary, hafizlikProgress] = await Promise.all([
+    const [gradeSummary, evaluations, infirmaryRecords, profileEntries, documents, dormitoryAssignment, dormitoryHistory, libraryLoans, attendanceSummary, hafizlikProgress, courseBookProgress] = await Promise.all([
       student.course_class ? getStudentGradeSummary(profile, student) : Promise.resolve(null),
       getEvaluationsByStudent(student.id),
       getInfirmaryRecordsByStudent(student.id),
@@ -62,6 +64,7 @@ export default async function ParentPanelPage({ params, searchParams }: PageProp
       getStudentLoans(student.id),
       getStudentAttendanceSummaryForParent(student.id),
       getHafizlikProgress(student.id),
+      getStudentCourseBookProgress(student.id),
     ]);
 
     const hafizlikPercentage = hafizlikProgress.data
@@ -87,6 +90,7 @@ export default async function ParentPanelPage({ params, searchParams }: PageProp
       hafizlikPercentage,
       attendanceRate,
       gradeAverage: gradeSummary?.overallAverage ?? null,
+      courseBookProgress,
     };
   });
 
@@ -251,7 +255,7 @@ export default async function ParentPanelPage({ params, searchParams }: PageProp
               ))}
             </div>
           ) : (
-            profiles.map(({ student, gradeSummary, evaluations, infirmaryRecords, profileEntries, documents, dormitoryAssignment, dormitoryHistory, libraryLoans, attendanceSummary, hafizlikProgress, hafizlikPercentage, attendanceRate, gradeAverage }) => {
+            profiles.map(({ student, gradeSummary, evaluations, infirmaryRecords, profileEntries, documents, dormitoryAssignment, dormitoryHistory, libraryLoans, attendanceSummary, hafizlikProgress, hafizlikPercentage, attendanceRate, gradeAverage, courseBookProgress }) => {
               const interviews = studentInterviews[student.id] ?? [];
               const isSelected = selectedStudentId === student.id || !selectedStudentId;
               const showFullDetail = !selectedStudentId || isSelected;
@@ -284,6 +288,21 @@ export default async function ParentPanelPage({ params, searchParams }: PageProp
                       {gradeSummary ? <GradeSummary summary={gradeSummary} studentId={student.id} canEdit={false} /> : null}
                       <EvaluationSummary evaluations={evaluations} studentId={student.id} canEdit={false} />
                       <HafizlikPanel studentName={student.full_name} progress={hafizlikProgress} />
+
+                      {courseBookProgress.length > 0 && (
+                        <Card>
+                          <CardHeader className="flex flex-row items-center gap-2 pb-3">
+                            <BookOpen className="size-5 text-[#093657]" />
+                            <div>
+                              <CardTitle className="text-sm">Ders Kitapları</CardTitle>
+                              <CardDescription className="text-xs">Öğrencinizin ders kitapları ilerlemesi</CardDescription>
+                            </div>
+                          </CardHeader>
+                          <CardContent>
+                            <StudentCourseBooksPanel progress={courseBookProgress} />
+                          </CardContent>
+                        </Card>
+                      )}
 
                       {interviews.length > 0 && (
                         <Card>

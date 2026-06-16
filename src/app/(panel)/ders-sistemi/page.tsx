@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, BookOpen } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -89,6 +89,13 @@ export default async function DersSistemiPage({ searchParams }: Props) {
                   <p className="text-sm text-muted-foreground">Bu ders henüz hiçbir sınıfa atanmamış.</p>
                 )}
                 <div className="mt-3 flex items-center gap-2">
+                  <Link
+                    href={`/ders-sistemi/${course.id}/kitaplar`}
+                    className="flex items-center gap-1 text-xs font-medium text-[#093657] hover:underline"
+                  >
+                    <BookOpen className="size-3" /> Kitaplar
+                  </Link>
+                  <span className="text-muted-foreground">·</span>
                   <Link
                     href={`/ders-sistemi/${course.id}/duzenle`}
                     className="text-xs font-medium text-[#093657] hover:underline"

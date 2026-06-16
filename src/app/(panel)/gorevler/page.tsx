@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus, CheckCircle2, Clock, AlertTriangle, Calendar } from "lucide-react";
+import { Plus, CheckCircle2, Clock, AlertTriangle, Calendar, Users } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { requireAuth } from "@/lib/auth";
@@ -52,6 +52,9 @@ export default async function GorevlerPage({
         actions={
           canCreate ? (
             <div className="flex gap-2">
+              <Link href="/gorevler/ogrenci-gorevleri" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+                <Users className="mr-1.5 size-4" /> Öğrenci Görevleri
+              </Link>
               <Link href="/gorevler/yeni" className={cn(buttonVariants({ size: "sm" }))}>
                 <Plus className="mr-1.5 size-4" /> Yeni Görev
               </Link>
