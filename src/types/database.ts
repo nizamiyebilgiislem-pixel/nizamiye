@@ -243,6 +243,19 @@ export type StudentBookRow = {
   read_date: DateString | null;
   note: string | null;
   created_by: string | null;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+};
+
+export type HafizlikProgressRow = {
+  id: string;
+  student_id: string;
+  current_juz: number;
+  current_page: number;
+  status: "learning" | "reviewing" | "completed";
+  target_completion_date: DateString | null;
+  teacher_note: string | null;
+  created_by: string | null;
   updated_by: string | null;
   created_at: Timestamp;
   updated_at: Timestamp;
@@ -727,6 +740,7 @@ export type Database = {
       parent_student_links: TableDefinition<ParentStudentLinkRow>;
       student_profile_notes: TableDefinition<StudentProfileNoteRow>;
       student_books: TableDefinition<StudentBookRow>;
+      hafizlik_progress: TableDefinition<HafizlikProgressRow>;
       student_term_snapshots: TableDefinition<StudentTermSnapshotRow>;
       term_closure_runs: TableDefinition<TermClosureRunRow>;
       archive_exports: TableDefinition<ArchiveExportRow>;

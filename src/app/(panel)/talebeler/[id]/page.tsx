@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Pencil } from "lucide-react";
 
+import { HafizlikProgressPanel } from "@/components/hafizlik/hafizlik-progress-panel";
 import { StudentDocumentSummary } from "@/components/documents/student-document-summary";
 import { EvaluationSummary } from "@/components/evaluations/evaluation-summary";
 import { GradeSummary } from "@/components/grades/grade-summary";
@@ -49,6 +50,9 @@ import { canManageStudentProfileEntries } from "@/lib/student-profile/permission
 import { getStudentTermSnapshots } from "@/lib/terms/queries";
 import { canEditStudent, canViewStudent } from "@/lib/students/permissions";
 import { getStudentById } from "@/lib/students/queries";
+import { getHafizlikProgress, updateHafizlikProgressAction } from "@/lib/hafizlik/actions";
+import { canManageHafizlikProgress } from "@/lib/hafizlik/permissions";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
 type StudentDetailPageProps = {
@@ -96,6 +100,11 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
   const studentLoans = canViewLib ? await getStudentLoans(student.id) : [];
   const canViewGuid = canViewGuidance(profile) && await canViewGuidanceForStudent(profile, { course_class_id: student.course_class?.id ?? null, department_id: student.department?.id ?? null });
   const infirmaryRecordsForOverview = profile.role === "rehberlik" ? [] : infirmaryRecords;
+
+  const supabase = await createSupabaseServerClient();
+  const hafizlikPermResult = await canManageHafizlikProgress(supabase, profile, student.id);
+  const canManageHafizlik = !hafizlikPermResult.error;
+  const hafizlikProgress = await getHafizlikProgress(student.id);
 
   return (
     <div className="space-y-6">
@@ -159,6 +168,7 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
           <TabsTrigger value="egitim">Eğitim Bilgileri</TabsTrigger>
           <TabsTrigger value="notlar">Notlar</TabsTrigger>
           <TabsTrigger value="kanaatler">Kanaatler</TabsTrigger>
+          {canManageHafizlik && <TabsTrigger value="hafizlik">Hafızlık</TabsTrigger>}
           {canViewInfirmaryTab && <TabsTrigger value="revir">Revir</TabsTrigger>}
           <TabsTrigger value="evraklar">Evraklar</TabsTrigger>
           {canViewAttendanceTab && <TabsTrigger value="yoklama">Yoklama</TabsTrigger>}
@@ -241,6 +251,16 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
         <TabsContent value="kanaatler">
           <EvaluationSummary evaluations={evaluations} studentId={student.id} canEdit={canEditEvaluations} />
         </TabsContent>
+        {canManageHafizlik && (
+          <TabsContent value="hafizlik">
+            <HafizlikProgressPanel
+              studentId={student.id}
+              progress={hafizlikProgress.data}
+              canEdit={canManageHafizlik}
+              updateAction={updateHafizlikProgressAction}
+            />
+          </TabsContent>
+        )}
         {canViewInfirmaryTab && (
           <TabsContent value="revir">
             <StudentInfirmarySummary records={infirmaryRecords} studentId={student.id} canEdit={canEditInfirmary} />
