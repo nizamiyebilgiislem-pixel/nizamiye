@@ -57,6 +57,8 @@ export default async function TeacherDetailPage({ params, searchParams }: Teache
         profile={target}
         source="hocalar"
         canManage={profile.role === "admin" || profile.role === "genel_mudur"}
+        canResetPassword={(profile.role === "admin" || profile.role === "genel_mudur") && profile.id !== target.id}
+        returnPath={`/hocalar/${target.id}`}
         createAuthAction={createProfileAuthAccountAction}
         resetPasswordAction={resetProfileAuthPasswordAction}
       />

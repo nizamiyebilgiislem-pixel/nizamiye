@@ -65,6 +65,8 @@ export default async function ParentDetailPage({ params, searchParams }: ParentD
         profile={parent}
         source="veliler"
         canManage={canManageAuth}
+        canResetPassword={canManageAuth && profile.id !== parent.id}
+        returnPath={`/veliler/${parent.id}`}
         createAuthAction={createProfileAuthAccountAction}
         resetPasswordAction={resetProfileAuthPasswordAction}
       />

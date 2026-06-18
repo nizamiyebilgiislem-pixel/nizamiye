@@ -7,6 +7,8 @@ import { z } from "zod";
 import { requireAuth } from "@/lib/auth";
 import { buildAuditActor, createAuditLog } from "@/lib/audit/log";
 import { normalizeTurkishPhone } from "@/lib/phone";
+import { generateStrongTemporaryPassword } from "@/lib/profiles/password-reset";
+import { setPasswordResetFlash } from "@/lib/profiles/password-reset-flash";
 import {
   createAuthUserAccount,
   deleteAuthUserAccount,
@@ -20,6 +22,7 @@ import {
 } from "@/lib/profiles/permissions";
 import { getProfileById } from "@/lib/profiles/queries";
 import { uploadProfilePhoto, validateImageFile } from "@/lib/storage/upload";
+import { SupabaseAdminConfigError } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { UserRole } from "@/types/rbac";
 
@@ -113,7 +116,17 @@ const profileAuthSchema = z.object({
 const resetPasswordSchema = z.object({
   profile_id: z.string().uuid(),
   source: sourceSchema,
-  temporary_password: z.string().trim().min(8, "Geçici şifre en az 8 karakter olmalıdır."),
+  return_path: z.string().trim().min(1).optional(),
+  password_mode: z.enum(["manual", "generated"]).default("manual"),
+  temporary_password: z.string().trim().optional(),
+}).superRefine((data, context) => {
+  if (data.password_mode === "manual" && (!data.temporary_password || data.temporary_password.trim().length < 8)) {
+    context.addIssue({
+      code: "custom",
+      message: "Yeni şifre en az 8 karakter olmalıdır.",
+      path: ["temporary_password"],
+    });
+  }
 });
 
 async function createProfileAction(formData: FormData, source: "hocalar" | "kullanicilar") {
@@ -502,21 +515,37 @@ export async function resetProfileAuthPasswordAction(formData: FormData) {
     redirect(`${getProfileBasePath(parsed.data.source)}/${target.id}?error=unauthorized`);
   }
 
-  if (!target.auth_user_id) {
-    redirect(`${getProfileBasePath(parsed.data.source)}/${target.id}?error=auth-missing`);
+  if (profile.id === target.id) {
+    redirect(`${resolveReturnPath(parsed.data.source, target.id, parsed.data.return_path)}?error=self-password-reset`);
   }
 
-  const { error } = await updateAuthUserPassword(target.auth_user_id, parsed.data.temporary_password);
+  if (!target.auth_user_id) {
+    redirect(`${resolveReturnPath(parsed.data.source, target.id, parsed.data.return_path)}?error=auth-missing`);
+  }
 
-  if (error) {
-    redirect(`${getProfileBasePath(parsed.data.source)}/${target.id}?error=auth-password`);
+  const nextPassword = parsed.data.password_mode === "generated"
+    ? generateStrongTemporaryPassword()
+    : parsed.data.temporary_password!.trim();
+
+  try {
+    const { error } = await updateAuthUserPassword(target.auth_user_id, nextPassword);
+
+    if (error) {
+      redirect(`${resolveReturnPath(parsed.data.source, target.id, parsed.data.return_path)}?error=auth-password`);
+    }
+  } catch (error) {
+    if (error instanceof SupabaseAdminConfigError) {
+      redirect(`${resolveReturnPath(parsed.data.source, target.id, parsed.data.return_path)}?error=server-config`);
+    }
+
+    redirect(`${resolveReturnPath(parsed.data.source, target.id, parsed.data.return_path)}?error=auth-password`);
   }
 
   await createAuditLog({
     ...buildAuditActor(profile),
-    action: "auth_password_reset",
-    title: "Geçici şifre atandı",
-    description: `${target.full_name} için geçici şifre güncellendi.`,
+    action: "password_reset_by_admin",
+    title: "Şifre yönetici tarafından sıfırlandı",
+    description: `${target.full_name} için giriş şifresi yönetici tarafından sıfırlandı.`,
     entityType: "auth_account",
     entityId: target.auth_user_id,
     beforeData: null,
@@ -526,11 +555,26 @@ export async function resetProfileAuthPasswordAction(formData: FormData) {
     },
     metadata: {
       profile_id: target.id,
+      target_user_id: target.auth_user_id,
+      performed_by: profile.id,
       source: parsed.data.source,
     },
   });
 
-  redirect(`${getProfileBasePath(parsed.data.source)}/${target.id}?success=password-reset`);
+  if (parsed.data.password_mode === "generated") {
+    await setPasswordResetFlash({
+      source: parsed.data.source,
+      profileId: target.id,
+      password: nextPassword,
+    });
+  }
+
+  revalidatePath("/hocalar");
+  revalidatePath("/kullanicilar");
+  revalidatePath("/veliler");
+  revalidatePath(`${getProfileBasePath(parsed.data.source)}/${target.id}`);
+  revalidatePath(`${getProfileBasePath(parsed.data.source)}/${target.id}/duzenle`);
+  redirect(`${resolveReturnPath(parsed.data.source, target.id, parsed.data.return_path)}?success=password-reset`);
 }
 
 async function persistProfileUpdate(
@@ -588,6 +632,14 @@ function getProfileBasePath(source: string) {
   }
 
   return source === "kullanicilar" ? "/kullanicilar" : "/hocalar";
+}
+
+function resolveReturnPath(source: string, profileId: string, returnPath?: string) {
+  if (typeof returnPath === "string" && returnPath.startsWith("/")) {
+    return returnPath;
+  }
+
+  return `${getProfileBasePath(source)}/${profileId}`;
 }
 
 function normalizeDepartmentId(role: UserRole, departmentId: string | null) {

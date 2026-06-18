@@ -12,6 +12,7 @@ import { ProfileInfoCard } from "@/components/profiles/profile-info-card";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireRole } from "@/lib/auth";
+import { consumePasswordResetFlash } from "@/lib/profiles/password-reset-flash";
 import {
   createProfileAuthAccountAction,
   resetProfileAuthPasswordAction,
@@ -37,6 +38,8 @@ export default async function UserDetailPage({ params, searchParams }: UserDetai
 
   const parentDetail = profile.role === "veli" ? await getParentProfileByIdForProfile(viewer, profile.id) : null;
   const canManage = canManageUserProfile(viewer, profile);
+  const canResetPassword = canManage && viewer.id !== profile.id;
+  const generatedPassword = await consumePasswordResetFlash("kullanicilar", profile.id);
 
   return (
     <div className="space-y-6">
@@ -59,11 +62,14 @@ export default async function UserDetailPage({ params, searchParams }: UserDetai
       </div>
       <ProfileErrorMessage error={query.error} />
       {query.success ? <SuccessMessage success={query.success} /> : null}
+      {generatedPassword ? <GeneratedPasswordMessage password={generatedPassword} /> : null}
       <ProfileInfoCard profile={profile} />
       <ProfileAuthManagement
         profile={profile}
         source="kullanicilar"
         canManage
+        canResetPassword={canResetPassword}
+        returnPath={`/kullanicilar/${profile.id}`}
         createAuthAction={createProfileAuthAccountAction}
         resetPasswordAction={resetProfileAuthPasswordAction}
       />
@@ -77,10 +83,18 @@ function SuccessMessage({ success }: { success: string }) {
   const messages: Record<string, string> = {
     "auth-created": "Auth hesabı oluşturuldu.",
     "auth-linked": "Auth hesabı profile bağlandı.",
-    "password-reset": "Şifre başarıyla güncellendi.",
+    "password-reset": "Şifre başarıyla sıfırlandı.",
   };
 
   return <div className="rounded-md border border-primary/40 bg-primary/10 px-3 py-2 text-sm text-primary">{messages[success] ?? success}</div>;
+}
+
+function GeneratedPasswordMessage({ password }: { password: string }) {
+  return (
+    <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">
+      Oluşturulan geçici şifre: <span className="font-semibold tracking-wide">{password}</span>
+    </div>
+  );
 }
 
 function ClassList({ title, classes }: { title: string; classes: Array<{ id: string; name: string }> }) {

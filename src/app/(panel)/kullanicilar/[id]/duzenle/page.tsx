@@ -1,17 +1,23 @@
 import { notFound, redirect } from "next/navigation";
 
+import { consumePasswordResetFlash } from "@/lib/profiles/password-reset-flash";
 import { PageHeader } from "@/components/layout/page-header";
+import { ProfileAuthManagement } from "@/components/profiles/profile-auth-management";
 import { ProfileErrorMessage } from "@/components/profiles/profile-error-message";
 import { ProfileForm } from "@/components/profiles/profile-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAuth } from "@/lib/auth";
-import { updateUserProfileAction } from "@/lib/profiles/actions";
+import {
+  createProfileAuthAccountAction,
+  resetProfileAuthPasswordAction,
+  updateUserProfileAction,
+} from "@/lib/profiles/actions";
 import { canManageUserProfile, getCreatableRoles } from "@/lib/profiles/permissions";
 import { getDepartmentsForProfiles, getProfileById } from "@/lib/profiles/queries";
 
 type EditUserPageProps = {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; success?: string }>;
 };
 
 export default async function EditUserPage({ params, searchParams }: EditUserPageProps) {
@@ -31,11 +37,23 @@ export default async function EditUserPage({ params, searchParams }: EditUserPag
     getDepartmentsForProfiles(profile),
   ]);
   const roleOptions = getCreatableRoles(profile);
+  const canResetPassword = canManageUserProfile(profile, target) && profile.id !== target.id;
+  const generatedPassword = await consumePasswordResetFlash("kullanicilar", target.id);
 
   return (
     <div className="space-y-6">
       <PageHeader eyebrow="Kullanıcılar" title="Profil Düzenle" description="Profil bilgilerini güncelleyin." />
       <ProfileErrorMessage error={query.error} />
+      {query.success === "password-reset" ? (
+        <div className="rounded-md border border-primary/40 bg-primary/10 px-3 py-2 text-sm text-primary">
+          Şifre başarıyla sıfırlandı.
+        </div>
+      ) : null}
+      {generatedPassword ? (
+        <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">
+          Oluşturulan geçici şifre: <span className="font-semibold tracking-wide">{generatedPassword}</span>
+        </div>
+      ) : null}
       <Card>
         <CardHeader>
           <CardTitle>{target.full_name}</CardTitle>
@@ -50,6 +68,17 @@ export default async function EditUserPage({ params, searchParams }: EditUserPag
           />
         </CardContent>
       </Card>
+      {target.auth_user_id ? (
+        <ProfileAuthManagement
+          profile={target}
+          source="kullanicilar"
+          canManage={canManageUserProfile(profile, target)}
+          canResetPassword={canResetPassword}
+          returnPath={`/kullanicilar/${target.id}/duzenle`}
+          createAuthAction={createProfileAuthAccountAction}
+          resetPasswordAction={resetProfileAuthPasswordAction}
+        />
+      ) : null}
     </div>
   );
 }

@@ -14,6 +14,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCourseBooksForTeacher } from "@/lib/course-books/queries";
 import { DailyLessonLogForm } from "@/components/daily-lesson-logs/daily-lesson-log-form";
 import { DailyLessonLogList } from "@/components/daily-lesson-logs/daily-lesson-log-list";
+import type { ProfileRow } from "@/types/database";
 
 type PageProps = {
   searchParams: Promise<{ success?: string }>;
@@ -126,7 +127,7 @@ export default async function DailyLessonLogsPage({ searchParams }: PageProps) {
   );
 }
 
-async function AllLogsSection({ profile }: { profile: { role: string; department_id?: string; id: string } }) {
+async function AllLogsSection({ profile }: { profile: Pick<ProfileRow, "id" | "role" | "department_id"> }) {
   const supabase = await createSupabaseServerClient();
 
   const { data: logs } = await supabase

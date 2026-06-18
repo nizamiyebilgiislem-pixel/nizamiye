@@ -13,6 +13,7 @@ export const auditActionLabels: Record<string, string> = {
   staff_profile_created: "Hoca/kullanıcı oluşturuldu",
   auth_account_created: "Auth hesabı oluşturuldu",
   auth_password_reset: "Geçici şifre atandı",
+  password_reset_by_admin: "Şifre yönetici tarafından sıfırlandı",
   class_course_created: "Sınıfa ders atandı",
   class_course_updated: "Derse hoca atandı",
   schedule_slot_created: "Ders programı slotu oluşturuldu",
