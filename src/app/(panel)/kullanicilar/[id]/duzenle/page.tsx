@@ -1,12 +1,13 @@
 import { notFound, redirect } from "next/navigation";
 
-import { consumePasswordResetFlash } from "@/lib/profiles/password-reset-flash";
 import { PageHeader } from "@/components/layout/page-header";
+import { GeneratedPasswordFlash } from "@/components/profiles/generated-password-flash";
 import { ProfileAuthManagement } from "@/components/profiles/profile-auth-management";
 import { ProfileErrorMessage } from "@/components/profiles/profile-error-message";
 import { ProfileForm } from "@/components/profiles/profile-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAuth } from "@/lib/auth";
+import { readPasswordResetFlash } from "@/lib/profiles/password-reset-flash";
 import {
   createProfileAuthAccountAction,
   resetProfileAuthPasswordAction,
@@ -38,7 +39,7 @@ export default async function EditUserPage({ params, searchParams }: EditUserPag
   ]);
   const roleOptions = getCreatableRoles(profile);
   const canResetPassword = canManageUserProfile(profile, target) && profile.id !== target.id;
-  const generatedPassword = await consumePasswordResetFlash("kullanicilar", target.id);
+  const generatedPassword = await readPasswordResetFlash("kullanicilar", target.id);
 
   return (
     <div className="space-y-6">
@@ -49,11 +50,7 @@ export default async function EditUserPage({ params, searchParams }: EditUserPag
           Şifre başarıyla sıfırlandı.
         </div>
       ) : null}
-      {generatedPassword ? (
-        <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">
-          Oluşturulan geçici şifre: <span className="font-semibold tracking-wide">{generatedPassword}</span>
-        </div>
-      ) : null}
+      {generatedPassword ? <GeneratedPasswordFlash password={generatedPassword} /> : null}
       <Card>
         <CardHeader>
           <CardTitle>{target.full_name}</CardTitle>

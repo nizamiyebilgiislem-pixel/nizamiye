@@ -2,7 +2,7 @@ import "server-only";
 
 import { cookies } from "next/headers";
 
-const PASSWORD_RESET_FLASH_COOKIE = "password-reset-flash";
+export const PASSWORD_RESET_FLASH_COOKIE = "password-reset-flash";
 
 type PasswordResetFlashPayload = {
   source: "hocalar" | "kullanicilar" | "veliler";
@@ -22,17 +22,9 @@ export async function setPasswordResetFlash(payload: PasswordResetFlashPayload) 
   });
 }
 
-export async function consumePasswordResetFlash(source: PasswordResetFlashPayload["source"], profileId: string) {
+export async function readPasswordResetFlash(source: PasswordResetFlashPayload["source"], profileId: string) {
   const cookieStore = await cookies();
   const rawValue = cookieStore.get(PASSWORD_RESET_FLASH_COOKIE)?.value;
-
-  cookieStore.set(PASSWORD_RESET_FLASH_COOKIE, "", {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: 0,
-  });
 
   if (!rawValue) {
     return null;

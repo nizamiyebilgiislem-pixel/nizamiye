@@ -4,6 +4,7 @@ import { Pencil } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { ProfileDeleteButton } from "@/components/profiles/profile-delete-button";
+import { GeneratedPasswordFlash } from "@/components/profiles/generated-password-flash";
 import { ParentLinkedStudentsCard } from "@/components/parents/parent-linked-students-card";
 import { ProfileAuthManagement } from "@/components/profiles/profile-auth-management";
 import { ProfileAvatar } from "@/components/profiles/profile-avatar";
@@ -12,7 +13,7 @@ import { ProfileInfoCard } from "@/components/profiles/profile-info-card";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireRole } from "@/lib/auth";
-import { consumePasswordResetFlash } from "@/lib/profiles/password-reset-flash";
+import { readPasswordResetFlash } from "@/lib/profiles/password-reset-flash";
 import {
   createProfileAuthAccountAction,
   resetProfileAuthPasswordAction,
@@ -39,7 +40,7 @@ export default async function UserDetailPage({ params, searchParams }: UserDetai
   const parentDetail = profile.role === "veli" ? await getParentProfileByIdForProfile(viewer, profile.id) : null;
   const canManage = canManageUserProfile(viewer, profile);
   const canResetPassword = canManage && viewer.id !== profile.id;
-  const generatedPassword = await consumePasswordResetFlash("kullanicilar", profile.id);
+  const generatedPassword = await readPasswordResetFlash("kullanicilar", profile.id);
 
   return (
     <div className="space-y-6">
@@ -62,7 +63,7 @@ export default async function UserDetailPage({ params, searchParams }: UserDetai
       </div>
       <ProfileErrorMessage error={query.error} />
       {query.success ? <SuccessMessage success={query.success} /> : null}
-      {generatedPassword ? <GeneratedPasswordMessage password={generatedPassword} /> : null}
+      {generatedPassword ? <GeneratedPasswordFlash password={generatedPassword} /> : null}
       <ProfileInfoCard profile={profile} />
       <ProfileAuthManagement
         profile={profile}
@@ -87,14 +88,6 @@ function SuccessMessage({ success }: { success: string }) {
   };
 
   return <div className="rounded-md border border-primary/40 bg-primary/10 px-3 py-2 text-sm text-primary">{messages[success] ?? success}</div>;
-}
-
-function GeneratedPasswordMessage({ password }: { password: string }) {
-  return (
-    <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">
-      Oluşturulan geçici şifre: <span className="font-semibold tracking-wide">{password}</span>
-    </div>
-  );
 }
 
 function ClassList({ title, classes }: { title: string; classes: Array<{ id: string; name: string }> }) {
