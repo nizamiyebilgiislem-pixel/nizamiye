@@ -19,6 +19,7 @@ import { canCreateTalep } from "../src/lib/talepler/permissions.ts";
 import { roles } from "../src/types/rbac.ts";
 
 const rlsMigration = readFileSync("supabase/migrations/00038_security_hardening_rls.sql", "utf8");
+const hafizlikVisibilityMigration = readFileSync("supabase/migrations/00048_hafizlik_progress_department_visibility.sql", "utf8");
 
 function profile(role, overrides = {}) {
   return {
@@ -68,6 +69,16 @@ test("rehberlik role only sees the trimmed navigation and allowed routes", () =>
   assert.deepEqual(labels.sort(), ["Dashboard", "Rehberlik", "Talebeler", "Veliler"]);
 });
 
+test("hoca role can access hafizlik module from navigation and routes", () => {
+  assert.equal(getRouteAllowedRoles("/hafizlik")?.includes("hoca"), true);
+  assert.equal(getRouteAllowedRoles("/hafizlik/guncelle")?.includes("hoca"), true);
+
+  const nav = getNavigationForRole("hoca");
+  const labels = nav.flatMap((group) => group.items.map((item) => item.label));
+
+  assert.equal(labels.includes("Hafızlık Takibi"), true);
+});
+
 test("rehberlik can view students but cannot create students or talepler", () => {
   assert.equal(canViewStudent(profile("rehberlik"), { department_id: "dep-1" }), true);
   assert.equal(canCreateStudent(profile("rehberlik")), false);
@@ -107,4 +118,11 @@ test("archives bucket has no authenticated direct select policy", () => {
   assert.match(rlsMigration, /update storage\.buckets\s+set public = false\s+where id = 'archives'/);
   assert.doesNotMatch(rlsMigration, /create policy "archives_objects_select"/);
   assert.match(rlsMigration, /create policy "archives_objects_insert"/);
+});
+
+test("hafizlik visibility migration lets teachers read department-wide records", () => {
+  assert.match(hafizlikVisibilityMigration, /create policy "Hoca gorebilir bolumundeki hafizlik kayitlari"/);
+  assert.match(hafizlikVisibilityMigration, /for select/);
+  assert.match(hafizlikVisibilityMigration, /p\.role = 'hoca'/);
+  assert.match(hafizlikVisibilityMigration, /p\.department_id = c\.department_id/);
 });

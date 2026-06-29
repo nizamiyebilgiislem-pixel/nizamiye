@@ -78,13 +78,11 @@ export default async function EducationAssignmentPage({ params, searchParams }: 
                 </select>
                 <select name="teacher_id" className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
                   <option value="">Hoca atanmamış</option>
-                  {data.availableTeachers
-                    .filter((teacher) => teacher.role === "hoca")
-                    .map((teacher) => (
-                      <option key={teacher.id} value={teacher.id}>
-                        {teacher.full_name}
-                      </option>
-                    ))}
+                  {data.availableTeachers.map((teacher) => (
+                    <option key={teacher.id} value={teacher.id}>
+                      {teacher.full_name}
+                    </option>
+                  ))}
                 </select>
                 <select name="is_active" defaultValue="true" className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
                   <option value="true">Aktif</option>
@@ -151,7 +149,6 @@ export default async function EducationAssignmentPage({ params, searchParams }: 
                             <select name="teacher_id" defaultValue={classCourse.teacher_id ?? ""} className="h-9 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
                               <option value="">Hoca atanmamış</option>
                               {data.availableTeachers
-                                .filter((teacher) => teacher.role === "hoca")
                                 .concat(classCourse.teacher && !data.availableTeachers.some((teacher) => teacher.id === classCourse.teacher_id) ? [classCourse.teacher] : [])
                                 .map((teacher) => (
                                   <option key={teacher.id} value={teacher.id}>

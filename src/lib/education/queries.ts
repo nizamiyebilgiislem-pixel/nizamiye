@@ -89,16 +89,18 @@ export async function getEducationAssignmentData(profile: ProfileRow, classId: s
 
   const supabase = await createSupabaseServerClient();
   const departmentId = classRow.department_id;
-  const [coursesResult, teachersResult, classCoursesResult, slotsResult] = await Promise.all([
+  const [coursesResult, teacherProfilesResult, managerProfilesResult, classCoursesResult, slotsResult] = await Promise.all([
     supabase.from("courses").select("*").eq("department_id", departmentId).eq("is_active", true).order("name", { ascending: true }),
-    supabase.from("profiles").select("*").eq("department_id", departmentId).in("role", ["hoca", "bolum_muduru"]).eq("is_active", true).order("full_name", { ascending: true }),
+    supabase.from("profiles").select("*").eq("role", "hoca").eq("is_active", true).order("full_name", { ascending: true }),
+    supabase.from("profiles").select("*").eq("department_id", departmentId).eq("role", "bolum_muduru").eq("is_active", true).order("full_name", { ascending: true }),
     supabase.from("class_courses").select("*").eq("class_id", classId).order("created_at", { ascending: true }),
     supabase.from("weekly_schedule_slots").select("*").eq("class_id", classId),
   ]);
 
   const loadError = collectEducationLoadError([
     coursesResult.error,
-    teachersResult.error,
+    teacherProfilesResult.error,
+    managerProfilesResult.error,
     classCoursesResult.error,
     slotsResult.error,
   ]);
@@ -110,11 +112,16 @@ export async function getEducationAssignmentData(profile: ProfileRow, classId: s
   const classCourses = await attachClassCourseRelations(classCoursesResult.data ?? [], slotsResult.data ?? []);
   const assignedCourseIds = new Set(classCourses.map((classCourse) => classCourse.course_id));
 
+  const availableTeachers = dedupeProfilesById([
+    ...(teacherProfilesResult.data ?? []),
+    ...(managerProfilesResult.data ?? []),
+  ]);
+
   return {
     classRow,
     classCourses,
     availableCourses: (coursesResult.data ?? []).filter((course) => !assignedCourseIds.has(course.id)),
-    availableTeachers: teachersResult.data ?? [],
+    availableTeachers,
     loadError,
   };
 }
@@ -381,4 +388,10 @@ function collectEducationLoadError(errors: Array<{ code?: string | null; message
   }
 
   return "load";
+}
+
+function dedupeProfilesById(profiles: ProfileRow[]) {
+  return Array.from(new Map(profiles.map((profile) => [profile.id, profile])).values()).sort((left, right) =>
+    left.full_name.localeCompare(right.full_name, "tr-TR"),
+  );
 }

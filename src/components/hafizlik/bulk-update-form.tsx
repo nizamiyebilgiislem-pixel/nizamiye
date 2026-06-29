@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { redirect } from "next/navigation";
 
 import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +17,7 @@ const statusLabels = {
 
 export function BulkUpdateForm({
   students,
+  departmentId,
   updateAction,
 }: {
   students: Array<{
@@ -27,6 +27,7 @@ export function BulkUpdateForm({
     progress: HafizlikProgressRow | null;
     teacherName: string | null;
   }>;
+  departmentId: string;
   updateAction: (formData: FormData) => void | Promise<void>;
 }) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -54,12 +55,7 @@ export function BulkUpdateForm({
 
   return (
     <form action={updateAction} className="space-y-6">
-      <input type="hidden" name="current_juz" value="1" />
-      <input type="hidden" name="current_page" value="1" />
-      <input type="hidden" name="status" value="learning" />
-      <input type="hidden" name="target_completion_date" value="" />
-      <input type="hidden" name="teacher_note" value="" />
-
+      <input type="hidden" name="department_id" value={departmentId} />
       {selectedIds.size > 0 && (
         <div className="rounded-md border border-primary/40 bg-primary/10 px-4 py-2 text-sm">
           {selectedIds.size} öğrenci seçildi

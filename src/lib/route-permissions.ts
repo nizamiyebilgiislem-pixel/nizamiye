@@ -59,6 +59,8 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/ders-notlari/aylik-rapor": topManagerRoles,
   "/kanaat-sistemi": staffAndSupportRoles,
   "/kanaat-sistemi/kanaat-girisi": staffAndSupportRoles,
+  "/hafizlik": staffRoles,
+  "/hafizlik/guncelle": staffRoles,
   "/yatakhane": staffAndSupportRoles,
   "/yatakhane/yeni": managerRoles,
   "/yatakhane/[id]": staffAndSupportRoles,

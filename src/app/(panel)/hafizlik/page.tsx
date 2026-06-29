@@ -3,20 +3,19 @@ import { redirect } from "next/navigation";
 import { AlertTriangle, Clock } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
+import { getHafizlikDepartmentScope, getHafizlikStudentsByDepartment } from "@/lib/hafizlik/queries";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { requireAuth } from "@/lib/auth";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
 type HafizlikDashboardPageProps = {
-  params: Promise<{}>;
-  searchParams: Promise<{ search?: string }>;
+  searchParams: Promise<{ search?: string; department?: string }>;
 };
 
-export default async function HafizlikDashboardPage({ params, searchParams }: HafizlikDashboardPageProps) {
+export default async function HafizlikDashboardPage({ searchParams }: HafizlikDashboardPageProps) {
   const { profile } = await requireAuth();
   const query = await searchParams;
 
@@ -24,102 +23,40 @@ export default async function HafizlikDashboardPage({ params, searchParams }: Ha
     redirect("/dashboard?error=unauthorized");
   }
 
-  const supabase = await createSupabaseServerClient();
+  const scope = await getHafizlikDepartmentScope(profile, query.department);
 
-  const { data: hafizlikDepartment } = await supabase
-    .from("departments")
-    .select("id, name")
-    .eq("slug", "hafizlik")
-    .single();
-
-  if (!hafizlikDepartment) {
+  if (!scope.selectedDepartment) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Hafızlık Takibi" description="Hafızlık bölümü bulunamadı." />
+        <PageHeader title="Hafızlık Takibi" description="Görüntüleyebileceğiniz aktif bölüm bulunamadı." />
         <Card>
           <CardContent className="py-10 text-center text-sm text-muted-foreground">
-            Hafızlık bölümü sistemde tanımlı değil.
+            Hafızlık takibi için erişilebilir aktif bölüm bulunamadı.
           </CardContent>
         </Card>
       </div>
     );
   }
 
-  const searchTerm = query.search?.toLowerCase() ?? "";
-
-  const { data: allStudents } = await supabase
-    .from("students")
-    .select(`
-      id,
-      full_name,
-      course_class_id,
-      course_class:classes!inner(id, name, department_id, class_teacher_id)
-    `)
-    .eq("status", "active");
-
-  const hafizlikStudentIds = (allStudents ?? [])
-    .filter((s: any) => s.course_class?.department_id === hafizlikDepartment.id)
-    .map((s: any) => s.id);
-
-  const { data: allProgress } = hafizlikStudentIds.length > 0
-    ? await supabase
-        .from("hafizlik_progress")
-        .select("*")
-        .in("student_id", hafizlikStudentIds)
-    : { data: [] };
-
-  const { data: allProfiles } = hafizlikStudentIds.length > 0
-    ? await supabase
-        .from("profiles")
-        .select("id, full_name")
-        .in("id", (allStudents ?? []).map((s: any) => s.course_class?.class_teacher_id).filter(Boolean))
-    : { data: [] };
-
-  const teacherMap = new Map((allProfiles ?? []).map((p: any) => [p.id, p.full_name]));
-
-  const progressMap = new Map((allProgress ?? []).map((p: any) => [p.student_id, p]));
-
-  const filteredStudents = (allStudents ?? []).filter((s: any) => {
-    if (s.course_class?.department_id !== hafizlikDepartment.id) return false;
-    if (searchTerm && !s.full_name.toLowerCase().includes(searchTerm)) return false;
-    return true;
-  });
-
-  const studentsWithProgress = filteredStudents.map((student: any) => {
-    const progress = progressMap.get(student.id);
-    const teacherName = teacherMap.get(student.course_class?.class_teacher_id) ?? null;
-    const percentage = progress
-      ? Math.round(((progress.current_juz - 1) * 604 + progress.current_page) / 604 * 100)
-      : 0;
-    return {
-      ...student,
-      progress,
-      teacherName,
-      percentage,
-    };
-  });
-
-  const overdueCount = studentsWithProgress.filter((s: any) => {
-    if (!s.progress?.target_completion_date) return false;
-    return new Date(s.progress.target_completion_date) < new Date();
-  }).length;
-
-  const onTrackCount = studentsWithProgress.filter((s: any) => {
-    if (!s.progress) return false;
-    return s.progress.status === "completed";
-  }).length;
+  const searchTerm = query.search?.trim().toLocaleLowerCase("tr-TR") ?? "";
+  const studentsWithProgress = (await getHafizlikStudentsByDepartment(scope.selectedDepartment.id, { onlyWithProgress: true }))
+    .filter((student) => !searchTerm || student.full_name.toLocaleLowerCase("tr-TR").includes(searchTerm));
 
   const today = new Date();
   const in7Days = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-  const overdueStudents = studentsWithProgress.filter((s: any) => {
-    if (!s.progress?.target_completion_date || s.progress.status === "completed") return false;
-    return new Date(s.progress.target_completion_date) < today;
+  const learningCount = studentsWithProgress.filter((student) => student.progress?.status === "learning").length;
+  const reviewingCount = studentsWithProgress.filter((student) => student.progress?.status === "reviewing").length;
+  const completedCount = studentsWithProgress.filter((student) => student.progress?.status === "completed").length;
+
+  const overdueStudents = studentsWithProgress.filter((student) => {
+    if (!student.progress?.target_completion_date || student.progress.status === "completed") return false;
+    return new Date(student.progress.target_completion_date) < today;
   });
 
-  const approachingStudents = studentsWithProgress.filter((s: any) => {
-    if (!s.progress?.target_completion_date || s.progress.status === "completed") return false;
-    const targetDate = new Date(s.progress.target_completion_date);
+  const approachingStudents = studentsWithProgress.filter((student) => {
+    if (!student.progress?.target_completion_date || student.progress.status === "completed") return false;
+    const targetDate = new Date(student.progress.target_completion_date);
     return targetDate >= today && targetDate <= in7Days;
   });
 
@@ -128,39 +65,43 @@ export default async function HafizlikDashboardPage({ params, searchParams }: Ha
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <PageHeader
           title="Hafızlık Takibi"
-          description={`${hafizlikDepartment.name} bölümü öğrencilerinin cüz bazlı ilerleme takibi.`}
+          description={`${scope.selectedDepartment.name} bölümündeki hafız öğrencilerin cüz bazlı ilerleme takibi.`}
         />
         <div className="flex gap-2">
-          <Link href="/hafizlik/guncelle" className={buttonVariants()}>
+          <Link href={`/hafizlik/guncelle?department=${scope.selectedDepartment.id}`} className={buttonVariants()}>
             Toplu Güncelle
           </Link>
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardContent className="pt-6">
             <div className="text-2xl font-bold">{studentsWithProgress.length}</div>
-            <p className="text-sm text-muted-foreground">Toplam Öğrenci</p>
+            <p className="text-sm text-muted-foreground">Hafızlık Kaydı</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-green-600">{onTrackCount}</div>
-            <p className="text-sm text-muted-foreground">Tamamlanan</p>
+            <div className="text-2xl font-bold text-blue-600">{learningCount}</div>
+            <p className="text-sm text-muted-foreground">Öğreniyor</p>
           </CardContent>
         </Card>
-        <Card className={cn(overdueCount > 0 && "border-red-200")}>
+        <Card>
           <CardContent className="pt-6">
-            <div className={cn("text-2xl font-bold", overdueCount > 0 && "text-red-600")}>
-              {overdueCount}
-            </div>
-            <p className="text-sm text-muted-foreground">Hedef Gecikmiş</p>
+            <div className="text-2xl font-bold text-yellow-600">{reviewingCount}</div>
+            <p className="text-sm text-muted-foreground">Tekrar Eden</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-2xl font-bold text-green-600">{completedCount}</div>
+            <p className="text-sm text-muted-foreground">Tamamlayan</p>
           </CardContent>
         </Card>
       </div>
 
-      {overdueStudents.length > 0 && (
+      {overdueStudents.length > 0 ? (
         <Card className="border-red-200 bg-red-50">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2 text-red-900">
@@ -170,22 +111,21 @@ export default async function HafizlikDashboardPage({ params, searchParams }: Ha
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {overdueStudents.map((student: any) => {
-                const daysOverdue = Math.ceil((today.getTime() - new Date(student.progress.target_completion_date).getTime()) / (1000 * 60 * 60 * 24));
+              {overdueStudents.map((student) => {
+                const daysOverdue = Math.ceil(
+                  (today.getTime() - new Date(student.progress?.target_completion_date ?? today).getTime()) / (1000 * 60 * 60 * 24),
+                );
+
                 return (
                   <div key={student.id} className="flex items-center justify-between rounded-md border border-red-200 bg-white px-3 py-2">
                     <div>
                       <Link href={`/talebeler/${student.id}?tab=hafizlik`} className="font-medium text-red-900 hover:underline">
                         {student.full_name}
                       </Link>
-                      <span className="ml-2 text-sm text-red-700">
-                        {student.course_class?.name}
-                      </span>
+                      <span className="ml-2 text-sm text-red-700">{student.course_class?.name}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-red-600">
-                        {daysOverdue} gün geçmiş
-                      </span>
+                      <span className="text-sm font-medium text-red-600">{daysOverdue} gün geçmiş</span>
                       <Badge variant="destructive">Gecikmiş</Badge>
                     </div>
                   </div>
@@ -194,9 +134,9 @@ export default async function HafizlikDashboardPage({ params, searchParams }: Ha
             </div>
           </CardContent>
         </Card>
-      )}
+      ) : null}
 
-      {approachingStudents.length > 0 && (
+      {approachingStudents.length > 0 ? (
         <Card className="border-yellow-200 bg-yellow-50">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2 text-yellow-900">
@@ -206,22 +146,21 @@ export default async function HafizlikDashboardPage({ params, searchParams }: Ha
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {approachingStudents.map((student: any) => {
-                const daysLeft = Math.ceil((new Date(student.progress.target_completion_date).getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+              {approachingStudents.map((student) => {
+                const daysLeft = Math.ceil(
+                  (new Date(student.progress?.target_completion_date ?? today).getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+                );
+
                 return (
                   <div key={student.id} className="flex items-center justify-between rounded-md border border-yellow-200 bg-white px-3 py-2">
                     <div>
                       <Link href={`/talebeler/${student.id}?tab=hafizlik`} className="font-medium text-yellow-900 hover:underline">
                         {student.full_name}
                       </Link>
-                      <span className="ml-2 text-sm text-yellow-700">
-                        {student.course_class?.name}
-                      </span>
+                      <span className="ml-2 text-sm text-yellow-700">{student.course_class?.name}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-yellow-600">
-                        {daysLeft} gün kaldı
-                      </span>
+                      <span className="text-sm font-medium text-yellow-600">{daysLeft} gün kaldı</span>
                       <Badge variant="outline" className="border-yellow-300 bg-yellow-100 text-yellow-800">
                         Yaklaşıyor
                       </Badge>
@@ -232,13 +171,26 @@ export default async function HafizlikDashboardPage({ params, searchParams }: Ha
             </div>
           </CardContent>
         </Card>
-      )}
+      ) : null}
 
       <Card>
         <CardHeader>
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <CardTitle>Öğrenci Listesi</CardTitle>
-            <form className="flex gap-2">
+            <form className="flex flex-col gap-2 md:flex-row">
+              {scope.canSelectDepartment && scope.departments.length > 1 ? (
+                <select
+                  name="department"
+                  defaultValue={scope.selectedDepartment.id}
+                  className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                >
+                  {scope.departments.map((department) => (
+                    <option key={department.id} value={department.id}>
+                      {department.name}
+                    </option>
+                  ))}
+                </select>
+              ) : null}
               <Input
                 name="search"
                 placeholder="Öğrenci ara..."
@@ -254,63 +206,54 @@ export default async function HafizlikDashboardPage({ params, searchParams }: Ha
         <CardContent>
           {studentsWithProgress.length > 0 ? (
             <div className="space-y-4">
-              {studentsWithProgress.map((student: any) => (
+              {studentsWithProgress.map((student) => (
                 <div key={student.id} className="flex items-center gap-4 rounded-md border border-border p-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <Link href={`/talebeler/${student.id}`} className="font-medium hover:underline">
                         {student.full_name}
                       </Link>
-                      <span className="text-sm text-muted-foreground">
-                        · {student.course_class?.name}
-                      </span>
+                      <span className="text-sm text-muted-foreground">· {student.course_class?.name}</span>
                     </div>
-                    {student.teacherName && (
+                    {student.teacherName ? (
                       <p className="text-sm text-muted-foreground">Sınıf Hocası: {student.teacherName}</p>
-                    )}
+                    ) : null}
                   </div>
                   <div className="flex items-center gap-4">
-                    {student.progress ? (
-                      <>
-                        <div className="w-32">
-                          <div className="flex justify-between text-xs">
-                            <span>{student.progress.current_juz}. Cüz</span>
-                            <span>{student.percentage}%</span>
-                          </div>
-                          <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-muted">
-                            <div
-                              className="h-full rounded-full bg-primary"
-                              style={{ width: `${student.percentage}%` }}
-                            />
-                          </div>
-                        </div>
-                        <Badge
-                          variant="outline"
-                          className={cn(
-                            student.progress.status === "completed" && "bg-green-100 text-green-800",
-                            student.progress.status === "reviewing" && "bg-yellow-100 text-yellow-800",
-                            student.progress.status === "learning" && "bg-blue-100 text-blue-800"
-                          )}
-                        >
-                          {student.progress.status === "learning" ? "Öğreniyor" :
-                           student.progress.status === "reviewing" ? "Tekrar" : "Tamamlandı"}
-                        </Badge>
-                        {student.progress.target_completion_date && (
-                          <span className={cn(
-                            "text-xs",
-                            new Date(student.progress.target_completion_date) < new Date() && "text-red-600 font-medium"
-                          )}>
-                            Hedef: {new Date(student.progress.target_completion_date).toLocaleDateString("tr-TR")}
-                          </span>
-                        )}
-                      </>
-                    ) : (
-                      <Badge variant="secondary">Kayıt Yok</Badge>
-                    )}
-                    <Link
-                      href={`/talebeler/${student.id}?tab=hafizlik`}
-                      className={buttonVariants({ variant: "ghost", size: "sm" })}
+                    <div className="w-32">
+                      <div className="flex justify-between text-xs">
+                        <span>{student.progress?.current_juz}. Cüz</span>
+                        <span>{student.percentage}%</span>
+                      </div>
+                      <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-muted">
+                        <div className="h-full rounded-full bg-primary" style={{ width: `${student.percentage}%` }} />
+                      </div>
+                    </div>
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        student.progress?.status === "completed" && "bg-green-100 text-green-800",
+                        student.progress?.status === "reviewing" && "bg-yellow-100 text-yellow-800",
+                        student.progress?.status === "learning" && "bg-blue-100 text-blue-800",
+                      )}
                     >
+                      {student.progress?.status === "learning"
+                        ? "Öğreniyor"
+                        : student.progress?.status === "reviewing"
+                          ? "Tekrar"
+                          : "Tamamlandı"}
+                    </Badge>
+                    {student.progress?.target_completion_date ? (
+                      <span
+                        className={cn(
+                          "text-xs",
+                          new Date(student.progress.target_completion_date) < new Date() && "font-medium text-red-600",
+                        )}
+                      >
+                        Hedef: {new Date(student.progress.target_completion_date).toLocaleDateString("tr-TR")}
+                      </span>
+                    ) : null}
+                    <Link href={`/talebeler/${student.id}?tab=hafizlik`} className={buttonVariants({ variant: "ghost", size: "sm" })}>
                       Detay
                     </Link>
                   </div>
@@ -319,7 +262,7 @@ export default async function HafizlikDashboardPage({ params, searchParams }: Ha
             </div>
           ) : (
             <p className="py-6 text-center text-sm text-muted-foreground">
-              {searchTerm ? "Arama sonucu bulunamadı." : "Bu bölümde aktif öğrenci bulunmuyor."}
+              {searchTerm ? "Arama sonucu bulunamadı." : "Bu bölümde hafızlık kaydı olan aktif öğrenci bulunmuyor."}
             </p>
           )}
         </CardContent>

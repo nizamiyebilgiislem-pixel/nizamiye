@@ -5,10 +5,11 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { requireAuth } from "@/lib/auth";
-import { buildAuditActor } from "@/lib/audit/log";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { canManageHafizlikProgress } from "@/lib/hafizlik/permissions";
+import { getHafizlikDepartmentScope, getHafizlikStudentsByDepartment } from "@/lib/hafizlik/queries";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { ProfileRow } from "@/types/database";
 
 const updateProgressSchema = z.object({
   student_id: z.string().uuid(),
@@ -21,7 +22,6 @@ const updateProgressSchema = z.object({
 
 export async function updateHafizlikProgressAction(formData: FormData) {
   const { profile } = await requireAuth();
-  const actor = buildAuditActor(profile);
 
   const rawData = {
     student_id: formData.get("student_id"),
@@ -138,49 +138,23 @@ export async function getHafizlikProgress(studentId: string) {
   return { data, error: null };
 }
 
-export async function getHafizlikStudentsForBulk(profileId: string) {
-  const supabase = await createSupabaseServerClient();
+export async function getHafizlikStudentsForBulk(
+  profile: Pick<ProfileRow, "role" | "department_id">,
+  departmentId?: string | null,
+) {
+  const scope = await getHafizlikDepartmentScope(profile, departmentId);
 
-  const { data: hafizlikDepartment } = await supabase
-    .from("departments")
-    .select("id, name")
-    .eq("slug", "hafizlik")
-    .single();
-
-  if (!hafizlikDepartment) {
-    return { students: [], department: null };
+  if (!scope.selectedDepartment) {
+    return { students: [], department: null, departments: scope.departments, canSelectDepartment: scope.canSelectDepartment };
   }
 
-  const { data: students } = await supabase
-    .from("students")
-    .select(`
-      id,
-      full_name,
-      course_class:classes!inner(id, name, department_id, class_teacher_id)
-    `)
-    .eq("status", "active")
-    .eq("course_class.department_id", hafizlikDepartment.id);
-
-  const { data: progress } = await supabase
-    .from("hafizlik_progress")
-    .select("*")
-    .in("student_id", (students ?? []).map((s: any) => s.id));
-
-  const { data: teachers } = await supabase
-    .from("profiles")
-    .select("id, full_name")
-    .in("id", (students ?? []).map((s: any) => s.course_class?.class_teacher_id).filter(Boolean));
-
-  const teacherMap = new Map((teachers ?? []).map((t: any) => [t.id, t.full_name]));
-  const progressMap = new Map((progress ?? []).map((p: any) => [p.student_id, p]));
+  const students = await getHafizlikStudentsByDepartment(scope.selectedDepartment.id);
 
   return {
-    students: (students ?? []).map((s: any) => ({
-      ...s,
-      progress: progressMap.get(s.id) ?? null,
-      teacherName: teacherMap.get(s.course_class?.class_teacher_id) ?? null,
-    })),
-    department: hafizlikDepartment,
+    students,
+    department: scope.selectedDepartment,
+    departments: scope.departments,
+    canSelectDepartment: scope.canSelectDepartment,
   };
 }
 
@@ -193,6 +167,7 @@ export async function bulkUpdateHafizlikProgressAction(formData: FormData): Prom
   const status = formData.get("status");
   const target_completion_date = formData.get("target_completion_date");
   const teacher_note = formData.get("teacher_note");
+  const departmentId = String(formData.get("department_id") ?? "").trim();
 
   if (studentIds.length === 0) {
     throw new Error("Öğrenci seçilmedi.");
@@ -237,8 +212,9 @@ export async function bulkUpdateHafizlikProgressAction(formData: FormData): Prom
     }
 
     await syncMemorizationScore(supabase, studentId, Number(current_juz), Number(current_page));
+    updatedCount += 1;
   }
 
   revalidatePath("/hafizlik");
-  redirect("/hafizlik/guncelle?success=" + studentIds.length);
+  redirect(`/hafizlik/guncelle?success=${updatedCount}${departmentId ? `&department=${departmentId}` : ""}`);
 }
