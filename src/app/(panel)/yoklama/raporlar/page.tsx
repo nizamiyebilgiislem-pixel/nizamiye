@@ -2,6 +2,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
 import { requireAuth } from "@/lib/auth";
 import { getAttendanceFilterOptions, getAttendanceReportData } from "@/lib/attendance/queries";
 import { attendanceTypes } from "@/lib/attendance/constants";
@@ -64,43 +65,43 @@ export default async function AttendanceReportsPage({ searchParams }: Attendance
             </div>
             <div className="space-y-2">
               <label className="text-xs font-medium text-muted-foreground">Tür</label>
-              <select name="attendanceType" defaultValue={query.attendanceType ?? "all"} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm">
+              <NativeSelect name="attendanceType" defaultValue={query.attendanceType ?? "all"} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm">
                 <option value="all">Tümü</option>
                 {attendanceTypes.map((type) => (
                   <option key={type} value={type}>
                     {typeLabel(type)}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
             <div className="space-y-2">
               <label className="text-xs font-medium text-muted-foreground">Bölüm</label>
-              <select name="departmentId" defaultValue={query.departmentId ?? ""} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm">
+              <NativeSelect name="departmentId" defaultValue={query.departmentId ?? ""} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm">
                 <option value="">Tümü</option>
                 {options.departments.map((department) => (
                   <option key={department.id} value={department.id}>
                     {department.name}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
             <div className="space-y-2">
               <label className="text-xs font-medium text-muted-foreground">Sınıf</label>
-              <select name="classId" defaultValue={query.classId ?? ""} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm">
+              <NativeSelect name="classId" defaultValue={query.classId ?? ""} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm">
                 <option value="">Tümü</option>
                 {options.classes.map((classRow) => (
                   <option key={classRow.id} value={classRow.id}>
                     {classRow.name}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
             <div className="space-y-2">
               <label className="text-xs font-medium text-muted-foreground">Rapor Tipi</label>
-              <select name="reportType" defaultValue={reportType} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm">
+              <NativeSelect name="reportType" defaultValue={reportType} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm">
                 <option value="daily">Genel Günlük</option>
                 <option value="prayer">Namaz Yoklaması</option>
-              </select>
+              </NativeSelect>
             </div>
             <div className="xl:col-span-6">
               <Button type="submit">Raporu Oluştur</Button>

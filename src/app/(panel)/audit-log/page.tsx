@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Filter, Search } from "lucide-react";
 
@@ -14,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { NativeSelect } from "@/components/ui/native-select";
 import { requireAuth } from "@/lib/auth";
 import { auditActionOptions, auditActionLabels, auditEntityTypeLabels, auditEntityTypeOptions } from "@/lib/audit/constants";
 import { getAuditLogsForProfile } from "@/lib/audit/queries";
@@ -54,7 +55,7 @@ export default async function AuditLogPage({ searchParams }: AuditLogPageProps) 
       <PageHeader
         eyebrow="Audit Log"
         title="Audit Log"
-        description="Kritik işlemler kronolojik olarak kaydedilir. Bölüm müdürleri ve hocalar yalnızca yetkili oldukları talebe kayıtlarını görür."
+        description="Kritik iÅŸlemler kronolojik olarak kaydedilir. BÃ¶lÃ¼m mÃ¼dÃ¼rleri ve hocalar yalnÄ±zca yetkili olduklarÄ± talebe kayÄ±tlarÄ±nÄ± gÃ¶rÃ¼r."
       />
 
       <Card>
@@ -64,13 +65,13 @@ export default async function AuditLogPage({ searchParams }: AuditLogPageProps) 
               <span className="text-xs font-medium text-muted-foreground">Arama</span>
               <div className="relative">
                 <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-                <Input name="q" defaultValue={params.q} placeholder="Başlık, açıklama, işlem yapan veya talebe adı" className="pl-9" />
+                <Input name="q" defaultValue={params.q} placeholder="BaÅŸlÄ±k, aÃ§Ä±klama, iÅŸlem yapan veya talebe adÄ±" className="pl-9" />
               </div>
             </label>
 
             <label className="space-y-1">
-              <span className="text-xs font-medium text-muted-foreground">İşlem</span>
-              <select
+              <span className="text-xs font-medium text-muted-foreground">Ä°ÅŸlem</span>
+              <NativeSelect
                 name="action"
                 defaultValue={params.action ?? ""}
                 className="h-9 w-full rounded-md border border-border bg-background px-3 text-sm shadow-sm outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20"
@@ -80,12 +81,12 @@ export default async function AuditLogPage({ searchParams }: AuditLogPageProps) 
                     {option.label}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </label>
 
             <label className="space-y-1">
               <span className="text-xs font-medium text-muted-foreground">Entity type</span>
-              <select
+              <NativeSelect
                 name="entity_type"
                 defaultValue={params.entity_type ?? ""}
                 className="h-9 w-full rounded-md border border-border bg-background px-3 text-sm shadow-sm outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20"
@@ -95,26 +96,26 @@ export default async function AuditLogPage({ searchParams }: AuditLogPageProps) 
                     {option.label}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </label>
 
             <label className="space-y-1">
-              <span className="text-xs font-medium text-muted-foreground">İşlemi yapan</span>
+              <span className="text-xs font-medium text-muted-foreground">Ä°ÅŸlemi yapan</span>
               <Input name="actor" defaultValue={params.actor} placeholder="Ad soyad" />
             </label>
 
             <label className="space-y-1">
               <span className="text-xs font-medium text-muted-foreground">Talebe</span>
-              <Input name="student" defaultValue={params.student} placeholder="Talebe adı" />
+              <Input name="student" defaultValue={params.student} placeholder="Talebe adÄ±" />
             </label>
 
             <label className="space-y-1">
-              <span className="text-xs font-medium text-muted-foreground">Başlangıç</span>
+              <span className="text-xs font-medium text-muted-foreground">BaÅŸlangÄ±Ã§</span>
               <Input name="from" type="date" defaultValue={params.from} />
             </label>
 
             <label className="space-y-1">
-              <span className="text-xs font-medium text-muted-foreground">Bitiş</span>
+              <span className="text-xs font-medium text-muted-foreground">BitiÅŸ</span>
               <Input name="to" type="date" defaultValue={params.to} />
             </label>
 
@@ -137,11 +138,11 @@ export default async function AuditLogPage({ searchParams }: AuditLogPageProps) 
             <TableHeader>
               <TableRow>
                 <TableHead>Tarih</TableHead>
-                <TableHead>İşlem</TableHead>
-                <TableHead>Başlık</TableHead>
-                <TableHead>İşlemi yapan</TableHead>
+                <TableHead>Ä°ÅŸlem</TableHead>
+                <TableHead>BaÅŸlÄ±k</TableHead>
+                <TableHead>Ä°ÅŸlemi yapan</TableHead>
                 <TableHead>Rol</TableHead>
-                <TableHead>İlgili talebe</TableHead>
+                <TableHead>Ä°lgili talebe</TableHead>
                 <TableHead>Entity type</TableHead>
               </TableRow>
             </TableHeader>
@@ -166,7 +167,7 @@ export default async function AuditLogPage({ searchParams }: AuditLogPageProps) 
               ) : (
                 <TableRow>
                   <TableCell colSpan={7} className="py-12 text-center text-sm text-muted-foreground">
-                    Kayıt bulunamadı.
+                    KayÄ±t bulunamadÄ±.
                   </TableCell>
                 </TableRow>
               )}

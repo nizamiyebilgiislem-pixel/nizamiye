@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
 import { requireAuth } from "@/lib/auth";
 import { getAttendanceDashboardSummary, getAttendanceFilterOptions, getAttendanceSessionsForProfile } from "@/lib/attendance/queries";
 import { attendanceTypes } from "@/lib/attendance/constants";
@@ -92,44 +93,44 @@ export default async function AttendancePage({ searchParams }: AttendancePagePro
             </div>
             <div className="space-y-2">
               <label className="text-xs font-medium text-muted-foreground">Tür</label>
-              <select name="attendanceType" defaultValue={query.attendanceType ?? "all"} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm">
+              <NativeSelect name="attendanceType" defaultValue={query.attendanceType ?? "all"} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm">
                 <option value="all">Tümü</option>
                 {attendanceTypes.map((type) => (
                   <option key={type} value={type}>
                     {typeLabel(type)}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
             <div className="space-y-2">
               <label className="text-xs font-medium text-muted-foreground">Bölüm</label>
-              <select name="departmentId" defaultValue={query.departmentId ?? ""} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm">
+              <NativeSelect name="departmentId" defaultValue={query.departmentId ?? ""} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm">
                 <option value="">Tümü</option>
                 {options.departments.map((department) => (
                   <option key={department.id} value={department.id}>
                     {department.name}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
             <div className="space-y-2">
               <label className="text-xs font-medium text-muted-foreground">Sınıf</label>
-              <select name="classId" defaultValue={query.classId ?? ""} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm">
+              <NativeSelect name="classId" defaultValue={query.classId ?? ""} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm">
                 <option value="">Tümü</option>
                 {activeClasses.map((classRow) => (
                   <option key={classRow.id} value={classRow.id}>
                     {classRow.name}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
             <div className="space-y-2">
               <label className="text-xs font-medium text-muted-foreground">Durum</label>
-              <select name="status" defaultValue={query.status ?? "all"} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm">
+              <NativeSelect name="status" defaultValue={query.status ?? "all"} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm">
                 <option value="all">Tümü</option>
                 <option value="completed">Tamamlandı</option>
                 <option value="draft">Taslak</option>
-              </select>
+              </NativeSelect>
             </div>
             <div className="space-y-2 lg:col-span-6">
               <label className="text-xs font-medium text-muted-foreground">Arama</label>

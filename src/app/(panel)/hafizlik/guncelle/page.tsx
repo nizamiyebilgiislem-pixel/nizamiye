@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { NativeSelect } from "@/components/ui/native-select";
 import { requireAuth } from "@/lib/auth";
 import { bulkUpdateHafizlikProgressAction, getHafizlikStudentsForBulk } from "@/lib/hafizlik/actions";
 
@@ -31,24 +32,24 @@ export default async function BulkUpdatePage({ searchParams }: BulkUpdatePagePro
           <ArrowLeft className="size-4" />
         </Link>
         <PageHeader
-          title="Toplu Hafızlık Güncelleme"
-          description={`${department?.name ?? "Bölüm"} bölümündeki aktif öğrencilerin hafızlık ilerlemesini toplu güncelle.`}
+          title="Toplu HafÄ±zlÄ±k GÃ¼ncelleme"
+          description={`${department?.name ?? "BÃ¶lÃ¼m"} bÃ¶lÃ¼mÃ¼ndeki aktif Ã¶ÄŸrencilerin hafÄ±zlÄ±k ilerlemesini toplu gÃ¼ncelle.`}
         />
       </div>
 
       {query.success ? (
         <div className="rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900">
-          {query.success} öğrenci güncellendi.
+          {query.success} Ã¶ÄŸrenci gÃ¼ncellendi.
         </div>
       ) : null}
 
       <Card>
         <CardHeader>
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <CardTitle>Öğrenci Listesi</CardTitle>
+            <CardTitle>Ã–ÄŸrenci Listesi</CardTitle>
             {canSelectDepartment && departments.length > 1 ? (
               <form className="flex gap-2">
-                <select
+                <NativeSelect
                   name="department"
                   defaultValue={department?.id ?? departments[0]?.id ?? ""}
                   className="h-10 rounded-md border border-input bg-background px-3 text-sm"
@@ -58,8 +59,8 @@ export default async function BulkUpdatePage({ searchParams }: BulkUpdatePagePro
                       {item.name}
                     </option>
                   ))}
-                </select>
-                <Button type="submit" variant="outline">Bölümü Aç</Button>
+                </NativeSelect>
+                <Button type="submit" variant="outline">BÃ¶lÃ¼mÃ¼ AÃ§</Button>
               </form>
             ) : null}
           </div>
@@ -72,7 +73,7 @@ export default async function BulkUpdatePage({ searchParams }: BulkUpdatePagePro
               updateAction={bulkUpdateHafizlikProgressAction}
             />
           ) : (
-            <EmptyState title="Bu bölümde aktif öğrenci bulunmuyor." />
+            <EmptyState title="Bu bÃ¶lÃ¼mde aktif Ã¶ÄŸrenci bulunmuyor." />
           )}
         </CardContent>
       </Card>

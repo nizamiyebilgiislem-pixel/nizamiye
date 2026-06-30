@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { Plus, ExternalLink } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { NativeSelect } from "@/components/ui/native-select";
 import { requireAuth } from "@/lib/auth";
 import { canManageDocuments, canViewLibrary } from "@/lib/library/permissions";
 import { getDocuments, getActiveCategories } from "@/lib/library/queries";
@@ -20,7 +21,7 @@ export default async function DokumanlarPage({ searchParams }: Props) {
   const filters = await searchParams;
 
   if (!canViewLibrary(profile)) {
-    return <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Bu sayfaya erişim yetkiniz bulunmamaktadır.</div>;
+    return <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Bu sayfaya eriÅŸim yetkiniz bulunmamaktadÄ±r.</div>;
   }
 
   const [documents, categories] = await Promise.all([
@@ -33,14 +34,14 @@ export default async function DokumanlarPage({ searchParams }: Props) {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Kütüphane"
-        title="Dokümanlar"
-        description="Dijital doküman arşivi."
+        eyebrow="KÃ¼tÃ¼phane"
+        title="DokÃ¼manlar"
+        description="Dijital dokÃ¼man arÅŸivi."
         actions={
           canManage ? (
             <Link href="/kutuphane/dokumanlar/yeni" className={cn(buttonVariants({ size: "sm" }))}>
               <Plus className="size-4" aria-hidden />
-              Doküman Ekle
+              DokÃ¼man Ekle
             </Link>
           ) : null
         }
@@ -49,28 +50,28 @@ export default async function DokumanlarPage({ searchParams }: Props) {
       <Card className="bg-white">
         <CardContent className="p-4">
           <form className="flex flex-wrap gap-3">
-            <select
+            <NativeSelect
               name="category_id"
               defaultValue={filters.category_id ?? ""}
               className="h-9 rounded-md border border-input bg-background px-3 text-sm outline-none focus:border-ring"
             >
-              <option value="">Tüm Kategoriler</option>
+              <option value="">TÃ¼m Kategoriler</option>
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
-            </select>
-            <select
+            </NativeSelect>
+            <NativeSelect
               name="document_type"
               defaultValue={filters.document_type ?? ""}
               className="h-9 rounded-md border border-input bg-background px-3 text-sm outline-none focus:border-ring"
             >
-              <option value="">Tüm Türler</option>
+              <option value="">TÃ¼m TÃ¼rler</option>
               <option value="pdf">PDF</option>
               <option value="word">Word</option>
               <option value="excel">Excel</option>
-              <option value="image">Görsel</option>
-              <option value="other">Diğer</option>
-            </select>
+              <option value="image">GÃ¶rsel</option>
+              <option value="other">DiÄŸer</option>
+            </NativeSelect>
             <Button type="submit" variant="secondary" size="sm">Filtrele</Button>
             {(filters.category_id || filters.document_type) && (
               <Link href="/kutuphane/dokumanlar" className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}>Temizle</Link>
@@ -83,13 +84,13 @@ export default async function DokumanlarPage({ searchParams }: Props) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Başlık</TableHead>
-              <TableHead>Tür</TableHead>
+              <TableHead>BaÅŸlÄ±k</TableHead>
+              <TableHead>TÃ¼r</TableHead>
               <TableHead>Kategori</TableHead>
-              <TableHead>Dosya Adı</TableHead>
-              <TableHead>Yükleyen</TableHead>
+              <TableHead>Dosya AdÄ±</TableHead>
+              <TableHead>YÃ¼kleyen</TableHead>
               <TableHead>Tarih</TableHead>
-              <TableHead>İşlemler</TableHead>
+              <TableHead>Ä°ÅŸlemler</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -113,7 +114,7 @@ export default async function DokumanlarPage({ searchParams }: Props) {
                         className={cn(buttonVariants({ variant: "ghost", size: "xs" }))}
                       >
                         <ExternalLink className="size-3" aria-hidden />
-                        Görüntüle
+                        GÃ¶rÃ¼ntÃ¼le
                       </a>
                     </div>
                   </TableCell>
@@ -121,7 +122,7 @@ export default async function DokumanlarPage({ searchParams }: Props) {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">Henüz doküman yüklenmemiş.</TableCell>
+                <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">HenÃ¼z dokÃ¼man yÃ¼klenmemiÅŸ.</TableCell>
               </TableRow>
             )}
           </TableBody>
@@ -135,6 +136,6 @@ function DocTypeBadge({ type }: { type: string | null }) {
   if (type === "pdf") return <Badge variant="destructive">PDF</Badge>;
   if (type === "word") return <Badge variant="secondary">Word</Badge>;
   if (type === "excel") return <Badge variant="secondary">Excel</Badge>;
-  if (type === "image") return <Badge>Görsel</Badge>;
-  return <Badge variant="outline">Diğer</Badge>;
+  if (type === "image") return <Badge>GÃ¶rsel</Badge>;
+  return <Badge variant="outline">DiÄŸer</Badge>;
 }

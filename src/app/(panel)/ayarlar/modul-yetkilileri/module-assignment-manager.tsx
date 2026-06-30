@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useActionState } from "react";
 import { UserRoundX, UserRoundCheck } from "lucide-react";
@@ -6,6 +6,7 @@ import { UserRoundX, UserRoundCheck } from "lucide-react";
 import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { NativeSelect } from "@/components/ui/native-select";
 import { createModuleAssignmentAction, deactivateModuleAssignmentAction } from "@/lib/module-assignments/actions";
 import type { ModuleAssignmentWithProfile } from "@/lib/module-assignments/queries";
 import type { ProfileRow } from "@/types/database";
@@ -49,12 +50,12 @@ export function ModuleAssignmentManager({
 
         <form action={createFormAction} className="flex flex-wrap gap-2">
           <input type="hidden" name="module_key" value={moduleKey} />
-          <select
+          <NativeSelect
             name="profile_id"
             className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
             required
           >
-            <option value="">Kullanıcı seçin...</option>
+            <option value="">KullanÄ±cÄ± seÃ§in...</option>
             {profiles
               .filter((p) => !assigneeIds.has(p.id))
               .map((p) => (
@@ -62,7 +63,7 @@ export function ModuleAssignmentManager({
                   {p.full_name} ({p.role})
                 </option>
               ))}
-          </select>
+          </NativeSelect>
           <FormSubmitButton>{assignActionLabel}</FormSubmitButton>
         </form>
 
@@ -81,7 +82,7 @@ export function ModuleAssignmentManager({
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="text-xs text-muted-foreground">
-                    {a.assigned_by_profile?.full_name ?? "Bilinmeyen"} tarafından
+                    {a.assigned_by_profile?.full_name ?? "Bilinmeyen"} tarafÄ±ndan
                   </span>
                   <form action={deactivateFormAction}>
                     <input type="hidden" name="assignment_id" value={a.id} />
@@ -90,7 +91,7 @@ export function ModuleAssignmentManager({
                       className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50"
                     >
                       <UserRoundX className="size-3" />
-                      Yetkiyi Kaldır
+                      Yetkiyi KaldÄ±r
                     </button>
                   </form>
                 </div>

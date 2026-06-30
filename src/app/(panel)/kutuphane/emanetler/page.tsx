@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { Plus } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { NativeSelect } from "@/components/ui/native-select";
 import { requireAuth } from "@/lib/auth";
 import { canManageLoans, canViewLibrary } from "@/lib/library/permissions";
 import { getLoans } from "@/lib/library/queries";
@@ -22,7 +23,7 @@ export default async function EmanetlerPage({ searchParams }: Props) {
   const page = Number(filters.page) || 1;
 
   if (!canViewLibrary(profile)) {
-    return <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Bu sayfaya erişim yetkiniz bulunmamaktadır.</div>;
+    return <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Bu sayfaya eriÅŸim yetkiniz bulunmamaktadÄ±r.</div>;
   }
 
   const { loans, totalCount } = await getLoans(profile, {
@@ -41,9 +42,9 @@ export default async function EmanetlerPage({ searchParams }: Props) {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Kütüphane"
+        eyebrow="KÃ¼tÃ¼phane"
         title="Emanetler"
-        description="Tüm kitap emanet kayıtları."
+        description="TÃ¼m kitap emanet kayÄ±tlarÄ±."
         actions={
           canManage ? (
             <Link href="/kutuphane/emanetler/yeni" className={cn(buttonVariants({ size: "sm" }))}>
@@ -57,16 +58,16 @@ export default async function EmanetlerPage({ searchParams }: Props) {
       <Card className="bg-white">
         <CardContent className="p-4">
           <form className="flex flex-wrap gap-3">
-            <select
+            <NativeSelect
               name="status"
               defaultValue={filters.status ?? ""}
               className="h-9 rounded-md border border-input bg-background px-3 text-sm outline-none focus:border-ring"
             >
-              <option value="">Tüm Durumlar</option>
+              <option value="">TÃ¼m Durumlar</option>
               <option value="borrowed">Emanette</option>
               <option value="returned">Teslim Edildi</option>
-              <option value="lost">Kayıp</option>
-            </select>
+              <option value="lost">KayÄ±p</option>
+            </NativeSelect>
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" name="overdue" value="true" defaultChecked={filters.overdue === "true"} className="rounded border-border" />
               Sadece Gecikenler
@@ -84,13 +85,13 @@ export default async function EmanetlerPage({ searchParams }: Props) {
           <TableHeader>
             <TableRow>
               <TableHead>Kitap</TableHead>
-              <TableHead>Alan Kişi</TableHead>
-              <TableHead>Tür</TableHead>
-              <TableHead>Alış Tarihi</TableHead>
+              <TableHead>Alan KiÅŸi</TableHead>
+              <TableHead>TÃ¼r</TableHead>
+              <TableHead>AlÄ±ÅŸ Tarihi</TableHead>
               <TableHead>Son Teslim</TableHead>
               <TableHead>Durum</TableHead>
               <TableHead>Gecikme</TableHead>
-              <TableHead>İşlemler</TableHead>
+              <TableHead>Ä°ÅŸlemler</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -99,7 +100,7 @@ export default async function EmanetlerPage({ searchParams }: Props) {
                 const isOverdue = loan.status === "borrowed" && loan.due_date && loan.due_date < today;
                 return (
                   <TableRow key={loan.id}>
-                    <TableCell className="font-medium">{loan.book?.title ?? "Kitap silinmiş"}</TableCell>
+                    <TableCell className="font-medium">{loan.book?.title ?? "Kitap silinmiÅŸ"}</TableCell>
                     <TableCell>{loan.student?.full_name ?? loan.profile?.full_name ?? "-"}</TableCell>
                     <TableCell>{loan.borrower_type === "student" ? "Talebe" : "Personel"}</TableCell>
                     <TableCell>{loan.loan_date}</TableCell>
@@ -110,7 +111,7 @@ export default async function EmanetlerPage({ searchParams }: Props) {
                     <TableCell>
                       {isOverdue ? (
                         <Badge variant="destructive">
-                          {Math.ceil((new Date(today).getTime() - new Date(loan.due_date!).getTime()) / (1000 * 60 * 60 * 24))} gün
+                          {Math.ceil((new Date(today).getTime() - new Date(loan.due_date!).getTime()) / (1000 * 60 * 60 * 24))} gÃ¼n
                         </Badge>
                       ) : (
                         <span className="text-xs text-muted-foreground">-</span>
@@ -125,7 +126,7 @@ export default async function EmanetlerPage({ searchParams }: Props) {
             ) : (
               <TableRow>
                 <TableCell colSpan={8} className="py-10 text-center text-muted-foreground">
-                  {filters.status || filters.overdue ? "Filtrelerle eşleşen emanet bulunamadı." : "Henüz emanet kaydı bulunmuyor."}
+                  {filters.status || filters.overdue ? "Filtrelerle eÅŸleÅŸen emanet bulunamadÄ±." : "HenÃ¼z emanet kaydÄ± bulunmuyor."}
                 </TableCell>
               </TableRow>
             )}
@@ -141,6 +142,6 @@ export default async function EmanetlerPage({ searchParams }: Props) {
 function LoanStatusBadge({ status }: { status: string }) {
   if (status === "borrowed") return <Badge variant="secondary">Emanette</Badge>;
   if (status === "returned") return <Badge variant="outline">Teslim Edildi</Badge>;
-  if (status === "lost") return <Badge variant="destructive">Kayıp</Badge>;
+  if (status === "lost") return <Badge variant="destructive">KayÄ±p</Badge>;
   return <Badge>{status}</Badge>;
 }

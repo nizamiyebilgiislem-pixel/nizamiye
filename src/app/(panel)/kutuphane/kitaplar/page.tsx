@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { Plus, Search } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { NativeSelect } from "@/components/ui/native-select";
 import { requireAuth } from "@/lib/auth";
 import { canManageBooks, canViewLibrary } from "@/lib/library/permissions";
 import { getBooks, getActiveCategories } from "@/lib/library/queries";
@@ -23,7 +24,7 @@ export default async function KitaplarPage({ searchParams }: Props) {
   const page = Number(filters.page) || 1;
 
   if (!canViewLibrary(profile)) {
-    return <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Bu sayfaya erişim yetkiniz bulunmamaktadır.</div>;
+    return <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Bu sayfaya eriÅŸim yetkiniz bulunmamaktadÄ±r.</div>;
   }
 
   const [{ books, totalCount }, categories] = await Promise.all([
@@ -43,9 +44,9 @@ export default async function KitaplarPage({ searchParams }: Props) {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Kütüphane"
+        eyebrow="KÃ¼tÃ¼phane"
         title="Kitaplar"
-        description="Tüm kitap kayıtları."
+        description="TÃ¼m kitap kayÄ±tlarÄ±."
         actions={
           canManage ? (
             <Link href="/kutuphane/kitaplar/yeni" className={cn(buttonVariants({ size: "sm" }))}>
@@ -61,27 +62,27 @@ export default async function KitaplarPage({ searchParams }: Props) {
           <form className="flex flex-wrap gap-3">
             <div className="relative flex-1 min-w-[200px]">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
-              <Input name="search" defaultValue={filters.search ?? ""} placeholder="Kitap adı, yazar veya ISBN ara..." className="pl-9" />
+              <Input name="search" defaultValue={filters.search ?? ""} placeholder="Kitap adÄ±, yazar veya ISBN ara..." className="pl-9" />
             </div>
-            <select
+            <NativeSelect
               name="category_id"
               defaultValue={filters.category_id ?? ""}
               className="h-9 rounded-md border border-input bg-background px-3 text-sm outline-none focus:border-ring"
             >
-              <option value="">Tüm Kategoriler</option>
+              <option value="">TÃ¼m Kategoriler</option>
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
-            </select>
-            <select
+            </NativeSelect>
+            <NativeSelect
               name="available"
               defaultValue={filters.available ?? ""}
               className="h-9 rounded-md border border-input bg-background px-3 text-sm outline-none focus:border-ring"
             >
-              <option value="">Tümü</option>
-              <option value="true">Müsait</option>
+              <option value="">TÃ¼mÃ¼</option>
+              <option value="true">MÃ¼sait</option>
               <option value="false">Emanette</option>
-            </select>
+            </NativeSelect>
             <Button type="submit" variant="secondary" size="sm">Filtrele</Button>
             {(filters.search || filters.category_id || filters.available) && (
               <Link href="/kutuphane/kitaplar" className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}>Temizle</Link>
@@ -94,7 +95,7 @@ export default async function KitaplarPage({ searchParams }: Props) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Kitap Adı</TableHead>
+              <TableHead>Kitap AdÄ±</TableHead>
               <TableHead>Yazar</TableHead>
               <TableHead>Kategori</TableHead>
               <TableHead>Raf/Konum</TableHead>
@@ -102,7 +103,7 @@ export default async function KitaplarPage({ searchParams }: Props) {
               <TableHead className="text-center">Mevcut</TableHead>
               <TableHead className="text-center">Emanette</TableHead>
               <TableHead>Durum</TableHead>
-              <TableHead>İşlemler</TableHead>
+              <TableHead>Ä°ÅŸlemler</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -127,7 +128,7 @@ export default async function KitaplarPage({ searchParams }: Props) {
                       <div className="flex items-center gap-2">
                         <Link href={`/kutuphane/kitaplar/${book.id}`} className={cn(buttonVariants({ variant: "ghost", size: "xs" }))}>Detay</Link>
                         {canManage && (
-                          <Link href={`/kutuphane/kitaplar/${book.id}/duzenle`} className={cn(buttonVariants({ variant: "ghost", size: "xs" }))}>Düzenle</Link>
+                          <Link href={`/kutuphane/kitaplar/${book.id}/duzenle`} className={cn(buttonVariants({ variant: "ghost", size: "xs" }))}>DÃ¼zenle</Link>
                         )}
                         {canManage && book.available_count > 0 && (
                           <Link href={`/kutuphane/emanetler/yeni?book_id=${book.id}`} className={cn(buttonVariants({ variant: "ghost", size: "xs" }))}>Emanet Ver</Link>
@@ -140,7 +141,7 @@ export default async function KitaplarPage({ searchParams }: Props) {
             ) : (
               <TableRow>
                 <TableCell colSpan={9} className="py-10 text-center text-muted-foreground">
-                  {filters.search || filters.category_id ? "Aramanızla eşleşen kitap bulunamadı." : "Henüz kitap eklenmemiş."}
+                  {filters.search || filters.category_id ? "AramanÄ±zla eÅŸleÅŸen kitap bulunamadÄ±." : "HenÃ¼z kitap eklenmemiÅŸ."}
                 </TableCell>
               </TableRow>
             )}

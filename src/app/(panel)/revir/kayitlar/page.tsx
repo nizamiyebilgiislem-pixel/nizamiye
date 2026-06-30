@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/ui/empty-state";
+import { NativeSelect } from "@/components/ui/native-select";
 import { requireAuth } from "@/lib/auth";
 import { getInfirmaryRecordsForProfile } from "@/lib/infirmary/queries";
 import { canManageInfirmary } from "@/lib/module-assignments/permissions";
@@ -30,12 +31,12 @@ export default async function RecordsPage({ searchParams }: RecordsPageProps) {
       <InfirmaryErrorMessage error={params.error} />
       <Card><CardContent className="p-4"><form action="/revir/kayitlar" className="grid gap-3 xl:grid-cols-[1fr_180px_180px_150px_150px_170px_170px_auto]">
         <Input name="q" defaultValue={params.q ?? ""} placeholder="Talebe, şikayet, hastane, ilaç" className="h-10" />
-        <select name="department" defaultValue={params.department ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Tüm bölümler</option>{departments.map((d)=><option key={d.id} value={d.id}>{d.name}</option>)}</select>
-        <select name="class" defaultValue={params.class ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Tüm sınıflar</option>{classes.map((c)=><option key={c.id} value={c.id}>{c.name}</option>)}</select>
+        <NativeSelect name="department" defaultValue={params.department ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Tüm bölümler</option>{departments.map((d)=><option key={d.id} value={d.id}>{d.name}</option>)}</NativeSelect>
+        <NativeSelect name="class" defaultValue={params.class ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Tüm sınıflar</option>{classes.map((c)=><option key={c.id} value={c.id}>{c.name}</option>)}</NativeSelect>
         <Input name="from" type="date" defaultValue={params.from ?? ""} className="h-10" />
         <Input name="to" type="date" defaultValue={params.to ?? ""} className="h-10" />
-        <select name="hospital" defaultValue={params.hospital ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Sevk tümü</option><option value="true">Sevk edildi</option><option value="false">Sevk edilmedi</option></select>
-        <select name="parent" defaultValue={params.parent ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Veli tümü</option><option value="true">Bilgilendirildi</option><option value="false">Bilgilendirilmedi</option></select>
+        <NativeSelect name="hospital" defaultValue={params.hospital ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Sevk tümü</option><option value="true">Sevk edildi</option><option value="false">Sevk edilmedi</option></NativeSelect>
+        <NativeSelect name="parent" defaultValue={params.parent ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Veli tümü</option><option value="true">Bilgilendirildi</option><option value="false">Bilgilendirilmedi</option></NativeSelect>
         <Button type="submit">Filtrele</Button>
       </form></CardContent></Card>
       {records.length > 0 ? <InfirmaryList records={records} profile={profile} canManageAll={canManage} /> : <EmptyState title="Revir kaydı bulunamadı." />}

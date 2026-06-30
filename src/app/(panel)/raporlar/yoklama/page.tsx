@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
 import { AttendanceDashboardCard } from "@/components/attendance/attendance-dashboard-card";
 import { AttendanceSessionList } from "@/components/attendance/attendance-session-list";
@@ -7,6 +7,7 @@ import { PdfPrintButton } from "@/components/reports/pdf-print-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
 import { requireAuth } from "@/lib/auth";
 import { attendanceTypeLabels, attendanceTypes } from "@/lib/attendance/constants";
 import { getAttendanceDashboardSummary, getAttendanceFilterOptions, getAttendanceReportData } from "@/lib/attendance/queries";
@@ -42,14 +43,14 @@ export default async function AttendanceReportsPage({ searchParams }: { searchPa
     entityType: "report",
     entityId: "attendance",
     title: "Yoklama Raporu PDF",
-    description: "Günlük ve namaz yoklama raporu oluşturuldu.",
+    description: "GÃ¼nlÃ¼k ve namaz yoklama raporu oluÅŸturuldu.",
   });
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
         <Link href="/raporlar" className={cn("text-sm font-medium text-[#093657] hover:underline")}>
-          Raporlar&apos;a dön
+          Raporlar&apos;a dÃ¶n
         </Link>
         <PdfPrintButton />
       </div>
@@ -57,7 +58,7 @@ export default async function AttendanceReportsPage({ searchParams }: { searchPa
       <PageHeader
         eyebrow="Raporlar"
         title="Yoklama Raporu"
-        description="Günlük ve namaz yoklamalarını filtreleyip resmi PDF görünümünde alın."
+        description="GÃ¼nlÃ¼k ve namaz yoklamalarÄ±nÄ± filtreleyip resmi PDF gÃ¶rÃ¼nÃ¼mÃ¼nde alÄ±n."
       />
 
       <AttendanceDashboardCard summary={dashboardSummary} />
@@ -65,38 +66,38 @@ export default async function AttendanceReportsPage({ searchParams }: { searchPa
       <Card size="sm">
         <CardContent className="space-y-4 p-4">
           <form className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-            <Field label="Başlangıç" name="from" type="date" defaultValue={query.from} />
-            <Field label="Bitiş" name="to" type="date" defaultValue={query.to} />
+            <Field label="BaÅŸlangÄ±Ã§" name="from" type="date" defaultValue={query.from} />
+            <Field label="BitiÅŸ" name="to" type="date" defaultValue={query.to} />
             <SelectField
-              label="Tür"
+              label="TÃ¼r"
               name="attendanceType"
               defaultValue={query.attendanceType ?? "all"}
-              options={[{ value: "all", label: "Tümü" }, ...attendanceTypes.map((type) => ({ value: type, label: attendanceTypeLabels[type] }))]}
+              options={[{ value: "all", label: "TÃ¼mÃ¼" }, ...attendanceTypes.map((type) => ({ value: type, label: attendanceTypeLabels[type] }))]}
             />
             <SelectField
-              label="Bölüm"
+              label="BÃ¶lÃ¼m"
               name="departmentId"
               defaultValue={query.departmentId ?? ""}
-              options={[{ value: "", label: "Tümü" }, ...filters.departments.map((department) => ({ value: department.id, label: department.name }))]}
+              options={[{ value: "", label: "TÃ¼mÃ¼" }, ...filters.departments.map((department) => ({ value: department.id, label: department.name }))]}
             />
             <SelectField
-              label="Sınıf"
+              label="SÄ±nÄ±f"
               name="classId"
               defaultValue={query.classId ?? ""}
-              options={[{ value: "", label: "Tümü" }, ...filters.classes.map((classRow) => ({ value: classRow.id, label: classRow.name }))]}
+              options={[{ value: "", label: "TÃ¼mÃ¼" }, ...filters.classes.map((classRow) => ({ value: classRow.id, label: classRow.name }))]}
             />
             <SelectField
               label="Durum"
               name="status"
               defaultValue={query.status ?? "all"}
               options={[
-                { value: "all", label: "Tümü" },
-                { value: "completed", label: "Tamamlandı" },
+                { value: "all", label: "TÃ¼mÃ¼" },
+                { value: "completed", label: "TamamlandÄ±" },
                 { value: "draft", label: "Taslak" },
               ]}
             />
             <div className="xl:col-span-2">
-              <Field label="Arama" name="search" type="search" defaultValue={query.search} placeholder="Başlık, sınıf, bölüm, alan" />
+              <Field label="Arama" name="search" type="search" defaultValue={query.search} placeholder="BaÅŸlÄ±k, sÄ±nÄ±f, bÃ¶lÃ¼m, alan" />
             </div>
             <div className="flex items-end gap-2 xl:col-span-3">
               <Button type="submit" className="h-10">
@@ -114,13 +115,13 @@ export default async function AttendanceReportsPage({ searchParams }: { searchPa
         <CardContent className="space-y-3 p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-base font-semibold text-[#093657]">Yoklama Oturumları</h2>
+              <h2 className="text-base font-semibold text-[#093657]">Yoklama OturumlarÄ±</h2>
               <p className="text-sm text-muted-foreground">
-                {reportData.summary.totalSessions} oturum · {reportData.summary.totalRecords} kayıt
+                {reportData.summary.totalSessions} oturum Â· {reportData.summary.totalRecords} kayÄ±t
               </p>
             </div>
             <p className="text-sm text-muted-foreground">
-              {reportData.summary.dailySessionCount} günlük · {reportData.summary.prayerSessionCount} namaz
+              {reportData.summary.dailySessionCount} gÃ¼nlÃ¼k Â· {reportData.summary.prayerSessionCount} namaz
             </p>
           </div>
           <AttendanceSessionList sessions={reportData.rows} />
@@ -165,13 +166,13 @@ function SelectField({
   return (
     <label className="space-y-1 text-sm">
       <span className="text-xs uppercase tracking-wide text-muted-foreground">{label}</span>
-      <select name={name} defaultValue={defaultValue} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+      <NativeSelect name={name} defaultValue={defaultValue} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>
         ))}
-      </select>
+      </NativeSelect>
     </label>
   );
 }

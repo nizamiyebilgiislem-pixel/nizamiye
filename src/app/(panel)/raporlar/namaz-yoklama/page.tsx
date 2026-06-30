@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
 import { AttendanceDashboardCard } from "@/components/attendance/attendance-dashboard-card";
 import { AttendanceSessionList } from "@/components/attendance/attendance-session-list";
@@ -7,6 +7,7 @@ import { PdfPrintButton } from "@/components/reports/pdf-print-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
 import { requireAuth } from "@/lib/auth";
 import { attendanceTypeLabels, prayerAttendanceTypes } from "@/lib/attendance/constants";
 import { getAttendanceDashboardSummary, getAttendanceFilterOptions, getAttendanceReportData } from "@/lib/attendance/queries";
@@ -38,23 +39,23 @@ export default async function PrayerAttendanceReportsPage({ searchParams }: { se
     reportType: "prayer_attendance_report",
     entityType: "report",
     entityId: "prayer-attendance",
-    title: "Namaz Yoklaması Raporu PDF",
-    description: "Namaz yoklaması raporu oluşturuldu.",
+    title: "Namaz YoklamasÄ± Raporu PDF",
+    description: "Namaz yoklamasÄ± raporu oluÅŸturuldu.",
   });
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
         <Link href="/raporlar" className={cn("text-sm font-medium text-[#093657] hover:underline")}>
-          Raporlar&apos;a dön
+          Raporlar&apos;a dÃ¶n
         </Link>
         <PdfPrintButton />
       </div>
 
       <PageHeader
         eyebrow="Raporlar"
-        title="Namaz Yoklaması Raporu"
-        description="Sabah, öğle, ikindi, akşam ve yatsı namaz yoklamalarını PDF olarak alın."
+        title="Namaz YoklamasÄ± Raporu"
+        description="Sabah, Ã¶ÄŸle, ikindi, akÅŸam ve yatsÄ± namaz yoklamalarÄ±nÄ± PDF olarak alÄ±n."
       />
 
       <AttendanceDashboardCard summary={dashboardSummary} />
@@ -62,22 +63,22 @@ export default async function PrayerAttendanceReportsPage({ searchParams }: { se
       <Card size="sm">
         <CardContent className="space-y-4 p-4">
           <form className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            <Field label="Başlangıç" name="from" type="date" defaultValue={query.from} />
-            <Field label="Bitiş" name="to" type="date" defaultValue={query.to} />
+            <Field label="BaÅŸlangÄ±Ã§" name="from" type="date" defaultValue={query.from} />
+            <Field label="BitiÅŸ" name="to" type="date" defaultValue={query.to} />
             <SelectField
-              label="Bölüm"
+              label="BÃ¶lÃ¼m"
               name="departmentId"
               defaultValue={query.departmentId ?? ""}
-              options={[{ value: "", label: "Tümü" }, ...filters.departments.map((department) => ({ value: department.id, label: department.name }))]}
+              options={[{ value: "", label: "TÃ¼mÃ¼" }, ...filters.departments.map((department) => ({ value: department.id, label: department.name }))]}
             />
             <SelectField
-              label="Sınıf"
+              label="SÄ±nÄ±f"
               name="classId"
               defaultValue={query.classId ?? ""}
-              options={[{ value: "", label: "Tümü" }, ...filters.classes.map((classRow) => ({ value: classRow.id, label: classRow.name }))]}
+              options={[{ value: "", label: "TÃ¼mÃ¼" }, ...filters.classes.map((classRow) => ({ value: classRow.id, label: classRow.name }))]}
             />
             <div className="xl:col-span-2">
-              <Field label="Arama" name="search" type="search" defaultValue={query.search} placeholder="Başlık, sınıf, bölüm, alan" />
+              <Field label="Arama" name="search" type="search" defaultValue={query.search} placeholder="BaÅŸlÄ±k, sÄ±nÄ±f, bÃ¶lÃ¼m, alan" />
             </div>
             <div className="flex items-end gap-2 xl:col-span-2">
               <Button type="submit">Filtrele</Button>
@@ -93,9 +94,9 @@ export default async function PrayerAttendanceReportsPage({ searchParams }: { se
         <CardContent className="space-y-4 p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-base font-semibold text-[#093657]">Namaz Yoklaması Oturumları</h2>
+              <h2 className="text-base font-semibold text-[#093657]">Namaz YoklamasÄ± OturumlarÄ±</h2>
               <p className="text-sm text-muted-foreground">
-                {prayerRows.length} oturum · {reportData.summary.prayerSessionCount} toplam namaz oturumu
+                {prayerRows.length} oturum Â· {reportData.summary.prayerSessionCount} toplam namaz oturumu
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -154,13 +155,13 @@ function SelectField({
   return (
     <label className="space-y-1 text-sm">
       <span className="text-xs uppercase tracking-wide text-muted-foreground">{label}</span>
-      <select name={name} defaultValue={defaultValue} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+      <NativeSelect name={name} defaultValue={defaultValue} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>
         ))}
-      </select>
+      </NativeSelect>
     </label>
   );
 }

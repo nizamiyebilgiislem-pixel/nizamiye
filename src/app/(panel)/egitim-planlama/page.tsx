@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
 import { EducationErrorMessage } from "@/components/education/education-error-message";
 import { PageHeader } from "@/components/layout/page-header";
@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { NativeSelect } from "@/components/ui/native-select";
 import { requireAuth } from "@/lib/auth";
 import { getEducationDashboard, getEducationSelectionData } from "@/lib/education/queries";
 import { cn } from "@/lib/utils";
@@ -26,41 +27,41 @@ export default async function EducationPlanningPage({ searchParams }: EducationP
     <div className="space-y-6">
       <PageHeader
         eyebrow="Akademik"
-        title="Eğitim Planlama"
-        description="Sınıf ders atamaları ve haftalık program yönetimi."
+        title="EÄŸitim Planlama"
+        description="SÄ±nÄ±f ders atamalarÄ± ve haftalÄ±k program yÃ¶netimi."
       />
 
       <EducationErrorMessage error={query.error} saved={query.saved} />
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <SummaryCard label="Aktif Sınıf" value={dashboard.summary.activeClassCount} />
-        <SummaryCard label="Atamalı Sınıf" value={dashboard.summary.assignedClassCount} />
-        <SummaryCard label="Programlı Sınıf" value={dashboard.summary.scheduledClassCount} />
-        <SummaryCard label="Hocasız Ders" value={dashboard.summary.missingTeacherAssignmentCount} />
+        <SummaryCard label="Aktif SÄ±nÄ±f" value={dashboard.summary.activeClassCount} />
+        <SummaryCard label="AtamalÄ± SÄ±nÄ±f" value={dashboard.summary.assignedClassCount} />
+        <SummaryCard label="ProgramlÄ± SÄ±nÄ±f" value={dashboard.summary.scheduledClassCount} />
+        <SummaryCard label="HocasÄ±z Ders" value={dashboard.summary.missingTeacherAssignmentCount} />
       </section>
 
       <Card>
         <CardHeader className="border-b border-border">
-          <CardTitle>Sınıf Seçimi</CardTitle>
+          <CardTitle>SÄ±nÄ±f SeÃ§imi</CardTitle>
         </CardHeader>
         <CardContent className="p-4">
           <form action="/egitim-planlama" className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-            <select name="department" defaultValue={query.department ?? selection.selectedDepartment?.id ?? ""} className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
-              <option value="">Bölüm seçin</option>
+            <NativeSelect name="department" defaultValue={query.department ?? selection.selectedDepartment?.id ?? ""} className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
+              <option value="">BÃ¶lÃ¼m seÃ§in</option>
               {selection.departments.map((department) => (
                 <option key={department.id} value={department.id}>
                   {department.name}
                 </option>
               ))}
-            </select>
-            <select name="class" defaultValue={selection.selectedClass?.id ?? ""} className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
-              <option value="">Sınıf seçin</option>
+            </NativeSelect>
+            <NativeSelect name="class" defaultValue={selection.selectedClass?.id ?? ""} className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
+              <option value="">SÄ±nÄ±f seÃ§in</option>
               {selection.classes.map((classRow) => (
                 <option key={classRow.id} value={classRow.id}>
                   {classRow.name}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
             <Button type="submit">
               Filtrele
             </Button>
@@ -70,20 +71,20 @@ export default async function EducationPlanningPage({ searchParams }: EducationP
 
       <Card>
         <CardHeader className="border-b border-border">
-          <CardTitle>Sınıflar</CardTitle>
+          <CardTitle>SÄ±nÄ±flar</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Sınıf</TableHead>
-                  <TableHead>Bölüm</TableHead>
-                  <TableHead>Ders Sayısı</TableHead>
+                  <TableHead>SÄ±nÄ±f</TableHead>
+                  <TableHead>BÃ¶lÃ¼m</TableHead>
+                  <TableHead>Ders SayÄ±sÄ±</TableHead>
                   <TableHead>Program Slotu</TableHead>
-                  <TableHead>Hocasız Ders</TableHead>
+                  <TableHead>HocasÄ±z Ders</TableHead>
                   <TableHead>Durum</TableHead>
-                  <TableHead className="text-right">İşlemler</TableHead>
+                  <TableHead className="text-right">Ä°ÅŸlemler</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -103,12 +104,12 @@ export default async function EducationPlanningPage({ searchParams }: EducationP
                       <div className="flex justify-end gap-2">
                         {["admin", "genel_mudur", "bolum_muduru"].includes(profile.role) ? (
                           <Link href={`/egitim-planlama/ders-atamalari/${classRow.id}`} className={cn(buttonVariants({ variant: "secondary", size: "sm" }))}>
-                            Ders Atamaları
+                            Ders AtamalarÄ±
                           </Link>
                         ) : null}
                         {profile.role !== "destek_birim_muduru" ? (
                           <Link href={`/egitim-planlama/ders-programi/${classRow.id}`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
-                            Ders Programı
+                            Ders ProgramÄ±
                           </Link>
                         ) : null}
                       </div>

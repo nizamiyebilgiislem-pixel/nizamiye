@@ -9,6 +9,7 @@ import { StudentAvatar } from "@/components/students/student-avatar";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
 import { requireAuth } from "@/lib/auth";
 import { updateDepartmentAttendanceAction } from "@/lib/attendance/actions";
 import { attendanceRecordStatusLabelsByType, attendanceTypeDescriptions, attendanceTypeLabels, attendanceTypes } from "@/lib/attendance/constants";
@@ -123,7 +124,7 @@ export default async function DepartmentAttendancePage({ searchParams }: Departm
                         </div>
                       </div>
                       <div className="grid gap-2 md:min-w-[360px] md:grid-cols-[160px_minmax(0,1fr)]">
-                        <select
+                        <NativeSelect
                           data-attendance-status="true"
                           name={`status_${record.id}`}
                           defaultValue={record.status}
@@ -134,7 +135,7 @@ export default async function DepartmentAttendancePage({ searchParams }: Departm
                               {label}
                             </option>
                           ))}
-                        </select>
+                        </NativeSelect>
                         <Input name={`note_${record.id}`} defaultValue={record.note ?? ""} placeholder="Not" />
                       </div>
                     </div>
