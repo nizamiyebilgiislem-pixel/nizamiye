@@ -17,6 +17,8 @@ import { GuidanceDashboardCard } from "@/components/guidance/guidance-dashboard-
 import { TaskDashboardCard } from "@/components/tasks/task-dashboard-card";
 import { LibraryDashboardCard } from "@/components/library/library-dashboard-card";
 import { LiveSessionDashboardCard } from "@/components/live-sessions/live-session-dashboard-card";
+import { MetricCard } from "@/components/dashboard/metric-card";
+import { QuickActionButton } from "@/components/dashboard/quick-action-button";
 import { TodayLessonLogsCard } from "@/components/dashboard/today-lesson-logs-card";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -94,10 +96,10 @@ export async function DepartmentManagerDashboard({ profile }: { profile: Profile
       ) : null}
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <MiniStatCard icon={GraduationCap} label="Aktif Talebe" value={data.active_student_count} />
-        <MiniStatCard icon={School} label="Aktif Sınıf" value={data.active_class_count} />
-        <MiniStatCard icon={UsersRound} label="Aktif Hoca" value={data.active_teacher_count} />
-        <MiniStatCard icon={ClipboardList} label="Kanaat Eksik" value={data.missing_evaluation_count} />
+        <MetricCard icon={GraduationCap} label="Aktif Talebe" value={data.active_student_count} />
+        <MetricCard icon={School} label="Aktif Sınıf" value={data.active_class_count} />
+        <MetricCard icon={UsersRound} label="Aktif Hoca" value={data.active_teacher_count} />
+        <MetricCard icon={ClipboardList} label="Kanaat Eksik" value={data.missing_evaluation_count} />
       </div>
 
       {missingAttendanceClasses.length > 0 ? (
@@ -223,38 +225,4 @@ export async function DepartmentManagerDashboard({ profile }: { profile: Profile
   );
 }
 
-function MiniStatCard({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: typeof GraduationCap;
-  label: string;
-  value: number;
-}) {
-  return (
-    <Card className="border-[#e5e7eb] bg-white">
-      <CardContent className="flex items-center gap-2.5 p-3">
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-[#eaf1f6]">
-          <Icon className="size-4 text-[#093657]" aria-hidden />
-        </div>
-        <div className="flex flex-1 items-center justify-between gap-2">
-          <p className="truncate text-xs font-medium text-muted-foreground">{label}</p>
-          <p className="text-sm font-semibold text-[#093657]">{value.toLocaleString("tr-TR")}</p>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
 
-function QuickActionButton({ href, label }: { href: string; label: string }) {
-  return (
-    <Link
-      href={href}
-      className="inline-flex items-center gap-1.5 rounded-md border border-[#093657]/20 bg-white px-3 py-2 text-xs font-medium text-[#093657] transition-colors hover:bg-[#eaf1f6]"
-    >
-      <FileText className="size-3.5" aria-hidden />
-      {label}
-    </Link>
-  );
-}

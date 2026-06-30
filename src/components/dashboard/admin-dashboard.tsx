@@ -1,10 +1,10 @@
 import Link from "next/link";
-import type { ComponentType } from "react";
 import { Activity, Building2, GraduationCap, School, UsersRound } from "lucide-react";
 
 import { DepartmentOccupancyPanel } from "@/components/dashboard/department-occupancy-panel";
 import { DepartmentStatusCard } from "@/components/dashboard/department-status-card";
 import { DepartmentSuccessPanel } from "@/components/dashboard/department-success-panel";
+import { MetricCard } from "@/components/dashboard/metric-card";
 import { AttendanceDashboardCard } from "@/components/attendance/attendance-dashboard-card";
 import { DormitoryDashboardCard } from "@/components/dormitory/dormitory-dashboard-card";
 import { LibraryDashboardCard } from "@/components/library/library-dashboard-card";
@@ -18,8 +18,9 @@ import { ReportShortcutCard } from "@/components/reports/report-shortcut-card";
 import { StudentAvatar } from "@/components/students/student-avatar";
 import { StudentStatusBadge } from "@/components/students/student-status-badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { getAttendanceDashboardSummary } from "@/lib/attendance/queries";
-import { getDashboardData, type DashboardDistributionItem, type DashboardMetric } from "@/lib/dashboard/queries";
+import { getDashboardData, type DashboardDistributionItem } from "@/lib/dashboard/queries";
 import { getDepartmentAnalyticsForProfile } from "@/lib/departments/analytics";
 import { getDormitoryDashboardData, getUnassignedStudentsCount } from "@/lib/dormitory/queries";
 import { getGuidanceDashboardData } from "@/lib/guidance/queries";
@@ -30,7 +31,7 @@ import { getLiveSessionDashboardData } from "@/lib/live-sessions/queries";
 
 import type { ProfileRow } from "@/types/database";
 
-const metricIcons: Record<string, ComponentType<{ className?: string; "aria-hidden"?: boolean }>> = {
+const metricIcons: Record<string, typeof GraduationCap> = {
   "active-students": GraduationCap,
   teachers: UsersRound,
   "active-classes": School,
@@ -82,9 +83,10 @@ export async function AdminDashboard({ profile }: { profile: ProfileRow }) {
       <section className="space-y-2">
         <h2 className="text-sm font-semibold text-[#093657]">Bölümlerin Güncel Durumu</h2>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {dashboard.metrics.filter((metric) => mainMetricKeys.has(metric.key)).map((metric) => (
-            <SmallMetricCard key={metric.key} metric={metric} />
-          ))}
+          {dashboard.metrics.filter((metric) => mainMetricKeys.has(metric.key)).map((metric) => {
+            const Icon = metricIcons[metric.key] ?? Activity;
+            return <MetricCard key={metric.key} icon={Icon} label={metric.label} value={metric.value} />;
+          })}
         </div>
       </section>
 
@@ -100,7 +102,7 @@ export async function AdminDashboard({ profile }: { profile: ProfileRow }) {
             ))}
           </div>
         ) : (
-          <EmptyState text="Görüntülenecek bölüm bulunamadı." />
+          <EmptyState title="Görüntülenecek bölüm bulunamadı." />
         )}
       </section>
 
@@ -187,7 +189,7 @@ export async function AdminDashboard({ profile }: { profile: ProfileRow }) {
                 </Link>
               ))
             ) : (
-              <EmptyState text="Henüz kayıt yok." />
+              <EmptyState title="Henüz kayıt yok." />
             )}
           </CardContent>
         </Card>
@@ -237,24 +239,6 @@ export async function AdminDashboard({ profile }: { profile: ProfileRow }) {
   );
 }
 
-function SmallMetricCard({ metric }: { metric: DashboardMetric }) {
-  const Icon = metricIcons[metric.key] ?? Activity;
-
-  return (
-    <Card className="border-[#e5e7eb] bg-white">
-      <CardContent className="flex items-center gap-2.5 p-3">
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-[#eaf1f6]">
-          <Icon className="size-4 text-[#093657]" aria-hidden />
-        </div>
-        <div className="flex flex-1 items-center justify-between gap-2">
-          <p className="truncate text-xs font-medium text-muted-foreground">{metric.label}</p>
-          <p className="text-sm font-semibold text-[#093657]">{metric.value.toLocaleString("tr-TR")}</p>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
 function RecentStudentRecordsCard({
   title,
   description,
@@ -282,7 +266,7 @@ function RecentStudentRecordsCard({
             </Link>
           ))
         ) : (
-          <EmptyState text="Henüz kayıt yok." />
+          <EmptyState title="Henüz kayıt yok." />
         )}
       </CardContent>
     </Card>
@@ -316,15 +300,11 @@ function DistributionCard({ title, items }: { title: string; items: DashboardDis
             </Link>
           ))
         ) : (
-          <EmptyState text="Veri yok." />
+          <EmptyState title="Veri yok." />
         )}
       </CardContent>
     </Card>
   );
-}
-
-function EmptyState({ text }: { text: string }) {
-  return <div className="px-4 py-6 text-center text-sm text-muted-foreground">{text}</div>;
 }
 
 function formatDate(value: string) {

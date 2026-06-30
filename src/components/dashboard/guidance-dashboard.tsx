@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CalendarClock, ClipboardList, HeartHandshake, Plus, Users } from "lucide-react";
 
+import { MetricCard } from "@/components/dashboard/metric-card";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getGuidanceDashboardData, getRecentInterviews, getUpcomingFollowUps } from "@/lib/guidance/queries";
@@ -86,22 +87,6 @@ async function getTodayFollowUpCount() {
     .eq("status", "planned")
     .eq("follow_up_date", today);
   return count ?? 0;
-}
-
-function MetricCard({ icon: Icon, label, value }: { icon: typeof Users; label: string; value: number }) {
-  return (
-    <Card className="border-[#e5e7eb] bg-white">
-      <CardContent className="flex items-center gap-2.5 p-3">
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-[#eaf1f6]">
-          <Icon className="size-4 text-[#093657]" aria-hidden />
-        </div>
-        <div className="flex flex-1 items-center justify-between gap-2">
-          <p className="truncate text-xs font-medium text-muted-foreground">{label}</p>
-          <p className="text-sm font-semibold text-[#093657]">{value.toLocaleString("tr-TR")}</p>
-        </div>
-      </CardContent>
-    </Card>
-  );
 }
 
 function ListCard({

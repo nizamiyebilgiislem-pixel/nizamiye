@@ -4,6 +4,8 @@ import { AlertTriangle, BookOpen, CheckCircle2, ClipboardList, FileText, Graduat
 import { StudentAvatar } from "@/components/students/student-avatar";
 import { StudentStatusBadge } from "@/components/students/student-status-badge";
 import { LiveSessionDashboardCard } from "@/components/live-sessions/live-session-dashboard-card";
+import { MetricCard } from "@/components/dashboard/metric-card";
+import { QuickActionButton } from "@/components/dashboard/quick-action-button";
 import { TodayLessonLogsCard } from "@/components/dashboard/today-lesson-logs-card";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/layout/page-header";
@@ -82,10 +84,10 @@ export async function ClassTeacherDashboard({ profile }: { profile: ProfileRow }
       ) : null}
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <MiniStatCard icon={Users} label="Toplam Talebe" value={totalStudents} />
-        <MiniStatCard icon={School} label={data.classes.length > 1 ? "Sınıf Sayısı" : "Sınıf"} value={data.classes.length} />
-        <MiniStatCard icon={ClipboardList} label="Kanaat Eksik" value={totalMissingEvaluation} />
-        <MiniStatCard
+        <MetricCard icon={Users} label="Toplam Talebe" value={totalStudents} />
+        <MetricCard icon={School} label={data.classes.length > 1 ? "Sınıf Sayısı" : "Sınıf"} value={data.classes.length} />
+        <MetricCard icon={ClipboardList} label="Kanaat Eksik" value={totalMissingEvaluation} />
+        <MetricCard
           icon={BookOpen}
           label="Ders Programı"
           value={data.classes.filter((c) => c.has_schedule).length}
@@ -303,38 +305,4 @@ async function AttendanceSummaryCard({ profile }: { profile: ProfileRow }) {
   );
 }
 
-function MiniStatCard({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: typeof Users;
-  label: string;
-  value: number;
-}) {
-  return (
-    <Card className="border-[#e5e7eb] bg-white">
-      <CardContent className="flex items-center gap-2.5 p-3">
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-[#eaf1f6]">
-          <Icon className="size-4 text-[#093657]" aria-hidden />
-        </div>
-        <div className="flex flex-1 items-center justify-between gap-2">
-          <p className="truncate text-xs font-medium text-muted-foreground">{label}</p>
-          <p className="text-sm font-semibold text-[#093657]">{value.toLocaleString("tr-TR")}</p>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
 
-function QuickActionButton({ href, label }: { href: string; label: string }) {
-  return (
-    <Link
-      href={href}
-      className="inline-flex items-center gap-1.5 rounded-md border border-[#093657]/20 bg-white px-3 py-2 text-xs font-medium text-[#093657] transition-colors hover:bg-[#eaf1f6]"
-    >
-      <FileText className="size-3.5" aria-hidden />
-      {label}
-    </Link>
-  );
-}
