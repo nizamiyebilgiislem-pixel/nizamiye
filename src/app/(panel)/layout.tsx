@@ -1,6 +1,8 @@
+import { Suspense } from "react";
 import { headers } from "next/headers";
 
 import { PanelShell } from "@/components/layout/panel-shell";
+import { PanelShellSkeleton } from "@/components/layout/panel-shell-skeleton";
 import { ToastProvider } from "@/components/toast/toast-provider";
 import { RouteToast } from "@/components/toast/route-toast";
 import { requireAuth } from "@/lib/auth";
@@ -11,11 +13,7 @@ import { getNavigationBadgeCounts } from "@/lib/notifications/queries";
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 
-export default async function PanelLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+async function PanelLayoutContent({ children }: { children: React.ReactNode }) {
   const { profile } = await requireAuth();
 
   const headersList = await headers();
@@ -34,11 +32,23 @@ export default async function PanelLayout({
   ]);
 
   return (
+    <PanelShell navigationGroups={applyNavigationBadges(navigationGroups, badgeCounts)} profile={profile}>
+      {children}
+    </PanelShell>
+  );
+}
+
+export default async function PanelLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
     <ToastProvider>
       <RouteToast />
-      <PanelShell navigationGroups={applyNavigationBadges(navigationGroups, badgeCounts)} profile={profile}>
-        {children}
-      </PanelShell>
+      <Suspense fallback={<PanelShellSkeleton />}>
+        <PanelLayoutContent>{children}</PanelLayoutContent>
+      </Suspense>
     </ToastProvider>
   );
 }

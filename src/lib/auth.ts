@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 
@@ -17,21 +18,16 @@ export type CurrentAuthState = {
   error: unknown | null;
 };
 
-export async function getCurrentUser() {
+export const getCurrentUser = cache(async () => {
   const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  return user;
+});
 
-    return user;
-  } catch {
-    return null;
-  }
-}
-
-export async function getCurrentAuthState(): Promise<CurrentAuthState> {
+export const getCurrentAuthState = cache(async (): Promise<CurrentAuthState> => {
   const user = await getCurrentUser();
 
   if (!user) {
@@ -41,9 +37,9 @@ export async function getCurrentAuthState(): Promise<CurrentAuthState> {
   const { profile, error } = await getActiveProfileForUserId(user.id);
 
   return { user, profile, error };
-}
+});
 
-export async function getActiveProfileForUserId(userId: string) {
+export const getActiveProfileForUserId = cache(async (userId: string) => {
   const supabase = await createSupabaseServerClient();
   const { data: profile, error } = await supabase
     .from("profiles")
@@ -53,7 +49,7 @@ export async function getActiveProfileForUserId(userId: string) {
     .maybeSingle();
 
   return { profile, error };
-}
+});
 
 export async function getCurrentProfile() {
   const { profile } = await getCurrentAuthState();
