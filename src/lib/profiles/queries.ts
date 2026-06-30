@@ -7,9 +7,19 @@ export type ProfileWithDepartment = ProfileRow & {
   department: DepartmentRow | null;
 };
 
+export type ProfileCourseAssignment = {
+  id: string;
+  course_id: string;
+  course_name: string;
+  class_id: string;
+  class_name: string;
+  is_active: boolean;
+};
+
 export type ProfileDetail = ProfileWithDepartment & {
   assigned_classes: ClassRow[];
   department_classes: ClassRow[];
+  assigned_courses: ProfileCourseAssignment[];
 };
 
 export type ProfileListFilters = {
@@ -96,21 +106,38 @@ export async function getProfileById(id: string) {
     return null;
   }
 
-  const [{ data: department }, { data: assignedClasses }, { data: departmentClasses }] = await Promise.all([
-    profile.department_id
-      ? supabase.from("departments").select("*").eq("id", profile.department_id).maybeSingle()
-      : Promise.resolve({ data: null }),
-    supabase.from("classes").select("*").eq("class_teacher_id", profile.id).order("name", { ascending: true }),
-    profile.department_id
-      ? supabase.from("classes").select("*").eq("department_id", profile.department_id).order("name", { ascending: true })
-      : Promise.resolve({ data: [] }),
-  ]);
+  const [{ data: department }, { data: assignedClasses }, { data: departmentClasses }, { data: classCourses }, { data: allCourses }, { data: allClasses }] =
+    await Promise.all([
+      profile.department_id
+        ? supabase.from("departments").select("*").eq("id", profile.department_id).maybeSingle()
+        : Promise.resolve({ data: null }),
+      supabase.from("classes").select("*").eq("class_teacher_id", profile.id).order("name", { ascending: true }),
+      profile.department_id
+        ? supabase.from("classes").select("*").eq("department_id", profile.department_id).order("name", { ascending: true })
+        : Promise.resolve({ data: [] }),
+      supabase.from("class_courses").select("*").eq("teacher_id", profile.id),
+      supabase.from("courses").select("*"),
+      supabase.from("classes").select("*"),
+    ]);
+
+  const classMap = new Map((allClasses ?? []).map((c) => [c.id, c]));
+  const courseMap = new Map((allCourses ?? []).map((c) => [c.id, c]));
+
+  const assigned_courses: ProfileCourseAssignment[] = (classCourses ?? []).map((cc) => ({
+    id: cc.id,
+    course_id: cc.course_id,
+    course_name: courseMap.get(cc.course_id)?.name ?? "-",
+    class_id: cc.class_id,
+    class_name: classMap.get(cc.class_id)?.name ?? "-",
+    is_active: cc.is_active,
+  }));
 
   return {
     ...profile,
     department: department ?? null,
     assigned_classes: assignedClasses ?? [],
     department_classes: departmentClasses ?? [],
+    assigned_courses,
   };
 }
 

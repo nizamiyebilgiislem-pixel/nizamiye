@@ -16,6 +16,9 @@ import {
 } from "@/lib/profiles/actions";
 import { canEditStaffProfile, canViewStaffProfile } from "@/lib/profiles/permissions";
 import { getProfileById } from "@/lib/profiles/queries";
+import type { ProfileCourseAssignment } from "@/lib/profiles/queries";
+import { TeacherScheduleCard } from "@/components/schedule/teacher-schedule-card";
+import { getTeacherScheduleSlots } from "@/lib/education/queries";
 import { cn } from "@/lib/utils";
 
 type TeacherDetailPageProps = {
@@ -31,6 +34,8 @@ export default async function TeacherDetailPage({ params, searchParams }: Teache
   if (!target) {
     notFound();
   }
+
+  const teacherSlots = target.role === "hoca" ? await getTeacherScheduleSlots(target.id) : [];
 
   if (!canViewStaffProfile(profile, target)) {
     redirect("/hocalar?error=unauthorized");
@@ -64,8 +69,9 @@ export default async function TeacherDetailPage({ params, searchParams }: Teache
       />
       <ClassListCard title="Sınıf Hocası Olduğu Sınıflar" classes={target.assigned_classes} />
       <ClassListCard title="Kendi Bölümündeki Sınıflar" classes={target.department_classes} />
+      <CourseListCard title="Verdiği Dersler" courses={target.assigned_courses} />
+      {teacherSlots.length > 0 ? <TeacherScheduleCard slots={teacherSlots} /> : null}
       <div className="grid gap-4 md:grid-cols-2">
-        <Placeholder title="Verdiği Dersler" />
         <Placeholder title="Sorumlu Olduğu Öğrenciler" />
       </div>
     </div>
@@ -98,6 +104,35 @@ function ClassListCard({ title, classes }: { title: string; classes: Array<{ id:
             >
               <span className="font-medium">{classRow.name}</span>
               <span className="text-muted-foreground">{classRow.is_active ? "Aktif" : "Pasif"}</span>
+            </Link>
+          ))
+        ) : (
+          <p className="text-sm text-muted-foreground">Kayıt bulunamadı.</p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function CourseListCard({ title, courses }: { title: string; courses: ProfileCourseAssignment[] }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        {courses.length > 0 ? (
+          courses.map((course) => (
+            <Link
+              key={course.id}
+              href={`/ders-sistemi/${course.course_id}/duzenle`}
+              className="flex items-center justify-between rounded-md border border-border bg-background px-3 py-2 text-sm"
+            >
+              <div className="flex flex-col">
+                <span className="font-medium">{course.course_name}</span>
+                <span className="text-xs text-muted-foreground">{course.class_name}</span>
+              </div>
+              <span className="text-muted-foreground">{course.is_active ? "Aktif" : "Pasif"}</span>
             </Link>
           ))
         ) : (

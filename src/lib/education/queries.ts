@@ -160,6 +160,58 @@ export async function getEducationScheduleData(profile: ProfileRow, classId: str
   };
 }
 
+export type TeacherScheduleSlot = WeeklyScheduleSlotWithRelations & {
+  class_name: string;
+};
+
+export async function getTeacherScheduleSlots(profileId: string): Promise<TeacherScheduleSlot[]> {
+  const supabase = await createSupabaseServerClient();
+
+  const { data: classCourses } = await supabase
+    .from("class_courses")
+    .select("*")
+    .eq("teacher_id", profileId)
+    .eq("is_active", true);
+
+  if (!classCourses || classCourses.length === 0) {
+    return [];
+  }
+
+  const classCourseIds = classCourses.map((cc) => cc.id);
+  const classIds = Array.from(new Set(classCourses.map((cc) => cc.class_id)));
+  const courseIds = Array.from(new Set(classCourses.map((cc) => cc.course_id)));
+
+  const [{ data: slots }, { data: classes }, { data: courses }, { data: teachers }] = await Promise.all([
+    supabase.from("weekly_schedule_slots").select("*").in("class_course_id", classCourseIds).order("period_no", { ascending: true }),
+    supabase.from("classes").select("*").in("id", classIds),
+    supabase.from("courses").select("*").in("id", courseIds),
+    supabase.from("profiles").select("*").in("id", [profileId]),
+  ]);
+
+  const classMap = new Map((classes ?? []).map((c) => [c.id, c]));
+  const courseMap = new Map((courses ?? []).map((c) => [c.id, c]));
+  const teacherMap = new Map((teachers ?? []).map((t) => [t.id, t]));
+  const classCourseMap = new Map(classCourses.map((cc) => [cc.id, cc]));
+
+  return (slots ?? []).map((slot) => {
+    const cc = classCourseMap.get(slot.class_course_id);
+    return {
+      ...slot,
+      class_course: cc
+        ? {
+            ...cc,
+            course: courseMap.get(cc.course_id) ?? null,
+            teacher: teacherMap.get(profileId) ?? null,
+            slot_count: 0,
+          }
+        : null,
+      course: cc ? (courseMap.get(cc.course_id) ?? null) : null,
+      teacher: teacherMap.get(profileId) ?? null,
+      class_name: cc ? (classMap.get(cc.class_id)?.name ?? "-") : "-",
+    };
+  });
+}
+
 export async function getEducationClassById(profile: ProfileRow, classId: string) {
   const supabase = await createSupabaseServerClient();
   const { data: classRow, error } = await supabase.from("classes").select("*").eq("id", classId).maybeSingle();
