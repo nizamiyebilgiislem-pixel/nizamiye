@@ -39,7 +39,7 @@ export default async function GradeEntryPage({ searchParams }: GradeEntryPagePro
   const termStateMessage = !workspace.currentTerm
     ? "Aktif dönem yok. Not girişi başlamadan önce cari dönemi belirleyin."
     : workspace.currentTerm.status !== "active" || !workspace.currentTerm.is_active
-      ? "Kapalı dönem için not girişi yapılamaz."
+      ? "Kapalı dönem için sınav girişi yapılamaz."
       : null;
   const helperMessage = !workspace.selectedDepartmentId
     ? "Önce bölüm seçiniz."
@@ -59,9 +59,9 @@ export default async function GradeEntryPage({ searchParams }: GradeEntryPagePro
             ? "Bu sınıfta aktif öğrenci bulunamadı."
             : null;
   const readOnlyMessage = workspace.isReadOnly
-    ? "Bu rolde not girişi salt okunur durumdadır. Kaydet butonu gösterilmez."
+    ? "Bu rolde sınav girişi salt okunur durumdadır. Kaydet butonu gösterilmez."
     : profile.role === "hoca" && workspace.classes.length === 0
-      ? "Yetkiniz olan ders/sınıf ataması bulunmadığı için not girişi yapamazsınız."
+      ? "Yetkiniz olan ders/sınıf ataması bulunmadığı için sınav girişi yapamazsınız."
       : null;
   const gradeEntryFormKey = [
     workspace.selectedDepartmentId,
@@ -72,7 +72,7 @@ export default async function GradeEntryPage({ searchParams }: GradeEntryPagePro
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Not Sistemi" title="Not Girişi" description="Bölüm, sınıf, ders ve sınav türü seçerek not girişini düzenli bir akışla yönetin." />
+      <PageHeader eyebrow="Not Sistemi" title="Sınav Girişi" description="Bölüm, sınıf, ders ve sınav türü seçerek sınav girişini düzenli bir akışla yönetin." />
       <GradeErrorMessage error={params.error} />
 
       {params.success === "saved" ? (
@@ -95,7 +95,7 @@ export default async function GradeEntryPage({ searchParams }: GradeEntryPagePro
 
       <Card>
         <CardHeader className="pb-0">
-          <CardTitle className="text-base">Not Girişi Filtreleri</CardTitle>
+          <CardTitle className="text-base">Sınav Girişi Filtreleri</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 p-4">
           <GradeEntryFilter

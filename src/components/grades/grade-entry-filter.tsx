@@ -151,7 +151,7 @@ export function GradeEntryFilter({
             ))}
           </select>
           <span className="text-xs text-muted-foreground">
-            {lockDepartmentSelection ? "Rolünüz gereği bölüm seçimi sabitlenmiştir." : "Not girişini bölüm bazında daraltın."}
+            {lockDepartmentSelection ? "Rolünüz gereği bölüm seçimi sabitlenmiştir." : "Sınav girişini bölüm bazında daraltın."}
           </span>
         </label>
 

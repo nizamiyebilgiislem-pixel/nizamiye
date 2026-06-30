@@ -56,7 +56,7 @@ export const moduleGroups: NavigationGroup[] = [
     label: "Akademik",
     items: [
       { label: "Ders Sistemi", href: "/ders-sistemi", iconKey: "grades", allowedRoles: managerRoles },
-      { label: "Not Girişi", href: "/not-sistemi/not-girisi", iconKey: "grades", allowedRoles: staffViewerRoles },
+      { label: "Sınav Girişi", href: "/not-sistemi/not-girisi", iconKey: "grades", allowedRoles: staffViewerRoles },
       { label: "Dönemler", href: "/not-sistemi/donemler", iconKey: "calendar", allowedRoles: academicTermViewerRoles },
       { label: "Eğitim Planlama", href: "/egitim-planlama", iconKey: "calendar", allowedRoles: staffViewerRoles },
       { label: "Kanaat Sistemi", href: "/kanaat-sistemi", iconKey: "evaluations", allowedRoles: staffViewerRoles },

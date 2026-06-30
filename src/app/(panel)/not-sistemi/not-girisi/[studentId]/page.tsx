@@ -32,7 +32,7 @@ export default async function StudentGradeEntryPage({ params, searchParams }: St
     <div className="space-y-6">
       <div className="flex items-start gap-4">
         <StudentAvatar name={student.full_name} photoUrl={student.photo_url} size="lg" previewable />
-        <PageHeader eyebrow="Not Girişi" title={student.full_name} description={`${student.department?.name ?? "-"} · ${student.course_class.name}`} />
+        <PageHeader eyebrow="Sınav Girişi" title={student.full_name} description={`${student.department?.name ?? "-"} · ${student.course_class.name}`} />
       </div>
       <GradeErrorMessage error={query.error} />
       {query.saved ? <div className="rounded-md border border-primary/40 bg-primary/10 px-3 py-2 text-sm text-primary">Notlar kaydedildi.</div> : null}

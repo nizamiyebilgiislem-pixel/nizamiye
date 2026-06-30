@@ -9,7 +9,7 @@ const messages: Record<string, string> = {
   grade: "Not değeri 0 ile 100 arasında olmalıdır.",
   empty: "Kaydedilecek not girilmedi.",
   term: "Not kaydı için dönem seçilmelidir.",
-  "term-closed": "Aktif dönem kapalı olduğu için not girişi yapılamaz.",
+  "term-closed": "Aktif dönem kapalı olduğu için sınav girişi yapılamaz.",
   class: "Öğrencinin sınıf bilgisi bulunamadı.",
   "not-found": "Kayıt bulunamadı.",
   selection: "Bölüm, sınıf, ders ve sınav türü seçimini tamamlayın.",
