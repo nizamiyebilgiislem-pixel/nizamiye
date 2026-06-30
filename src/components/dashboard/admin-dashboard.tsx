@@ -7,6 +7,7 @@ import { DepartmentSuccessPanel } from "@/components/dashboard/department-succes
 import { MetricCard } from "@/components/dashboard/metric-card";
 import { AttendanceDashboardCard } from "@/components/attendance/attendance-dashboard-card";
 import { DormitoryDashboardCard } from "@/components/dormitory/dormitory-dashboard-card";
+import { DutyDashboardCard } from "@/components/dashboard/duty-dashboard-card";
 import { LibraryDashboardCard } from "@/components/library/library-dashboard-card";
 import { GuidanceDashboardCard } from "@/components/guidance/guidance-dashboard-card";
 import { TaskDashboardCard } from "@/components/tasks/task-dashboard-card";
@@ -131,6 +132,7 @@ export async function AdminDashboard({ profile }: { profile: ProfileRow }) {
           activeSurveys={guidanceData.active_surveys}
           plannedActivities={guidanceData.planned_activities}
         />
+        <DutyDashboardCard />
         <TaskDashboardCard
           openCount={taskCounts.pending + taskCounts.in_progress}
           overdueCount={taskCounts.overdue}

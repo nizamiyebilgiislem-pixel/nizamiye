@@ -8,6 +8,7 @@ import { buildAuditActor, createAuditLog } from "@/lib/audit/log";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { canCreateTask, canAssignToProfile, canEditTask, canUpdateTaskStatus, canCommentOnTask, canDeleteTask, isAssignableRole } from "@/lib/tasks/permissions";
 import { logSupabaseActionError, buildFriendlyDbErrorMessage } from "@/lib/supabase-action-error";
+import type { TaskRow } from "@/types/database";
 
 const createTaskSchema = z.object({
   title: z.string().min(1, "Başlık zorunludur."),
@@ -28,6 +29,8 @@ const editTaskSchema = z.object({
   title: z.string().min(1, "Başlık zorunludur."),
   description: z.string().optional(),
   priority: z.string().optional(),
+  assigned_to: z.string().optional(),
+  department_id: z.string().optional(),
   due_date: z.string().optional(),
 });
 
@@ -136,7 +139,7 @@ export async function updateTaskStatusAction(_previousState: unknown, formData: 
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
-  const updateFields: Record<string, unknown> = { status };
+  const updateFields: Partial<TaskRow> = { status };
 
   if (status === "completed") {
     updateFields.completed_at = new Date().toISOString();
@@ -181,7 +184,7 @@ export async function editTaskAction(_previousState: unknown, formData: FormData
     return { error: parsed.error.issues.map((e) => e.message).join(", ") };
   }
 
-  const { id, title, description, priority, due_date } = parsed.data;
+  const { id, title, description, priority, assigned_to, department_id, due_date } = parsed.data;
 
   const { data: task } = await supabase
     .from("tasks")
@@ -197,14 +200,46 @@ export async function editTaskAction(_previousState: unknown, formData: FormData
     return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
   }
 
+  const updateFields: Partial<TaskRow> = {
+    title,
+    description: description || null,
+    priority: priority || "normal",
+    due_date: due_date || null,
+  };
+
+  if (assigned_to) {
+    const { data: targetProfile } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", assigned_to)
+      .single();
+
+    if (!targetProfile) {
+      return { error: "Atanacak kullanıcı bulunamadı." };
+    }
+
+    if (!targetProfile.is_active) {
+      return { error: "Pasif kullanıcıya görev atanamaz." };
+    }
+
+    if (!isAssignableRole(targetProfile.role)) {
+      return { error: "Bu kullanıcıya görev atanamaz." };
+    }
+
+    if (!canAssignToProfile(profile, targetProfile)) {
+      return { error: "Bu kişiye görev atama yetkiniz bulunmamaktadır." };
+    }
+
+    updateFields.assigned_to = assigned_to;
+  }
+
+  if (department_id !== undefined) {
+    updateFields.department_id = department_id || null;
+  }
+
   const { error } = await supabase
     .from("tasks")
-    .update({
-      title,
-      description: description || null,
-      priority: priority || "normal",
-      due_date: due_date || null,
-    })
+    .update(updateFields)
     .eq("id", id);
 
   if (error) {

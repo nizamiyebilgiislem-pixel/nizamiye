@@ -13,6 +13,7 @@ import {
 
 import { AttendanceDashboardCard } from "@/components/attendance/attendance-dashboard-card";
 import { DormitoryDashboardCard } from "@/components/dormitory/dormitory-dashboard-card";
+import { DutyDashboardCard } from "@/components/dashboard/duty-dashboard-card";
 import { GuidanceDashboardCard } from "@/components/guidance/guidance-dashboard-card";
 import { TaskDashboardCard } from "@/components/tasks/task-dashboard-card";
 import { LibraryDashboardCard } from "@/components/library/library-dashboard-card";
@@ -200,6 +201,7 @@ export async function DepartmentManagerDashboard({ profile }: { profile: Profile
           activeSurveys={guidanceData.active_surveys}
           plannedActivities={guidanceData.planned_activities}
         />
+        <DutyDashboardCard />
         <TaskDashboardCard
           openCount={taskCounts.pending + taskCounts.in_progress}
           overdueCount={taskCounts.overdue}

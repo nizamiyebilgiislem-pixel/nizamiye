@@ -83,6 +83,7 @@ export const moduleGroups: NavigationGroup[] = [
       { label: "Dönem Sonlandırma", href: "/sistem/donem-sonlandirma", iconKey: "audit", allowedRoles: topManagerRoles },
       { label: "Talep Yönetimi", href: "/talepler", iconKey: "talepler", allowedRoles: talepRoles },
       { label: "Görev Yönetimi", href: "/gorevler", iconKey: "tasks", allowedRoles: taskRoles },
+      { label: "Nöbetçi Yönetimi", href: "/gorevler/nobetci", iconKey: "calendar", allowedRoles: taskRoles },
       { label: "Ayarlar", href: "/ayarlar", iconKey: "settings", allowedRoles: topManagerRoles },
       { label: "Modül Yetkilileri", href: "/ayarlar/modul-yetkilileri", iconKey: "settings", allowedRoles: topManagerRoles },
     ],

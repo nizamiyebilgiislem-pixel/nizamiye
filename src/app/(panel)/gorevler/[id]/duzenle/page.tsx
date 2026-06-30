@@ -4,18 +4,17 @@ import { PageHeader } from "@/components/layout/page-header";
 import { TaskEditForm } from "@/components/tasks/task-edit-form";
 import { requireAuth } from "@/lib/auth";
 import { canEditTask } from "@/lib/tasks/permissions";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { getAssignableProfiles, getDepartmentOptions } from "@/lib/tasks/queries";
 
 export default async function GorevDuzenlePage({ params }: { params: Promise<{ id: string }> }) {
   const { profile } = await requireAuth();
   const { id } = await params;
 
-  const supabase = createSupabaseAdminClient();
-  const { data: task } = await supabase
-    .from("tasks")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const [task, assignableProfiles, departmentOptions] = await Promise.all([
+    getTaskByIdRaw(id),
+    getAssignableProfiles(profile),
+    getDepartmentOptions(),
+  ]);
 
   if (!task) notFound();
 
@@ -26,7 +25,14 @@ export default async function GorevDuzenlePage({ params }: { params: Promise<{ i
   return (
     <div className="space-y-6">
       <PageHeader eyebrow="Görev Yönetimi" title="Görevi Düzenle" description="Görev bilgilerini güncelleyin." />
-      <TaskEditForm task={task} />
+      <TaskEditForm task={task} assignableProfiles={assignableProfiles} departmentOptions={departmentOptions} />
     </div>
   );
+}
+
+async function getTaskByIdRaw(id: string) {
+  const { createSupabaseAdminClient } = await import("@/lib/supabase/admin");
+  const supabase = createSupabaseAdminClient();
+  const { data } = await supabase.from("tasks").select("*").eq("id", id).single();
+  return data;
 }
