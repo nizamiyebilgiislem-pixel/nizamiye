@@ -514,6 +514,33 @@ export async function deleteLoanAction(loanId: string) {
   return { success: true };
 }
 
+export async function deleteBookAction(bookId: string) {
+  const { profile } = await requireAuth();
+  const supabase = await createSupabaseServerClient();
+
+  const { error } = await supabase
+    .from("library_books")
+    .delete()
+    .eq("id", bookId);
+
+  if (error) {
+    logSupabaseActionError({ action: "deleteBook", profile, payload: { id: bookId }, error });
+    return { error: buildFriendlyDbErrorMessage(error) };
+  }
+
+  createAuditLog({
+    ...buildAuditActor(profile),
+    action: "library_book_deleted",
+    entityType: "library_book",
+    entityId: bookId,
+    title: "Kitap silindi",
+  });
+
+  revalidatePath("/kutuphane/kitaplar");
+  revalidatePath("/kutuphane");
+  return { success: true };
+}
+
 const maxDocSizeBytes = 20 * 1024 * 1024;
 const allowedDocTypes = new Set(["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "image/jpeg", "image/png", "image/webp"]);
 

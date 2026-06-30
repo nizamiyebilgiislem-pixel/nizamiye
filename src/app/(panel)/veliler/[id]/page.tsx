@@ -46,17 +46,14 @@ export default async function ParentDetailPage({ params, searchParams }: ParentD
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex items-start gap-4">
-          <ProfileAvatar name={parent.full_name} photoUrl={parent.photo_url} size="lg" />
-          <PageHeader eyebrow="Veliler" title={parent.full_name} description={parent.email ?? parent.phone ?? "İletişim bilgisi yok"} />
-        </div>
-        {canEdit ? (
-          <Link href={`/veliler/${parent.id}/duzenle`} className={cn(buttonVariants())}>
-            <Pencil className="size-4" aria-hidden="true" />
-            Düzenle
-          </Link>
-        ) : null}
+      <div className="flex items-start gap-4">
+        <ProfileAvatar name={parent.full_name} photoUrl={parent.photo_url} size="lg" />
+        <PageHeader
+          eyebrow="Veliler"
+          title={parent.full_name}
+          description={parent.email ?? parent.phone ?? "İletişim bilgisi yok"}
+          actions={canEdit ? <Link href={`/veliler/${parent.id}/duzenle`} className={cn(buttonVariants())}><Pencil className="size-4" aria-hidden="true" />Düzenle</Link> : undefined}
+        />
       </div>
       <ParentErrorMessage error={query.error} />
       {query.success ? <SuccessMessage success={query.success} /> : null}

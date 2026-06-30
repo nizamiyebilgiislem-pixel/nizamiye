@@ -1,5 +1,8 @@
 import { notFound } from "next/navigation";
-import { ArrowLeft, Bed, Plus } from "lucide-react";
+import { ArrowLeft, Bed, Plus, Trash2 } from "lucide-react";
+
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
+import { deleteDormitoryAction } from "@/lib/dormitory/actions";
 
 import { DormitoryDetailPanel } from "@/components/dormitory/dormitory-detail-panel";
 import { PageHeader } from "@/components/layout/page-header";
@@ -54,6 +57,13 @@ export default async function DormitoryDetailPage({ params }: DormitoryDetailPag
               Öğrenci Yerleştir
             </Link>
           )}
+          {canManage ? (
+            <form action={deleteDormitoryAction.bind(null, dormitory.id) as unknown as (formData: FormData) => void}>
+              <FormSubmitButton variant="destructive" size="sm">
+                <Trash2 className="mr-1.5 size-4" /> Sil
+              </FormSubmitButton>
+            </form>
+          ) : null}
         </div>
       </div>
 

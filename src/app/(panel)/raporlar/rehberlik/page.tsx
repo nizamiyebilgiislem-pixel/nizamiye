@@ -1,6 +1,6 @@
 
 
-import { ReportEmptyState } from "@/components/reports/report-filter-panel";
+import { EmptyState } from "@/components/ui/empty-state";
 import { ReportPrintActions } from "@/components/reports/report-print-actions";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -84,7 +84,7 @@ export default async function GuidanceReportsPage() {
       )}
 
       {recentInterviews.length === 0 && upcomingFollowUps.length === 0 && (
-        <ReportEmptyState message="Rehberlik verisi bulunamadı." />
+        <EmptyState title="Rehberlik verisi bulunamadı." />
       )}
     </div>
   );

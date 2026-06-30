@@ -45,22 +45,14 @@ export default async function UserDetailPage({ params, searchParams }: UserDetai
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex items-start gap-4">
-          <ProfileAvatar name={profile.full_name} photoUrl={profile.photo_url} size="lg" />
-          <PageHeader eyebrow="Kullanıcılar" title={profile.full_name} description={profile.email ?? "E-posta yok"} />
-        </div>
-        {canManage ? (
-          <div className="flex items-center gap-2">
-            <Link
-              href={`/kullanicilar/${profile.id}/duzenle`}
-              className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
-            >
-              <Pencil className="mr-1.5 size-4" /> Düzenle
-            </Link>
-            <ProfileDeleteButton profileId={profile.id} profileName={profile.full_name} />
-          </div>
-        ) : null}
+      <div className="flex items-start gap-4">
+        <ProfileAvatar name={profile.full_name} photoUrl={profile.photo_url} size="lg" />
+        <PageHeader
+          eyebrow="Kullanıcılar"
+          title={profile.full_name}
+          description={profile.email ?? "E-posta yok"}
+          actions={canManage ? <div className="flex items-center gap-2"><Link href={`/kullanicilar/${profile.id}/duzenle`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}><Pencil className="mr-1.5 size-4" /> Düzenle</Link><ProfileDeleteButton profileId={profile.id} profileName={profile.full_name} /></div> : undefined}
+        />
       </div>
       <ProfileErrorMessage error={query.error} />
       {query.success ? <SuccessMessage success={query.success} /> : null}

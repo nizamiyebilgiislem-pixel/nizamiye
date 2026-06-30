@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Eye, EyeOff, Loader2, Mail, Lock } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export function LoginForm() {
@@ -45,7 +46,7 @@ export function LoginForm() {
         </label>
         <div className="relative">
           <Mail className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[#94a3b8]" />
-          <input
+          <Input
             id="email"
             name="email"
             type="email"
@@ -54,7 +55,7 @@ export function LoginForm() {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             placeholder="ornek@nizamiye.edu.tr"
-            className="h-11 w-full rounded-lg border border-[#dbe3ea] bg-[#fafcfd] pl-10 pr-3.5 text-sm outline-none transition-all placeholder:text-[#94a3b8] focus:border-[#093657] focus:bg-white focus:ring-2 focus:ring-[#093657]/15"
+            className="pl-10"
           />
         </div>
       </div>
@@ -65,7 +66,7 @@ export function LoginForm() {
         </label>
         <div className="relative">
           <Lock className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[#94a3b8]" />
-          <input
+          <Input
             id="password"
             name="password"
             type={showPassword ? "text" : "password"}
@@ -74,7 +75,7 @@ export function LoginForm() {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             placeholder="••••••••"
-            className="h-11 w-full rounded-lg border border-[#dbe3ea] bg-[#fafcfd] pl-10 pr-10 text-sm outline-none transition-all placeholder:text-[#94a3b8] focus:border-[#093657] focus:bg-white focus:ring-2 focus:ring-[#093657]/15"
+            className="pl-10 pr-10"
           />
           <button
             type="button"

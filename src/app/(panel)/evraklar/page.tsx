@@ -29,10 +29,12 @@ export default async function DocumentsPage({ searchParams }: DocumentsPageProps
   const totalPages = Math.ceil((list.totalCount ?? 0) / pageSize);
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <PageHeader eyebrow="Evraklar" title="Evrak Yönetimi" description="Talebe evrak URL kayıtlarını yönetin." />
-        {profile.role !== "destek_birim_muduru" ? <Link href="/evraklar/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Evrak</Link> : null}
-      </div>
+      <PageHeader
+        eyebrow="Evraklar"
+        title="Evrak Yönetimi"
+        description="Talebe evrak URL kayıtlarını yönetin."
+        actions={profile.role !== "destek_birim_muduru" ? <Link href="/evraklar/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Evrak</Link> : undefined}
+      />
       <DocumentErrorMessage error={params.error} />
       <section className="grid gap-4 md:grid-cols-3">
         <Metric label="Toplam Evrak" value={summary.totalCount} />

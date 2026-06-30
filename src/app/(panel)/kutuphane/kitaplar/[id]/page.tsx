@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
+
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
+import { deleteBookAction } from "@/lib/library/actions";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -43,10 +46,17 @@ export default async function KitapDetayPage({ params }: Props) {
         description={book.author ? `Yazar: ${book.author}` : undefined}
         actions={
           canManage ? (
-            <Link href={`/kutuphane/kitaplar/${book.id}/duzenle`} className={cn(buttonVariants({ size: "sm" }))}>
-              <Pencil className="size-4" aria-hidden />
-              Düzenle
-            </Link>
+            <div className="flex gap-2">
+              <Link href={`/kutuphane/kitaplar/${book.id}/duzenle`} className={cn(buttonVariants({ size: "sm" }))}>
+                <Pencil className="size-4" aria-hidden />
+                Düzenle
+              </Link>
+              <form action={deleteBookAction.bind(null, book.id) as unknown as (formData: FormData) => void}>
+                <FormSubmitButton variant="destructive" size="sm">
+                  <Trash2 className="mr-1.5 size-4" /> Sil
+                </FormSubmitButton>
+              </form>
+            </div>
           ) : null
         }
       />

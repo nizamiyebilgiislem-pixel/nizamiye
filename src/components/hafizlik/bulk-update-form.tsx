@@ -5,6 +5,7 @@ import { useState } from "react";
 import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { NativeSelect } from "@/components/ui/native-select";
 import { cn } from "@/lib/utils";
 import type { HafizlikProgressRow } from "@/types/database";
 
@@ -65,17 +66,16 @@ export function BulkUpdateForm({
       <div className="grid gap-4 md:grid-cols-3">
         <div className="space-y-2">
           <Label htmlFor="bulk_juz">Cüz</Label>
-          <select
+          <NativeSelect
             id="bulk_juz"
             name="current_juz"
-            className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
           >
             {JuzOptions.map((j) => (
               <option key={j} value={j}>
                 {j}. Cüz
               </option>
             ))}
-          </select>
+          </NativeSelect>
         </div>
         <div className="space-y-2">
           <Label htmlFor="bulk_page">Sayfa</Label>
@@ -91,15 +91,14 @@ export function BulkUpdateForm({
         </div>
         <div className="space-y-2">
           <Label htmlFor="bulk_status">Durum</Label>
-          <select
+          <NativeSelect
             id="bulk_status"
             name="status"
-            className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
           >
             <option value="learning">Öğreniyor</option>
             <option value="reviewing">Tekrar</option>
             <option value="completed">Tamamlandı</option>
-          </select>
+          </NativeSelect>
         </div>
         <div className="space-y-2">
           <Label htmlFor="bulk_target">Hedef Tarih (Opsiyonel)</Label>

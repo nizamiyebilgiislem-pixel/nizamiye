@@ -1,6 +1,6 @@
 
 
-import { ReportEmptyState } from "@/components/reports/report-filter-panel";
+import { EmptyState } from "@/components/ui/empty-state";
 import { ReportPrintActions } from "@/components/reports/report-print-actions";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -65,7 +65,7 @@ export default async function DormitoryReportsPage() {
           </div>
         </div>
       ) : (
-        <ReportEmptyState message="Yatakhane kaydı bulunamadı." />
+        <EmptyState title="Yatakhane kaydı bulunamadı." />
       )}
     </div>
   );

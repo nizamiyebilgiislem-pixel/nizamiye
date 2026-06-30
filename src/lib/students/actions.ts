@@ -10,7 +10,7 @@ import { buildAuditActor, createStudentAuditLog } from "@/lib/audit/log";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { canCreateStudent, canEditStudent, canReactivateArchivedStudent } from "@/lib/students/permissions";
 import { getStudentById } from "@/lib/students/queries";
-import { buildSaveRedirect, logSupabaseActionError } from "@/lib/supabase-action-error";
+import { buildSaveRedirect, logSupabaseActionError, buildFriendlyDbErrorMessage } from "@/lib/supabase-action-error";
 import type { ClassRow } from "@/types/database";
 import type { StudentStatus } from "@/types/rbac";
 
@@ -395,4 +395,43 @@ function validateStudentPhoto(file: File, path: string) {
   } catch {
     redirect(`${path}?error=photo&errorMessage=` + encodeURIComponent("Fotoğraf yalnızca JPEG, PNG veya WebP formatında ve en fazla 3 MB olabilir."));
   }
+}
+
+export async function deleteStudentAction(studentId: string) {
+  const { profile } = await requireAuth();
+  const supabase = await createSupabaseServerClient();
+
+  const { data: student } = await supabase
+    .from("students")
+    .select("full_name")
+    .eq("id", studentId)
+    .single();
+
+  if (!student) {
+    return { error: "Talebe bulunamadı." };
+  }
+
+  const { error } = await supabase
+    .from("students")
+    .delete()
+    .eq("id", studentId);
+
+  if (error) {
+    logSupabaseActionError({ action: "deleteStudent", profile, payload: { id: studentId }, error });
+    return { error: buildFriendlyDbErrorMessage(error) };
+  }
+
+  await createStudentAuditLog({
+    ...buildAuditActor(profile),
+    action: "student_deleted",
+    title: "Talebe silindi",
+    description: `${student.full_name} kaydı silindi.`,
+    entityId: studentId,
+    studentId,
+    beforeData: { full_name: student.full_name },
+    afterData: null,
+  });
+
+  revalidatePath("/talebeler");
+  return { success: true };
 }

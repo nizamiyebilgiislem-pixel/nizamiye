@@ -10,6 +10,7 @@ import { canEditStudentEvaluations } from "@/lib/evaluations/permissions";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { requireAcademicTermWritable } from "@/lib/terms/guards";
 import { getStudentById } from "@/lib/students/queries";
+import { logSupabaseActionError, buildFriendlyDbErrorMessage } from "@/lib/supabase-action-error";
 
 const optionalScore = z.preprocess((value) => {
   if (typeof value !== "string") return value;
@@ -112,4 +113,50 @@ export async function saveEvaluationAction(formData: FormData) {
   revalidatePath(`/talebeler/${student.id}`);
   revalidatePath(`/kanaat-sistemi/kanaat-girisi/${student.id}`);
   redirect(`/kanaat-sistemi/kanaat-girisi/${student.id}?success=saved&term=${parsed.data.term_id}`);
+}
+
+export async function deleteEvaluationAction(evaluationId: string) {
+  const { profile } = await requireAuth();
+  const supabase = await createSupabaseServerClient();
+
+  const { data: evaluation } = await supabase
+    .from("student_evaluations")
+    .select("id, student_id")
+    .eq("id", evaluationId)
+    .single();
+
+  if (!evaluation) {
+    return { error: "Kanaat kaydı bulunamadı." };
+  }
+
+  const student = await getStudentById(evaluation.student_id);
+
+  if (!student) {
+    return { error: "Öğrenci bulunamadı." };
+  }
+
+  if (!canEditStudentEvaluations(profile, student, student.course_class)) {
+    return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
+  }
+
+  const { error } = await supabase
+    .from("student_evaluations")
+    .delete()
+    .eq("id", evaluationId);
+
+  if (error) {
+    logSupabaseActionError({ action: "deleteEvaluation", profile, payload: { id: evaluationId }, error });
+    return { error: buildFriendlyDbErrorMessage(error) };
+  }
+
+  createAuditLog({
+    ...buildAuditActor(profile),
+    action: "evaluation_deleted",
+    entityType: "evaluation",
+    entityId: evaluationId,
+    title: "Kanaat kaydı silindi",
+  });
+
+  revalidatePath("/kanaat-sistemi");
+  return { success: true };
 }

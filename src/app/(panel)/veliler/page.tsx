@@ -30,19 +30,12 @@ export default async function ParentsPage({ searchParams }: ParentsPageProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <PageHeader
-          eyebrow="Veliler"
-          title="Veli Yönetimi"
-          description="Veli profillerini, auth bağlantılarını ve talebe ilişkilerini yönetin."
-        />
-        {canCreateParentProfile(profile) ? (
-          <Link href="/veliler/yeni" className={cn(buttonVariants())}>
-            <Plus className="size-4" aria-hidden="true" />
-            Yeni Veli Ekle
-          </Link>
-        ) : null}
-      </div>
+      <PageHeader
+        eyebrow="Veliler"
+        title="Veli Yönetimi"
+        description="Veli profillerini, auth bağlantılarını ve talebe ilişkilerini yönetin."
+        actions={canCreateParentProfile(profile) ? <Link href="/veliler/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Veli Ekle</Link> : undefined}
+      />
       <ParentErrorMessage error={params.error} />
       <ParentFilters actionPath="/veliler" values={{ search: params.q, status: params.status }} />
       {parents.length > 0 ? (

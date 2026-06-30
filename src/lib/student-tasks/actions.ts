@@ -7,6 +7,8 @@ import { requireAuth } from "@/lib/auth";
 import { buildAuditActor } from "@/lib/audit/log";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { canCreateStudentTask, canDeleteStudentTask, canManageStudentTask } from "@/lib/student-tasks/permissions";
+import { logSupabaseActionError, buildFriendlyDbErrorMessage } from "@/lib/supabase-action-error";
+import type { StudentTaskRow } from "@/types/database";
 
 const createStudentTaskSchema = z.object({
   student_id: z.string().uuid("Öğrenci seçilmelidir."),
@@ -229,6 +231,51 @@ export async function reassignStudentTaskAction(taskId: string, newStudentId: st
 
   revalidatePath("/gorevler");
   return;
+}
+
+export async function updateStudentTaskAction(taskId: string, data: Partial<StudentTaskRow>) {
+  const { profile } = await requireAuth();
+  const supabase = await createSupabaseServerClient();
+
+  const { data: task } = await supabase
+    .from("student_tasks")
+    .select("id, student_id")
+    .eq("id", taskId)
+    .single();
+
+  if (!task) {
+    return { error: "Görev bulunamadı." };
+  }
+
+  const permResult = await canManageStudentTask(supabase, profile, task.student_id);
+  if (permResult.error) {
+    return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
+  }
+
+  const allowedFields: (keyof StudentTaskRow)[] = ["title", "description", "due_date", "status"];
+  const updateData: Partial<StudentTaskRow> = {};
+  for (const field of allowedFields) {
+    if (data[field] !== undefined) {
+      (updateData as Record<string, unknown>)[field] = data[field];
+    }
+  }
+
+  if (Object.keys(updateData).length === 0) {
+    return { error: "Güncellenecek alan bulunamadı." };
+  }
+
+  const { error } = await supabase
+    .from("student_tasks")
+    .update(updateData)
+    .eq("id", taskId);
+
+  if (error) {
+    logSupabaseActionError({ action: "updateStudentTask", profile, payload: { id: taskId, ...updateData }, error });
+    return { error: buildFriendlyDbErrorMessage(error) };
+  }
+
+  revalidatePath("/gorevler");
+  return { success: true };
 }
 
 export { taskTypeLabels };

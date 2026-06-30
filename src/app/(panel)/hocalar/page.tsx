@@ -35,19 +35,12 @@ export default async function TeachersPage({ searchParams }: TeachersPageProps) 
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <PageHeader
-          eyebrow="Hocalar"
-          title="Hocalar"
-          description="Hoca, bölüm müdürü ve genel müdür profillerini görüntüleyin."
-        />
-        {canCreateStaffProfile(profile) ? (
-          <Link href="/hocalar/yeni" className={cn(buttonVariants())}>
-            <Plus className="size-4" aria-hidden="true" />
-            Yeni Hoca Ekle
-          </Link>
-        ) : null}
-      </div>
+      <PageHeader
+        eyebrow="Hocalar"
+        title="Hocalar"
+        description="Hoca, bölüm müdürü ve genel müdür profillerini görüntüleyin."
+        actions={canCreateStaffProfile(profile) ? <Link href="/hocalar/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Hoca Ekle</Link> : undefined}
+      />
 
       <ProfileErrorMessage error={params.error} />
       <ProfileFilters

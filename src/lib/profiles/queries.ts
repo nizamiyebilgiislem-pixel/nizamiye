@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { staffProfileRoles } from "@/lib/profiles/permissions";
 import type { ClassRow, DepartmentRow, ProfileRow, StudentRow } from "@/types/database";
@@ -30,7 +31,7 @@ export type ProfileListFilters = {
   staffOnly?: boolean;
 };
 
-export async function getDepartmentsForProfiles(profile: ProfileRow) {
+export const getDepartmentsForProfiles = cache(async (profile: ProfileRow) => {
   const supabase = await createSupabaseServerClient();
   let query = supabase.from("departments").select("*").eq("is_active", true).order("name", { ascending: true });
 
@@ -45,7 +46,7 @@ export async function getDepartmentsForProfiles(profile: ProfileRow) {
   }
 
   return data;
-}
+});
 
 export async function getProfilesForCurrentProfile(profile: ProfileRow, filters: ProfileListFilters = {}) {
   const supabase = await createSupabaseServerClient();
@@ -94,7 +95,7 @@ export async function getProfilesForCurrentProfile(profile: ProfileRow, filters:
   };
 }
 
-export async function getProfileById(id: string) {
+export const getProfileById = cache(async (id: string) => {
   const supabase = await createSupabaseServerClient();
   const { data: profile, error } = await supabase.from("profiles").select("*").eq("id", id).maybeSingle();
 
@@ -139,9 +140,9 @@ export async function getProfileById(id: string) {
     department_classes: departmentClasses ?? [],
     assigned_courses,
   };
-}
+});
 
-export async function getAssignedClassCount(profileId: string) {
+export const getAssignedClassCount = cache(async (profileId: string) => {
   const supabase = await createSupabaseServerClient();
   const { count, error } = await supabase
     .from("classes")
@@ -153,9 +154,9 @@ export async function getAssignedClassCount(profileId: string) {
   }
 
   return count ?? 0;
-}
+});
 
-export async function getParentLinkedStudents(profileId: string): Promise<StudentRow[]> {
+export const getParentLinkedStudents = cache(async (profileId: string): Promise<StudentRow[]> => {
   const supabase = await createSupabaseServerClient();
   const { data: links, error } = await supabase.from("parent_student_links").select("student_id").eq("parent_profile_id", profileId);
 
@@ -173,7 +174,7 @@ export async function getParentLinkedStudents(profileId: string): Promise<Studen
     .order("full_name", { ascending: true });
 
   return data ?? [];
-}
+});
 
 function attachDepartment(profile: ProfileRow, departmentMap: Map<string, DepartmentRow>): ProfileWithDepartment {
   return {

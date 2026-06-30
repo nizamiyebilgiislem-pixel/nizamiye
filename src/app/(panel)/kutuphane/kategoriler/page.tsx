@@ -1,3 +1,6 @@
+import { Trash2 } from "lucide-react";
+
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +10,7 @@ import { canManageCategories } from "@/lib/library/permissions";
 import { getCategories } from "@/lib/library/queries";
 import { CategoryForm } from "@/components/library/category-form";
 import { createCategoryAction } from "@/lib/library/actions";
+import { deleteCategoryAction } from "@/lib/library/category-actions";
 
 export default async function KategorilerPage() {
   const { profile } = await requireAuth();
@@ -42,9 +46,16 @@ export default async function KategorilerPage() {
                       <p className="truncate text-xs text-muted-foreground">{cat.description}</p>
                     )}
                   </div>
-                  <Badge variant={cat.is_active ? "default" : "outline"}>
-                    {cat.is_active ? "Aktif" : "Pasif"}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={cat.is_active ? "default" : "outline"}>
+                      {cat.is_active ? "Aktif" : "Pasif"}
+                    </Badge>
+                    <form action={deleteCategoryAction.bind(null, cat.id) as unknown as (formData: FormData) => void}>
+                      <FormSubmitButton variant="destructive" size="xs">
+                        <Trash2 className="size-4" />
+                      </FormSubmitButton>
+                    </form>
+                  </div>
                 </div>
               ))
             ) : (

@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Pencil } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
+
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
+import { deleteTalepAction } from "@/lib/talepler/actions";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { TalepStatusForm } from "@/components/talepler/talep-status-form";
@@ -61,10 +64,17 @@ export default async function TalepDetayPage({ params }: { params: Promise<{ id:
         title={talep.title}
         actions={
           canEdit ? (
-            <Link href={`/talepler/${id}/duzenle`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
-              <Pencil className="mr-1.5 size-4" />
-              Düzenle
-            </Link>
+            <div className="flex gap-2">
+              <Link href={`/talepler/${id}/duzenle`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+                <Pencil className="mr-1.5 size-4" />
+                Düzenle
+              </Link>
+              <form action={deleteTalepAction.bind(null, id) as unknown as (formData: FormData) => void}>
+                <FormSubmitButton variant="destructive" size="sm">
+                  <Trash2 className="mr-1.5 size-4" /> Sil
+                </FormSubmitButton>
+              </form>
+            </div>
           ) : undefined
         }
       />

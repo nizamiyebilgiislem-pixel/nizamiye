@@ -27,19 +27,12 @@ export default async function EditDersPage({ params, searchParams }: Props) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <PageHeader
-          eyebrow="Ders Sistemi"
-          title={`Düzenle: ${editData.course.name}`}
-          description="Ders adını, durumunu ve sınıf atamalarını yönetin."
-        />
-        <Link
-          href="/ders-sistemi"
-          className={cn(buttonVariants({ variant: "outline" }))}
-        >
-          ← Geri
-        </Link>
-      </div>
+      <PageHeader
+        eyebrow="Ders Sistemi"
+        title={`Düzenle: ${editData.course.name}`}
+        description="Ders adını, durumunu ve sınıf atamalarını yönetin."
+        actions={<Link href="/ders-sistemi" className={cn(buttonVariants({ variant: "outline" }))}>← Geri</Link>}
+      />
       <ProfileErrorMessage error={search.error} />
 
       <Card>

@@ -6,6 +6,9 @@ import Link from "next/link";
 import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import {
   SearchableComboboxRoot,
@@ -93,15 +96,14 @@ export function LoanForm({ action, preselectedBookId, books, students, profiles 
 
             <label className="grid gap-2 text-sm font-medium">
               Alan Kişi Türü
-              <select
+              <NativeSelect
                 name="borrower_type"
                 value={borrowerType}
                 onChange={(e) => { setBorrowerType(e.target.value); setSelectedBorrower(null); }}
-                className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20"
               >
                 <option value="student">Talebe</option>
                 <option value="profile">Personel / Hoca</option>
-              </select>
+              </NativeSelect>
             </label>
 
             <label className="grid gap-2 text-sm font-medium">
@@ -129,31 +131,28 @@ export function LoanForm({ action, preselectedBookId, books, students, profiles 
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="grid gap-2 text-sm font-medium">
                 Alış Tarihi *
-                <input
+                <Input
                   name="loan_date"
                   type="date"
                   required
                   defaultValue={new Date().toISOString().split("T")[0]}
-                  className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20"
                 />
               </label>
               <label className="grid gap-2 text-sm font-medium">
                 Son Teslim Tarihi
-                <input
+                <Input
                   name="due_date"
                   type="date"
-                  className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20"
                 />
               </label>
             </div>
 
             <label className="grid gap-2 text-sm font-medium">
               Not
-              <textarea
+              <Textarea
                 name="note"
                 placeholder="Opsiyonel not"
                 rows={2}
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20"
               />
             </label>
 

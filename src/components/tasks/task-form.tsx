@@ -6,6 +6,9 @@ import Link from "next/link";
 import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { createTaskAction } from "@/lib/tasks/actions";
 import type { AssignableProfile } from "@/lib/tasks/queries";
@@ -39,50 +42,46 @@ export function TaskForm({ assignableProfiles, departmentOptions, currentProfile
           <form action={formAction} className="space-y-5">
             <label className="grid gap-2 text-sm font-medium">
               Başlık *
-              <input
+              <Input
                 name="title"
                 required
                 placeholder="Görev başlığı"
-                className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20"
               />
             </label>
 
             <label className="grid gap-2 text-sm font-medium">
               Açıklama
-              <textarea
+              <Textarea
                 name="description"
                 rows={4}
                 placeholder="Görev açıklaması"
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20"
               />
             </label>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="grid gap-2 text-sm font-medium">
                 Atanacak Kişi *
-                <select
+                <NativeSelect
                   name="assigned_to"
                   required
-                  className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20"
                 >
                   <option value="">Personel seçin</option>
                   {assignableProfiles.map((p) => (
                     <option key={p.id} value={p.id}>{p.full_name}</option>
                   ))}
-                </select>
+                </NativeSelect>
               </label>
 
               <label className="grid gap-2 text-sm font-medium">
                 Öncelik
-                <select
+                <NativeSelect
                   name="priority"
                   defaultValue="normal"
-                  className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20"
                 >
                   {priorityOptions.map((o) => (
                     <option key={o.value} value={o.value}>{o.label}</option>
                   ))}
-                </select>
+                </NativeSelect>
               </label>
             </div>
 
@@ -90,24 +89,22 @@ export function TaskForm({ assignableProfiles, departmentOptions, currentProfile
               {showDepartment && (
                 <label className="grid gap-2 text-sm font-medium">
                   Bölüm
-                  <select
+                  <NativeSelect
                     name="department_id"
-                    className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20"
                   >
                     <option value="">Bölüm seçin</option>
                     {departmentOptions.map((d) => (
                       <option key={d.id} value={d.id}>{d.name}</option>
                     ))}
-                  </select>
+                  </NativeSelect>
                 </label>
               )}
 
               <label className="grid gap-2 text-sm font-medium">
                 Son Tarih
-                <input
+                <Input
                   type="date"
                   name="due_date"
-                  className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20"
                 />
               </label>
             </div>

@@ -32,19 +32,12 @@ export default async function ClassesPage({ searchParams }: ClassesPageProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <PageHeader
-          eyebrow="Sınıflar"
-          title="Sınıflar"
-          description="Bölüm bazlı sınıfları, sınıf hocası atamalarını ve aktif talebe sayılarını yönetin."
-        />
-        {canManageClasses(profile) ? (
-          <Link href="/siniflar/yeni" className={cn(buttonVariants())}>
-            <Plus className="size-4" aria-hidden="true" />
-            Yeni Sınıf Ekle
-          </Link>
-        ) : null}
-      </div>
+      <PageHeader
+        eyebrow="Sınıflar"
+        title="Sınıflar"
+        description="Bölüm bazlı sınıfları, sınıf hocası atamalarını ve aktif talebe sayılarını yönetin."
+        actions={canManageClasses(profile) ? <Link href="/siniflar/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Sınıf Ekle</Link> : undefined}
+      />
       <ClassErrorMessage error={params.error} />
       <ClassFilters departments={departments} values={{ search: params.q, departmentId: params.department, status: params.status }} />
       {classes.length > 0 ? (

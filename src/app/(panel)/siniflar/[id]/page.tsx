@@ -1,7 +1,10 @@
 import Link from "next/link";
 import type { ComponentType } from "react";
 import { notFound, redirect } from "next/navigation";
-import { BookOpen, CalendarDays, Pencil, UsersRound } from "lucide-react";
+import { BookOpen, CalendarDays, Pencil, Trash2, UsersRound } from "lucide-react";
+
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
+import { deleteClassAction } from "@/lib/classes/actions";
 
 import { ClassCourseManager } from "@/components/classes/class-course-manager";
 import { ClassErrorMessage } from "@/components/classes/class-error-message";
@@ -47,19 +50,12 @@ export default async function ClassDetailPage({ params, searchParams }: ClassDet
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <PageHeader
-          eyebrow={classRow.department?.name ?? "Sınıf"}
-          title={classRow.name}
-          description="Sınıfın hoca, doluluk, başarı, ders programı ve talebe yönetim özeti."
-        />
-        {canEditClass(profile, classRow) ? (
-          <Link href={`/siniflar/${classRow.id}/duzenle`} className={cn(buttonVariants())}>
-            <Pencil className="size-4" aria-hidden="true" />
-            Düzenle
-          </Link>
-        ) : null}
-      </div>
+      <PageHeader
+        eyebrow={classRow.department?.name ?? "Sınıf"}
+        title={classRow.name}
+        description="Sınıfın hoca, doluluk, başarı, ders programı ve talebe yönetim özeti."
+        actions={canEditClass(profile, classRow) ? <div className="flex gap-2"><Link href={`/siniflar/${classRow.id}/duzenle`} className={cn(buttonVariants())}><Pencil className="size-4" aria-hidden="true" />Düzenle</Link><form action={deleteClassAction.bind(null, classRow.id) as unknown as (formData: FormData) => void}><FormSubmitButton variant="destructive" size="sm"><Trash2 className="mr-1.5 size-4" /> Sil</FormSubmitButton></form></div> : undefined}
+      />
 
       <ClassErrorMessage error={query.error} />
 

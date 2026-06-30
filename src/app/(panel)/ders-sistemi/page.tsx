@@ -21,12 +21,12 @@ export default async function DersSistemiPage({ searchParams }: Props) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <PageHeader eyebrow="Ders Sistemi" title="Ders Yönetimi" description="Dersleri oluşturun, sınıflara atayın ve hocaları belirleyin." />
-        <Link href="/ders-sistemi/yeni" className={cn(buttonVariants())}>
-          <Plus className="mr-1.5 size-4" /> Yeni Ders
-        </Link>
-      </div>
+      <PageHeader
+        eyebrow="Ders Sistemi"
+        title="Ders Yönetimi"
+        description="Dersleri oluşturun, sınıflara atayın ve hocaları belirleyin."
+        actions={<Link href="/ders-sistemi/yeni" className={cn(buttonVariants())}><Plus className="mr-1.5 size-4" /> Yeni Ders</Link>}
+      />
       {params.success ? (
         <div className="rounded-md border border-primary/40 bg-primary/10 px-3 py-2 text-sm text-primary">Ders başarıyla oluşturuldu.</div>
       ) : null}

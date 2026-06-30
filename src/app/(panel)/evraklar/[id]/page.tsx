@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { ExternalLink, Pencil } from "lucide-react";
+import { ExternalLink, Pencil, Trash2 } from "lucide-react";
+
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
+import { deleteStudentDocumentAction } from "@/lib/documents/actions";
 
 import { DocumentErrorMessage } from "@/components/documents/document-error-message";
 import { PageHeader } from "@/components/layout/page-header";
@@ -22,13 +25,12 @@ export default async function DocumentDetailPage({ params, searchParams }: Docum
   const editable = canEditStudentDocuments(profile, document.student, document.course_class);
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <PageHeader eyebrow="Evraklar" title={document.document_type} description={`${document.student.full_name} · ${document.course_class?.name ?? "-"}`} />
-        <div className="flex gap-2">
-          <a href={document.file_url} target="_blank" rel="noreferrer" className={cn(buttonVariants({ variant: "secondary" }))}><ExternalLink className="size-4" aria-hidden="true" />Dosyayı Aç</a>
-          {editable ? <Link href={`/evraklar/${document.id}/duzenle`} className={cn(buttonVariants())}><Pencil className="size-4" aria-hidden="true" />Düzenle</Link> : null}
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Evraklar"
+        title={document.document_type}
+        description={`${document.student.full_name} · ${document.course_class?.name ?? "-"}`}
+        actions={<><a href={document.file_url} target="_blank" rel="noreferrer" className={cn(buttonVariants({ variant: "secondary" }))}><ExternalLink className="size-4" aria-hidden="true" />Dosyayı Aç</a>{editable ? <><Link href={`/evraklar/${document.id}/duzenle`} className={cn(buttonVariants())}><Pencil className="size-4" aria-hidden="true" />Düzenle</Link><form action={deleteStudentDocumentAction.bind(null, document.id) as unknown as (formData: FormData) => void}><FormSubmitButton variant="destructive" size="sm"><Trash2 className="mr-1.5 size-4" /> Sil</FormSubmitButton></form></> : null}</>}
+      />
       <DocumentErrorMessage error={query.error} />
       <Card><CardHeader><CardTitle>Evrak Detayı</CardTitle></CardHeader><CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         <Info label="Talebe" value={document.student.full_name} />

@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
+
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
+import { deleteInfirmaryRecordAction } from "@/lib/infirmary/actions";
 
 import { InfirmaryErrorMessage } from "@/components/infirmary/infirmary-error-message";
 import { PageHeader } from "@/components/layout/page-header";
@@ -23,10 +26,12 @@ export default async function InfirmaryDetailPage({ params, searchParams }: Infi
   const editable = canEditInfirmaryRecord(profile, record.student, record.course_class) || await canManageInfirmary(profile);
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <PageHeader eyebrow="Revir" title={record.student.full_name} description={`${record.department?.name ?? "-"} · ${record.course_class?.name ?? "-"}`} />
-        {editable ? <Link href={`/revir/${record.id}/duzenle`} className={cn(buttonVariants())}><Pencil className="size-4" aria-hidden="true" />Düzenle</Link> : null}
-      </div>
+      <PageHeader
+        eyebrow="Revir"
+        title={record.student.full_name}
+        description={`${record.department?.name ?? "-"} · ${record.course_class?.name ?? "-"}`}
+        actions={editable ? <div className="flex gap-2"><Link href={`/revir/${record.id}/duzenle`} className={cn(buttonVariants())}><Pencil className="size-4" aria-hidden="true" />Düzenle</Link><form action={deleteInfirmaryRecordAction.bind(null, record.id) as unknown as (formData: FormData) => void}><FormSubmitButton variant="destructive" size="sm"><Trash2 className="mr-1.5 size-4" /> Sil</FormSubmitButton></form></div> : undefined}
+      />
       <InfirmaryErrorMessage error={query.error} />
       <Card><CardHeader><CardTitle>Revir Kaydı</CardTitle></CardHeader><CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         <Info label="Tarih" value={record.record_date} />

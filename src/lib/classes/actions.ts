@@ -7,7 +7,7 @@ import { z } from "zod";
 import { requireAuth } from "@/lib/auth";
 import { canEditClass, canManageClasses } from "@/lib/classes/permissions";
 import { getClassById } from "@/lib/classes/queries";
-import { buildSaveRedirect, logSupabaseActionError } from "@/lib/supabase-action-error";
+import { buildSaveRedirect, logSupabaseActionError, buildFriendlyDbErrorMessage } from "@/lib/supabase-action-error";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const emptyUuidToNull = z.preprocess((value) => {
@@ -184,6 +184,29 @@ async function isTeacherInDepartment(teacherId: string, departmentId: string) {
     .maybeSingle();
 
   return !error && Boolean(data);
+}
+
+export async function deleteClassAction(classId: string) {
+  const { profile } = await requireAuth();
+
+  if (!canManageClasses(profile)) {
+    return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
+  }
+
+  const supabase = await createSupabaseServerClient();
+
+  const { error } = await supabase
+    .from("classes")
+    .delete()
+    .eq("id", classId);
+
+  if (error) {
+    logSupabaseActionError({ action: "deleteClass", profile, payload: { id: classId }, error });
+    return { error: buildFriendlyDbErrorMessage(error) };
+  }
+
+  revalidatePath("/siniflar");
+  return { success: true };
 }
 
 function slugifyClassName(value: string) {

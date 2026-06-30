@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { ReportEmptyState } from "@/components/reports/report-filter-panel";
+import { EmptyState } from "@/components/ui/empty-state";
 import { ReportPrintActions } from "@/components/reports/report-print-actions";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
@@ -76,7 +76,7 @@ export default async function DocumentReportsPage() {
           </CardContent>
         </Card>
       ) : (
-        <ReportEmptyState message="Evrak bulunamadı." />
+        <EmptyState title="Evrak bulunamadı." />
       )}
     </div>
   );

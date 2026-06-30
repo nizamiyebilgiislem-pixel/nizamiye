@@ -1,6 +1,6 @@
 
 
-import { ReportEmptyState } from "@/components/reports/report-filter-panel";
+import { EmptyState } from "@/components/ui/empty-state";
 import { ReportPrintActions } from "@/components/reports/report-print-actions";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -71,7 +71,7 @@ export default async function TaskReportsPage() {
           </CardContent>
         </Card>
       ) : (
-        <ReportEmptyState message="Görev bulunamadı." />
+        <EmptyState title="Görev bulunamadı." />
       )}
     </div>
   );

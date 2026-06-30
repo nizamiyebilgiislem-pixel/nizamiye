@@ -58,14 +58,12 @@ export default async function ReportsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <PageHeader
-          eyebrow="Yönetim"
-          title="Rapor Merkezi"
-          description="Kurum çıktılarını, resmi PDF görünümünü ve dönemsel özetleri tek merkezden yönetin."
-        />
-        <ReportPrintActions backHref="/dashboard" />
-      </div>
+      <PageHeader
+        eyebrow="Yönetim"
+        title="Rapor Merkezi"
+        description="Kurum çıktılarını, resmi PDF görünümünü ve dönemsel özetleri tek merkezden yönetin."
+        actions={<ReportPrintActions backHref="/dashboard" />}
+      />
 
       <Card size="sm" className="border-[#093657]/15 bg-white">
         <CardContent className="flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between">

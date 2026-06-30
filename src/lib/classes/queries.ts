@@ -23,7 +23,7 @@ export type ClassListFilters = {
   status?: string;
 };
 
-export async function getDepartmentsForProfile(profile: ProfileRow) {
+export const getDepartmentsForProfile = cache(async (profile: ProfileRow) => {
   const supabase = await createSupabaseServerClient();
   let query = supabase.from("departments").select("*").order("name", { ascending: true });
 
@@ -38,7 +38,7 @@ export async function getDepartmentsForProfile(profile: ProfileRow) {
   }
 
   return data;
-}
+});
 
 export async function getDepartmentSummaries(profile: ProfileRow): Promise<DepartmentSummary[]> {
   const supabase = await createSupabaseServerClient();
@@ -70,7 +70,7 @@ export async function getDepartmentSummaries(profile: ProfileRow): Promise<Depar
   });
 }
 
-export async function getTeachersForProfile(profile: ProfileRow, departmentId?: string) {
+export const getTeachersForProfile = cache(async (profile: ProfileRow, departmentId?: string) => {
   const supabase = await createSupabaseServerClient();
   let query = supabase.from("profiles").select("*").in("role", ["hoca", "bolum_muduru"]).eq("is_active", true).order("full_name", { ascending: true });
 
@@ -87,7 +87,7 @@ export async function getTeachersForProfile(profile: ProfileRow, departmentId?: 
   }
 
   return data;
-}
+});
 
 export async function getClassesForProfile(profile: ProfileRow, filters: ClassListFilters = {}) {
   const supabase = await createSupabaseServerClient();
@@ -172,7 +172,7 @@ export const getClassById = cache(async (id: string) => {
   };
 });
 
-export async function getTeachersByDepartment(departmentId: string) {
+export const getTeachersByDepartment = cache(async (departmentId: string) => {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("profiles")
@@ -187,9 +187,9 @@ export async function getTeachersByDepartment(departmentId: string) {
   }
 
   return data;
-}
+});
 
-async function getActiveStudents() {
+const getActiveStudents = cache(async () => {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.from("students").select("*").eq("status", "active");
 
@@ -198,9 +198,9 @@ async function getActiveStudents() {
   }
 
   return data;
-}
+});
 
-async function getActiveStudentsByClassId(classId: string) {
+const getActiveStudentsByClassId = cache(async (classId: string) => {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("students")
@@ -214,7 +214,7 @@ async function getActiveStudentsByClassId(classId: string) {
   }
 
   return data;
-}
+});
 
 function groupStudentsByClass(students: StudentRow[]) {
   const map = new Map<string, StudentRow[]>();

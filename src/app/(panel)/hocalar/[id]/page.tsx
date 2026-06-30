@@ -44,17 +44,14 @@ export default async function TeacherDetailPage({ params, searchParams }: Teache
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex items-start gap-4">
-          <ProfileAvatar name={target.full_name} photoUrl={target.photo_url} size="lg" />
-          <PageHeader eyebrow="Hocalar" title={target.full_name} description={target.department?.name ?? "Bölüm yok"} />
-        </div>
-        {canEditStaffProfile(profile, target) ? (
-          <Link href={`/hocalar/${target.id}/duzenle`} className={cn(buttonVariants())}>
-            <Pencil className="size-4" aria-hidden="true" />
-            Düzenle
-          </Link>
-        ) : null}
+      <div className="flex items-start gap-4">
+        <ProfileAvatar name={target.full_name} photoUrl={target.photo_url} size="lg" />
+        <PageHeader
+          eyebrow="Hocalar"
+          title={target.full_name}
+          description={target.department?.name ?? "Bölüm yok"}
+          actions={canEditStaffProfile(profile, target) ? <Link href={`/hocalar/${target.id}/duzenle`} className={cn(buttonVariants())}><Pencil className="size-4" aria-hidden="true" />Düzenle</Link> : undefined}
+        />
       </div>
       <ProfileErrorMessage error={query.error} />
       {query.success ? <SuccessMessage success={query.success} /> : null}

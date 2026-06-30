@@ -52,25 +52,12 @@ export default async function AttendancePage({ searchParams }: AttendancePagePro
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <PageHeader
-          eyebrow="Yoklama"
-          title="Yoklama Sistemi"
-          description="Günlük sınıf yoklaması ile sabah, öğle, ikindi, akşam ve yatsı yoklamalarını aynı panelden yönetin."
-        />
-        <div className="flex flex-wrap gap-2">
-          <Link href="/yoklama/raporlar" className={cn(buttonVariants({ variant: "secondary" }))}>
-            <FileText className="size-4" aria-hidden="true" />
-            Raporlar
-          </Link>
-          {canManage ? (
-            <Link href="/yoklama/yeni" className={cn(buttonVariants())}>
-              <Plus className="size-4" aria-hidden="true" />
-              Yeni Yoklama
-            </Link>
-          ) : null}
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Yoklama"
+        title="Yoklama Sistemi"
+        description="Günlük sınıf yoklaması ile sabah, öğle, ikindi, akşam ve yatsı yoklamalarını aynı panelden yönetin."
+        actions={<div className="flex flex-wrap gap-2"><Link href="/yoklama/raporlar" className={cn(buttonVariants({ variant: "secondary" }))}><FileText className="size-4" aria-hidden="true" />Raporlar</Link>{canManage ? <Link href="/yoklama/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Yoklama</Link> : null}</div>}
+      />
 
       {query.error ? (
         <Card>

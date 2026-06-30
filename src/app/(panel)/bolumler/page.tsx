@@ -22,18 +22,12 @@ export default async function DepartmentsPage({ searchParams }: DepartmentsPageP
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <PageHeader
-          eyebrow="Bölümler"
-          title="Bölüm Yönetimi"
-          description="Bölümlerin müdür, sınıf, talebe, doluluk ve başarı durumunu tek ekrandan izleyin."
-        />
-        {canCreate ? (
-          <Link href="/bolumler/yeni" className={cn(buttonVariants())}>
-            Yeni Bölüm
-          </Link>
-        ) : null}
-      </div>
+      <PageHeader
+        eyebrow="Bölümler"
+        title="Bölüm Yönetimi"
+        description="Bölümlerin müdür, sınıf, talebe, doluluk ve başarı durumunu tek ekrandan izleyin."
+        actions={canCreate ? <Link href="/bolumler/yeni" className={cn(buttonVariants())}>Yeni Bölüm</Link> : undefined}
+      />
 
       <DepartmentErrorMessage error={params.error} />
 

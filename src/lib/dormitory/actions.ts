@@ -253,3 +253,55 @@ export async function endAssignmentAction(assignmentId: string) {
 
   return { success: true };
 }
+
+export async function deleteDormitoryAction(dormitoryId: string) {
+  const { profile } = await requireAuth();
+  const supabase = await createSupabaseServerClient();
+
+  const { error } = await supabase
+    .from("dormitories")
+    .delete()
+    .eq("id", dormitoryId);
+
+  if (error) {
+    logSupabaseActionError({ action: "deleteDormitory", profile, payload: { id: dormitoryId }, error });
+    return { error: buildFriendlyDbErrorMessage(error) };
+  }
+
+  createAuditLog({
+    ...buildAuditActor(profile),
+    action: "dormitory_deleted",
+    entityType: "dormitory",
+    entityId: dormitoryId,
+    title: "Yatakhane silindi",
+  });
+
+  revalidatePath("/yatakhane");
+  return { success: true };
+}
+
+export async function deleteDormitoryAssignmentAction(assignmentId: string) {
+  const { profile } = await requireAuth();
+  const supabase = await createSupabaseServerClient();
+
+  const { error } = await supabase
+    .from("dormitory_assignments")
+    .delete()
+    .eq("id", assignmentId);
+
+  if (error) {
+    logSupabaseActionError({ action: "deleteDormitoryAssignment", profile, payload: { id: assignmentId }, error });
+    return { error: buildFriendlyDbErrorMessage(error) };
+  }
+
+  createAuditLog({
+    ...buildAuditActor(profile),
+    action: "dormitory_assignment_deleted",
+    entityType: "dormitory_assignment",
+    entityId: assignmentId,
+    title: "Yatakhane kaydı silindi",
+  });
+
+  revalidatePath("/yatakhane");
+  return { success: true };
+}

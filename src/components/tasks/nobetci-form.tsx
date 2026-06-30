@@ -5,6 +5,8 @@ import { X } from "lucide-react";
 
 import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
 import { assignTeacherDutyAction, assignStudentDutyAction, removeDutyAction } from "@/lib/tasks/duty-actions";
 import type { DutyTeacher, DutyStudent } from "@/lib/tasks/duty-queries";
 
@@ -59,10 +61,9 @@ export function NobetciForm(props: NobetciFormProps) {
           {type === "teacher" && props.assignableProfiles ? (
             <label className="grid gap-2 text-sm font-medium">
               Hoca
-              <select
+              <NativeSelect
                 name="assigned_to"
                 required
-                className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20"
               >
                 <option value="">Hoca seçin</option>
                 {props.assignableProfiles
@@ -70,17 +71,16 @@ export function NobetciForm(props: NobetciFormProps) {
                   .map((p) => (
                     <option key={p.id} value={p.id}>{p.full_name}</option>
                   ))}
-              </select>
+              </NativeSelect>
             </label>
           ) : null}
 
           {type === "student" && props.students ? (
             <label className="grid gap-2 text-sm font-medium">
               Öğrenci
-              <select
+              <NativeSelect
                 name="student_id"
                 required
-                className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20"
               >
                 <option value="">Öğrenci seçin</option>
                 {props.students.map((s) => (
@@ -88,27 +88,25 @@ export function NobetciForm(props: NobetciFormProps) {
                     {s.full_name}{s.className ? ` (${s.className})` : ""}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </label>
           ) : null}
 
           <label className="grid gap-2 text-sm font-medium">
             Tarih
-            <input
+            <Input
               type="date"
               name="date"
               required
               defaultValue={todayDate}
-              className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20"
             />
           </label>
 
           <label className="grid gap-2 text-sm font-medium">
             Not (isteğe bağlı)
-            <input
+            <Input
               name="note"
               placeholder="örn: Sabah nöbeti"
-              className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20"
             />
           </label>
 

@@ -3,7 +3,6 @@ import {
   AlertTriangle,
   Building2,
   ClipboardList,
-  FileText,
   GraduationCap,
   ListChecks,
   School,
@@ -11,40 +10,29 @@ import {
   UsersRound,
 } from "lucide-react";
 
-import { AttendanceDashboardCard } from "@/components/attendance/attendance-dashboard-card";
-import { DormitoryDashboardCard } from "@/components/dormitory/dormitory-dashboard-card";
-import { DutyDashboardCard } from "@/components/dashboard/duty-dashboard-card";
-import { GuidanceDashboardCard } from "@/components/guidance/guidance-dashboard-card";
-import { TaskDashboardCard } from "@/components/tasks/task-dashboard-card";
-import { LibraryDashboardCard } from "@/components/library/library-dashboard-card";
-import { LiveSessionDashboardCard } from "@/components/live-sessions/live-session-dashboard-card";
+import {
+  SuspenseAttendanceCard,
+  SuspenseDormitoryCard,
+  SuspenseDutyCard,
+  SuspenseGuidanceCard,
+  SuspenseLibraryCard,
+  SuspenseLiveSessionCard,
+  SuspenseTaskCard,
+  SuspenseTodayLessonLogsCard,
+} from "@/components/dashboard/async-widgets";
 import { MetricCard } from "@/components/dashboard/metric-card";
 import { QuickActionButton } from "@/components/dashboard/quick-action-button";
-import { TodayLessonLogsCard } from "@/components/dashboard/today-lesson-logs-card";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { getAttendanceDashboardSummary } from "@/lib/attendance/queries";
-import { getDormitoryDashboardData, getUnassignedStudentsCount } from "@/lib/dormitory/queries";
-import { getGuidanceDashboardData } from "@/lib/guidance/queries";
-import { getLibraryDashboardData } from "@/lib/library/queries";
 import { getActiveTerms } from "@/lib/terms/queries";
-import { getTaskCounts } from "@/lib/tasks/queries";
-import { getLiveSessionDashboardData } from "@/lib/live-sessions/queries";
 import type { ProfileRow } from "@/types/database";
 
 import { getDepartmentManagerDashboardData } from "@/lib/dashboard/role-based-queries";
 
 export async function DepartmentManagerDashboard({ profile }: { profile: ProfileRow }) {
-  const [data, attendanceSummary, dormitoryData, unassignedCount, libraryData, guidanceData, activeTerms, taskCounts, liveSessionData] = await Promise.all([
+  const [data, activeTerms] = await Promise.all([
     getDepartmentManagerDashboardData(profile),
-    getAttendanceDashboardSummary(profile),
-    getDormitoryDashboardData(profile),
-    getUnassignedStudentsCount(profile),
-    getLibraryDashboardData(),
-    getGuidanceDashboardData(profile),
     getActiveTerms(),
-    getTaskCounts(profile),
-    getLiveSessionDashboardData(profile),
   ]);
 
   const activeTerm = activeTerms[0] ?? null;
@@ -124,7 +112,7 @@ export async function DepartmentManagerDashboard({ profile }: { profile: Profile
         </Card>
       ) : null}
 
-      <AttendanceDashboardCard summary={attendanceSummary} />
+      <SuspenseAttendanceCard profile={profile} />
 
       <section className="space-y-3">
         <div className="flex items-center justify-between gap-3">
@@ -179,37 +167,13 @@ export async function DepartmentManagerDashboard({ profile }: { profile: Profile
       </section>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <DormitoryDashboardCard
-          totalCapacity={dormitoryData.totalCapacity}
-          assignedCount={dormitoryData.assignedCount}
-          availableCapacity={dormitoryData.availableCapacity}
-          totalDormitories={dormitoryData.totalDormitories}
-          unassignedStudents={unassignedCount}
-        />
-        <LibraryDashboardCard
-          totalBooks={libraryData.totalBooks}
-          totalCopies={libraryData.totalCopies}
-          availableCopies={libraryData.availableCopies}
-          borrowedCount={libraryData.borrowedCount}
-          overdueCount={libraryData.overdueCount}
-          totalDocuments={libraryData.totalDocuments}
-        />
-        <GuidanceDashboardCard
-          totalInterviews={guidanceData.total_interviews}
-          openFollowUps={guidanceData.open_follow_ups}
-          thisMonthInterviews={guidanceData.this_month_interviews}
-          activeSurveys={guidanceData.active_surveys}
-          plannedActivities={guidanceData.planned_activities}
-        />
-        <DutyDashboardCard />
-        <TaskDashboardCard
-          openCount={taskCounts.pending + taskCounts.in_progress}
-          overdueCount={taskCounts.overdue}
-          dueTodayCount={taskCounts.dueToday}
-          completedCount={taskCounts.completed}
-        />
-        <LiveSessionDashboardCard upcomingCount={liveSessionData.upcomingCount} />
-        <TodayLessonLogsCard maxItems={5} />
+        <SuspenseDormitoryCard profile={profile} />
+        <SuspenseLibraryCard />
+        <SuspenseGuidanceCard profile={profile} />
+        <SuspenseDutyCard />
+        <SuspenseTaskCard profile={profile} />
+        <SuspenseLiveSessionCard profile={profile} />
+        <SuspenseTodayLessonLogsCard maxItems={5} />
       </div>
 
       <section className="space-y-2">

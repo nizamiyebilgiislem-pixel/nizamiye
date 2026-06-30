@@ -12,6 +12,7 @@ import { getInfirmaryRecordById } from "@/lib/infirmary/queries";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { assertDateWithinAcademicTerm, requireCurrentAcademicTermWritable } from "@/lib/terms/guards";
 import { getStudentById } from "@/lib/students/queries";
+import { logSupabaseActionError, buildFriendlyDbErrorMessage } from "@/lib/supabase-action-error";
 
 const text = z.preprocess((value) => (typeof value === "string" && value.trim() === "" ? null : value), z.string().nullable());
 
@@ -146,4 +147,30 @@ export async function updateInfirmaryRecordAction(formData: FormData) {
   revalidatePath(`/revir/${record.id}`);
   revalidatePath(`/talebeler/${record.student.id}`);
   redirect(`/revir/${record.id}?success=updated`);
+}
+
+export async function deleteInfirmaryRecordAction(recordId: string) {
+  const { profile } = await requireAuth();
+  const supabase = await createSupabaseServerClient();
+
+  const { error } = await supabase
+    .from("infirmary_records")
+    .delete()
+    .eq("id", recordId);
+
+  if (error) {
+    logSupabaseActionError({ action: "deleteInfirmaryRecord", profile, payload: { id: recordId }, error });
+    return { error: buildFriendlyDbErrorMessage(error) };
+  }
+
+  createAuditLog({
+    ...buildAuditActor(profile),
+    action: "infirmary_record_deleted",
+    entityType: "infirmary_record",
+    entityId: recordId,
+    title: "Revir kaydı silindi",
+  });
+
+  revalidatePath("/revir");
+  return { success: true };
 }

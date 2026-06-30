@@ -1,34 +1,26 @@
 import Link from "next/link";
 import { Activity, Building2, GraduationCap, School, UsersRound } from "lucide-react";
 
-import { DepartmentOccupancyPanel } from "@/components/dashboard/department-occupancy-panel";
-import { DepartmentStatusCard } from "@/components/dashboard/department-status-card";
-import { DepartmentSuccessPanel } from "@/components/dashboard/department-success-panel";
+import {
+  SuspenseAttendanceCard,
+  SuspenseDepartmentSection,
+  SuspenseDormitoryCard,
+  SuspenseDutyCard,
+  SuspenseGuidanceCard,
+  SuspenseLibraryCard,
+  SuspenseLiveSessionCard,
+  SuspenseTaskCard,
+  SuspenseTodayLessonLogsCard,
+} from "@/components/dashboard/async-widgets";
 import { MetricCard } from "@/components/dashboard/metric-card";
-import { AttendanceDashboardCard } from "@/components/attendance/attendance-dashboard-card";
-import { DormitoryDashboardCard } from "@/components/dormitory/dormitory-dashboard-card";
-import { DutyDashboardCard } from "@/components/dashboard/duty-dashboard-card";
-import { LibraryDashboardCard } from "@/components/library/library-dashboard-card";
-import { GuidanceDashboardCard } from "@/components/guidance/guidance-dashboard-card";
-import { TaskDashboardCard } from "@/components/tasks/task-dashboard-card";
-import { LiveSessionDashboardCard } from "@/components/live-sessions/live-session-dashboard-card";
-import { TodayLessonLogsCard } from "@/components/dashboard/today-lesson-logs-card";
-
 import { PageHeader } from "@/components/layout/page-header";
 import { ReportShortcutCard } from "@/components/reports/report-shortcut-card";
 import { StudentAvatar } from "@/components/students/student-avatar";
 import { StudentStatusBadge } from "@/components/students/student-status-badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
-import { getAttendanceDashboardSummary } from "@/lib/attendance/queries";
 import { getDashboardData, type DashboardDistributionItem } from "@/lib/dashboard/queries";
-import { getDepartmentAnalyticsForProfile } from "@/lib/departments/analytics";
-import { getDormitoryDashboardData, getUnassignedStudentsCount } from "@/lib/dormitory/queries";
-import { getGuidanceDashboardData } from "@/lib/guidance/queries";
-import { getLibraryDashboardData } from "@/lib/library/queries";
 import { getActiveTerms } from "@/lib/terms/queries";
-import { getTaskCounts } from "@/lib/tasks/queries";
-import { getLiveSessionDashboardData } from "@/lib/live-sessions/queries";
 
 import type { ProfileRow } from "@/types/database";
 
@@ -40,17 +32,9 @@ const metricIcons: Record<string, typeof GraduationCap> = {
 };
 
 export async function AdminDashboard({ profile }: { profile: ProfileRow }) {
-  const [dashboard, departments, activeTerms, attendanceSummary, dormitoryData, unassignedCount, libraryData, guidanceData, taskCounts, liveSessionData] = await Promise.all([
+  const [dashboard, activeTerms] = await Promise.all([
     getDashboardData(profile),
-    getDepartmentAnalyticsForProfile(profile),
     getActiveTerms(),
-    getAttendanceDashboardSummary(profile),
-    getDormitoryDashboardData(profile),
-    getUnassignedStudentsCount(profile),
-    getLibraryDashboardData(),
-    getGuidanceDashboardData(profile),
-    getTaskCounts(profile),
-    getLiveSessionDashboardData(profile),
   ]);
   const activeTerm = activeTerms[0] ?? null;
   const mainMetricKeys = new Set(["active-students", "teachers", "active-classes", "active-departments"]);
@@ -91,56 +75,18 @@ export async function AdminDashboard({ profile }: { profile: ProfileRow }) {
         </div>
       </section>
 
-      <section className="space-y-3">
-        <div className="space-y-0.5">
-          <h2 className="text-sm font-semibold text-[#093657]">Bölüm Bazlı Detay</h2>
-          <p className="text-xs text-muted-foreground">Müdür, doluluk, başarı ve program durumu.</p>
-        </div>
-        {departments.length > 0 ? (
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            {departments.map((department) => (
-              <DepartmentStatusCard key={department.id} department={department} />
-            ))}
-          </div>
-        ) : (
-          <EmptyState title="Görüntülenecek bölüm bulunamadı." />
-        )}
-      </section>
+      <SuspenseDepartmentSection profile={profile} activeTermName={activeTerm?.name} />
 
-      <AttendanceDashboardCard summary={attendanceSummary} />
+      <SuspenseAttendanceCard profile={profile} />
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <DormitoryDashboardCard
-          totalCapacity={dormitoryData.totalCapacity}
-          assignedCount={dormitoryData.assignedCount}
-          availableCapacity={dormitoryData.availableCapacity}
-          totalDormitories={dormitoryData.totalDormitories}
-          unassignedStudents={unassignedCount}
-        />
-        <LibraryDashboardCard
-          totalBooks={libraryData.totalBooks}
-          totalCopies={libraryData.totalCopies}
-          availableCopies={libraryData.availableCopies}
-          borrowedCount={libraryData.borrowedCount}
-          overdueCount={libraryData.overdueCount}
-          totalDocuments={libraryData.totalDocuments}
-        />
-        <GuidanceDashboardCard
-          totalInterviews={guidanceData.total_interviews}
-          openFollowUps={guidanceData.open_follow_ups}
-          thisMonthInterviews={guidanceData.this_month_interviews}
-          activeSurveys={guidanceData.active_surveys}
-          plannedActivities={guidanceData.planned_activities}
-        />
-        <DutyDashboardCard />
-        <TaskDashboardCard
-          openCount={taskCounts.pending + taskCounts.in_progress}
-          overdueCount={taskCounts.overdue}
-          dueTodayCount={taskCounts.dueToday}
-          completedCount={taskCounts.completed}
-        />
-        <LiveSessionDashboardCard upcomingCount={liveSessionData.upcomingCount} />
-        <TodayLessonLogsCard maxItems={5} />
+        <SuspenseDormitoryCard profile={profile} />
+        <SuspenseLibraryCard />
+        <SuspenseGuidanceCard profile={profile} />
+        <SuspenseDutyCard />
+        <SuspenseTaskCard profile={profile} />
+        <SuspenseLiveSessionCard profile={profile} />
+        <SuspenseTodayLessonLogsCard maxItems={5} />
         <div className="space-y-3">
           <ReportShortcutCard
             title="PDF Merkezi"
@@ -163,11 +109,6 @@ export async function AdminDashboard({ profile }: { profile: ProfileRow }) {
             }
           />
         </div>
-      </div>
-
-      <div className="grid gap-4 xl:grid-cols-2">
-        <DepartmentOccupancyPanel departments={departments} />
-        <DepartmentSuccessPanel departments={departments} activeTermName={activeTerm?.name} />
       </div>
 
       <div className="grid gap-4 xl:grid-cols-3">

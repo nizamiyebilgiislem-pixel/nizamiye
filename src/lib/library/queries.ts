@@ -121,12 +121,17 @@ export async function getBookById(id: string) {
   return data as unknown as BookWithCategory;
 }
 
-export async function getLoans(profile: ProfileRow, filters?: { status?: string; overdue?: boolean; student_id?: string; profile_id?: string; book_id?: string }, page?: number, pageSize = 20) {
+export async function getLoans(profile: ProfileRow, filters?: { search?: string; status?: string; overdue?: boolean; student_id?: string; profile_id?: string; book_id?: string }, page?: number, pageSize = 20) {
   const supabase = await createSupabaseServerClient();
   let query = supabase
     .from("library_loans")
     .select("*, book:book_id(id, title, author), student:student_id(id, full_name), profile:profile_id(id, full_name), given_by_profile:given_by(id, full_name), received_by_profile:received_by(id, full_name)", { count: "exact" })
     .order("created_at", { ascending: false });
+
+  if (filters?.search) {
+    const search = `%${filters.search}%`;
+    query = query.or(`book.title.ilike.${search},student.full_name.ilike.${search},profile.full_name.ilike.${search}`);
+  }
 
   if (filters?.status) {
     query = query.eq("status", filters.status as "borrowed" | "returned" | "lost");

@@ -1,6 +1,6 @@
 
 
-import { ReportEmptyState } from "@/components/reports/report-filter-panel";
+import { EmptyState } from "@/components/ui/empty-state";
 import { ReportPrintActions } from "@/components/reports/report-print-actions";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -73,7 +73,7 @@ export default async function LibraryReportsPage() {
       )}
 
       {overdueLoans.length === 0 && categoryCounts.length === 0 && (
-        <ReportEmptyState message="Kütüphane verisi bulunamadı." />
+        <EmptyState title="Kütüphane verisi bulunamadı." />
       )}
     </div>
   );

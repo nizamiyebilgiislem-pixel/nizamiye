@@ -20,13 +20,12 @@ export default async function InfirmaryPage({ searchParams }: InfirmaryPageProps
   const summary = await getInfirmaryDashboardSummary(profile);
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <PageHeader eyebrow="Revir" title="Revir Sistemi" description="Talebe revir kayıtlarını takip edin." />
-        <div className="flex gap-2">
-          <Link href="/revir/kayitlar" className={cn(buttonVariants({ variant: "secondary" }))}>Tüm Kayıtlar</Link>
-          {canManage ? <Link href="/revir/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Revir Kaydı</Link> : null}
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Revir"
+        title="Revir Sistemi"
+        description="Talebe revir kayıtlarını takip edin."
+        actions={<><Link href="/revir/kayitlar" className={cn(buttonVariants({ variant: "secondary" }))}>Tüm Kayıtlar</Link>{canManage ? <Link href="/revir/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Revir Kaydı</Link> : null}</>}
+      />
       <InfirmaryErrorMessage error={params.error} />
       <section className="grid gap-4 md:grid-cols-4">
         <Metric label="Toplam Kayıt" value={summary.totalCount} />

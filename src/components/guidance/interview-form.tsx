@@ -6,6 +6,9 @@ import Link from "next/link";
 import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
 type StudentOption = { id: string; full_name: string };
@@ -48,52 +51,51 @@ export function InterviewForm({ action, preselectedStudentId, students, defaultV
 
             <label className="grid gap-2 text-sm font-medium">
               Öğrenci *
-              <select
+              <NativeSelect
                 name="student_id"
                 required
                 value={studentId}
                 onChange={(e) => setStudentId(e.target.value)}
-                className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20"
               >
                 <option value="">Seçiniz</option>
                 {students.map((s) => <option key={s.id} value={s.id}>{s.full_name}</option>)}
-              </select>
+              </NativeSelect>
             </label>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="grid gap-2 text-sm font-medium">
                 Görüşme Tarihi *
-                <input name="interview_date" type="date" required defaultValue={defaultValues?.interview_date ?? new Date().toISOString().split("T")[0]} className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20" />
+                <Input name="interview_date" type="date" required defaultValue={defaultValues?.interview_date ?? new Date().toISOString().split("T")[0]} />
               </label>
               <label className="grid gap-2 text-sm font-medium">
                 Görüşme Türü *
-                <select name="interview_type" defaultValue={defaultValues?.interview_type ?? "individual"} className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20">
+                <NativeSelect name="interview_type" defaultValue={defaultValues?.interview_type ?? "individual"}>
                   <option value="individual">Bireysel</option>
                   <option value="group">Grup</option>
                   <option value="parent">Veli</option>
                   <option value="emergency">Acil</option>
                   <option value="follow_up">Takip</option>
-                </select>
+                </NativeSelect>
               </label>
             </div>
 
             <label className="grid gap-2 text-sm font-medium">
               Görünürlük
-              <select name="visibility" defaultValue={defaultValues?.visibility ?? "private"} className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20">
+              <NativeSelect name="visibility" defaultValue={defaultValues?.visibility ?? "private"}>
                 <option value="private">Özel (sadece rehberlik/admin)</option>
                 <option value="summary">Sadece Özet (bölüm müdürü/hoca özeti görebilir)</option>
                 <option value="shared">Paylaşıldı (herkes görebilir)</option>
-              </select>
+              </NativeSelect>
             </label>
 
             <label className="grid gap-2 text-sm font-medium">
               Başlık *
-              <input name="title" required defaultValue={defaultValues?.title ?? ""} placeholder="Görüşme başlığı" className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20" />
+              <Input name="title" required defaultValue={defaultValues?.title ?? ""} placeholder="Görüşme başlığı" />
             </label>
 
             <label className="grid gap-2 text-sm font-medium">
               Özet
-              <textarea name="summary" rows={3} defaultValue={defaultValues?.summary ?? ""} placeholder="Görüşme özeti" className="rounded-md border border-input bg-background px-3 py-2 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20" />
+              <Textarea name="summary" rows={3} defaultValue={defaultValues?.summary ?? ""} placeholder="Görüşme özeti" />
             </label>
 
             <label className="grid gap-2 text-sm font-medium">
@@ -101,7 +103,7 @@ export function InterviewForm({ action, preselectedStudentId, students, defaultV
                 Özel Notlar
                 <span className="rounded-md bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-700">Sadece rehberlik/admin</span>
               </span>
-              <textarea name="private_notes" rows={3} defaultValue={defaultValues?.private_notes ?? ""} placeholder="Özel notlar (sadece yetkili kullanıcılar görebilir)" className="rounded-md border border-input bg-background px-3 py-2 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20" />
+              <Textarea name="private_notes" rows={3} defaultValue={defaultValues?.private_notes ?? ""} placeholder="Özel notlar (sadece yetkili kullanıcılar görebilir)" />
             </label>
 
             <div className="grid gap-4 sm:grid-cols-3">
@@ -112,28 +114,28 @@ export function InterviewForm({ action, preselectedStudentId, students, defaultV
               ].map((field) => (
                 <label key={field.name} className="grid gap-2 text-sm font-medium">
                   {field.label}
-                  <input name={field.name} defaultValue={(defaultValues as Record<string, string>)?.[field.name] ?? ""} placeholder={field.placeholder} className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20" />
+                  <Input name={field.name} defaultValue={(defaultValues as Record<string, string>)?.[field.name] ?? ""} placeholder={field.placeholder} />
                 </label>
               ))}
             </div>
 
             <label className="grid gap-2 text-sm font-medium">
               Aksiyon Planı
-              <textarea name="action_plan" rows={3} defaultValue={defaultValues?.action_plan ?? ""} placeholder="Yapılacaklar ve aksiyonlar" className="rounded-md border border-input bg-background px-3 py-2 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20" />
+              <Textarea name="action_plan" rows={3} defaultValue={defaultValues?.action_plan ?? ""} placeholder="Yapılacaklar ve aksiyonlar" />
             </label>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="grid gap-2 text-sm font-medium">
                 Sonraki Takip Tarihi
-                <input name="next_follow_up_date" type="date" defaultValue={defaultValues?.next_follow_up_date ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20" />
+                <Input name="next_follow_up_date" type="date" defaultValue={defaultValues?.next_follow_up_date ?? ""} />
               </label>
               <label className="grid gap-2 text-sm font-medium">
                 Durum
-                <select name="status" defaultValue={defaultValues?.status ?? "open"} className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20">
+                <NativeSelect name="status" defaultValue={defaultValues?.status ?? "open"}>
                   <option value="open">Açık</option>
                   <option value="followed">Takip Ediliyor</option>
                   <option value="closed">Kapalı</option>
-                </select>
+                </NativeSelect>
               </label>
             </div>
 

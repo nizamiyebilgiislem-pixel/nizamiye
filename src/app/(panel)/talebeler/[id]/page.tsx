@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
+
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
+import { deleteStudentAction } from "@/lib/students/actions";
 
 import { HafizlikProgressPanel } from "@/components/hafizlik/hafizlik-progress-panel";
 import { StudentDocumentSummary } from "@/components/documents/student-document-summary";
@@ -109,32 +112,39 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex items-start gap-4">
-          <StudentAvatar name={student.full_name} photoUrl={student.photo_url} size="lg" previewable />
-          <PageHeader
-            eyebrow={student.department?.name ?? "Talebe"}
-            title={student.full_name}
-            description={`${student.guardian_phone ?? "Veli telefonu yok"}`}
-          />
-          {student.course_class?.id && profile.role !== "rehberlik" ? (
-            <Link
-              href={`/siniflar/${student.course_class.id}`}
-              className="text-sm font-medium text-[#093657] hover:underline"
-            >
-              {student.course_class.name}
-            </Link>
-          ) : null}
-        </div>
-        <div className="flex items-center gap-2">
-          <StatusBadge status={student.status} />
-          {editable ? (
-            <Link href={`/talebeler/${student.id}/duzenle`} className={cn(buttonVariants())}>
-              <Pencil className="size-4" aria-hidden="true" />
-              Düzenle
-            </Link>
-          ) : null}
-        </div>
+      <div className="flex items-start gap-4">
+        <StudentAvatar name={student.full_name} photoUrl={student.photo_url} size="lg" previewable />
+        <PageHeader
+          eyebrow={student.department?.name ?? "Talebe"}
+          title={student.full_name}
+          description={`${student.guardian_phone ?? "Veli telefonu yok"}`}
+          actions={
+            <div className="flex items-center gap-2">
+              <StatusBadge status={student.status} />
+              {editable ? (
+                <>
+                  <Link href={`/talebeler/${student.id}/duzenle`} className={cn(buttonVariants())}>
+                    <Pencil className="size-4" aria-hidden="true" />
+                    Düzenle
+                  </Link>
+                  <form action={deleteStudentAction.bind(null, student.id) as unknown as (formData: FormData) => void}>
+                    <FormSubmitButton variant="destructive" size="sm">
+                      <Trash2 className="mr-1.5 size-4" /> Sil
+                    </FormSubmitButton>
+                  </form>
+                </>
+              ) : null}
+            </div>
+          }
+        />
+        {student.course_class?.id && profile.role !== "rehberlik" ? (
+          <Link
+            href={`/siniflar/${student.course_class.id}`}
+            className="text-sm font-medium text-[#093657] hover:underline"
+          >
+            {student.course_class.name}
+          </Link>
+        ) : null}
       </div>
 
       <StudentErrorMessage error={query.error} />

@@ -6,7 +6,7 @@ import { z } from "zod";
 
 import { requireAuth } from "@/lib/auth";
 import { slugify } from "@/lib/slug";
-import { buildSaveRedirect, logSupabaseActionError } from "@/lib/supabase-action-error";
+import { buildSaveRedirect, logSupabaseActionError, buildFriendlyDbErrorMessage } from "@/lib/supabase-action-error";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { canManageDepartments } from "@/lib/departments/permissions";
 
@@ -138,6 +138,26 @@ export async function updateDepartmentAction(formData: FormData) {
 
   revalidateDepartmentPages();
   redirect(`/bolumler/${parsed.data.id}?success=updated`);
+}
+
+export async function deleteDepartmentAction(departmentId: string) {
+  const { profile } = await requireAuth();
+
+  const supabase = await createSupabaseServerClient();
+
+  const { error } = await supabase
+    .from("departments")
+    .delete()
+    .eq("id", departmentId);
+
+  if (error) {
+    logSupabaseActionError({ action: "deleteDepartment", profile, payload: { id: departmentId }, error });
+    return { error: buildFriendlyDbErrorMessage(error) };
+  }
+
+  revalidateDepartmentPages();
+  revalidatePath("/bolumler");
+  return { success: true };
 }
 
 function revalidateDepartmentPages() {

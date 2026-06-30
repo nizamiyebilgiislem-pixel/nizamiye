@@ -11,6 +11,7 @@ import { StudentAvatar } from "@/components/students/student-avatar";
 import { StudentProfilePdfButton } from "@/components/students/student-profile-pdf-button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -91,7 +92,7 @@ export function StudentProfileOverview({
                 </div>
               ))
             ) : (
-              <EmptyState text="Bu talebe için not verisi bulunamadı." />
+              <EmptyState title="Bu talebe için not verisi bulunamadı." />
             )}
           </CardContent>
         </Card>
@@ -114,7 +115,7 @@ export function StudentProfileOverview({
                 </div>
               ))
             ) : (
-              <EmptyState text="Henüz dönem içi yorum eklenmedi." />
+              <EmptyState title="Henüz dönem içi yorum eklenmedi." />
             )}
             {latestEvaluation?.general_opinion ? (
               <div className="rounded-md border border-border bg-white p-3">
@@ -145,7 +146,7 @@ export function StudentProfileOverview({
                 <p className="mt-1 text-sm text-muted-foreground">Tedavi: {latestInfirmary.treatment ?? "-"}</p>
               </div>
             ) : (
-              <EmptyState text="Revir kaydı bulunamadı." />
+              <EmptyState title="Revir kaydı bulunamadı." />
             )}
             {infirmaryRecords.slice(1, 4).map((record) => (
               <div key={record.id} className="flex items-center justify-between gap-3 rounded-md border border-border bg-white p-3">
@@ -178,7 +179,7 @@ export function StudentProfileOverview({
                 </div>
               ))
             ) : (
-              <EmptyState text="Henüz kitap kaydı eklenmedi." />
+              <EmptyState title="Henüz kitap kaydı eklenmedi." />
             )}
           </CardContent>
         </Card>
@@ -252,10 +253,6 @@ function Metric({ icon: Icon, label, value }: { icon: typeof TrendingUp; label: 
       <p className="mt-2 text-2xl font-semibold text-[#093657]">{value}</p>
     </div>
   );
-}
-
-function EmptyState({ text }: { text: string }) {
-  return <div className="rounded-md border border-dashed border-border bg-[#f8fafc] px-4 py-8 text-center text-sm text-muted-foreground">{text}</div>;
 }
 
 function formatAverage(value: number | null) {

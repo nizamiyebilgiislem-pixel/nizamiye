@@ -81,12 +81,4 @@ function FilterField(props: FilterField) {
   );
 }
 
-export function ReportEmptyState({ message }: { message?: string }) {
-  return (
-    <Card>
-      <CardContent className="py-12 text-center">
-        <p className="text-sm text-muted-foreground">{message ?? "Bu filtrelere uygun rapor verisi bulunamadı."}</p>
-      </CardContent>
-    </Card>
-  );
-}
+

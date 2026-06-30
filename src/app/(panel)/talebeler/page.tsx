@@ -42,27 +42,12 @@ export default async function StudentsPage({ searchParams }: StudentsPageProps) 
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <PageHeader
-          eyebrow="Talebeler"
-          title="Aktif Talebeler"
-          description="Aktif durumdaki talebeleri görüntüleyin, filtreleyin ve yetkiniz dahilinde yönetin."
-        />
-        <div className="flex flex-wrap gap-2">
-          {canViewArchive(profile) ? (
-            <Link href="/talebeler/arsiv" className={cn(buttonVariants({ variant: "secondary" }))}>
-              <Archive className="size-4" aria-hidden="true" />
-              Arşiv Talebeler
-            </Link>
-          ) : null}
-          {canCreateStudent(profile) ? (
-            <Link href="/talebeler/yeni" className={cn(buttonVariants())}>
-              <Plus className="size-4" aria-hidden="true" />
-              Yeni Talebe Ekle
-            </Link>
-          ) : null}
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Talebeler"
+        title="Aktif Talebeler"
+        description="Aktif durumdaki talebeleri görüntüleyin, filtreleyin ve yetkiniz dahilinde yönetin."
+        actions={<div className="flex flex-wrap gap-2">{canViewArchive(profile) ? <Link href="/talebeler/arsiv" className={cn(buttonVariants({ variant: "secondary" }))}><Archive className="size-4" aria-hidden="true" />Arşiv Talebeler</Link> : null}{canCreateStudent(profile) ? <Link href="/talebeler/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Talebe Ekle</Link> : null}</div>}
+      />
 
       <StudentErrorMessage error={params.error} />
       <StudentFilters

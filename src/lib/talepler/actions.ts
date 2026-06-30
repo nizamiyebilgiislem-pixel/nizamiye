@@ -190,3 +190,44 @@ export async function editTalepAction(_previousState: unknown, formData: FormDat
   revalidatePath("/talepler");
   return { success: true };
 }
+
+export async function deleteTalepAction(talepId: string) {
+  const { profile } = await requireAuth();
+  const supabase = createSupabaseAdminClient();
+
+  const { data: talep } = await supabase
+    .from("talepler")
+    .select("*")
+    .eq("id", talepId)
+    .single();
+
+  if (!talep) {
+    return { error: "Talep bulunamadı." };
+  }
+
+  if (!canManageTalepStatus(profile, talep)) {
+    return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
+  }
+
+  const { error } = await supabase
+    .from("talepler")
+    .delete()
+    .eq("id", talepId);
+
+  if (error) {
+    logSupabaseActionError({ action: "deleteTalep", profile, payload: { id: talepId }, error });
+    return { error: buildFriendlyDbErrorMessage(error) };
+  }
+
+  createAuditLog({
+    ...buildAuditActor(profile),
+    action: "talep_deleted",
+    entityType: "talep",
+    entityId: talepId,
+    title: "Talep silindi",
+    description: `${talep.title} talebi silindi.`,
+  });
+
+  revalidatePath("/talepler");
+  return { success: true };
+}

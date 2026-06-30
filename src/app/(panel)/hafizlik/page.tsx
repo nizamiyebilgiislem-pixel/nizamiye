@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { AlertTriangle, Clock } from "lucide-react";
+import { AlertTriangle, Clock, Trash2 } from "lucide-react";
+
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
+import { deleteHafizlikProgressAction } from "@/lib/hafizlik/actions";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { getHafizlikDepartmentScope, getHafizlikStudentsByDepartment } from "@/lib/hafizlik/queries";
@@ -252,6 +255,13 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
                     <Link href={`/talebeler/${student.id}?tab=hafizlik`} className={buttonVariants({ variant: "ghost", size: "sm" })}>
                       Detay
                     </Link>
+                    {student.progress?.id ? (
+                      <form action={deleteHafizlikProgressAction.bind(null, student.progress.id) as unknown as (formData: FormData) => void}>
+                        <FormSubmitButton variant="destructive" size="xs">
+                          <Trash2 className="size-4" />
+                        </FormSubmitButton>
+                      </form>
+                    ) : null}
                   </div>
                 </div>
               ))}

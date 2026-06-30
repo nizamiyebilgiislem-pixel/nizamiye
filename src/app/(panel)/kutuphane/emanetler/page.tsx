@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { Pagination } from "@/components/ui/pagination";
@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { requireAuth } from "@/lib/auth";
 import { canManageLoans, canViewLibrary } from "@/lib/library/permissions";
@@ -14,7 +15,7 @@ import { getLoans } from "@/lib/library/queries";
 import { cn } from "@/lib/utils";
 
 type Props = {
-  searchParams: Promise<{ status?: string; overdue?: string; student_id?: string; profile_id?: string; book_id?: string; page?: string }>;
+  searchParams: Promise<{ q?: string; status?: string; overdue?: string; student_id?: string; profile_id?: string; book_id?: string; page?: string }>;
 };
 
 export default async function EmanetlerPage({ searchParams }: Props) {
@@ -27,6 +28,7 @@ export default async function EmanetlerPage({ searchParams }: Props) {
   }
 
   const { loans, totalCount } = await getLoans(profile, {
+    search: filters.q,
     status: filters.status,
     overdue: filters.overdue === "true" ? true : undefined,
     student_id: filters.student_id,
@@ -58,6 +60,10 @@ export default async function EmanetlerPage({ searchParams }: Props) {
       <Card className="bg-white">
         <CardContent className="p-4">
           <form className="flex flex-wrap gap-3">
+            <div className="relative flex-1 min-w-[200px]">
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+              <Input name="q" defaultValue={filters.q ?? ""} placeholder="Kitap adı, alan kişi ara..." className="pl-9" />
+            </div>
             <NativeSelect
               name="status"
               defaultValue={filters.status ?? ""}
@@ -73,7 +79,7 @@ export default async function EmanetlerPage({ searchParams }: Props) {
               Sadece Gecikenler
             </label>
             <Button type="submit" variant="secondary" size="sm">Filtrele</Button>
-            {(filters.status || filters.overdue) && (
+            {(filters.q || filters.status || filters.overdue) && (
               <Link href="/kutuphane/emanetler" className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}>Temizle</Link>
             )}
           </form>
@@ -126,7 +132,7 @@ export default async function EmanetlerPage({ searchParams }: Props) {
             ) : (
               <TableRow>
                 <TableCell colSpan={8} className="py-10 text-center text-muted-foreground">
-                  {filters.status || filters.overdue ? "Filtrelerle eşleşen emanet bulunamadı." : "Henüz emanet kaydı bulunmuyor."}
+                  {filters.q || filters.status || filters.overdue ? "Aramanızla eşleşen emanet bulunamadı." : "Henüz emanet kaydı bulunmuyor."}
                 </TableCell>
               </TableRow>
             )}

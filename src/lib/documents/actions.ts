@@ -11,6 +11,7 @@ import { canEditStudentDocuments } from "@/lib/documents/permissions";
 import { getDocumentById } from "@/lib/documents/queries";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getStudentById } from "@/lib/students/queries";
+import { logSupabaseActionError, buildFriendlyDbErrorMessage } from "@/lib/supabase-action-error";
 
 const documentSchema = z.object({
   student_id: z.string().uuid(),
@@ -91,4 +92,45 @@ export async function updateDocumentAction(formData: FormData) {
   revalidatePath(`/evraklar/${document.id}`);
   revalidatePath(`/talebeler/${document.student.id}`);
   redirect(`/evraklar/${document.id}?success=updated`);
+}
+
+export async function deleteStudentDocumentAction(docId: string) {
+  const { profile } = await requireAuth();
+  const document = await getDocumentById(docId);
+
+  if (!document?.student) {
+    return { error: "Evrak bulunamadı." };
+  }
+
+  if (!canEditStudentDocuments(profile, document.student, document.course_class)) {
+    return { error: "Bu işlem için yetkiniz bulunmamaktadır." };
+  }
+
+  const supabase = await createSupabaseServerClient();
+
+  const { error } = await supabase
+    .from("student_documents")
+    .delete()
+    .eq("id", docId);
+
+  if (error) {
+    logSupabaseActionError({ action: "deleteStudentDocument", profile, payload: { id: docId }, error });
+    return { error: buildFriendlyDbErrorMessage(error) };
+  }
+
+  createAuditLog({
+    ...buildAuditActor(profile),
+    action: "document_deleted",
+    title: "Evrak silindi",
+    description: `${document.student.full_name} için evrak silindi.`,
+    entityType: "document",
+    entityId: docId,
+    studentId: document.student.id,
+    beforeData: { document_type: document.document_type, file_url: document.file_url },
+    afterData: null,
+  });
+
+  revalidatePath("/evraklar");
+  revalidatePath(`/talebeler/${document.student.id}`);
+  return { success: true };
 }

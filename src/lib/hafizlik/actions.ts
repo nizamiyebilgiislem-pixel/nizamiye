@@ -10,6 +10,7 @@ import { canManageHafizlikProgress } from "@/lib/hafizlik/permissions";
 import { getHafizlikDepartmentScope, getHafizlikStudentsByDepartment } from "@/lib/hafizlik/queries";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { ProfileRow } from "@/types/database";
+import { logSupabaseActionError, buildFriendlyDbErrorMessage } from "@/lib/supabase-action-error";
 
 const updateProgressSchema = z.object({
   student_id: z.string().uuid(),
@@ -217,4 +218,22 @@ export async function bulkUpdateHafizlikProgressAction(formData: FormData): Prom
 
   revalidatePath("/hafizlik");
   redirect(`/hafizlik/guncelle?success=${updatedCount}${departmentId ? `&department=${departmentId}` : ""}`);
+}
+
+export async function deleteHafizlikProgressAction(progressId: string) {
+  const { profile } = await requireAuth();
+  const supabase = await createSupabaseServerClient();
+
+  const { error } = await supabase
+    .from("hafizlik_progress")
+    .delete()
+    .eq("id", progressId);
+
+  if (error) {
+    logSupabaseActionError({ action: "deleteHafizlikProgress", profile, payload: { id: progressId }, error });
+    return { error: buildFriendlyDbErrorMessage(error) };
+  }
+
+  revalidatePath("/hafizlik");
+  return { success: true };
 }

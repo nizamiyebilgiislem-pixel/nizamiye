@@ -27,12 +27,12 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <PageHeader eyebrow="Not Sistemi" title="Dersler" description="Bölüm bazlı dersleri ve sınav türlerini yönetin." />
-        {canManageGradeSettings(profile) ? (
-          <Link href="/not-sistemi/dersler/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Ders</Link>
-        ) : null}
-      </div>
+      <PageHeader
+        eyebrow="Not Sistemi"
+        title="Dersler"
+        description="Bölüm bazlı dersleri ve sınav türlerini yönetin."
+        actions={canManageGradeSettings(profile) ? <Link href="/not-sistemi/dersler/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Ders</Link> : undefined}
+      />
       <GradeErrorMessage error={params.error} />
       <CourseFilters departments={departments} values={{ search: params.q, departmentId: params.department, status: params.status }} />
       {courses.length > 0 ? <CourseList courses={courses} profile={profile} /> : <EmptyState title="Ders bulunamadı." />}

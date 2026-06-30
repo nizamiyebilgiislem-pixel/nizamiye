@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
+
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
+import { deleteDepartmentAction } from "@/lib/departments/actions";
 
 import { ClassAccordionCard } from "@/components/classes/class-accordion-card";
 import { DepartmentCourseManager } from "@/components/courses/department-course-manager";
@@ -42,19 +45,12 @@ export default async function DepartmentDetailPage({ params, searchParams }: Dep
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <PageHeader
-          eyebrow="Bölüm Yönetimi"
-          title={department.name}
-          description={department.description ?? "Bölüm açıklaması henüz girilmedi."}
-        />
-        {canEdit ? (
-          <Link href={`/bolumler/${department.id}/duzenle`} className={cn(buttonVariants())}>
-            <Pencil className="size-4" aria-hidden="true" />
-            Düzenle
-          </Link>
-        ) : null}
-      </div>
+      <PageHeader
+        eyebrow="Bölüm Yönetimi"
+        title={department.name}
+        description={department.description ?? "Bölüm açıklaması henüz girilmedi."}
+        actions={canEdit ? <div className="flex gap-2"><Link href={`/bolumler/${department.id}/duzenle`} className={cn(buttonVariants())}><Pencil className="size-4" aria-hidden="true" />Düzenle</Link><form action={deleteDepartmentAction.bind(null, department.id) as unknown as (formData: FormData) => void}><FormSubmitButton variant="destructive" size="sm"><Trash2 className="mr-1.5 size-4" /> Sil</FormSubmitButton></form></div> : undefined}
+      />
 
       <DepartmentErrorMessage error={query.error} />
 

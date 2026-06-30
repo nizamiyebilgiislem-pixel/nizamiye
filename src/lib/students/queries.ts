@@ -104,7 +104,18 @@ export async function getStudentsForProfile(
   };
 }
 
-export async function getStudentById(id: string) {
+export const getActiveStudents = cache(async () => {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.from("students").select("*").eq("status", "active");
+
+  if (error) {
+    throw new Error("Aktif talebeler alınamadı.");
+  }
+
+  return data;
+});
+
+export const getStudentById = cache(async (id: string) => {
   const supabase = await createSupabaseServerClient();
   const { data: student, error } = await supabase.from("students").select("*").eq("id", id).maybeSingle();
 
@@ -124,9 +135,9 @@ export async function getStudentById(id: string) {
     course_class: courseClass,
     department,
   };
-}
+});
 
-async function getClassById(id: string) {
+const getClassById = cache(async (id: string) => {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.from("classes").select("*").eq("id", id).maybeSingle();
 
@@ -135,9 +146,9 @@ async function getClassById(id: string) {
   }
 
   return data;
-}
+});
 
-async function getDepartmentById(id: string) {
+const getDepartmentById = cache(async (id: string) => {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.from("departments").select("*").eq("id", id).maybeSingle();
 
@@ -146,7 +157,7 @@ async function getDepartmentById(id: string) {
   }
 
   return data;
-}
+});
 
 function getAllowedClassIds(profile: ProfileRow, classes: ClassRow[], departmentId?: string) {
   if (isGlobalViewRole(profile.role) || profile.role === "rehberlik") {

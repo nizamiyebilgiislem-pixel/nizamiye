@@ -11,6 +11,7 @@ import { getClassCoursesForStudent } from "@/lib/grades/queries";
 import { getStudentById } from "@/lib/students/queries";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { requireAcademicTermWritable } from "@/lib/terms/guards";
+import { logSupabaseActionError, buildFriendlyDbErrorMessage } from "@/lib/supabase-action-error";
 
 const gradeSchema = z.coerce.number().min(0, "Not 0'dan küçük olamaz.").max(100, "Not 100'den büyük olamaz.");
 
@@ -275,4 +276,31 @@ export async function saveClassCourseGradesAction(formData: FormData) {
   revalidatePath("/bolumler");
   revalidatePath(`/siniflar/${classRow.id}`);
   redirect(buildGradeEntryRedirectUrl({ ...redirectBase, success: "saved" }));
+}
+
+export async function deleteGradeAction(gradeId: string) {
+  const { profile } = await requireAuth();
+  const supabase = await createSupabaseServerClient();
+
+  const { error } = await supabase
+    .from("grades")
+    .delete()
+    .eq("id", gradeId);
+
+  if (error) {
+    logSupabaseActionError({ action: "deleteGrade", profile, payload: { id: gradeId }, error });
+    return { error: buildFriendlyDbErrorMessage(error) };
+  }
+
+  createAuditLog({
+    ...buildAuditActor(profile),
+    action: "grade_deleted",
+    entityType: "grade",
+    entityId: gradeId,
+    title: "Not silindi",
+  });
+
+  revalidatePath("/not-sistemi");
+  revalidatePath("/dashboard");
+  return { success: true };
 }
