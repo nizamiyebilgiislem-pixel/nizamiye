@@ -1,5 +1,8 @@
-export const activeRoles = ["admin", "genel_mudur", "bolum_muduru", "kutuphane_gorevlisi", "hoca", "veli", "sponsor", "rehberlik", "destek_birim_muduru"] as const;
+export const activeRoles = ["admin", "genel_mudur", "yonetim", "bolum_muduru", "kutuphane_gorevlisi", "hoca", "veli", "sponsor", "rehberlik", "destek_birim_muduru"] as const;
 export const legacyRoles = ["muhasebe"] as const;
+
+export const globalViewRoles = ["admin", "genel_mudur", "yonetim"] as const;
+export const globalManageRoles = ["admin", "genel_mudur"] as const;
 
 export const roles = activeRoles;
 
@@ -21,3 +24,11 @@ export type RoutePermission = {
 };
 
 export type ProfileRole = UserRole;
+
+export function isGlobalViewRole(role: string) {
+  return (globalViewRoles as readonly string[]).includes(role);
+}
+
+export function isGlobalManageRole(role: string) {
+  return (globalManageRoles as readonly string[]).includes(role);
+}

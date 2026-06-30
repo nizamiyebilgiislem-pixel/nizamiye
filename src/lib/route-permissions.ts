@@ -1,21 +1,26 @@
 import type { UserRole } from "@/types/rbac";
 
+const topViewerRoles: UserRole[] = ["admin", "genel_mudur", "yonetim"];
 const staffRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca"];
-const guidanceDashboardRoles: UserRole[] = [...staffRoles, "rehberlik", "destek_birim_muduru"];
-const staffAndSupportRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "destek_birim_muduru"];
+const staffViewerRoles: UserRole[] = [...topViewerRoles, "bolum_muduru", "hoca"];
+const guidanceDashboardRoles: UserRole[] = [...staffViewerRoles, "rehberlik", "destek_birim_muduru"];
+const staffAndSupportRoles: UserRole[] = [...staffViewerRoles, "destek_birim_muduru"];
 const managerRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru"];
 const topManagerRoles: UserRole[] = ["admin", "genel_mudur"];
-const parentManagerRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "destek_birim_muduru"];
-const allRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "veli", "destek_birim_muduru"];
+const parentManagerRoles: UserRole[] = [...staffAndSupportRoles];
+const allRoles: UserRole[] = [...topViewerRoles, "bolum_muduru", "hoca", "veli", "destek_birim_muduru"];
 const accountRoles: UserRole[] = [...allRoles, "muhasebe"];
 const assistantRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "kutuphane_gorevlisi", "destek_birim_muduru", "rehberlik", "veli"];
-const talepRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "destek_birim_muduru"];
+const talepViewRoles: UserRole[] = ["admin", "genel_mudur", "yonetim", "bolum_muduru", "destek_birim_muduru"];
+const talepCreateRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "destek_birim_muduru"];
 const talepManageRoles: UserRole[] = ["admin", "genel_mudur"];
+const taskViewRoles: UserRole[] = ["admin", "genel_mudur", "yonetim", "bolum_muduru", "hoca", "destek_birim_muduru", "kutuphane_gorevlisi"];
 const libraryStaffRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevlisi"];
-const libraryViewRoles: UserRole[] = ["admin", "genel_mudur", "kutuphane_gorevlisi", "bolum_muduru", "hoca", "destek_birim_muduru"];
+const libraryViewRoles: UserRole[] = ["admin", "genel_mudur", "yonetim", "kutuphane_gorevlisi", "bolum_muduru", "hoca", "destek_birim_muduru"];
 const guidanceStaffRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik"];
-const guidanceViewRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik", "bolum_muduru"];
-const liveSessionRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "rehberlik", "destek_birim_muduru", "kutuphane_gorevlisi"];
+const guidanceViewRoles: UserRole[] = ["admin", "genel_mudur", "yonetim", "rehberlik", "bolum_muduru", "hoca"];
+const liveSessionViewRoles: UserRole[] = ["admin", "genel_mudur", "yonetim", "bolum_muduru", "hoca", "rehberlik", "destek_birim_muduru", "kutuphane_gorevlisi"];
+const liveSessionManageRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "rehberlik", "destek_birim_muduru", "kutuphane_gorevlisi"];
 
 export const routePermissions: Record<string, UserRole[]> = {
   "/dashboard": guidanceDashboardRoles,
@@ -37,9 +42,9 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/talebeler/[id]/revir/pdf": allRoles,
   "/hocalar": staffAndSupportRoles,
   "/hocalar/yeni": topManagerRoles,
-  "/bolumler": staffAndSupportRoles,
+  "/bolumler": [...staffAndSupportRoles, "rehberlik"],
   "/bolumler/yeni": topManagerRoles,
-  "/bolumler/[id]/pdf": staffAndSupportRoles,
+  "/bolumler/[id]/pdf": [...staffAndSupportRoles, "rehberlik"],
   "/siniflar": staffAndSupportRoles,
   "/siniflar/yeni": managerRoles,
   "/siniflar/[id]/pdf": staffAndSupportRoles,
@@ -59,7 +64,7 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/ders-notlari/aylik-rapor": topManagerRoles,
   "/kanaat-sistemi": staffAndSupportRoles,
   "/kanaat-sistemi/kanaat-girisi": staffAndSupportRoles,
-  "/hafizlik": staffRoles,
+  "/hafizlik": [...staffViewerRoles, "rehberlik"],
   "/hafizlik/guncelle": staffRoles,
   "/yatakhane": staffAndSupportRoles,
   "/yatakhane/yeni": managerRoles,
@@ -68,9 +73,9 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/yatakhane/[id]/yerlestir": managerRoles,
   "/revir": staffAndSupportRoles,
   "/revir-sistemi": staffAndSupportRoles,
-  "/duyurular": staffAndSupportRoles,
-  "/duyurular/yeni": topManagerRoles,
-  "/duyurular/[id]": staffAndSupportRoles,
+  "/duyurular": [...staffAndSupportRoles, "rehberlik"],
+  "/duyurular/yeni": ["admin", "genel_mudur", "rehberlik"],
+  "/duyurular/[id]": [...staffAndSupportRoles, "rehberlik"],
   "/duyurular/[id]/duzenle": topManagerRoles,
   "/evraklar": staffAndSupportRoles,
   "/evrak-yonetimi": managerRoles,
@@ -88,14 +93,15 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/raporlar/kutuphane": libraryViewRoles,
   "/raporlar/rehberlik": [...guidanceViewRoles, "rehberlik"],
   "/raporlar/gorevler": staffAndSupportRoles,
-  "/raporlar/talepler": talepRoles,
+  "/raporlar/talepler": talepViewRoles,
   "/raporlar/evraklar": staffAndSupportRoles,
-  "/audit-log": topManagerRoles,
+  "/audit-log": topViewerRoles,
   "/sistem/arsiv-merkezi": topManagerRoles,
   "/sistem/donem-yonetimi": topManagerRoles,
   "/sistem/donem-yonetimi/[id]": topManagerRoles,
   "/sistem/donem-sonlandirma": topManagerRoles,
-  "/kullanicilar": topManagerRoles,
+  "/kullanicilar": topViewerRoles,
+  "/kullanicilar/[id]": topViewerRoles,
   "/kullanicilar/yeni": topManagerRoles,
   "/kullanicilar/[id]/duzenle": topManagerRoles,
   "/ayarlar": ["admin"],
@@ -128,28 +134,29 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/rehberlik/etkinlikler/yeni": guidanceStaffRoles,
   "/rehberlik/etkinlikler/[id]": guidanceViewRoles,
   "/rehberlik/raporlar": guidanceViewRoles,
-  "/talepler": talepRoles,
-  "/talepler/yeni": talepRoles,
-  "/talepler/[id]": talepRoles,
+  "/talepler": talepViewRoles,
+  "/talepler/yeni": talepCreateRoles,
+  "/talepler/[id]": talepViewRoles,
   "/talepler/[id]/duzenle": talepManageRoles,
-  "/gorevler": staffAndSupportRoles,
+  "/gorevler": taskViewRoles,
   "/gorevler/yeni": managerRoles,
-  "/gorevler/[id]": staffAndSupportRoles,
+  "/gorevler/[id]": taskViewRoles,
   "/gorevler/[id]/duzenle": topManagerRoles,
   "/ders-sistemi": managerRoles,
   "/ders-sistemi/yeni": managerRoles,
   "/ders-sistemi/[id]/duzenle": managerRoles,
-  "/canli-oturumlar": liveSessionRoles,
-  "/canli-oturumlar/yeni": liveSessionRoles,
-  "/canli-oturumlar/[id]": liveSessionRoles,
-  "/canli-oturumlar/[id]/duzenle": liveSessionRoles,
-  "/canli-oturumlar/[id]/katil": liveSessionRoles,
+  "/canli-oturumlar": liveSessionViewRoles,
+  "/canli-oturumlar/yeni": liveSessionManageRoles,
+  "/canli-oturumlar/[id]": liveSessionViewRoles,
+  "/canli-oturumlar/[id]/duzenle": liveSessionManageRoles,
+  "/canli-oturumlar/[id]/katil": liveSessionManageRoles,
   "/asistan": assistantRoles,
 };
 
 export const roleLabels: Record<UserRole, string> = {
   admin: "Admin",
   genel_mudur: "Genel Müdür",
+  yonetim: "Yönetim",
   bolum_muduru: "Bölüm Müdürü",
   hoca: "Hoca",
   kutuphane_gorevlisi: "Kütüphane Görevlisi",
@@ -170,6 +177,7 @@ export function getRouteAllowedRoles(pathname: string) {
 
 export function getDefaultPathForRole(role: UserRole) {
   if (role === "muhasebe") return "/hesabim";
+  if (role === "yonetim") return "/dashboard";
   return role === "veli" ? "/veli" : "/dashboard";
 }
 

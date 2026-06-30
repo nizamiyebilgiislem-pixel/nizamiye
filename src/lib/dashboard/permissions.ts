@@ -1,11 +1,12 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { ProfileRow } from "@/types/database";
+import { isGlobalViewRole } from "@/types/rbac";
 
 export type DashboardRole = "admin" | "genel_mudur" | "bolum_muduru" | "guidance" | "class_teacher" | "course_teacher" | "destek_birim_muduru" | "other";
 
 export async function getPrimaryDashboardRole(profile: ProfileRow): Promise<DashboardRole> {
-  if (profile.role === "admin" || profile.role === "genel_mudur") {
-    return profile.role;
+  if (isGlobalViewRole(profile.role)) {
+    return profile.role === "admin" ? "admin" : "genel_mudur";
   }
 
   if (profile.role === "bolum_muduru") {
@@ -58,6 +59,6 @@ async function checkIsCourseTeacher(profileId: string): Promise<boolean> {
 }
 
 export function canViewDepartmentDashboard(profile: ProfileRow, departmentId: string): boolean {
-  if (profile.role === "admin" || profile.role === "genel_mudur") return true;
+  if (isGlobalViewRole(profile.role)) return true;
   return profile.department_id === departmentId;
 }

@@ -113,7 +113,14 @@ export function Sidebar({ groups, isOpen, onClose }: SidebarProps) {
                 </p>
                 <div className="space-y-0.5">
                   {group.items.map((item) => (
-                    <SidebarLink key={item.href} href={item.href} label={item.label} iconKey={item.iconKey} onClick={onClose} />
+                    <SidebarLink
+                      key={item.href}
+                      href={item.href}
+                      label={item.label}
+                      iconKey={item.iconKey}
+                      badgeCount={item.badgeCount}
+                      onClick={onClose}
+                    />
                   ))}
                 </div>
               </div>
@@ -139,10 +146,11 @@ type SidebarLinkProps = {
   href: string;
   label: string;
   iconKey: string;
+  badgeCount?: number;
   onClick: () => void;
 };
 
-function SidebarLink({ href, label, iconKey, onClick }: SidebarLinkProps) {
+function SidebarLink({ href, label, iconKey, badgeCount = 0, onClick }: SidebarLinkProps) {
   const pathname = usePathname();
   const isActive = pathname === href;
   const Icon = iconMap[iconKey] ?? Circle;
@@ -166,9 +174,13 @@ function SidebarLink({ href, label, iconKey, onClick }: SidebarLinkProps) {
         aria-hidden={true}
       />
       <span className="truncate">{label}</span>
-      {isActive && (
+      {badgeCount > 0 ? (
+        <span className="ml-auto inline-flex min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-semibold text-white">
+          {badgeCount > 99 ? "99+" : badgeCount}
+        </span>
+      ) : isActive ? (
         <span className="ml-auto size-1.5 rounded-full bg-[#093657]" />
-      )}
+      ) : null}
     </Link>
   );
 }

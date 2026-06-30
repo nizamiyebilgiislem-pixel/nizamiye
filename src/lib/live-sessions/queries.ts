@@ -1,7 +1,7 @@
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { canViewMeeting } from "@/lib/live-sessions/permissions";
 import type { ProfileRow, LiveSessionRow, LiveSessionParticipantRow } from "@/types/database";
-import type { UserRole } from "@/types/rbac";
+import { isGlobalViewRole, type UserRole } from "@/types/rbac";
 
 export type SessionRowWithRelations = LiveSessionRow & {
   creator: { id: string; full_name: string } | null;
@@ -45,7 +45,7 @@ export async function getSessions(profile: ProfileRow): Promise<SessionRowWithRe
       .select(sessionSelectFields)
       .order("start_time", { ascending: false });
 
-    if (!["admin", "genel_mudur"].includes(profile.role)) {
+    if (!isGlobalViewRole(profile.role)) {
       if (profile.role === "bolum_muduru" && profile.department_id) {
         query = query.eq("department_id", profile.department_id);
       } else {
@@ -110,7 +110,7 @@ export async function getUpcomingSessions(profile: ProfileRow) {
       .order("start_time", { ascending: true })
       .limit(10);
 
-    if (!["admin", "genel_mudur"].includes(profile.role)) {
+    if (!isGlobalViewRole(profile.role)) {
       if (profile.role === "bolum_muduru" && profile.department_id) {
         query = query.eq("department_id", profile.department_id);
       } else {

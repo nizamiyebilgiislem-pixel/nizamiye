@@ -3,14 +3,15 @@ import { Plus, Megaphone } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { requireAuth } from "@/lib/auth";
-import { canViewAnnouncements, canManageAnnouncements } from "@/lib/duyurular/permissions";
+import { canCreateAnnouncements, canViewAnnouncements } from "@/lib/duyurular/permissions";
 import { getAnnouncements } from "@/lib/duyurular/queries";
+import { markAnnouncementNotificationsAsRead } from "@/lib/notifications/queries";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const roleLabels: Record<string, string> = { admin: "Admin", genel_mudur: "Genel Müdür", bolum_muduru: "Bölüm Müdürü", hoca: "Hoca" };
+const roleLabels: Record<string, string> = { admin: "Admin", genel_mudur: "Genel Müdür", yonetim: "Yönetim", bolum_muduru: "Bölüm Müdürü", hoca: "Hoca", rehberlik: "Rehberlik" };
 
 export default async function DuyurularPage() {
   const { profile } = await requireAuth();
@@ -20,7 +21,8 @@ export default async function DuyurularPage() {
   }
 
   const announcements = await getAnnouncements();
-  const canManage = canManageAnnouncements(profile);
+  const canCreate = canCreateAnnouncements(profile);
+  await markAnnouncementNotificationsAsRead(profile.id);
 
   return (
     <div className="space-y-6">
@@ -28,7 +30,7 @@ export default async function DuyurularPage() {
         eyebrow="Modül"
         title="Duyurular"
         description="Kurum içi duyuru yönetimi."
-        actions={canManage ? <Link href="/duyurular/yeni" className={cn(buttonVariants({ size: "sm" }))}><Plus className="mr-1.5 size-4" /> Yeni Duyuru</Link> : undefined}
+        actions={canCreate ? <Link href="/duyurular/yeni" className={cn(buttonVariants({ size: "sm" }))}><Plus className="mr-1.5 size-4" /> Yeni Duyuru</Link> : undefined}
       />
 
       {announcements.length === 0 ? (

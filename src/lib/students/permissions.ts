@@ -1,4 +1,5 @@
 import type { ClassRow, ProfileRow, StudentRow } from "@/types/database";
+import { isGlobalViewRole } from "@/types/rbac";
 
 export function canCreateStudent(profile: ProfileRow) {
   return ["admin", "genel_mudur", "bolum_muduru"].includes(profile.role);
@@ -13,7 +14,7 @@ export function canReactivateArchivedStudent(profile: ProfileRow) {
 }
 
 export function canViewStudent(profile: ProfileRow, courseClass: Pick<ClassRow, "department_id"> | null) {
-  if (profile.role === "admin" || profile.role === "genel_mudur") {
+  if (isGlobalViewRole(profile.role)) {
     return true;
   }
 

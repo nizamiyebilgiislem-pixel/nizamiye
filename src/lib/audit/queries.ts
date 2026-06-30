@@ -1,5 +1,6 @@
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { ProfileRow, StudentRow } from "@/types/database";
+import { isGlobalViewRole } from "@/types/rbac";
 
 export type AuditLogFilters = {
   action?: string;
@@ -202,7 +203,7 @@ async function buildStudentMap(admin: ReturnType<typeof createSupabaseAdminClien
 async function getVisibleStudentIds(profile: ProfileRow) {
   const admin = createSupabaseAdminClient();
 
-  if (profile.role === "admin" || profile.role === "genel_mudur") {
+  if (isGlobalViewRole(profile.role)) {
     return null;
   }
 
@@ -241,7 +242,7 @@ async function getVisibleStudentIds(profile: ProfileRow) {
 }
 
 function canViewAuditLogForProfile(profile: ProfileRow, log: AuditLogRow, visibleStudentIds: Set<string> | null) {
-  if (profile.role === "admin" || profile.role === "genel_mudur") {
+  if (isGlobalViewRole(profile.role)) {
     return true;
   }
 
@@ -253,7 +254,7 @@ function canViewAuditLogForProfile(profile: ProfileRow, log: AuditLogRow, visibl
 }
 
 function canViewStudentAuditLog(profile: ProfileRow, studentId: string, visibleStudentIds: Set<string> | null) {
-  if (profile.role === "admin" || profile.role === "genel_mudur") {
+  if (isGlobalViewRole(profile.role)) {
     return true;
   }
 

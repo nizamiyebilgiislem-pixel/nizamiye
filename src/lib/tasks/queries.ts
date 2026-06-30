@@ -1,6 +1,7 @@
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { ProfileRow, TaskRow, TaskCommentRow, TaskAttachmentRow } from "@/types/database";
 import { isAssignableRole } from "@/lib/tasks/permissions";
+import { isGlobalViewRole } from "@/types/rbac";
 
 const taskSelectFields = `
   *,
@@ -30,7 +31,7 @@ export async function getTasks(profile: ProfileRow, page?: number, pageSize = 20
     .eq("is_active", true)
     .order("created_at", { ascending: false });
 
-  if (["admin", "genel_mudur"].includes(role)) {
+  if (isGlobalViewRole(role)) {
     // No additional filters needed
   } else if (role === "bolum_muduru" && profile.department_id) {
     query = query.or(`department_id.eq.${profile.department_id},assigned_by.eq.${profile.id},assigned_to.eq.${profile.id}`);

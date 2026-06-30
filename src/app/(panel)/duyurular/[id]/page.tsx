@@ -7,13 +7,14 @@ import { requireAuth } from "@/lib/auth";
 import { canViewAnnouncements, canManageAnnouncements } from "@/lib/duyurular/permissions";
 import { getAnnouncementById } from "@/lib/duyurular/queries";
 import { deleteAnnouncementAction } from "@/lib/duyurular/actions";
+import { markAnnouncementNotificationsAsRead } from "@/lib/notifications/queries";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { cn } from "@/lib/utils";
 
-const roleLabels: Record<string, string> = { admin: "Admin", genel_mudur: "Genel Müdür", bolum_muduru: "Bölüm Müdürü", hoca: "Hoca" };
+const roleLabels: Record<string, string> = { admin: "Admin", genel_mudur: "Genel Müdür", yonetim: "Yönetim", bolum_muduru: "Bölüm Müdürü", hoca: "Hoca", rehberlik: "Rehberlik" };
 
 export default async function DuyuruDetayPage({ params }: { params: Promise<{ id: string }> }) {
   const { profile } = await requireAuth();
@@ -25,6 +26,7 @@ export default async function DuyuruDetayPage({ params }: { params: Promise<{ id
 
   const announcement = await getAnnouncementById(id);
   if (!announcement) notFound();
+  await markAnnouncementNotificationsAsRead(profile.id);
 
   const canManage = canManageAnnouncements(profile);
 

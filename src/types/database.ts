@@ -733,6 +733,7 @@ export type NotificationRow = {
   id: string;
   profile_id: string;
   type: "info" | "success" | "warning" | "error" | "sms";
+  module_key: string | null;
   title: string;
   message: string | null;
   is_read: boolean;

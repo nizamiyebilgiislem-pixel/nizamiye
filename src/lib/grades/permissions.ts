@@ -1,11 +1,12 @@
 import type { ClassCourseRow, ClassRow, ProfileRow, StudentRow } from "@/types/database";
+import { isGlobalViewRole } from "@/types/rbac";
 
 export function canManageGradeSettings(profile: ProfileRow) {
   return ["admin", "genel_mudur"].includes(profile.role);
 }
 
 export function canViewDepartmentGrades(profile: ProfileRow, departmentId: string) {
-  if (profile.role === "admin" || profile.role === "genel_mudur") {
+  if (isGlobalViewRole(profile.role)) {
     return true;
   }
 
@@ -66,7 +67,7 @@ export function canEditClassCourseGrades(
 }
 
 export function canViewStudentGrades(profile: ProfileRow, courseClass: Pick<ClassRow, "department_id"> | null) {
-  if (profile.role === "admin" || profile.role === "genel_mudur") {
+  if (isGlobalViewRole(profile.role)) {
     return true;
   }
 

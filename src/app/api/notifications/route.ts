@@ -1,3 +1,4 @@
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function GET() {
@@ -19,7 +20,9 @@ export async function GET() {
       return Response.json({ error: "Profile not found" }, { status: 404 });
     }
 
-    const { data: notifications, error } = await supabase
+    const adminSupabase = createSupabaseAdminClient();
+
+    const { data: notifications, error } = await adminSupabase
       .from("notifications")
       .select("*")
       .eq("profile_id", profile.id)
@@ -55,7 +58,9 @@ export async function POST() {
       return Response.json({ error: "Profile not found" }, { status: 404 });
     }
 
-    await supabase
+    const adminSupabase = createSupabaseAdminClient();
+
+    await adminSupabase
       .from("notifications")
       .update({ is_read: true })
       .eq("profile_id", profile.id)

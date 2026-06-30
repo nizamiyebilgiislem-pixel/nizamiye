@@ -57,6 +57,9 @@ test("muhasebe role is not assignable and cannot use active modules", () => {
 test("rehberlik role only sees the trimmed navigation and allowed routes", () => {
   assert.equal(getRouteAllowedRoles("/dashboard")?.includes("rehberlik"), true);
   assert.equal(getRouteAllowedRoles("/talebeler")?.includes("rehberlik"), true);
+  assert.equal(getRouteAllowedRoles("/bolumler")?.includes("rehberlik"), true);
+  assert.equal(getRouteAllowedRoles("/duyurular")?.includes("rehberlik"), true);
+  assert.equal(getRouteAllowedRoles("/duyurular/yeni")?.includes("rehberlik"), true);
   assert.equal(getRouteAllowedRoles("/talebeler/123/duzenle")?.includes("rehberlik"), false);
   assert.equal(getRouteAllowedRoles("/veliler")?.includes("rehberlik"), true);
   assert.equal(getRouteAllowedRoles("/veliler/123/duzenle")?.includes("rehberlik"), false);
@@ -66,7 +69,7 @@ test("rehberlik role only sees the trimmed navigation and allowed routes", () =>
 
   const nav = getNavigationForRole("rehberlik");
   const labels = nav.flatMap((group) => group.items.map((item) => item.label));
-  assert.deepEqual(labels.sort(), ["Dashboard", "Rehberlik", "Talebeler", "Veliler"]);
+  assert.deepEqual(labels.sort(), ["Bölümler", "Dashboard", "Duyurular", "Rehberlik", "Talebeler", "Veliler"]);
 });
 
 test("hoca role can access hafizlik module from navigation and routes", () => {
@@ -98,6 +101,30 @@ test("rehberlik cannot use academic write helpers", async () => {
   assert.equal(canEditInfirmaryRecord(rehberlik, { status: "active" }, { department_id: "dep-1", class_teacher_id: null }), false);
   assert.equal(canEditStudentDocuments(rehberlik, { status: "active" }, { department_id: "dep-1", class_teacher_id: null }), false);
   assert.equal(canBindParentFromStudentDetail(rehberlik), false);
+});
+
+test("yonetim role can view global routes but cannot use write helpers", async () => {
+  const yonetim = profile("yonetim");
+
+  assert.equal(roles.includes("yonetim"), true);
+  assert.equal(getRouteAllowedRoles("/dashboard")?.includes("yonetim"), true);
+  assert.equal(getRouteAllowedRoles("/kullanicilar")?.includes("yonetim"), true);
+  assert.equal(getRouteAllowedRoles("/audit-log")?.includes("yonetim"), true);
+  assert.equal(getRouteAllowedRoles("/talebeler/yeni")?.includes("yonetim"), false);
+  assert.equal(getRouteAllowedRoles("/kullanicilar/yeni")?.includes("yonetim"), false);
+
+  assert.equal(canViewStudent(yonetim, { department_id: "dep-1" }), true);
+  assert.equal(canCreateStudent(yonetim), false);
+  assert.equal(canCreateTalep(yonetim), false);
+  assert.equal(canManageAcademicTerms(yonetim), false);
+  assert.equal(canManageAttendance(yonetim), false);
+  assert.equal(await canManageGuidance(yonetim), false);
+  assert.equal(canViewGuidance(yonetim), true);
+  assert.equal(canEditStudentGrades(yonetim, { status: "active" }, { department_id: "dep-1", class_teacher_id: null }, []), false);
+  assert.equal(canEditStudentEvaluations(yonetim, { status: "active" }, { department_id: "dep-1", class_teacher_id: null }), false);
+  assert.equal(canEditInfirmaryRecord(yonetim, { status: "active" }, { department_id: "dep-1", class_teacher_id: null }), false);
+  assert.equal(canEditStudentDocuments(yonetim, { status: "active" }, { department_id: "dep-1", class_teacher_id: null }), false);
+  assert.equal(canBindParentFromStudentDetail(yonetim), false);
 });
 
 test("security hardening migration removes broad academic policies", () => {

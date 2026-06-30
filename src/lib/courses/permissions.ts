@@ -1,4 +1,5 @@
 import type { ClassRow, ProfileRow } from "@/types/database";
+import { isGlobalViewRole } from "@/types/rbac";
 
 export function canManageDepartmentCourses(profile: ProfileRow, departmentId: string) {
   if (profile.role === "admin" || profile.role === "genel_mudur") {
@@ -13,7 +14,7 @@ export function canManageDepartmentCourses(profile: ProfileRow, departmentId: st
 }
 
 export function canViewDepartmentCourses(profile: ProfileRow, departmentId: string) {
-  if (profile.role === "admin" || profile.role === "genel_mudur") {
+  if (isGlobalViewRole(profile.role)) {
     return true;
   }
 

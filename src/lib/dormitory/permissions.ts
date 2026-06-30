@@ -1,4 +1,5 @@
 import type { ProfileRow } from "@/types/database";
+import { isGlobalViewRole } from "@/types/rbac";
 
 export function canManageDormitories(profile: ProfileRow) {
   return ["admin", "genel_mudur", "bolum_muduru"].includes(profile.role);
@@ -9,7 +10,7 @@ export function canDeleteDormitories(profile: ProfileRow) {
 }
 
 export function canViewDormitories(profile: ProfileRow) {
-  return ["admin", "genel_mudur", "bolum_muduru", "hoca"].includes(profile.role);
+  return isGlobalViewRole(profile.role) || ["bolum_muduru", "hoca"].includes(profile.role);
 }
 
 export function canManageDormitoryAssignments(profile: ProfileRow) {
@@ -17,7 +18,7 @@ export function canManageDormitoryAssignments(profile: ProfileRow) {
 }
 
 export function canViewDormitoryForStudents(profile: ProfileRow, studentDepartmentId: string | null) {
-  if (profile.role === "admin" || profile.role === "genel_mudur") {
+  if (isGlobalViewRole(profile.role)) {
     return true;
   }
 

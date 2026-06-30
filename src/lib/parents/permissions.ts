@@ -1,4 +1,5 @@
 import type { ProfileRow } from "@/types/database";
+import { isGlobalViewRole } from "@/types/rbac";
 
 export function canViewParentDirectory(profile: ProfileRow) {
   return profile.role !== "veli";
@@ -33,7 +34,7 @@ export function canManageParentLinks(profile: ProfileRow, visibleLinkedStudentCo
 }
 
 export function canViewParentDetail(profile: ProfileRow, visibleLinkedStudentCount: number) {
-  if (profile.role === "admin" || profile.role === "genel_mudur") {
+  if (isGlobalViewRole(profile.role)) {
     return true;
   }
 

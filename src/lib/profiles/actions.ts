@@ -55,7 +55,7 @@ const passwordField = z.preprocess((value) => {
 
 const booleanField = z.preprocess((value) => value === "on" || value === "true", z.boolean());
 
-const roleSchema = z.enum(["admin", "genel_mudur", "bolum_muduru", "hoca", "veli"]);
+const roleSchema = z.enum(["admin", "genel_mudur", "yonetim", "bolum_muduru", "hoca", "veli", "rehberlik", "destek_birim_muduru"]);
 const sourceSchema = z.enum(["hocalar", "kullanicilar", "veliler"]);
 
 const profileSchema = z

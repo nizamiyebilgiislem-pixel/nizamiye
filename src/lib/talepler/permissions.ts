@@ -1,12 +1,12 @@
 import type { ProfileRow, TalepRow } from "@/types/database";
-import type { UserRole } from "@/types/rbac";
+import { isGlobalViewRole, type UserRole } from "@/types/rbac";
 
 const talepCreatorRoles: UserRole[] = [
   "admin", "genel_mudur", "bolum_muduru", "destek_birim_muduru",
 ];
 
 export function canViewTalepler(profile: ProfileRow) {
-  return talepCreatorRoles.includes(profile.role as UserRole);
+  return isGlobalViewRole(profile.role) || talepCreatorRoles.includes(profile.role as UserRole);
 }
 
 export function canCreateTalep(profile: ProfileRow) {
@@ -26,7 +26,7 @@ export function canManageTalepStatus(profile: ProfileRow, talep: TalepRow): bool
 }
 
 export function canViewTalep(profile: ProfileRow, talep: TalepRow): boolean {
-  if (["admin", "genel_mudur"].includes(profile.role)) return true;
+  if (isGlobalViewRole(profile.role)) return true;
   if (talep.requested_by === profile.id) return true;
   if (profile.role === "bolum_muduru" && profile.department_id && talep.requested_unit === profile.department_id) return true;
   if (profile.role === "destek_birim_muduru" && talep.requested_unit === "destek") return true;

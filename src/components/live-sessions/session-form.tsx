@@ -26,6 +26,7 @@ const sessionTypeOptions = [
 const participantRoleLabels: Record<UserRole, string> = {
   admin: "Admin",
   genel_mudur: "Genel Müdür",
+  yonetim: "Yönetim",
   bolum_muduru: "Bölüm Müdürü",
   hoca: "Hoca",
   rehberlik: "Rehberlik",

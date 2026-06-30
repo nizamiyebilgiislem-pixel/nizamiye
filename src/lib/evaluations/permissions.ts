@@ -1,7 +1,8 @@
 import type { ClassRow, ProfileRow, StudentRow } from "@/types/database";
+import { isGlobalViewRole } from "@/types/rbac";
 
 export function canViewStudentEvaluations(profile: ProfileRow, courseClass: Pick<ClassRow, "department_id"> | null) {
-  if (profile.role === "admin" || profile.role === "genel_mudur") return true;
+  if (isGlobalViewRole(profile.role)) return true;
   if (profile.role === "bolum_muduru" || profile.role === "hoca") {
     return Boolean(profile.department_id && courseClass?.department_id === profile.department_id);
   }

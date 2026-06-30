@@ -2,6 +2,7 @@ import { cache } from "react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { archivedStudentStatuses } from "@/lib/students/constants";
 import type { ClassRow, DepartmentRow, ProfileRow, StudentRow } from "@/types/database";
+import { isGlobalViewRole } from "@/types/rbac";
 
 export type StudentWithRelations = StudentRow & {
   course_class: ClassRow | null;
@@ -148,7 +149,7 @@ async function getDepartmentById(id: string) {
 }
 
 function getAllowedClassIds(profile: ProfileRow, classes: ClassRow[], departmentId?: string) {
-  if (profile.role === "admin" || profile.role === "genel_mudur" || profile.role === "rehberlik") {
+  if (isGlobalViewRole(profile.role) || profile.role === "rehberlik") {
     return classes
       .filter((courseClass) => {
         if (departmentId && courseClass.department_id !== departmentId) {
@@ -166,7 +167,7 @@ function getAllowedClassIds(profile: ProfileRow, classes: ClassRow[], department
         return false;
       }
 
-      if (profile.role === "admin" || profile.role === "genel_mudur") {
+      if (isGlobalViewRole(profile.role)) {
         return true;
       }
 

@@ -1,5 +1,6 @@
 import { hasModuleAssignment } from "@/lib/module-assignments/queries";
 import type { ProfileRow } from "@/types/database";
+import { isGlobalViewRole } from "@/types/rbac";
 
 function isLibraryManager(profile: ProfileRow) {
   return ["admin", "genel_mudur", "kutuphane_gorevlisi"].includes(profile.role);
@@ -11,7 +12,7 @@ export async function canManageLibrary(profile: ProfileRow) {
 }
 
 export function canViewLibrary(profile: ProfileRow) {
-  return ["admin", "genel_mudur", "kutuphane_gorevlisi", "bolum_muduru", "hoca", "destek_birim_muduru"].includes(profile.role);
+  return isGlobalViewRole(profile.role) || ["kutuphane_gorevlisi", "bolum_muduru", "hoca", "destek_birim_muduru"].includes(profile.role);
 }
 
 export function canDeleteLibraryItems(profile: ProfileRow) {

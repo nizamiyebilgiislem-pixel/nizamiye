@@ -1,4 +1,5 @@
 import type { ClassCourseRow, ClassRow, ProfileRow } from "@/types/database";
+import { isGlobalViewRole } from "@/types/rbac";
 
 const managerRoles: Array<ProfileRow["role"]> = ["admin", "genel_mudur", "bolum_muduru"];
 
@@ -19,7 +20,7 @@ export function canManageEducationPlanning(profile: ProfileRow, classRow?: Pick<
 }
 
 export function canViewEducationClass(profile: ProfileRow, classRow: Pick<ClassRow, "department_id" | "class_teacher_id">) {
-  if (profile.role === "admin" || profile.role === "genel_mudur") {
+  if (isGlobalViewRole(profile.role)) {
     return true;
   }
 
@@ -35,7 +36,7 @@ export function canViewClassAssignments(
   classRow: Pick<ClassRow, "department_id" | "class_teacher_id">,
   classCourse?: Pick<ClassCourseRow, "teacher_id"> | null,
 ) {
-  if (profile.role === "admin" || profile.role === "genel_mudur") {
+  if (isGlobalViewRole(profile.role)) {
     return true;
   }
 
@@ -59,7 +60,7 @@ export function canViewClassSchedule(
   classRow: Pick<ClassRow, "department_id" | "class_teacher_id">,
   classCourses: Array<Pick<ClassCourseRow, "teacher_id">> = [],
 ) {
-  if (profile.role === "admin" || profile.role === "genel_mudur") {
+  if (isGlobalViewRole(profile.role)) {
     return true;
   }
 
@@ -95,7 +96,7 @@ export function canEditStudentCourseGrade(
     return false;
   }
 
-  if (profile.role === "admin" || profile.role === "genel_mudur") {
+  if (isGlobalViewRole(profile.role)) {
     return true;
   }
 

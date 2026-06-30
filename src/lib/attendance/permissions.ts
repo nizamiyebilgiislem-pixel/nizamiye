@@ -1,7 +1,8 @@
 import type { ClassRow, ProfileRow } from "@/types/database";
+import { isGlobalViewRole } from "@/types/rbac";
 
 export function canViewAttendance(profile: ProfileRow) {
-  return ["admin", "genel_mudur", "bolum_muduru", "hoca"].includes(profile.role);
+  return isGlobalViewRole(profile.role) || ["bolum_muduru", "hoca"].includes(profile.role);
 }
 
 export function canManageAttendance(profile: ProfileRow) {
@@ -13,7 +14,7 @@ export function canManageAttendanceSettings(profile: ProfileRow) {
 }
 
 export function canViewAttendanceClass(profile: ProfileRow, classRow: Pick<ClassRow, "department_id" | "class_teacher_id"> | null) {
-  if (profile.role === "admin" || profile.role === "genel_mudur") {
+  if (isGlobalViewRole(profile.role)) {
     return true;
   }
 

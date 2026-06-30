@@ -5,7 +5,8 @@ import { ToastProvider } from "@/components/toast/toast-provider";
 import { RouteToast } from "@/components/toast/route-toast";
 import { requireAuth } from "@/lib/auth";
 import { requireRouteAccess } from "@/lib/auth";
-import { getNavigationForProfile } from "@/lib/navigation";
+import { applyNavigationBadges, getNavigationForProfile } from "@/lib/navigation";
+import { getNavigationBadgeCounts } from "@/lib/notifications/queries";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -27,12 +28,15 @@ export default async function PanelLayout({
     await requireRouteAccess(pathname);
   }
 
-  const navigationGroups = await getNavigationForProfile(profile);
+  const [navigationGroups, badgeCounts] = await Promise.all([
+    getNavigationForProfile(profile),
+    getNavigationBadgeCounts(profile.id),
+  ]);
 
   return (
     <ToastProvider>
       <RouteToast />
-      <PanelShell navigationGroups={navigationGroups} profile={profile}>
+      <PanelShell navigationGroups={applyNavigationBadges(navigationGroups, badgeCounts)} profile={profile}>
         {children}
       </PanelShell>
     </ToastProvider>

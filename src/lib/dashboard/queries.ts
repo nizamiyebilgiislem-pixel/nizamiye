@@ -1,4 +1,5 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { isGlobalViewRole } from "@/types/rbac";
 import type {
   ClassCourseRow,
   ClassRow,
@@ -106,7 +107,7 @@ export async function getDashboardData(profile: ProfileRow): Promise<DashboardDa
   const visibleStudents = studentsResult.data.filter((student) => student.course_class_id && visibleClassIds.has(student.course_class_id));
   const visibleStudentIds = new Set(visibleStudents.map((student) => student.id));
   const visibleProfiles = profilesResult.data.filter((profileRow) => {
-    if (profile.role === "admin" || profile.role === "genel_mudur") {
+    if (isGlobalViewRole(profile.role)) {
       return true;
     }
 
@@ -181,7 +182,7 @@ function metric(key: string, label: string, value: number, description: string):
 }
 
 function filterDepartments(departments: DepartmentRow[], profile: ProfileRow) {
-  if (profile.role === "admin" || profile.role === "genel_mudur") {
+  if (isGlobalViewRole(profile.role)) {
     return departments;
   }
 

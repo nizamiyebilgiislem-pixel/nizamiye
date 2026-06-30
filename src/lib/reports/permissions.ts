@@ -4,6 +4,7 @@ import { canViewDormitories } from "@/lib/dormitory/permissions";
 import { canViewLibraryReports } from "@/lib/library/permissions";
 import { canViewGuidanceReports } from "@/lib/guidance/permissions";
 import { canViewAllTasks } from "@/lib/tasks/permissions";
+import { isGlobalViewRole } from "@/types/rbac";
 
 export function canViewReportCenter(profile: ProfileRow) {
   return profile.role !== "veli";
@@ -22,7 +23,7 @@ export function canViewDepartmentReports(profile: ProfileRow) {
 }
 
 export function canViewGradeReports(profile: ProfileRow) {
-  return ["admin", "genel_mudur", "bolum_muduru", "hoca"].includes(profile.role);
+  return isGlobalViewRole(profile.role) || ["bolum_muduru", "hoca"].includes(profile.role);
 }
 
 export function canViewAttendanceReports(profile: ProfileRow) {
@@ -30,11 +31,11 @@ export function canViewAttendanceReports(profile: ProfileRow) {
 }
 
 export function canViewEvaluationReports(profile: ProfileRow) {
-  return ["admin", "genel_mudur", "bolum_muduru", "hoca"].includes(profile.role);
+  return isGlobalViewRole(profile.role) || ["bolum_muduru", "hoca"].includes(profile.role);
 }
 
 export function canViewInfirmaryReports(profile: ProfileRow) {
-  return ["admin", "genel_mudur", "bolum_muduru", "hoca", "destek_birim_muduru"].includes(profile.role);
+  return isGlobalViewRole(profile.role) || ["bolum_muduru", "hoca", "destek_birim_muduru"].includes(profile.role);
 }
 
 export function canViewDormitoryReports(profile: ProfileRow) {
@@ -48,7 +49,7 @@ export function canViewTaskReports(profile: ProfileRow) {
 }
 
 export function canViewRequestReports(profile: ProfileRow) {
-  return ["admin", "genel_mudur", "bolum_muduru", "rehberlik", "destek_birim_muduru"].includes(profile.role);
+  return isGlobalViewRole(profile.role) || ["bolum_muduru", "rehberlik", "destek_birim_muduru"].includes(profile.role);
 }
 
 export function canViewDocumentReports(profile: ProfileRow) {

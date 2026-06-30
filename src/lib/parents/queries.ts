@@ -6,6 +6,7 @@ import type {
   ProfileRow,
   StudentRow,
 } from "@/types/database";
+import { isGlobalViewRole } from "@/types/rbac";
 
 export type ParentVisibleStudent = StudentRow & {
   course_class: ClassRow | null;
@@ -86,7 +87,7 @@ export async function getParentProfilesForProfile(profile: ProfileRow, filters: 
 
   const visibleParents = (parentsResult.data ?? [])
     .filter((parent) => {
-      if (profile.role === "admin" || profile.role === "genel_mudur") {
+      if (isGlobalViewRole(profile.role)) {
         return true;
       }
 
@@ -190,7 +191,7 @@ export async function getParentProfilesByStudentId(profile: ProfileRow, studentI
 
   const visibleStudentIds = new Set(visibleStudents.map((student) => student.id));
 
-  if (!visibleStudentIds.has(studentId) && profile.role !== "admin" && profile.role !== "genel_mudur") {
+  if (!visibleStudentIds.has(studentId) && !isGlobalViewRole(profile.role)) {
     return [];
   }
 
@@ -223,7 +224,7 @@ async function getVisibleParentIdsForStudents(profile: ProfileRow, visibleStuden
   const ids = new Set<string>();
 
   (data ?? []).forEach((link) => {
-    if (profile.role === "admin" || profile.role === "genel_mudur" || visibleStudentIds.has(link.student_id)) {
+    if (isGlobalViewRole(profile.role) || visibleStudentIds.has(link.student_id)) {
       ids.add(link.parent_profile_id);
     }
   });
@@ -270,7 +271,7 @@ function filterParentProfiles(parents: ParentProfileListItem[], search?: string)
 }
 
 function filterClassesForParentManagement(profile: ProfileRow, classes: ClassRow[]) {
-  if (profile.role === "admin" || profile.role === "genel_mudur") {
+  if (isGlobalViewRole(profile.role)) {
     return classes;
   }
 

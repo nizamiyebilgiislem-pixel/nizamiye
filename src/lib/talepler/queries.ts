@@ -1,6 +1,6 @@
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { ProfileRow, TalepRow } from "@/types/database";
-import type { UserRole } from "@/types/rbac";
+import { isGlobalViewRole, type UserRole } from "@/types/rbac";
 
 export const talepUnitRoles: Record<string, UserRole[]> = {
   destek: ["destek_birim_muduru"],
@@ -68,7 +68,7 @@ export async function getTalepler(profile: ProfileRow, page?: number, pageSize =
     .select(selectFields, { count: "exact" })
     .order("created_at", { ascending: false });
 
-  if (["admin", "genel_mudur"].includes(profile.role)) {
+  if (isGlobalViewRole(profile.role)) {
     // No additional filters needed
   } else {
     const handlerUnits: string[] = [];
@@ -96,7 +96,7 @@ export async function getRecentTalepler(profile: ProfileRow, limit = 5): Promise
   const supabase = createSupabaseAdminClient();
   const selectFields = "*, requester:requested_by(id, full_name), assignee:assigned_to(id, full_name), target:target_person(id, full_name)";
 
-  if (["admin", "genel_mudur"].includes(profile.role)) {
+  if (isGlobalViewRole(profile.role)) {
     const { data } = await supabase
       .from("talepler")
       .select(selectFields)

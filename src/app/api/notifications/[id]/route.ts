@@ -1,3 +1,4 @@
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function PATCH(
@@ -23,7 +24,9 @@ export async function PATCH(
       return Response.json({ error: "Profile not found" }, { status: 404 });
     }
 
-    const { error } = await supabase
+    const adminSupabase = createSupabaseAdminClient();
+
+    const { error } = await adminSupabase
       .from("notifications")
       .update({ is_read: true })
       .eq("id", id)

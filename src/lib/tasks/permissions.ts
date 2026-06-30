@@ -1,4 +1,5 @@
 import type { ProfileRow, TaskRow } from "@/types/database";
+import { isGlobalViewRole } from "@/types/rbac";
 
 const ASSIGNABLE_ROLES = [
   "admin",
@@ -16,7 +17,7 @@ export function isAssignableRole(role: string): role is AssignableRole {
 }
 
 export function canViewAllTasks(profile: ProfileRow) {
-  return ["admin", "genel_mudur", "bolum_muduru"].includes(profile.role);
+  return isGlobalViewRole(profile.role) || profile.role === "bolum_muduru";
 }
 
 export function canCreateTask(profile: ProfileRow) {

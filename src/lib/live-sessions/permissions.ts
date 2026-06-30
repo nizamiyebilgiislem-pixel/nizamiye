@@ -1,8 +1,10 @@
 import type { ProfileRow, LiveSessionRow } from "@/types/database";
+import { isGlobalViewRole } from "@/types/rbac";
 
 const liveSessionStaffRoles = [
   "admin",
   "genel_mudur",
+  "yonetim",
   "bolum_muduru",
   "hoca",
   "rehberlik",
@@ -10,7 +12,7 @@ const liveSessionStaffRoles = [
   "kutuphane_gorevlisi",
 ] as const;
 
-const sessionCreatorRoles = liveSessionStaffRoles;
+const sessionCreatorRoles = liveSessionStaffRoles.filter((role) => role !== "yonetim");
 
 export function isLiveSessionStaff(profile: Pick<ProfileRow, "role" | "is_active">) {
   return profile.is_active && liveSessionStaffRoles.includes(profile.role as typeof liveSessionStaffRoles[number]);
@@ -21,7 +23,7 @@ export function canCreateSession(profile: ProfileRow) {
 }
 
 export function canEditSession(profile: ProfileRow, session: LiveSessionRow) {
-  if (["admin", "genel_mudur"].includes(profile.role)) return true;
+  if (isGlobalViewRole(profile.role)) return true;
   if (session.created_by === profile.id) return true;
   return false;
 }
@@ -39,7 +41,7 @@ export function canDeleteSession(profile: ProfileRow, session: LiveSessionRow) {
 }
 
 export function canJoinSession(profile: ProfileRow) {
-  return isLiveSessionStaff(profile);
+  return isLiveSessionStaff(profile) && profile.role !== "yonetim";
 }
 
 export function canViewMeeting(profile: ProfileRow, session: LiveSessionRow, participantIds: string[]) {

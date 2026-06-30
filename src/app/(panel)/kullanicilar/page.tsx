@@ -25,7 +25,7 @@ type UsersPageProps = {
 
 export default async function UsersPage({ searchParams }: UsersPageProps) {
   const params = await searchParams;
-  const { profile } = await requireRole(["admin", "genel_mudur"]);
+  const { profile } = await requireRole(["admin", "genel_mudur", "yonetim"]);
   const { profiles, departments } = await getProfilesForCurrentProfile(profile, {
     search: params.q,
     role: params.role,
@@ -49,9 +49,11 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
           roleOptions={[...roles]}
           values={{ search: params.q, role: params.role, departmentId: params.department, status: params.status }}
         />
-        <Link href="/kullanicilar/yeni" className={cn(buttonVariants(), "shrink-0")}>
-          <Plus className="mr-1.5 size-4" /> Yeni Kullanıcı
-        </Link>
+        {profile.role !== "yonetim" ? (
+          <Link href="/kullanicilar/yeni" className={cn(buttonVariants(), "shrink-0")}>
+            <Plus className="mr-1.5 size-4" /> Yeni Kullanıcı
+          </Link>
+        ) : null}
       </div>
       {profiles.length > 0 ? (
         <ProfileListTable profiles={profiles} currentProfile={profile} detailBasePath="/kullanicilar" showEdit showCreatedAt />

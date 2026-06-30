@@ -1,4 +1,5 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { isGlobalViewRole } from "@/types/rbac";
 import type {
   ClassCourseRow,
   ClassRow,
@@ -147,7 +148,7 @@ async function getAnalyticsSource(profile: ProfileRow): Promise<AnalyticsSource>
     departments: visibleDepartments,
     classes: classes ?? [],
     profiles: (profilesResult.data ?? []).filter((profileRow) => {
-      if (profile.role === "admin" || profile.role === "genel_mudur") {
+      if (isGlobalViewRole(profile.role) || profile.role === "rehberlik") {
         return true;
       }
 

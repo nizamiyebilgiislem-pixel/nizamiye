@@ -30,7 +30,7 @@ type UserDetailPageProps = {
 
 export default async function UserDetailPage({ params, searchParams }: UserDetailPageProps) {
   const [{ id }, query] = await Promise.all([params, searchParams]);
-  const { profile: viewer } = await requireRole(["admin", "genel_mudur"]);
+  const { profile: viewer } = await requireRole(["admin", "genel_mudur", "yonetim"]);
   const profile = await getProfileById(id);
 
   if (!profile) {
