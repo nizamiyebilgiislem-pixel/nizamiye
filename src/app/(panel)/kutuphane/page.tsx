@@ -9,6 +9,7 @@ import { canManageBooks, canViewLibrary } from "@/lib/library/permissions";
 import { getLibraryDashboardData, getRecentBooks, getActiveLoans, getOverdueLoans, getCategoryBookCounts } from "@/lib/library/queries";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default async function LibraryPage() {
   const { profile } = await requireAuth();
@@ -98,7 +99,7 @@ export default async function LibraryPage() {
                 </Link>
               ))
             ) : (
-              <div className="px-4 py-6 text-center text-sm text-muted-foreground">Henüz kitap eklenmemiş.</div>
+              <EmptyState title="Henüz kitap eklenmemiş." />
             )}
           </CardContent>
         </Card>

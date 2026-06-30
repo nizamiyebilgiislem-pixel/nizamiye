@@ -6,6 +6,7 @@ import { CourseList } from "@/components/courses/course-list";
 import { GradeErrorMessage } from "@/components/grades/grade-error-message";
 import { PageHeader } from "@/components/layout/page-header";
 import { buttonVariants } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { getCoursesForProfile } from "@/lib/courses/queries";
 import { canManageGradeSettings } from "@/lib/grades/permissions";
@@ -34,7 +35,7 @@ export default async function CoursesPage({ searchParams }: CoursesPageProps) {
       </div>
       <GradeErrorMessage error={params.error} />
       <CourseFilters departments={departments} values={{ search: params.q, departmentId: params.department, status: params.status }} />
-      {courses.length > 0 ? <CourseList courses={courses} profile={profile} /> : <p className="text-sm text-muted-foreground">Ders bulunamadı.</p>}
+      {courses.length > 0 ? <CourseList courses={courses} profile={profile} /> : <EmptyState title="Ders bulunamadı." />}
     </div>
   );
 }

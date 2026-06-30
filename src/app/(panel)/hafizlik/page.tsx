@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
@@ -29,11 +30,7 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
     return (
       <div className="space-y-6">
         <PageHeader title="Hafızlık Takibi" description="Görüntüleyebileceğiniz aktif bölüm bulunamadı." />
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">
-            Hafızlık takibi için erişilebilir aktif bölüm bulunamadı.
-          </CardContent>
-        </Card>
+        <EmptyState title="Hafızlık takibi için erişilebilir aktif bölüm bulunamadı." />
       </div>
     );
   }
@@ -259,9 +256,7 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
               ))}
             </div>
           ) : (
-            <p className="py-6 text-center text-sm text-muted-foreground">
-              {searchTerm ? "Arama sonucu bulunamadı." : "Bu bölümde hafızlık kaydı olan aktif öğrenci bulunmuyor."}
-            </p>
+            <EmptyState title={searchTerm ? "Arama sonucu bulunamadı." : "Bu bölümde hafızlık kaydı olan aktif öğrenci bulunmuyor."} />
           )}
         </CardContent>
       </Card>

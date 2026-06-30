@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { getRecipientsForSender } from "@/lib/messages/actions";
 import { YeniMesajClient } from "./yeni-mesaj-client";
@@ -19,18 +20,11 @@ export default async function YeniMesajPage() {
           eyebrow="Mesajlaşma"
           title="Yeni Mesaj"
         />
-        <Card>
-          <CardContent className="py-8 text-center text-sm text-muted-foreground">
-            <p>Şu an mesaj gönderebileceğiniz bir kullanıcı bulunamadı.</p>
-            <p className="mt-2 text-xs">Veliler sadece öğretmenlere mesaj gönderebilir.</p>
-            <Link
-              href="/mesajlar"
-              className="mt-4 inline-block text-sm text-[#093657] hover:underline"
-            >
-              ← Geri dön
-            </Link>
-          </CardContent>
-        </Card>
+        <EmptyState
+          title="Şu an mesaj gönderebileceğiniz bir kullanıcı bulunamadı."
+          description="Veliler sadece öğretmenlere mesaj gönderebilir."
+          action={<Link href="/mesajlar" className="text-sm text-[#093657] hover:underline">← Geri dön</Link>}
+        />
       </div>
     );
   }

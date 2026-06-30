@@ -5,6 +5,7 @@ import { UserRoundX, UserRoundCheck } from "lucide-react";
 
 import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { createModuleAssignmentAction, deactivateModuleAssignmentAction } from "@/lib/module-assignments/actions";
 import type { ModuleAssignmentWithProfile } from "@/lib/module-assignments/queries";
 import type { ProfileRow } from "@/types/database";
@@ -66,7 +67,7 @@ export function ModuleAssignmentManager({
         </form>
 
         {assignees.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{emptyMessage}</p>
+          <EmptyState title={emptyMessage} />
         ) : (
           <div className="divide-y divide-border rounded-md border">
             {assignees.map((a) => (

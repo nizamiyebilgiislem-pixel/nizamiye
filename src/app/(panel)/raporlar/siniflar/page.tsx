@@ -101,7 +101,7 @@ function ClassReportCard({ classRow }: { classRow: ClassAnalytics }) {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">Bu sınıf için aktif talebe yok.</p>
+          <EmptyState title="Bu sınıf için aktif talebe yok." />
         )}
       </CardContent>
     </Card>

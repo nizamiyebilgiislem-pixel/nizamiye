@@ -1,6 +1,7 @@
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { canManageCategories } from "@/lib/library/permissions";
 import { getCategories } from "@/lib/library/queries";
@@ -47,7 +48,7 @@ export default async function KategorilerPage() {
                 </div>
               ))
             ) : (
-              <div className="px-4 py-6 text-center text-sm text-muted-foreground">Henüz kategori eklenmemiş.</div>
+              <EmptyState title="Henüz kategori eklenmemiş." />
             )}
           </CardContent>
         </Card>

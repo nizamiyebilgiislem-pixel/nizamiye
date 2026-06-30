@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { StudentTaskForm } from "@/components/student-tasks/student-task-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { ArrowLeft } from "lucide-react";
 import { requireAuth } from "@/lib/auth";
 import { canCreateStudentTask } from "@/lib/student-tasks/permissions";
@@ -39,9 +40,7 @@ export default async function NewStudentTaskPage() {
           {students.length > 0 ? (
             <StudentTaskForm students={students} />
           ) : (
-            <p className="py-6 text-center text-sm text-muted-foreground">
-              Görev atayabileceğiniz öğrenci bulunamadı.
-            </p>
+            <EmptyState title="Görev atayabileceğiniz öğrenci bulunamadı." />
           )}
         </CardContent>
       </Card>

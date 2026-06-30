@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { BookOpen, ClipboardCheck, FileText, HeartHandshake, CalendarDays } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { EvaluationSummary } from "@/components/evaluations/evaluation-summary";
@@ -365,11 +366,7 @@ export default async function ParentPanelPage({ params, searchParams }: PageProp
           )}
         </>
       ) : (
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">
-            Bu veli hesabına bağlı talebe bulunamadı. Yönetici panelinden veli-talebe bağlantısı oluşturulmalıdır.
-          </CardContent>
-        </Card>
+        <EmptyState title="Bu veli hesabına bağlı talebe bulunamadı." description="Yönetici panelinden veli-talebe bağlantısı oluşturulmalıdır." />
       )}
     </div>
   );

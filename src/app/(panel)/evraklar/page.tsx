@@ -8,6 +8,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { documentTypes } from "@/lib/documents/constants";
 import { getDocumentsDashboardSummary, getDocumentsForProfile } from "@/lib/documents/queries";
@@ -48,7 +49,7 @@ export default async function DocumentsPage({ searchParams }: DocumentsPageProps
         <Button type="submit">Filtrele</Button>
       </form></CardContent></Card>
       <div><h2 className="mb-3 text-lg font-semibold">Son Eklenen 10 Evrak</h2><DocumentList documents={summary.latestDocuments} profile={profile} /></div>
-      <div><h2 className="mb-3 text-lg font-semibold">Evrak Listesi</h2>{list.documents.length > 0 ? <><DocumentList documents={list.documents} profile={profile} /><Pagination currentPage={page} totalPages={totalPages} basePath="/evraklar" searchParams={params} /></> : <p className="text-sm text-muted-foreground">Evrak bulunamadı.</p>}</div>
+      <div><h2 className="mb-3 text-lg font-semibold">Evrak Listesi</h2>{list.documents.length > 0 ? <><DocumentList documents={list.documents} profile={profile} />        <Pagination currentPage={page} totalPages={totalPages} basePath="/evraklar" searchParams={params} /></> : <EmptyState title="Evrak bulunamadı." />}</div>
     </div>
   );
 }

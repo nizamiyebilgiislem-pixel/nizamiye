@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { AttendanceSessionCreateForm } from "@/components/attendance/attendance-session-create-form";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { canManageAttendance } from "@/lib/attendance/permissions";
 import { getAttendanceFilterOptions } from "@/lib/attendance/queries";
@@ -20,7 +21,7 @@ export default async function AttendanceNewPage({ searchParams }: AttendanceNewP
     return (
       <div className="space-y-6">
         <PageHeader eyebrow="Yeni Yoklama" title="Yetkisiz erişim" description="Yoklama oluşturma yetkiniz bulunmamaktadır." />
-        <Card><CardContent className="p-5 text-center text-sm text-muted-foreground">Bu işlem için yetkiniz bulunmamaktadır.</CardContent></Card>
+        <EmptyState title="Bu işlem için yetkiniz bulunmamaktadır." />
       </div>
     );
   }

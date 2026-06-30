@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { getInfirmaryRecordsForProfile } from "@/lib/infirmary/queries";
 import { canManageInfirmary } from "@/lib/module-assignments/permissions";
@@ -37,7 +38,7 @@ export default async function RecordsPage({ searchParams }: RecordsPageProps) {
         <select name="parent" defaultValue={params.parent ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Veli tümü</option><option value="true">Bilgilendirildi</option><option value="false">Bilgilendirilmedi</option></select>
         <Button type="submit">Filtrele</Button>
       </form></CardContent></Card>
-      {records.length > 0 ? <InfirmaryList records={records} profile={profile} canManageAll={canManage} /> : <p className="text-sm text-muted-foreground">Revir kaydı bulunamadı.</p>}
+      {records.length > 0 ? <InfirmaryList records={records} profile={profile} canManageAll={canManage} /> : <EmptyState title="Revir kaydı bulunamadı." />}
     </div>
   );
 }

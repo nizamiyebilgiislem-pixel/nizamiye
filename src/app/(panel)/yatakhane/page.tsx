@@ -5,6 +5,7 @@ import { DormitoryCard } from "@/components/dormitory/dormitory-card";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { canManageDormitories } from "@/lib/dormitory/permissions";
 import { getDormitories, getDormitoryAssignmentCount, getDormitoryDashboardData, getUnassignedStudentsCount } from "@/lib/dormitory/queries";
@@ -55,23 +56,12 @@ export default async function DormitoryListPage() {
           ))}
         </div>
       ) : (
-        <Card>
-          <CardContent className="flex flex-col items-center gap-4 py-16 text-center">
-            <Bed className="size-12 text-muted-foreground/40" aria-hidden />
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Henüz yatakhane bulunmamaktadır.</p>
-              <p className="mt-1 text-xs text-muted-foreground/60">
-                Yeni bir yatakhane ekleyerek başlayın.
-              </p>
-            </div>
-            {canManage && (
-              <Link href="/yatakhane/yeni" className={cn(buttonVariants())}>
-                <Plus className="size-4" aria-hidden="true" />
-                Yeni Yatakhane
-              </Link>
-            )}
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={Bed}
+          title="Henüz yatakhane bulunmamaktadır."
+          description="Yeni bir yatakhane ekleyerek başlayın."
+          action={canManage ? <Link href="/yatakhane/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Yatakhane</Link> : undefined}
+        />
       )}
     </div>
   );

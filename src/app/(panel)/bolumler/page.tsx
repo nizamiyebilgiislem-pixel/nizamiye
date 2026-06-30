@@ -4,6 +4,7 @@ import { DepartmentCard } from "@/components/departments/department-card";
 import { DepartmentErrorMessage } from "@/components/departments/department-error-message";
 import { PageHeader } from "@/components/layout/page-header";
 import { buttonVariants } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { getDepartmentAnalyticsForProfile } from "@/lib/departments/analytics";
 import { canManageDepartments } from "@/lib/departments/permissions";
@@ -43,9 +44,7 @@ export default async function DepartmentsPage({ searchParams }: DepartmentsPageP
           ))}
         </section>
       ) : (
-        <div className="rounded-md border border-border bg-card px-4 py-6 text-sm text-muted-foreground">
-          Görüntülenecek bölüm bulunamadı.
-        </div>
+        <EmptyState title="Görüntülenecek bölüm bulunamadı." />
       )}
     </div>
   );

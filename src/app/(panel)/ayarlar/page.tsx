@@ -3,6 +3,7 @@ import { Shield, Database, Users, Building2, Activity, Calendar, Clock, Image as
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { cn } from "@/lib/utils";
@@ -197,7 +198,7 @@ export default async function SettingsPage() {
                 )}
               </>
             ) : (
-              <p className="text-sm text-muted-foreground">Aktif dönem bulunamadı.</p>
+              <EmptyState title="Aktif dönem bulunamadı." />
             )}
           </CardContent>
         </Card>
@@ -326,7 +327,7 @@ export default async function SettingsPage() {
                   </div>
                 ))}
               {Object.keys(roleCounts).length === 0 && (
-                <p className="col-span-2 text-sm text-muted-foreground">Henüz aktif personel yok.</p>
+                <EmptyState title="Henüz aktif personel yok." />
               )}
             </div>
           </CardContent>
@@ -360,7 +361,7 @@ export default async function SettingsPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">Henüz işlem kaydı yok.</p>
+              <EmptyState title="Henüz işlem kaydı yok." />
             )}
           </CardContent>
         </Card>

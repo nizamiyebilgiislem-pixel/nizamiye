@@ -6,6 +6,7 @@ import { BulkUpdateForm } from "@/components/hafizlik/bulk-update-form";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { bulkUpdateHafizlikProgressAction, getHafizlikStudentsForBulk } from "@/lib/hafizlik/actions";
 
@@ -71,9 +72,7 @@ export default async function BulkUpdatePage({ searchParams }: BulkUpdatePagePro
               updateAction={bulkUpdateHafizlikProgressAction}
             />
           ) : (
-            <p className="py-6 text-center text-sm text-muted-foreground">
-              Bu bölümde aktif öğrenci bulunmuyor.
-            </p>
+            <EmptyState title="Bu bölümde aktif öğrenci bulunmuyor." />
           )}
         </CardContent>
       </Card>

@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { getDersSistemiCourses } from "@/lib/ders-sistemi/queries";
 import { cn } from "@/lib/utils";
@@ -86,7 +87,7 @@ export default async function DersSistemiPage({ searchParams }: Props) {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground">Bu ders henüz hiçbir sınıfa atanmamış.</p>
+                  <EmptyState title="Bu ders henüz hiçbir sınıfa atanmamış." />
                 )}
                 <div className="mt-3 flex items-center gap-2">
                   <Link

@@ -3,6 +3,7 @@ import { EvaluationErrorMessage } from "@/components/evaluations/evaluation-erro
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { getEvaluationEntryList } from "@/lib/evaluations/queries";
 
@@ -36,7 +37,7 @@ export default async function EvaluationEntryPage({ searchParams }: EvaluationEn
       {students.length > 0 ? (
         <EvaluationEntryList students={students} profile={profile} selectedClass={selectedClass} />
       ) : (
-        <p className="text-sm text-muted-foreground">Seçili sınıfta aktif talebe bulunamadı.</p>
+        <EmptyState title="Seçili sınıfta aktif talebe bulunamadı." />
       )}
     </div>
   );

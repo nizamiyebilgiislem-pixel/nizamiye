@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { canViewMonthlyReport } from "@/lib/daily-lesson-logs/permissions";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -177,7 +178,7 @@ export default async function MonthlyReportPage({ searchParams }: PageProps) {
             ))}
 
             {departmentStats.length === 0 && (
-              <p className="text-center text-muted-foreground">Veri bulunamadı.</p>
+              <EmptyState title="Veri bulunamadı." />
             )}
           </div>
         </CardContent>
