@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { RichProfileCard } from "@/components/profiles/rich-profile-card";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { createScheduleSlotAction, updateScheduleSlotAction } from "@/lib/education/actions";
 import { canManageClassSchedule } from "@/lib/education/permissions";
 import { getEducationScheduleData } from "@/lib/education/queries";
@@ -105,10 +106,10 @@ export default async function EducationSchedulePage({ params, searchParams }: Pr
                   Ders programı için önce sınıfa aktif ders atanmalıdır.
                 </div>
               )}
-              <input name="start_time" type="time" defaultValue={formSlot?.start_time ?? ""} className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm" />
-              <input name="end_time" type="time" defaultValue={formSlot?.end_time ?? ""} className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm" />
-              <input name="room" defaultValue={formSlot?.room ?? ""} placeholder="Oda" className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm" />
-              <input name="note" defaultValue={formSlot?.note ?? ""} placeholder="Not" className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm" />
+            <Input name="start_time" type="time" defaultValue={formSlot?.start_time ?? ""} className="h-10" />
+            <Input name="end_time" type="time" defaultValue={formSlot?.end_time ?? ""} className="h-10" />
+            <Input name="room" defaultValue={formSlot?.room ?? ""} placeholder="Derslik" className="h-10" />
+            <Input name="note" defaultValue={formSlot?.note ?? ""} placeholder="Not" className="h-10" />
               <Button type="submit" className="lg:self-start" disabled={activeClassCourses.length === 0}>
                 {formSlot ? "Güncelle" : "Kaydet"}
               </Button>

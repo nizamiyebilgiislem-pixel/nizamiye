@@ -9,6 +9,7 @@ import { getInterviews } from "@/lib/guidance/queries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 const interviewTypeLabels: Record<string, string> = {
@@ -52,7 +53,7 @@ export default async function GorusmelerPage({ searchParams }: Props) {
           <form className="flex flex-wrap items-end gap-3">
             <label className="grid gap-1 text-xs font-medium">
               Arama
-              <input name="search" defaultValue={params.search ?? ""} placeholder="Başlık veya özet..." className="h-9 rounded-md border border-input bg-background px-2.5 text-sm outline-none focus:border-[#093657]" />
+              <Input name="search" defaultValue={params.search ?? ""} placeholder="Başlık veya özet..." />
             </label>
             <label className="grid gap-1 text-xs font-medium">
               Durum
@@ -83,11 +84,11 @@ export default async function GorusmelerPage({ searchParams }: Props) {
             </label>
             <label className="grid gap-1 text-xs font-medium">
               Başlangıç
-              <input name="date_from" type="date" defaultValue={params.date_from ?? ""} className="h-9 rounded-md border border-input bg-background px-2.5 text-sm outline-none focus:border-[#093657]" />
+              <Input name="date_from" type="date" defaultValue={params.date_from ?? ""} />
             </label>
             <label className="grid gap-1 text-xs font-medium">
               Bitiş
-              <input name="date_to" type="date" defaultValue={params.date_to ?? ""} className="h-9 rounded-md border border-input bg-background px-2.5 text-sm outline-none focus:border-[#093657]" />
+              <Input name="date_to" type="date" defaultValue={params.date_to ?? ""} />
             </label>
             <Button type="submit">Filtrele</Button>
           </form>

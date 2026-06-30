@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { PdfPrintButton } from "@/components/reports/pdf-print-button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { requireAuth } from "@/lib/auth";
 import { attendanceTypeLabels, prayerAttendanceTypes } from "@/lib/attendance/constants";
 import { getAttendanceDashboardSummary, getAttendanceFilterOptions, getAttendanceReportData } from "@/lib/attendance/queries";
@@ -128,12 +129,12 @@ function Field({
   return (
     <label className="space-y-1 text-sm">
       <span className="text-xs uppercase tracking-wide text-muted-foreground">{label}</span>
-      <input
+      <Input
         type={type}
         name={name}
         defaultValue={defaultValue}
         placeholder={placeholder}
-        className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+        className="h-10"
       />
     </label>
   );

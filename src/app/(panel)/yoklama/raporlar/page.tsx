@@ -1,6 +1,7 @@
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { requireAuth } from "@/lib/auth";
 import { getAttendanceFilterOptions, getAttendanceReportData } from "@/lib/attendance/queries";
 import { attendanceTypes } from "@/lib/attendance/constants";
@@ -55,11 +56,11 @@ export default async function AttendanceReportsPage({ searchParams }: Attendance
           <form className="grid gap-3 xl:grid-cols-6" action="/yoklama/raporlar" method="get">
             <div className="space-y-2">
               <label className="text-xs font-medium text-muted-foreground">Tarih Başlangıç</label>
-              <input type="date" name="from" defaultValue={query.from} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm" />
+              <Input type="date" name="from" defaultValue={query.from} className="h-10" />
             </div>
             <div className="space-y-2">
               <label className="text-xs font-medium text-muted-foreground">Tarih Bitiş</label>
-              <input type="date" name="to" defaultValue={query.to} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm" />
+              <Input type="date" name="to" defaultValue={query.to} className="h-10" />
             </div>
             <div className="space-y-2">
               <label className="text-xs font-medium text-muted-foreground">Tür</label>

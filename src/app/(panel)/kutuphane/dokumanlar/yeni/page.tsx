@@ -6,6 +6,7 @@ import Link from "next/link";
 import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { uploadDocumentAction } from "@/lib/library/actions";
 
@@ -23,11 +24,11 @@ export default function DokumanEklePage() {
           <form action={formAction} className="space-y-5">
             <label className="grid gap-2 text-sm font-medium">
               Başlık *
-              <input
+              <Input
                 name="title"
                 required
                 placeholder="Doküman başlığı"
-                className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-ring"
+                className="h-10"
               />
             </label>
 
@@ -43,12 +44,12 @@ export default function DokumanEklePage() {
 
             <label className="grid gap-2 text-sm font-medium">
               Dosya *
-              <input
+              <Input
                 name="file"
                 type="file"
                 required
                 accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.webp"
-                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm font-normal outline-none file:mr-3 file:h-full file:border-0 file:bg-transparent file:text-sm file:font-medium focus:border-ring"
+                className="h-10"
               />
               <p className="text-xs text-muted-foreground">Maksimum 20 MB. PDF, Word, Excel veya görsel.</p>
             </label>

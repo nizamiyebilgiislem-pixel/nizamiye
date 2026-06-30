@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { requireAuth } from "@/lib/auth";
 import { canViewWeeklyReport } from "@/lib/daily-lesson-logs/permissions";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -151,18 +153,15 @@ export default async function WeeklyReportPage({ searchParams }: PageProps) {
         </CardHeader>
         <CardContent className="p-4">
           <form className="flex gap-4">
-            <input
+            <Input
               type="week"
               name="week"
               defaultValue={`${weekStart.getFullYear()}-W${String(getWeekNumber(weekStart)).padStart(2, "0")}`}
-              className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+              className="h-10"
             />
-            <button
-              type="submit"
-              className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground"
-            >
+            <Button type="submit">
               Göster
-            </button>
+            </Button>
           </form>
         </CardContent>
       </Card>

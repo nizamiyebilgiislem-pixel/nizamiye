@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { requireAuth } from "@/lib/auth";
 import { documentTypes } from "@/lib/documents/constants";
 import { getDocumentsDashboardSummary, getDocumentsForProfile } from "@/lib/documents/queries";
@@ -38,12 +39,12 @@ export default async function DocumentsPage({ searchParams }: DocumentsPageProps
       </section>
       <Card><CardHeader><CardTitle>Evrak Türlerine Göre Dağılım</CardTitle></CardHeader><CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">{summary.typeCounts.map((item)=><div key={item.type} className="rounded-md border border-border bg-background p-3"><p className="text-sm text-muted-foreground">{item.type}</p><p className="mt-1 text-2xl font-semibold">{item.count}</p></div>)}</CardContent></Card>
       <Card><CardContent className="p-4"><form action="/evraklar" className="grid gap-3 xl:grid-cols-[1fr_180px_180px_180px_150px_150px_auto]">
-        <input name="q" defaultValue={params.q ?? ""} placeholder="Talebe, tür veya URL" className="h-10 rounded-md border border-input bg-background px-3 text-sm" />
+        <Input name="q" defaultValue={params.q ?? ""} placeholder="Talebe, tür veya URL" className="h-10" />
         <select name="department" defaultValue={params.department ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Tüm bölümler</option>{list.departments.map((d)=><option key={d.id} value={d.id}>{d.name}</option>)}</select>
         <select name="class" defaultValue={params.class ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Tüm sınıflar</option>{list.classes.map((c)=><option key={c.id} value={c.id}>{c.name}</option>)}</select>
         <select name="type" defaultValue={params.type ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Tüm türler</option>{documentTypes.map((type)=><option key={type} value={type}>{type}</option>)}</select>
-        <input name="from" type="date" defaultValue={params.from ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm" />
-        <input name="to" type="date" defaultValue={params.to ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm" />
+        <Input name="from" type="date" defaultValue={params.from ?? ""} className="h-10" />
+        <Input name="to" type="date" defaultValue={params.to ?? ""} className="h-10" />
         <Button type="submit">Filtrele</Button>
       </form></CardContent></Card>
       <div><h2 className="mb-3 text-lg font-semibold">Son Eklenen 10 Evrak</h2><DocumentList documents={summary.latestDocuments} profile={profile} /></div>
