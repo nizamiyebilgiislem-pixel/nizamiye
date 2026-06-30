@@ -1,12 +1,12 @@
-"use client";
+ï»¿"use client";
 
 import { Button } from "@/components/ui/button";
 
 export default function Error({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-      <h2 className="text-lg font-semibold text-[#093657]">Bir hata oluştu</h2>
-      <p className="text-sm text-muted-foreground">Hesabım yüklenirken bir hata oluştu.</p>
+      <h2 className="text-lg font-semibold text-[#093657]">Bir hata oluÅŸtu</h2>
+      <p className="text-sm text-muted-foreground">HesabÄ±m yÃ¼klenirken bir hata oluÅŸtu.</p>
       <Button onClick={() => reset()}>Tekrar Dene</Button>
     </div>
   );
