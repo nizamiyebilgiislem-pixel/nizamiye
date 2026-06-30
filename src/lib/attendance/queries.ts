@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { canViewStudent } from "@/lib/students/permissions";
 import type {
@@ -421,6 +422,104 @@ export async function getAttendanceReportData(profile: ProfileRow, filters: Atte
   };
 }
 
+async function getAttendanceRecordMap(sessionIds: string[]) {
+  const admin = createSupabaseAdminClient();
+  if (sessionIds.length === 0) {
+    return new Map<string, AttendanceRecordRow[]>();
+  }
+
+  const { data, error } = await admin.from("attendance_records").select("*").in("session_id", sessionIds);
+
+  if (error) {
+    throw new Error("Yoklama kayıtları alınamadı.");
+  }
+
+  const map = new Map<string, AttendanceRecordRow[]>();
+  for (const record of (data ?? []) as AttendanceRecordRow[]) {
+    const list = map.get(record.session_id) ?? [];
+    list.push(record);
+    map.set(record.session_id, list);
+  }
+  return map;
+}
+
+const getProfilesByIds = cache(async (ids: string[]) => {
+  const admin = createSupabaseAdminClient();
+  if (ids.length === 0) {
+    return [] as ProfileRow[];
+  }
+
+  const { data, error } = await admin.from("profiles").select("*").in("id", ids);
+
+  if (error) {
+    throw new Error("Kullanıcı bilgileri alınamadı.");
+  }
+
+  return (data ?? []) as ProfileRow[];
+});
+
+const getVisibleClasses = cache(async (profile: ProfileRow) => {
+  const admin = createSupabaseAdminClient();
+  const { data, error } = await admin.from("classes").select("*").order("name", { ascending: true });
+
+  if (error) {
+    throw new Error("Sınıf bilgileri alınamadı.");
+  }
+
+  return (data ?? []).filter((classRow) => canViewAttendanceClass(profile, classRow));
+});
+
+const getDepartmentsByClassIds = cache(async (classIds: string[]) => {
+  const admin = createSupabaseAdminClient();
+  if (classIds.length === 0) {
+    return [] as DepartmentRow[];
+  }
+
+  const { data, error } = await admin.from("classes").select("department_id").in("id", classIds);
+  if (error) {
+    throw new Error("Bölüm bilgileri alınamadı.");
+  }
+
+  const departmentIds = Array.from(new Set((data ?? []).map((row) => row.department_id).filter(Boolean)));
+  if (departmentIds.length === 0) {
+    return [] as DepartmentRow[];
+  }
+
+  const departments = await admin.from("departments").select("*").in("id", departmentIds);
+  if (departments.error) {
+    throw new Error("Bölüm bilgileri alınamadı.");
+  }
+
+  return (departments.data ?? []) as DepartmentRow[];
+});
+
+const getActiveStudentCountMap = cache(async (classMap: Map<string, ClassRow>) => {
+  const admin = createSupabaseAdminClient();
+  const classIds = Array.from(classMap.keys());
+  if (classIds.length === 0) {
+    return new Map<string, number>();
+  }
+
+  const { data, error } = await admin.from("students").select("id,course_class_id,status").in("course_class_id", classIds);
+
+  if (error) {
+    throw new Error("Talebe sayıları alınamadı.");
+  }
+
+  const map = new Map<string, number>();
+  for (const classId of classIds) {
+    map.set(classId, 0);
+  }
+
+  for (const student of (data ?? []) as Array<{ course_class_id: string | null; status: string }>) {
+    if (student.course_class_id && student.status === "active") {
+      map.set(student.course_class_id, (map.get(student.course_class_id) ?? 0) + 1);
+    }
+  }
+
+  return map;
+});
+
 async function getSessionsByDateRange(profile: ProfileRow, range: { from?: string; to?: string }) {
   const admin = createSupabaseAdminClient();
   const { data: sessions, error } = await admin
@@ -477,104 +576,6 @@ async function getSessionsByDateRange(profile: ProfileRow, range: { from?: strin
     });
 
   return filtered;
-}
-
-async function getAttendanceRecordMap(sessionIds: string[]) {
-  const admin = createSupabaseAdminClient();
-  if (sessionIds.length === 0) {
-    return new Map<string, AttendanceRecordRow[]>();
-  }
-
-  const { data, error } = await admin.from("attendance_records").select("*").in("session_id", sessionIds);
-
-  if (error) {
-    throw new Error("Yoklama kayıtları alınamadı.");
-  }
-
-  const map = new Map<string, AttendanceRecordRow[]>();
-  for (const record of (data ?? []) as AttendanceRecordRow[]) {
-    const list = map.get(record.session_id) ?? [];
-    list.push(record);
-    map.set(record.session_id, list);
-  }
-  return map;
-}
-
-async function getProfilesByIds(ids: string[]) {
-  const admin = createSupabaseAdminClient();
-  if (ids.length === 0) {
-    return [] as ProfileRow[];
-  }
-
-  const { data, error } = await admin.from("profiles").select("*").in("id", ids);
-
-  if (error) {
-    throw new Error("Kullanıcı bilgileri alınamadı.");
-  }
-
-  return (data ?? []) as ProfileRow[];
-}
-
-async function getVisibleClasses(profile: ProfileRow) {
-  const admin = createSupabaseAdminClient();
-  const { data, error } = await admin.from("classes").select("*").order("name", { ascending: true });
-
-  if (error) {
-    throw new Error("Sınıf bilgileri alınamadı.");
-  }
-
-  return (data ?? []).filter((classRow) => canViewAttendanceClass(profile, classRow));
-}
-
-async function getDepartmentsByClassIds(classIds: string[]) {
-  const admin = createSupabaseAdminClient();
-  if (classIds.length === 0) {
-    return [] as DepartmentRow[];
-  }
-
-  const { data, error } = await admin.from("classes").select("department_id").in("id", classIds);
-  if (error) {
-    throw new Error("Bölüm bilgileri alınamadı.");
-  }
-
-  const departmentIds = Array.from(new Set((data ?? []).map((row) => row.department_id).filter(Boolean)));
-  if (departmentIds.length === 0) {
-    return [] as DepartmentRow[];
-  }
-
-  const departments = await admin.from("departments").select("*").in("id", departmentIds);
-  if (departments.error) {
-    throw new Error("Bölüm bilgileri alınamadı.");
-  }
-
-  return (departments.data ?? []) as DepartmentRow[];
-}
-
-async function getActiveStudentCountMap(classMap: Map<string, ClassRow>) {
-  const admin = createSupabaseAdminClient();
-  const classIds = Array.from(classMap.keys());
-  if (classIds.length === 0) {
-    return new Map<string, number>();
-  }
-
-  const { data, error } = await admin.from("students").select("id,course_class_id,status").in("course_class_id", classIds);
-
-  if (error) {
-    throw new Error("Talebe sayıları alınamadı.");
-  }
-
-  const map = new Map<string, number>();
-  for (const classId of classIds) {
-    map.set(classId, 0);
-  }
-
-  for (const student of (data ?? []) as Array<{ course_class_id: string | null; status: string }>) {
-    if (student.course_class_id && student.status === "active") {
-      map.set(student.course_class_id, (map.get(student.course_class_id) ?? 0) + 1);
-    }
-  }
-
-  return map;
 }
 
 async function getSessionsByStudentId(profile: ProfileRow, studentId: string) {

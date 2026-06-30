@@ -14,8 +14,14 @@ export async function getAcademicTerms() {
 }
 
 export const getActiveTerms = cache(async () => {
-  const terms = await getAcademicTerms();
-  return terms.filter((term) => term.is_active);
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.from("academic_terms").select("*").eq("is_active", true).order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error("Aktif dönemler alınamadı.");
+  }
+
+  return data ?? [];
 });
 
 export async function getCurrentAcademicTerm() {

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { ProfileRow, TaskRow, TaskCommentRow, TaskAttachmentRow } from "@/types/database";
 import { isAssignableRole } from "@/lib/tasks/permissions";
@@ -107,24 +108,44 @@ export async function getAssignableProfiles(currentProfile: ProfileRow) {
   return ((data ?? []) as AssignableProfile[]).filter((p) => isAssignableRole(p.role));
 }
 
-export async function getTaskCounts(profile: ProfileRow) {
-  const { data: tasks } = await getTasks(profile);
+export const getTaskCounts = cache(async (profile: ProfileRow) => {
+  const supabase = createSupabaseAdminClient();
+
+  const role = profile.role;
+
+  let query = supabase
+    .from("tasks")
+    .select("id, status, due_date, priority, assigned_to, is_active")
+    .eq("is_active", true)
+    .order("created_at", { ascending: false });
+
+  if (isGlobalViewRole(role)) {
+    // No additional filters needed
+  } else if (role === "bolum_muduru" && profile.department_id) {
+    query = query.or(`department_id.eq.${profile.department_id},assigned_by.eq.${profile.id},assigned_to.eq.${profile.id}`);
+  } else {
+    query = query.or(`assigned_to.eq.${profile.id},assigned_by.eq.${profile.id}`);
+  }
+
+  const { data: tasks } = await query;
 
   const now = new Date();
   const todayStr = now.toISOString().slice(0, 10);
 
+  const allTasks = (tasks ?? []) as Array<{ id: string; status: string; due_date: string | null; priority: string; assigned_to: string | null }>;
+
   return {
-    total: tasks.length,
-    pending: tasks.filter((t) => t.status === "pending").length,
-    in_progress: tasks.filter((t) => t.status === "in_progress").length,
-    completed: tasks.filter((t) => t.status === "completed").length,
-    cancelled: tasks.filter((t) => t.status === "cancelled").length,
-    overdue: tasks.filter((t) => t.due_date && t.due_date < todayStr && t.status !== "completed" && t.status !== "cancelled").length,
-    dueToday: tasks.filter((t) => t.due_date === todayStr && t.status !== "completed" && t.status !== "cancelled").length,
-    urgent: tasks.filter((t) => t.priority === "urgent" && t.status !== "completed" && t.status !== "cancelled").length,
-    myTasks: tasks.filter((t) => t.assigned_to === profile.id && t.status !== "completed" && t.status !== "cancelled").length,
+    total: allTasks.length,
+    pending: allTasks.filter((t) => t.status === "pending").length,
+    in_progress: allTasks.filter((t) => t.status === "in_progress").length,
+    completed: allTasks.filter((t) => t.status === "completed").length,
+    cancelled: allTasks.filter((t) => t.status === "cancelled").length,
+    overdue: allTasks.filter((t) => t.due_date && t.due_date < todayStr && t.status !== "completed" && t.status !== "cancelled").length,
+    dueToday: allTasks.filter((t) => t.due_date === todayStr && t.status !== "completed" && t.status !== "cancelled").length,
+    urgent: allTasks.filter((t) => t.priority === "urgent" && t.status !== "completed" && t.status !== "cancelled").length,
+    myTasks: allTasks.filter((t) => t.assigned_to === profile.id && t.status !== "completed" && t.status !== "cancelled").length,
   };
-}
+});
 
 export async function getTaskStats() {
   const supabase = createSupabaseAdminClient();
