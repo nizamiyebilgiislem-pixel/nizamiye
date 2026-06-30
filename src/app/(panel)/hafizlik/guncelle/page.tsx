@@ -46,7 +46,7 @@ export default async function BulkUpdatePage({ searchParams }: BulkUpdatePagePro
       <Card>
         <CardHeader>
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <CardTitle>Ã–ğrenci Listesi</CardTitle>
+            <CardTitle>Öğrenci Listesi</CardTitle>
             {canSelectDepartment && departments.length > 1 ? (
               <form className="flex gap-2">
                 <NativeSelect

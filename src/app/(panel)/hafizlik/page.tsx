@@ -82,7 +82,7 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
         <Card>
           <CardContent className="pt-6">
             <div className="text-2xl font-bold text-blue-600">{learningCount}</div>
-            <p className="text-sm text-muted-foreground">Ã–ğreniyor</p>
+            <p className="text-sm text-muted-foreground">Öğreniyor</p>
           </CardContent>
         </Card>
         <Card>
@@ -104,7 +104,7 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2 text-red-900">
               <AlertTriangle className="size-5" />
-              <CardTitle className="text-sm">Hedef Tarihi Geçen Ã–ğrenciler</CardTitle>
+              <CardTitle className="text-sm">Hedef Tarihi Geçen Öğrenciler</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -139,7 +139,7 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2 text-yellow-900">
               <Clock className="size-5" />
-              <CardTitle className="text-sm">Hedef Tarihi Yaklaşan Ã–ğrenciler (7 gün)</CardTitle>
+              <CardTitle className="text-sm">Hedef Tarihi Yaklaşan Öğrenciler (7 gün)</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -174,7 +174,7 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
       <Card>
         <CardHeader>
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <CardTitle>Ã–ğrenci Listesi</CardTitle>
+            <CardTitle>Öğrenci Listesi</CardTitle>
             <form className="flex flex-col gap-2 md:flex-row">
               {scope.canSelectDepartment && scope.departments.length > 1 ? (
                 <NativeSelect
@@ -191,7 +191,7 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
               ) : null}
                <Input
                 name="search"
-                placeholder="Ã–ğrenci ara..."
+                placeholder="Öğrenci ara..."
                 defaultValue={query.search ?? ""}
                 className="w-48"
               />
@@ -234,7 +234,7 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
                       )}
                     >
                       {student.progress?.status === "learning"
-                        ? "Ã–ğreniyor"
+                        ? "Öğreniyor"
                         : student.progress?.status === "reviewing"
                           ? "Tekrar"
                           : "Tamamlandı"}
