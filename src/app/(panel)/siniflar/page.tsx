@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 
-import { ClassEmptyState } from "@/components/classes/class-empty-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { ClassErrorMessage } from "@/components/classes/class-error-message";
 import { ClassFilters } from "@/components/classes/class-filters";
 import { ClassListTable } from "@/components/classes/class-list-table";
@@ -50,7 +50,7 @@ export default async function ClassesPage({ searchParams }: ClassesPageProps) {
       {classes.length > 0 ? (
         <ClassListTable classes={classes} profile={profile} />
       ) : (
-        <ClassEmptyState title="Sınıf bulunamadı" description="Filtreleri değiştirin veya yetkiniz varsa yeni sınıf ekleyin." />
+        <EmptyState title="Sınıf bulunamadı" description="Filtreleri değiştirin veya yetkiniz varsa yeni sınıf ekleyin." />
       )}
     </div>
   );

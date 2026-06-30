@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
-import { ProfileEmptyState } from "@/components/profiles/profile-empty-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { ProfileErrorMessage } from "@/components/profiles/profile-error-message";
 import { ProfileFilters } from "@/components/profiles/profile-filters";
 import { ProfileListTable } from "@/components/profiles/profile-list-table";
@@ -58,7 +58,7 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
       {profiles.length > 0 ? (
         <ProfileListTable profiles={profiles} currentProfile={profile} detailBasePath="/kullanicilar" showEdit showCreatedAt />
       ) : (
-        <ProfileEmptyState title="Kullanıcı profili bulunamadı" description="Filtreleri değiştirerek tekrar deneyin." />
+        <EmptyState title="Kullanıcı profili bulunamadı" description="Filtreleri değiştirerek tekrar deneyin." />
       )}
     </div>
   );

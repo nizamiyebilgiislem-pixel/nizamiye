@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { ClassEmptyState } from "@/components/classes/class-empty-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { ClassErrorMessage } from "@/components/classes/class-error-message";
 import { ClassForm } from "@/components/classes/class-form";
 import { PageHeader } from "@/components/layout/page-header";
@@ -36,7 +36,7 @@ export default async function NewClassPage({ searchParams }: NewClassPageProps) 
           </CardContent>
         </Card>
       ) : (
-        <ClassEmptyState title="Bölüm bulunamadı" description="Sınıf oluşturmak için aktif bölüm kaydı gereklidir." />
+        <EmptyState title="Bölüm bulunamadı" description="Sınıf oluşturmak için aktif bölüm kaydı gereklidir." />
       )}
     </div>
   );

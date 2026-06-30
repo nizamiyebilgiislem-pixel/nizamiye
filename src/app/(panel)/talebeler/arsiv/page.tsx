@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/layout/page-header";
-import { StudentEmptyState } from "@/components/students/student-empty-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { StudentErrorMessage } from "@/components/students/student-error-message";
 import { StudentFilters } from "@/components/students/student-filters";
 import { StudentListTable } from "@/components/students/student-list-table";
@@ -49,7 +49,7 @@ export default async function ArchivedStudentsPage({ searchParams }: ArchivedStu
           reactivateAction={reactivateStudentAction}
         />
       ) : (
-        <StudentEmptyState title="Arşiv kaydı bulunamadı" description="Seçili filtrelerle eşleşen arşiv talebesi yok." />
+        <EmptyState title="Arşiv kaydı bulunamadı" description="Seçili filtrelerle eşleşen arşiv talebesi yok." />
       )}
     </div>
   );

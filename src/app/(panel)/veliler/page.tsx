@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { ParentErrorMessage } from "@/components/parents/parent-error-message";
 import { ParentFilters } from "@/components/parents/parent-filters";
 import { ParentListTable } from "@/components/parents/parent-list-table";
-import { ProfileEmptyState } from "@/components/profiles/profile-empty-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { buttonVariants } from "@/components/ui/button";
 import { requireAuth } from "@/lib/auth";
 import { canCreateParentProfile } from "@/lib/parents/permissions";
@@ -48,7 +48,7 @@ export default async function ParentsPage({ searchParams }: ParentsPageProps) {
       {parents.length > 0 ? (
         <ParentListTable parents={parents} currentProfile={profile} />
       ) : (
-        <ProfileEmptyState title="Veli bulunamadı" description="Filtreleri değiştirin veya yetkiniz varsa yeni veli ekleyin." />
+        <EmptyState title="Veli bulunamadı" description="Filtreleri değiştirin veya yetkiniz varsa yeni veli ekleyin." />
       )}
     </div>
   );

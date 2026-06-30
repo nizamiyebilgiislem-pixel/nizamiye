@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
-import { ProfileEmptyState } from "@/components/profiles/profile-empty-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { ProfileErrorMessage } from "@/components/profiles/profile-error-message";
 import { ProfileFilters } from "@/components/profiles/profile-filters";
 import { ProfileListTable } from "@/components/profiles/profile-list-table";
@@ -59,7 +59,7 @@ export default async function TeachersPage({ searchParams }: TeachersPageProps) 
       {profiles.length > 0 ? (
         <ProfileListTable profiles={profiles} currentProfile={profile} detailBasePath="/hocalar" showEdit />
       ) : (
-        <ProfileEmptyState title="Profil bulunamadı" description="Filtreleri değiştirin veya yetkiniz varsa yeni profil ekleyin." />
+        <EmptyState title="Profil bulunamadı" description="Filtreleri değiştirin veya yetkiniz varsa yeni profil ekleyin." />
       )}
     </div>
   );

@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { StudentCreateForm } from "@/components/students/student-create-form";
-import { StudentEmptyState } from "@/components/students/student-empty-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { StudentErrorMessage } from "@/components/students/student-error-message";
 import { requireRole } from "@/lib/auth";
 import { getClassesForProfile, getDepartments } from "@/lib/students/queries";
@@ -35,7 +35,7 @@ export default async function NewStudentPage({ searchParams }: NewStudentPagePro
           </CardContent>
         </Card>
       ) : (
-        <StudentEmptyState
+        <EmptyState
           title="Kayıt için bölüm ve sınıf gerekli"
           description="Talebe eklemeden önce aktif bölüm ve kurs sınıfı oluşturulmalıdır."
         />

@@ -28,8 +28,6 @@ import { getInfirmaryRecordsByStudent } from "@/lib/infirmary/queries";
 import { getStudentActiveAssignment, getStudentAssignmentHistory } from "@/lib/dormitory/queries";
 import { getLinkedStudentIdsForParent, getStudentProfileEntries } from "@/lib/student-profile/queries";
 import { getStudentById } from "@/lib/students/queries";
-import { getClassById } from "@/lib/classes/queries";
-import { getDepartmentById } from "@/lib/departments/queries";
 import { getSurveysForParent, getStudentInterviewsForParent, getDepartmentActivities } from "@/lib/guidance/queries";
 import { getStudentLoans } from "@/lib/library/queries";
 import { getStudentAttendanceSummaryForParent } from "@/lib/attendance/queries";
@@ -97,16 +95,7 @@ export default async function ParentPanelPage({ params, searchParams }: PageProp
 
   const profiles = await Promise.all(studentDataPromises);
 
-  const classResults = await Promise.all(
-    students.map(async (student) => {
-      if (!student.course_class_id) return null;
-      const cls = await getClassById(student.course_class_id);
-      if (!cls) return null;
-      const dept = await getDepartmentById(cls.department_id);
-      return dept?.id ?? null;
-    }),
-  );
-  const studentDepartments = new Set(classResults.filter((id): id is string => id !== null));
+  const studentDepartments = new Set(students.map((s) => s.department?.id).filter((id): id is string => id !== null));
 
   const activitiesByDept: Record<string, Awaited<ReturnType<typeof getDepartmentActivities>>> = {};
   const deptActivities = await Promise.all(

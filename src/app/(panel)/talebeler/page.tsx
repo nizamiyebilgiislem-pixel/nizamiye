@@ -3,7 +3,7 @@ import { Archive, Plus } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { Pagination } from "@/components/ui/pagination";
-import { StudentEmptyState } from "@/components/students/student-empty-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { StudentErrorMessage } from "@/components/students/student-error-message";
 import { StudentFilters } from "@/components/students/student-filters";
 import { StudentListTable } from "@/components/students/student-list-table";
@@ -78,7 +78,7 @@ export default async function StudentsPage({ searchParams }: StudentsPageProps) 
           <Pagination currentPage={page} totalPages={totalPages} basePath="/talebeler" searchParams={params} />
         </>
       ) : (
-        <StudentEmptyState title="Aktif talebe bulunamadı" description="Filtreleri değiştirin veya yeni talebe ekleyin." />
+        <EmptyState title="Aktif talebe bulunamadı" description="Filtreleri değiştirin veya yeni talebe ekleyin." />
       )}
     </div>
   );
