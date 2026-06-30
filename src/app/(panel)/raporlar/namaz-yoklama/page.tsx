@@ -5,6 +5,7 @@ import { AttendanceSessionList } from "@/components/attendance/attendance-sessio
 import { PageHeader } from "@/components/layout/page-header";
 import { PdfPrintButton } from "@/components/reports/pdf-print-button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { requireAuth } from "@/lib/auth";
 import { attendanceTypeLabels, prayerAttendanceTypes } from "@/lib/attendance/constants";
 import { getAttendanceDashboardSummary, getAttendanceFilterOptions, getAttendanceReportData } from "@/lib/attendance/queries";
@@ -78,9 +79,7 @@ export default async function PrayerAttendanceReportsPage({ searchParams }: { se
               <Field label="Arama" name="search" type="search" defaultValue={query.search} placeholder="Başlık, sınıf, bölüm, alan" />
             </div>
             <div className="flex items-end gap-2 xl:col-span-2">
-              <button type="submit" className="inline-flex h-10 items-center rounded-md bg-[#093657] px-4 text-sm font-medium text-white hover:bg-[#072943]">
-                Filtrele
-              </button>
+              <Button type="submit">Filtrele</Button>
               <Link href="/raporlar/namaz-yoklama" className={cn("inline-flex h-10 items-center rounded-md border border-[#093657]/15 bg-white px-4 text-sm font-medium text-[#093657]")}>
                 Temizle
               </Link>

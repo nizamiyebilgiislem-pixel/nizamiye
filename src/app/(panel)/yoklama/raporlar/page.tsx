@@ -1,5 +1,6 @@
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { requireAuth } from "@/lib/auth";
 import { getAttendanceFilterOptions, getAttendanceReportData } from "@/lib/attendance/queries";
 import { attendanceTypes } from "@/lib/attendance/constants";
@@ -101,9 +102,7 @@ export default async function AttendanceReportsPage({ searchParams }: Attendance
               </select>
             </div>
             <div className="xl:col-span-6">
-              <button type="submit" className="rounded-md bg-[#093657] px-4 py-2 text-sm font-medium text-white">
-                Raporu Oluştur
-              </button>
+              <Button type="submit">Raporu Oluştur</Button>
             </div>
           </form>
         </CardContent>
