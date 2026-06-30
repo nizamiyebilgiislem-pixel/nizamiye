@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 
 import { EducationErrorMessage } from "@/components/education/education-error-message";
 import { PageHeader } from "@/components/layout/page-header";

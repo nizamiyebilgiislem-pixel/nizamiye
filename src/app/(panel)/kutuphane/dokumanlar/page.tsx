@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { Plus, ExternalLink } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";

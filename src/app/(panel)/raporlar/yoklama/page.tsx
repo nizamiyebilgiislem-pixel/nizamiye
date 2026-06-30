@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 
 import { AttendanceDashboardCard } from "@/components/attendance/attendance-dashboard-card";
 import { AttendanceSessionList } from "@/components/attendance/attendance-session-list";

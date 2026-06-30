@@ -1,4 +1,4 @@
-﻿import { EvaluationEntryList } from "@/components/evaluations/evaluation-entry-list";
+import { EvaluationEntryList } from "@/components/evaluations/evaluation-entry-list";
 import { EvaluationErrorMessage } from "@/components/evaluations/evaluation-error-message";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";

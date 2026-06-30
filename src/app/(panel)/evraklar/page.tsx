@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { Plus } from "lucide-react";
 
 import { DocumentErrorMessage } from "@/components/documents/document-error-message";
