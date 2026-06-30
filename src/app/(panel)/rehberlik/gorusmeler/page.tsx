@@ -8,7 +8,7 @@ import { canViewGuidance, canManageGuidance } from "@/lib/guidance/permissions";
 import { getInterviews } from "@/lib/guidance/queries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const interviewTypeLabels: Record<string, string> = {
@@ -89,7 +89,7 @@ export default async function GorusmelerPage({ searchParams }: Props) {
               Bitiş
               <input name="date_to" type="date" defaultValue={params.date_to ?? ""} className="h-9 rounded-md border border-input bg-background px-2.5 text-sm outline-none focus:border-[#093657]" />
             </label>
-            <button type="submit" className="h-9 rounded-md bg-[#093657] px-4 text-xs font-medium text-white hover:bg-[#093657]/90">Filtrele</button>
+            <Button type="submit">Filtrele</Button>
           </form>
         </CardContent>
       </Card>

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { EducationErrorMessage } from "@/components/education/education-error-message";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { requireAuth } from "@/lib/auth";
@@ -61,9 +61,9 @@ export default async function EducationPlanningPage({ searchParams }: EducationP
                 </option>
               ))}
             </select>
-            <button type="submit" className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm">
+            <Button type="submit">
               Filtrele
-            </button>
+            </Button>
           </form>
         </CardContent>
       </Card>

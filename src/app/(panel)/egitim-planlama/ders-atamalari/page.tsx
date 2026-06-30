@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { EducationErrorMessage } from "@/components/education/education-error-message";
 import { PageHeader } from "@/components/layout/page-header";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
@@ -45,9 +45,9 @@ export default async function EducationAssignmentLandingPage({ searchParams }: P
                 </option>
               ))}
             </select>
-            <button type="submit" className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm">
+            <Button type="submit">
               Sınıfa Git
-            </button>
+            </Button>
           </form>
         </CardContent>
       </Card>

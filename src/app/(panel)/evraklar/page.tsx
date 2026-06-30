@@ -5,7 +5,7 @@ import { DocumentErrorMessage } from "@/components/documents/document-error-mess
 import { DocumentList } from "@/components/documents/document-list";
 import { PageHeader } from "@/components/layout/page-header";
 import { Pagination } from "@/components/ui/pagination";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAuth } from "@/lib/auth";
 import { documentTypes } from "@/lib/documents/constants";
@@ -44,7 +44,7 @@ export default async function DocumentsPage({ searchParams }: DocumentsPageProps
         <select name="type" defaultValue={params.type ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Tüm türler</option>{documentTypes.map((type)=><option key={type} value={type}>{type}</option>)}</select>
         <input name="from" type="date" defaultValue={params.from ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm" />
         <input name="to" type="date" defaultValue={params.to ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm" />
-        <button type="submit" className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">Filtrele</button>
+        <Button type="submit">Filtrele</Button>
       </form></CardContent></Card>
       <div><h2 className="mb-3 text-lg font-semibold">Son Eklenen 10 Evrak</h2><DocumentList documents={summary.latestDocuments} profile={profile} /></div>
       <div><h2 className="mb-3 text-lg font-semibold">Evrak Listesi</h2>{list.documents.length > 0 ? <><DocumentList documents={list.documents} profile={profile} /><Pagination currentPage={page} totalPages={totalPages} basePath="/evraklar" searchParams={params} /></> : <p className="text-sm text-muted-foreground">Evrak bulunamadı.</p>}</div>

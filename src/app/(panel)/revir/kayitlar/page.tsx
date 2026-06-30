@@ -2,6 +2,7 @@ import { InfirmaryErrorMessage } from "@/components/infirmary/infirmary-error-me
 import { InfirmaryList } from "@/components/infirmary/infirmary-list";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { requireAuth } from "@/lib/auth";
 import { getInfirmaryRecordsForProfile } from "@/lib/infirmary/queries";
 import { canManageInfirmary } from "@/lib/module-assignments/permissions";
@@ -33,7 +34,7 @@ export default async function RecordsPage({ searchParams }: RecordsPageProps) {
         <input name="to" type="date" defaultValue={params.to ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm" />
         <select name="hospital" defaultValue={params.hospital ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Sevk tümü</option><option value="true">Sevk edildi</option><option value="false">Sevk edilmedi</option></select>
         <select name="parent" defaultValue={params.parent ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Veli tümü</option><option value="true">Bilgilendirildi</option><option value="false">Bilgilendirilmedi</option></select>
-        <button type="submit" className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">Filtrele</button>
+        <Button type="submit">Filtrele</Button>
       </form></CardContent></Card>
       {records.length > 0 ? <InfirmaryList records={records} profile={profile} canManageAll={canManage} /> : <p className="text-sm text-muted-foreground">Revir kaydı bulunamadı.</p>}
     </div>

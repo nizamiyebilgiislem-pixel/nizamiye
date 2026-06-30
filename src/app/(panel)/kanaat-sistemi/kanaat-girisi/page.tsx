@@ -2,6 +2,7 @@ import { EvaluationEntryList } from "@/components/evaluations/evaluation-entry-l
 import { EvaluationErrorMessage } from "@/components/evaluations/evaluation-error-message";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { requireAuth } from "@/lib/auth";
 import { getEvaluationEntryList } from "@/lib/evaluations/queries";
 
@@ -28,7 +29,7 @@ export default async function EvaluationEntryPage({ searchParams }: EvaluationEn
             <select name="class" defaultValue={selectedClass?.id ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm">
               {classes.map((classRow) => <option key={classRow.id} value={classRow.id}>{classRow.name}</option>)}
             </select>
-            <button type="submit" className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground">Göster</button>
+            <Button type="submit">Göster</Button>
           </form>
         </CardContent>
       </Card>
