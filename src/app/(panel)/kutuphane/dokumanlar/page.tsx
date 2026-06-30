@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { requireAuth } from "@/lib/auth";
 import { canManageDocuments, canViewLibrary } from "@/lib/library/permissions";
 import { getDocuments, getActiveCategories } from "@/lib/library/queries";
@@ -71,7 +71,7 @@ export default async function DokumanlarPage({ searchParams }: Props) {
               <option value="image">Görsel</option>
               <option value="other">Diğer</option>
             </select>
-            <button type="submit" className={cn(buttonVariants({ variant: "secondary", size: "sm" }))}>Filtrele</button>
+            <Button type="submit" variant="secondary" size="sm">Filtrele</Button>
             {(filters.category_id || filters.document_type) && (
               <Link href="/kutuphane/dokumanlar" className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}>Temizle</Link>
             )}

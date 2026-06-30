@@ -6,7 +6,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { requireAuth } from "@/lib/auth";
 import { canManageLoans, canViewLibrary } from "@/lib/library/permissions";
 import { getLoans } from "@/lib/library/queries";
@@ -71,7 +71,7 @@ export default async function EmanetlerPage({ searchParams }: Props) {
               <input type="checkbox" name="overdue" value="true" defaultChecked={filters.overdue === "true"} className="rounded border-border" />
               Sadece Gecikenler
             </label>
-            <button type="submit" className={cn(buttonVariants({ variant: "secondary", size: "sm" }))}>Filtrele</button>
+            <Button type="submit" variant="secondary" size="sm">Filtrele</Button>
             {(filters.status || filters.overdue) && (
               <Link href="/kutuphane/emanetler" className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}>Temizle</Link>
             )}

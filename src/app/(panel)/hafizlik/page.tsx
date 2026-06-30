@@ -5,7 +5,7 @@ import { AlertTriangle, Clock } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import { getHafizlikDepartmentScope, getHafizlikStudentsByDepartment } from "@/lib/hafizlik/queries";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { requireAuth } from "@/lib/auth";
@@ -197,9 +197,7 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
                 defaultValue={query.search ?? ""}
                 className="w-48"
               />
-              <button type="submit" className={buttonVariants({ variant: "outline" })}>
-                Ara
-              </button>
+              <Button type="submit" variant="outline">Ara</Button>
             </form>
           </div>
         </CardHeader>

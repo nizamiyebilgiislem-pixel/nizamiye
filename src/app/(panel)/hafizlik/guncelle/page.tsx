@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 
 import { BulkUpdateForm } from "@/components/hafizlik/bulk-update-form";
 import { PageHeader } from "@/components/layout/page-header";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAuth } from "@/lib/auth";
 import { bulkUpdateHafizlikProgressAction, getHafizlikStudentsForBulk } from "@/lib/hafizlik/actions";
@@ -58,9 +58,7 @@ export default async function BulkUpdatePage({ searchParams }: BulkUpdatePagePro
                     </option>
                   ))}
                 </select>
-                <button type="submit" className={buttonVariants({ variant: "outline" })}>
-                  Bölümü Aç
-                </button>
+                <Button type="submit" variant="outline">Bölümü Aç</Button>
               </form>
             ) : null}
           </div>

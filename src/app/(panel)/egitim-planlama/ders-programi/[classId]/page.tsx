@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { EducationErrorMessage } from "@/components/education/education-error-message";
 import { PageHeader } from "@/components/layout/page-header";
 import { RichProfileCard } from "@/components/profiles/rich-profile-card";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createScheduleSlotAction, updateScheduleSlotAction } from "@/lib/education/actions";
 import { canManageClassSchedule } from "@/lib/education/permissions";
@@ -109,9 +109,9 @@ export default async function EducationSchedulePage({ params, searchParams }: Pr
               <input name="end_time" type="time" defaultValue={formSlot?.end_time ?? ""} className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm" />
               <input name="room" defaultValue={formSlot?.room ?? ""} placeholder="Oda" className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm" />
               <input name="note" defaultValue={formSlot?.note ?? ""} placeholder="Not" className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm" />
-              <button type="submit" className={cn(buttonVariants(), "lg:self-start")} disabled={activeClassCourses.length === 0}>
+              <Button type="submit" className="lg:self-start" disabled={activeClassCourses.length === 0}>
                 {formSlot ? "Güncelle" : "Kaydet"}
-              </button>
+              </Button>
             </form>
           </CardContent>
         </Card>

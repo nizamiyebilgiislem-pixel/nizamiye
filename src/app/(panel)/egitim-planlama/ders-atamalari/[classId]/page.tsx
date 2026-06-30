@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { EducationErrorMessage } from "@/components/education/education-error-message";
 import { PageHeader } from "@/components/layout/page-header";
 import { RichProfileCard } from "@/components/profiles/rich-profile-card";
-import { buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClassCourseAction, updateClassCourseAction } from "@/lib/education/actions";
 import { canManageClassAssignments } from "@/lib/education/permissions";
@@ -88,9 +88,7 @@ export default async function EducationAssignmentPage({ params, searchParams }: 
                   <option value="true">Aktif</option>
                   <option value="false">Pasif</option>
                 </select>
-                <button type="submit" className={cn(buttonVariants())}>
-                  Kaydet
-                </button>
+                <Button type="submit">Kaydet</Button>
               </form>
             ) : (
               <p className="text-sm text-muted-foreground">Bu sınıf için atanabilir aktif ders kalmadı.</p>
@@ -160,9 +158,7 @@ export default async function EducationAssignmentPage({ params, searchParams }: 
                               <option value="true">Aktif</option>
                               <option value="false">Pasif</option>
                             </select>
-                            <button type="submit" className={cn(buttonVariants({ size: "sm" }))}>
-                              Güncelle
-                            </button>
+                            <Button type="submit" size="sm">Güncelle</Button>
                           </form>
                         ) : (
                           <span className="text-sm text-muted-foreground">Salt okunur</span>
