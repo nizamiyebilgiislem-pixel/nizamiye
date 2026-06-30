@@ -17,11 +17,12 @@ import { DailyLessonLogList } from "@/components/daily-lesson-logs/daily-lesson-
 import type { ProfileRow } from "@/types/database";
 
 type PageProps = {
-  searchParams: Promise<{ success?: string }>;
+  searchParams: Promise<{ success?: string; class_course_id?: string }>;
 };
 
 export default async function DailyLessonLogsPage({ searchParams }: PageProps) {
   const query = await searchParams;
+  const preselectedClassCourseId = query.class_course_id ?? null;
   const { profile } = await requireAuth();
 
   if (!canViewDailyLessonLog(profile)) {
@@ -80,6 +81,7 @@ export default async function DailyLessonLogsPage({ searchParams }: PageProps) {
               <DailyLessonLogForm
                 classCourses={classCourseOptions}
                 courseBooks={courseBookOptions}
+                preselectedClassCourseId={preselectedClassCourseId}
               />
             ) : (
               <p className="text-muted-foreground">

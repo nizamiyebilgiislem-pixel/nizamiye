@@ -19,10 +19,12 @@ export function DailyLessonLogForm({
   log,
   classCourses,
   courseBooks,
+  preselectedClassCourseId,
 }: {
   log?: DailyLessonLogWithRelations
   classCourses: ClassCourseOption[]
   courseBooks: CourseBookOption[]
+  preselectedClassCourseId?: string | null
 }) {
   const today = new Date().toISOString().split("T")[0]
 
@@ -39,7 +41,7 @@ export function DailyLessonLogForm({
           <select
             name="class_course_id"
             required
-            defaultValue={log?.class_course?.id ?? ""}
+            defaultValue={log?.class_course?.id ?? preselectedClassCourseId ?? ""}
             disabled={!!log}
             className="h-10 rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
           >

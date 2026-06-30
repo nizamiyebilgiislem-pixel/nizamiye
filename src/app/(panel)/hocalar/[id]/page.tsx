@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { Pencil } from "lucide-react";
+import { BookOpen, Pencil } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { ProfileAuthManagement } from "@/components/profiles/profile-auth-management";
@@ -123,17 +123,25 @@ function CourseListCard({ title, courses }: { title: string; courses: ProfileCou
       <CardContent className="space-y-2">
         {courses.length > 0 ? (
           courses.map((course) => (
-            <Link
+            <div
               key={course.id}
-              href={`/ders-sistemi/${course.course_id}/duzenle`}
               className="flex items-center justify-between rounded-md border border-border bg-background px-3 py-2 text-sm"
             >
               <div className="flex flex-col">
                 <span className="font-medium">{course.course_name}</span>
                 <span className="text-xs text-muted-foreground">{course.class_name}</span>
               </div>
-              <span className="text-muted-foreground">{course.is_active ? "Aktif" : "Pasif"}</span>
-            </Link>
+              <div className="flex items-center gap-2">
+                <Link
+                  href={`/ders-notlari?class_course_id=${course.id}`}
+                  className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                >
+                  <BookOpen className="size-3.5" />
+                  Ders Notu
+                </Link>
+                <span className="text-muted-foreground">{course.is_active ? "Aktif" : "Pasif"}</span>
+              </div>
+            </div>
           ))
         ) : (
           <p className="text-sm text-muted-foreground">Kayıt bulunamadı.</p>
