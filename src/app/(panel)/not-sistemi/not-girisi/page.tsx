@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { StudentAvatar } from "@/components/students/student-avatar";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
@@ -29,35 +30,34 @@ export default async function GradeEntryPage({ searchParams }: GradeEntryPagePro
     classCourseId: params.course,
     examTypeId: params.exam,
   });
-  const classesForDepartment = workspace.selectedDepartmentId
-    ? workspace.classes.filter((classRow) => classRow.department_id === workspace.selectedDepartmentId)
-    : [];
-  const coursesForClass = workspace.selectedClassId
-    ? workspace.classCourses.filter((classCourse) => classCourse.class_id === workspace.selectedClassId)
-    : [];
-
   const termStateMessage = !workspace.currentTerm
     ? "Aktif dönem yok. Not girişi başlamadan önce cari dönemi belirleyin."
     : workspace.currentTerm.status !== "active" || !workspace.currentTerm.is_active
       ? "Kapalı dönem için sınav girişi yapılamaz."
       : null;
+  const classesForDepartment = workspace.selectedDepartmentId
+    ? workspace.classes.filter((c) => c.department_id === workspace.selectedDepartmentId)
+    : [];
+  const coursesForClass = workspace.selectedClassId
+    ? workspace.classCourses.filter((c) => c.class_id === workspace.selectedClassId)
+    : [];
   const helperMessage = !workspace.selectedDepartmentId
     ? "Önce bölüm seçiniz."
     : classesForDepartment.length === 0
       ? "Bu bölüme ait aktif sınıf bulunamadı."
-    : !workspace.selectedClassId
-      ? "Önce sınıf seçiniz."
-      : coursesForClass.length === 0
-        ? "Bu sınıfa atanmış aktif ders bulunamadı."
-      : !workspace.selectedClassCourseId
-        ? "Ders seçildikten sonra öğrenciler listelenecek."
-        : (workspace.selectedClassCourse?.examTypes.length ?? 0) === 0
-          ? "Bu derse ait aktif sınav türü bulunamadı."
-        : !workspace.selectedExamTypeId
-          ? "Sınav türü seçildikten sonra öğrenciler listelenecek."
-          : workspace.students.length === 0
-            ? "Bu sınıfta aktif öğrenci bulunamadı."
-            : null;
+      : !workspace.selectedClassId
+        ? "Önce sınıf seçiniz."
+        : coursesForClass.length === 0
+          ? "Bu sınıfa atanmış aktif ders bulunamadı."
+          : !workspace.selectedClassCourseId
+            ? "Ders seçildikten sonra öğrenciler listelenecek."
+            : (workspace.selectedClassCourse?.examTypes.length ?? 0) === 0
+              ? "Bu derse ait aktif sınav türü bulunamadı."
+              : !workspace.selectedExamTypeId
+                ? "Sınav türü seçildikten sonra öğrenciler listelenecek."
+                : workspace.students.length === 0
+                  ? "Bu sınıfta aktif öğrenci bulunamadı."
+                  : null;
   const readOnlyMessage = workspace.isReadOnly
     ? "Bu rolde sınav girişi salt okunur durumdadır. Kaydet butonu gösterilmez."
     : profile.role === "hoca" && workspace.classes.length === 0
@@ -133,13 +133,9 @@ export default async function GradeEntryPage({ searchParams }: GradeEntryPagePro
       </Card>
 
       {workspace.departments.length === 0 ? (
-        <Card>
-          <CardContent className="py-8 text-center text-sm text-muted-foreground">Bölüm yok.</CardContent>
-        </Card>
+        <EmptyState title="Bölüm bulunamadı." description="Not girişi için önce bölüm oluşturulmalıdır." />
       ) : helperMessage ? (
-        <Card>
-          <CardContent className="py-8 text-center text-sm text-muted-foreground">{helperMessage}</CardContent>
-        </Card>
+        <EmptyState title={helperMessage} />
       ) : (
         <Card>
           <CardContent className="p-0">
