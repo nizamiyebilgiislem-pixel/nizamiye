@@ -21,6 +21,7 @@ const guidanceStaffRoles: UserRole[] = ["admin", "genel_mudur", "rehberlik"];
 const guidanceViewRoles: UserRole[] = ["admin", "genel_mudur", "yonetim", "rehberlik", "bolum_muduru", "hoca"];
 const liveSessionViewRoles: UserRole[] = ["admin", "genel_mudur", "yonetim", "bolum_muduru", "hoca", "rehberlik", "destek_birim_muduru", "kutuphane_gorevlisi"];
 const liveSessionManageRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "rehberlik", "destek_birim_muduru", "kutuphane_gorevlisi"];
+const messagingRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "veli", "destek_birim_muduru"];
 
 export const routePermissions: Record<string, UserRole[]> = {
   "/dashboard": guidanceDashboardRoles,
@@ -151,6 +152,10 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/canli-oturumlar/[id]/duzenle": liveSessionManageRoles,
   "/canli-oturumlar/[id]/katil": liveSessionManageRoles,
   "/asistan": assistantRoles,
+  "/mesajlar": messagingRoles,
+  "/mesajlar/yeni": messagingRoles,
+  "/mesajlar/[id]": messagingRoles,
+  "/sponsor": ["sponsor"],
 };
 
 export const roleLabels: Record<UserRole, string> = {
