@@ -4,6 +4,7 @@ import { PrintableReportShell } from "@/components/reports/printable-report-shel
 import { StudentAvatar } from "@/components/students/student-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { NativeSelect } from "@/components/ui/native-select";
 import { requireAuth } from "@/lib/auth";
 import { canViewStudent } from "@/lib/students/permissions";
 import { getStudentById } from "@/lib/students/queries";
@@ -66,14 +67,14 @@ export default async function StudentGradesPdfPage({ params, searchParams }: { p
             <input type="hidden" name="id" value={student.id} />
             <label className="space-y-1 text-sm">
               <span className="text-xs uppercase tracking-wide text-muted-foreground">Dönem</span>
-              <select name="term" defaultValue={summary.selectedTermId ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm">
+              <NativeSelect name="term" defaultValue={summary.selectedTermId ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm">
                 <option value="">Aktif / varsayılan</option>
                 {terms.map((term) => (
                   <option key={term.id} value={term.id}>
                     {term.name}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </label>
             <button type="submit" className="inline-flex h-10 items-center rounded-md bg-[#093657] px-4 text-sm font-medium text-white hover:bg-[#072943]">
               Dönemi Göster

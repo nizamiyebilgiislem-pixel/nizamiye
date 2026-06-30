@@ -7,6 +7,7 @@ import { RichProfileCard } from "@/components/profiles/rich-profile-card";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
 import { createScheduleSlotAction, updateScheduleSlotAction } from "@/lib/education/actions";
 import { canManageClassSchedule } from "@/lib/education/permissions";
 import { getEducationScheduleData } from "@/lib/education/queries";
@@ -77,13 +78,13 @@ export default async function EducationSchedulePage({ params, searchParams }: Pr
             <form action={formSlot ? updateScheduleSlotAction : createScheduleSlotAction} className="grid gap-3 lg:grid-cols-[140px_140px_minmax(0,1.4fr)_120px_120px_120px_minmax(0,1fr)_auto]">
               {formSlot ? <input type="hidden" name="id" value={formSlot.id} /> : null}
               <input type="hidden" name="class_id" value={data.classRow.id} />
-              <select name="day_of_week" defaultValue={String(formSlot?.day_of_week ?? selectedDay)} className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
+              <NativeSelect name="day_of_week" defaultValue={String(formSlot?.day_of_week ?? selectedDay)} className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
                 {Object.entries(weeklyScheduleDayLabels).map(([value, label]) => (
                   <option key={value} value={value}>
                     {label}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
               <input
                 name="period_no"
                 type="number"
@@ -92,7 +93,7 @@ export default async function EducationSchedulePage({ params, searchParams }: Pr
                 className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm"
               />
               {activeClassCourses.length > 0 ? (
-                <select name="class_course_id" required defaultValue={formSlot?.class_course_id ?? activeClassCourses[0]?.id ?? ""} className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
+                <NativeSelect name="class_course_id" required defaultValue={formSlot?.class_course_id ?? activeClassCourses[0]?.id ?? ""} className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
                   <option value="">Ders seçin</option>
                   {activeClassCourses.map((classCourse) => (
                     <option key={classCourse.id} value={classCourse.id}>
@@ -100,7 +101,7 @@ export default async function EducationSchedulePage({ params, searchParams }: Pr
                       {classCourse.teacher?.full_name ? ` · ${classCourse.teacher.full_name}` : " · Hoca atanmadı"}
                     </option>
                   ))}
-                </select>
+                </NativeSelect>
               ) : (
                 <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm text-amber-700 lg:col-span-3">
                   Ders programı için önce sınıfa aktif ders atanmalıdır.

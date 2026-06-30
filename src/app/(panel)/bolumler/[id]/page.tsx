@@ -140,9 +140,9 @@ export default async function DepartmentDetailPage({ params, searchParams }: Dep
           <CardContent className="grid gap-3 p-4 md:grid-cols-2">
             {department.latest_students.length > 0 ? (
               department.latest_students.map((student) => <StudentMiniCard key={student.id} student={student} />)
-            ) : (
-              <p className="text-sm text-muted-foreground">Henüz aktif talebe kaydı yok.</p>
-            )}
+          ) : (
+            <EmptyState title="Henüz aktif talebe kaydı yok." />
+          )}
           </CardContent>
         </Card>
 
@@ -155,7 +155,7 @@ export default async function DepartmentDetailPage({ params, searchParams }: Dep
             {department.teachers.length > 0 ? (
               department.teachers.map((teacher) => <RichProfileCard key={teacher.id} profile={teacher} href={`/hocalar/${teacher.id}`} compact />)
             ) : (
-              <p className="text-sm text-muted-foreground">Bu bölümde aktif hoca bulunmuyor.</p>
+              <EmptyState title="Bu bölümde aktif hoca bulunmuyor." />
             )}
           </CardContent>
         </Card>

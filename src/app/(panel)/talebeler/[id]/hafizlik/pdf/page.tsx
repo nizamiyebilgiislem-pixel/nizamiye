@@ -4,6 +4,7 @@ import { PrintableReportShell } from "@/components/reports/printable-report-shel
 import { StudentAvatar } from "@/components/students/student-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { canViewStudent } from "@/lib/students/permissions";
 import { getStudentById } from "@/lib/students/queries";
@@ -144,7 +145,7 @@ export default async function StudentHafizlikPdfPage({ params }: { params: Promi
               )}
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">Hafızlık kaydı başlatılmamış.</p>
+            <EmptyState title="Hafızlık kaydı başlatılmamış." />
           )}
         </CardContent>
       </Card>

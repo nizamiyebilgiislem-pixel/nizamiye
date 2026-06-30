@@ -13,6 +13,7 @@ import { StudentCompactCard } from "@/components/students/student-compact-card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { canEditClass, canViewClass } from "@/lib/classes/permissions";
 import { getClassAnalyticsById } from "@/lib/departments/analytics";
@@ -126,7 +127,7 @@ export default async function ClassDetailPage({ params, searchParams }: ClassDet
               ))}
             </div>
           ) : (
-            <div className="py-10 text-center text-sm text-muted-foreground">Bu sınıfta aktif talebe bulunmuyor.</div>
+            <EmptyState title="Bu sınıfta aktif talebe bulunmuyor." />
           )}
         </CardContent>
       </Card>

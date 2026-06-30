@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { RichProfileCard } from "@/components/profiles/rich-profile-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { NativeSelect } from "@/components/ui/native-select";
 import { createClassCourseAction, updateClassCourseAction } from "@/lib/education/actions";
 import { canManageClassAssignments } from "@/lib/education/permissions";
 import { getEducationAssignmentData } from "@/lib/education/queries";
@@ -68,26 +69,26 @@ export default async function EducationAssignmentPage({ params, searchParams }: 
             {data.availableCourses.length > 0 ? (
               <form action={createClassCourseAction} className="grid gap-3 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_170px_auto]">
                 <input type="hidden" name="class_id" value={data.classRow.id} />
-                <select name="course_id" required className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
+                <NativeSelect name="course_id" required className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
                   <option value="">Ders seçin</option>
                   {data.availableCourses.map((course) => (
                     <option key={course.id} value={course.id}>
                       {course.name}
                     </option>
                   ))}
-                </select>
-                <select name="teacher_id" className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
+                </NativeSelect>
+                <NativeSelect name="teacher_id" className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
                   <option value="">Hoca atanmamış</option>
                   {data.availableTeachers.map((teacher) => (
                     <option key={teacher.id} value={teacher.id}>
                       {teacher.full_name}
                     </option>
                   ))}
-                </select>
-                <select name="is_active" defaultValue="true" className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
+                </NativeSelect>
+                <NativeSelect name="is_active" defaultValue="true" className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
                   <option value="true">Aktif</option>
                   <option value="false">Pasif</option>
-                </select>
+                </NativeSelect>
                 <Button type="submit">Kaydet</Button>
               </form>
             ) : (
@@ -144,7 +145,7 @@ export default async function EducationAssignmentPage({ params, searchParams }: 
                         {canManage ? (
                           <form action={updateClassCourseAction} className="grid gap-2 lg:grid-cols-[minmax(0,1fr)_120px_auto]">
                             <input type="hidden" name="id" value={classCourse.id} />
-                            <select name="teacher_id" defaultValue={classCourse.teacher_id ?? ""} className="h-9 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
+                            <NativeSelect name="teacher_id" defaultValue={classCourse.teacher_id ?? ""} className="h-9 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
                               <option value="">Hoca atanmamış</option>
                               {data.availableTeachers
                                 .concat(classCourse.teacher && !data.availableTeachers.some((teacher) => teacher.id === classCourse.teacher_id) ? [classCourse.teacher] : [])
@@ -153,11 +154,11 @@ export default async function EducationAssignmentPage({ params, searchParams }: 
                                     {teacher.full_name}
                                   </option>
                                 ))}
-                            </select>
-                            <select name="is_active" defaultValue={String(classCourse.is_active)} className="h-9 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
+                            </NativeSelect>
+                            <NativeSelect name="is_active" defaultValue={String(classCourse.is_active)} className="h-9 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
                               <option value="true">Aktif</option>
                               <option value="false">Pasif</option>
-                            </select>
+                            </NativeSelect>
                             <Button type="submit" size="sm">Güncelle</Button>
                           </form>
                         ) : (

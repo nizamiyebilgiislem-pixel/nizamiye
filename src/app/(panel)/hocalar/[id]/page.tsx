@@ -9,6 +9,7 @@ import { ProfileErrorMessage } from "@/components/profiles/profile-error-message
 import { ProfileInfoCard } from "@/components/profiles/profile-info-card";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import {
   createProfileAuthAccountAction,
@@ -107,7 +108,7 @@ function ClassListCard({ title, classes }: { title: string; classes: Array<{ id:
             </Link>
           ))
         ) : (
-          <p className="text-sm text-muted-foreground">Kayıt bulunamadı.</p>
+          <EmptyState title="Kayıt bulunamadı." />
         )}
       </CardContent>
     </Card>
@@ -144,7 +145,7 @@ function CourseListCard({ title, courses }: { title: string; courses: ProfileCou
             </div>
           ))
         ) : (
-          <p className="text-sm text-muted-foreground">Kayıt bulunamadı.</p>
+          <EmptyState title="Kayıt bulunamadı." />
         )}
       </CardContent>
     </Card>
@@ -157,7 +158,9 @@ function Placeholder({ title }: { title: string }) {
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent className="py-8 text-center text-sm text-muted-foreground">Bu bölüm sonraki fazda aktif edilecek.</CardContent>
+      <CardContent>
+        <EmptyState title="Bu bölüm sonraki fazda aktif edilecek." />
+      </CardContent>
     </Card>
   );
 }

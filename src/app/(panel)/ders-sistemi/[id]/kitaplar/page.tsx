@@ -5,6 +5,7 @@ import { ArrowLeft, BookOpen } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import { CourseBookList } from "@/components/course-books/course-book-list";
 import { buttonVariants } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { canManageCourseBooks, canViewCourseBooks } from "@/lib/course-books/permissions";
 import { getCourseBooksWithProgress, getClassesForCourse } from "@/lib/course-books/queries";
@@ -78,10 +79,7 @@ export default async function CourseBooksPage({ params, searchParams }: Props) {
       )}
 
       {books.length === 0 && !canManage && (
-        <div className="rounded-md border border-border bg-muted/50 px-3 py-8 text-center">
-          <BookOpen className="mx-auto mb-2 size-8 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">Bu derse henüz kitap eklenmemiş.</p>
-        </div>
+        <EmptyState icon={BookOpen} title="Bu derse henüz kitap eklenmemiş." />
       )}
     </div>
   );

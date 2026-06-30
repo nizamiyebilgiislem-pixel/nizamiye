@@ -6,6 +6,7 @@ import { canViewGuidance } from "@/lib/guidance/permissions";
 import { getSurveyResults } from "@/lib/guidance/queries";
 import { logPdfGenerated } from "@/lib/reports/actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { PrintableReportShell } from "@/components/reports/printable-report-shell";
 import { PdfPrintButton } from "@/components/reports/pdf-print-button";
 import { PieChart } from "@/components/guidance/pie-chart";
@@ -134,7 +135,7 @@ export default async function AnketSonuclarPage({ params }: { params: Promise<{ 
                 {question.question_type === "text" && (
                   <div className="space-y-1">
                     {(result as { answers: string[] }).answers.length === 0 ? (
-                      <p className="text-sm text-muted-foreground">Henüz metin cevabı yok.</p>
+                      <EmptyState title="Henüz metin cevabı yok." />
                     ) : (
                       (result as { answers: string[] }).answers.map((ans, i) => (
                         <p key={i} className="rounded-md bg-muted px-3 py-1.5 text-sm">{ans}</p>

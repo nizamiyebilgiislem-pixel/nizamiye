@@ -12,6 +12,7 @@ import { ProfileErrorMessage } from "@/components/profiles/profile-error-message
 import { ProfileInfoCard } from "@/components/profiles/profile-info-card";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireRole } from "@/lib/auth";
 import { readPasswordResetFlash } from "@/lib/profiles/password-reset-flash";
 import {
@@ -104,7 +105,7 @@ function ClassList({ title, classes }: { title: string; classes: Array<{ id: str
             </div>
           ))
         ) : (
-          <p className="text-sm text-muted-foreground">Kayıt bulunamadı.</p>
+          <EmptyState title="Kayıt bulunamadı." />
         )}
       </CardContent>
     </Card>

@@ -11,7 +11,9 @@ import { updateActivityAction, addActivityParticipantsAction, removeActivityPart
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
+import { NativeSelect } from "@/components/ui/native-select";
 import { FormSubmitButton } from "@/components/forms/form-submit-button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils";
 
 const typeLabels: Record<string, string> = { trip: "Gezi", seminar: "Seminer", meeting: "Toplantı", sports: "Spor", cultural: "Kültürel", activity: "Aktivite" };
@@ -66,7 +68,7 @@ export default async function EtkinlikDetayPage({ params }: { params: Promise<{ 
           </CardHeader>
           <CardContent className="space-y-2">
             {activity.participants.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Henüz katılımcı eklenmemiş.</p>
+              <EmptyState title="Henüz katılımcı eklenmemiş." />
             ) : (
               activity.participants.map((p) => (
                 <div key={p.id} className="flex items-center justify-between rounded-md border border-border px-3 py-2">
@@ -102,10 +104,10 @@ export default async function EtkinlikDetayPage({ params }: { params: Promise<{ 
             <form action={addActivityParticipantsAction.bind(null, activity.id) as unknown as (formData: FormData) => void} className="space-y-3">
               <label className="grid gap-1 text-xs font-medium">
                 Katılımcı Türü
-                <select name="participant_type" className="h-9 rounded-md border border-input bg-background px-2.5 text-sm outline-none focus:border-[#093657]">
+                <NativeSelect name="participant_type" className="h-9 rounded-md border border-input bg-background px-2.5 text-sm outline-none focus:border-[#093657]">
                   <option value="student">Öğrenci</option>
                   <option value="profile">Personel</option>
-                </select>
+                </NativeSelect>
               </label>
               <div className="space-y-1 max-h-40 overflow-y-auto rounded-md border border-border p-2">
                 {(students ?? []).map((s) => (

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
+import { NativeSelect } from "@/components/ui/native-select";
 import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { requireRole } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -45,12 +46,12 @@ export default async function VeliAnketPage({ params }: { params: Promise<{ id: 
           <form action={submitSurveyResponseAsParentAction.bind(null, id) as unknown as (formData: FormData) => void} className="space-y-4">
             <div>
               <label className="text-sm font-medium">Talebe Seçin</label>
-              <select name="student_id" required className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20">
+              <NativeSelect name="student_id" required className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-[#093657] focus:ring-2 focus:ring-[#093657]/20">
                 <option value="">Talebe seçin</option>
                 {(students ?? []).map((s) => (
                   <option key={s.id} value={s.id}>{s.full_name}</option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
 
             {survey.questions.map((q, i) => (

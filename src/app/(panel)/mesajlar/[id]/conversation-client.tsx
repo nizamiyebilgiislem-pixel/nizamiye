@@ -6,6 +6,7 @@ import { ArrowLeft, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ProfileAvatar } from "@/components/profiles/profile-avatar";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { MessageInput } from "@/components/messages";
 import type { ProfileRow } from "@/types/database";
 
@@ -164,9 +165,7 @@ export function ConversationViewClient({
 
       <div className="flex-1 overflow-y-auto py-4 space-y-6">
         {groupedMessages.length === 0 ? (
-          <div className="text-center py-8 text-sm text-muted-foreground">
-            Henüz mesaj yok. İlk mesajı siz gönderin!
-          </div>
+          <EmptyState title="Henüz mesaj yok." description="İlk mesajı siz gönderin!" />
         ) : (
           groupedMessages.map((group, gi) => (
             <div key={gi}>

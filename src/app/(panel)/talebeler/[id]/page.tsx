@@ -22,6 +22,7 @@ import { StatusBadge } from "@/components/students/status-badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { getDocumentsByStudent } from "@/lib/documents/queries";
 import { canEditStudentDocuments } from "@/lib/documents/permissions";
@@ -344,9 +345,5 @@ function InfoCard({ title, items }: { title: string; items: Array<[string, strin
 }
 
 function PlaceholderCard() {
-  return (
-    <Card>
-      <CardContent className="py-10 text-center text-sm text-muted-foreground">Bu bölüm sonraki fazda aktif edilecek.</CardContent>
-    </Card>
-  );
+  return <EmptyState title="Bu bölüm sonraki fazda aktif edilecek." />;
 }

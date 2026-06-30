@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { StudentAvatar } from "@/components/students/student-avatar";
 import { StatusBadge } from "@/components/students/status-badge";
 import { requireAuth } from "@/lib/auth";
@@ -102,7 +103,7 @@ export default async function StudentInfoPdfPage({ params }: { params: Promise<{
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-muted-foreground">Bu talebeye bağlı veli hesabı yok.</p>
+                <EmptyState title="Bu talebeye bağlı veli hesabı yok." />
               )}
             </div>
           </CardContent>
