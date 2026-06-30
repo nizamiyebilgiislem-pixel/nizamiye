@@ -63,7 +63,7 @@ export function getCreatableRoles(profile: ProfileRow): UserRole[] {
   }
 
   if (profile.role === "genel_mudur") {
-    return ["bolum_muduru", "hoca", "destek_birim_muduru", "rehberlik"];
+    return ["yonetim", "bolum_muduru", "hoca", "destek_birim_muduru", "rehberlik"];
   }
 
   if (profile.role === "bolum_muduru") {

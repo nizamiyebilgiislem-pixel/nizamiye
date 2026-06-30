@@ -44,6 +44,9 @@ export default async function AttendancePage({ searchParams }: AttendancePagePro
     getAttendanceFilterOptions(profile),
   ]);
   const activeClasses = options.classes.filter((classRow) => classRow.is_active);
+  const bulkDepartment = profile.role === "bolum_muduru"
+    ? options.departments.find((department) => department.id === profile.department_id)
+    : null;
 
   return (
     <div className="space-y-6">
@@ -149,7 +152,11 @@ export default async function AttendancePage({ searchParams }: AttendancePagePro
 
       <AttendanceSessionList sessions={data.sessions} canManageAll={canManage} />
 
-      <AttendanceSessionCreateForm classes={activeClasses} />
+      <AttendanceSessionCreateForm
+        classes={activeClasses}
+        bulkDepartmentId={bulkDepartment?.id}
+        bulkDepartmentName={bulkDepartment?.name}
+      />
     </div>
   );
 }

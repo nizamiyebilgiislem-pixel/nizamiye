@@ -1,12 +1,13 @@
 import { AttendanceStatusBadge, AttendanceTypeBadge } from "@/components/attendance/attendance-badges";
+import { AttendanceBulkActions } from "@/components/attendance/attendance-bulk-actions";
 import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { StudentAvatar } from "@/components/students/student-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { attendanceRecordStatusLabelsByType, attendanceTypeDescriptions, attendanceTypeLabels } from "@/lib/attendance/constants";
 import { updateAttendanceSessionAction } from "@/lib/attendance/actions";
+import { attendanceRecordStatusLabelsByType, attendanceTypeDescriptions, attendanceTypeLabels } from "@/lib/attendance/constants";
 import type { AttendanceSessionDetail } from "@/lib/attendance/queries";
 
 export function AttendanceRecordEditor({ detail, canEdit }: { detail: AttendanceSessionDetail; canEdit: boolean }) {
@@ -59,11 +60,18 @@ export function AttendanceRecordEditor({ detail, canEdit }: { detail: Attendance
 
         <Card>
           <CardHeader>
-            <CardTitle>Öğrenci Durumları</CardTitle>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <CardTitle>Öğrenci Durumları</CardTitle>
+              {canEdit ? (
+                <AttendanceBulkActions
+                  allowedStatuses={Object.keys(attendanceRecordStatusLabelsByType[session.attendance_type])}
+                />
+              ) : null}
+            </div>
           </CardHeader>
           <CardContent className="space-y-3">
             {records.map((record) => (
-              <div key={record.id} className="rounded-md border border-border bg-[#f8fafc] p-3">
+              <div key={record.id} data-attendance-row="true" className="rounded-md border border-border bg-[#f8fafc] p-3">
                 <input type="hidden" name="record_id" value={record.id} />
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                   <div className="flex items-start gap-3">
@@ -75,6 +83,7 @@ export function AttendanceRecordEditor({ detail, canEdit }: { detail: Attendance
                   </div>
                   <div className="grid gap-2 md:min-w-[360px] md:grid-cols-[140px_minmax(0,1fr)]">
                     <select
+                      data-attendance-status="true"
                       name={`status_${record.id}`}
                       defaultValue={record.status}
                       disabled={!canEdit}

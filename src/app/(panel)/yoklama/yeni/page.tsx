@@ -25,8 +25,11 @@ export default async function AttendanceNewPage({ searchParams }: AttendanceNewP
     );
   }
 
-  const { classes } = await getAttendanceFilterOptions(profile);
+  const { classes, departments } = await getAttendanceFilterOptions(profile);
   const activeClasses = classes.filter((classRow) => classRow.is_active);
+  const bulkDepartment = profile.role === "bolum_muduru"
+    ? departments.find((department) => department.id === profile.department_id)
+    : null;
 
   if (activeClasses.length === 0) {
     notFound();
@@ -47,8 +50,10 @@ export default async function AttendanceNewPage({ searchParams }: AttendanceNewP
       <AttendanceSessionCreateForm
         classes={activeClasses}
         defaultAttendanceType={normalizeType(query.attendanceType)}
-        defaultDate={query.date}
+        defaultDate={query.date ?? getTodayDateString()}
         defaultClassId={query.classId}
+        bulkDepartmentId={bulkDepartment?.id}
+        bulkDepartmentName={bulkDepartment?.name}
       />
     </div>
   );
@@ -84,4 +89,19 @@ function descriptionForType(value?: string) {
   } as const;
 
   return map[type];
+}
+
+function getTodayDateString() {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Istanbul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+
+  const year = parts.find((part) => part.type === "year")?.value ?? "0000";
+  const month = parts.find((part) => part.type === "month")?.value ?? "00";
+  const day = parts.find((part) => part.type === "day")?.value ?? "00";
+
+  return `${year}-${month}-${day}`;
 }

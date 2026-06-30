@@ -43,6 +43,18 @@ export type AttendanceSessionDetail = {
   records: AttendanceRecordWithRelations[];
 };
 
+export type DepartmentAttendanceRecord = AttendanceRecordWithRelations & {
+  session: AttendanceSessionWithRelations;
+};
+
+export type DepartmentAttendanceDetail = {
+  department: DepartmentRow | null;
+  attendanceDate: string;
+  attendanceType: AttendanceType;
+  sessions: AttendanceSessionWithRelations[];
+  records: DepartmentAttendanceRecord[];
+};
+
 export type AttendanceRecordWithRelations = AttendanceRecordRow & {
   student: StudentRow | null;
 };
@@ -239,6 +251,84 @@ export async function getAttendanceSessionDetail(profile: ProfileRow, sessionId:
     session,
     records: mappedRecords as AttendanceRecordWithRelations[],
   } as AttendanceSessionDetail;
+}
+
+export async function getDepartmentAttendanceDetail(
+  profile: ProfileRow,
+  departmentId: string,
+  attendanceDate: string,
+  attendanceType: AttendanceType,
+): Promise<DepartmentAttendanceDetail | null> {
+  const visibleClasses = await getVisibleClasses(profile);
+  const departmentClasses = visibleClasses.filter((classRow) => classRow.department_id === departmentId && classRow.is_active);
+
+  if (departmentClasses.length === 0) {
+    return null;
+  }
+
+  const classIds = departmentClasses.map((classRow) => classRow.id);
+  const sessions = await getSessionsByDateRange(profile, { from: attendanceDate, to: attendanceDate });
+  const scopedSessions = sessions.filter(
+    (session) =>
+      classIds.includes(session.class_id) &&
+      session.attendance_date === attendanceDate &&
+      session.attendance_type === attendanceType,
+  );
+
+  if (scopedSessions.length === 0) {
+    return null;
+  }
+
+  const admin = createSupabaseAdminClient();
+  const sessionIds = scopedSessions.map((session) => session.id);
+  const { data: records, error } = await admin
+    .from("attendance_records")
+    .select("*")
+    .in("session_id", sessionIds)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    throw new Error("Bölüm yoklama kayıtları alınamadı.");
+  }
+
+  const studentIds = Array.from(new Set((records ?? []).map((record) => record.student_id)));
+  const { data: students, error: studentError } = await admin
+    .from("students")
+    .select("*")
+    .in("id", studentIds.length > 0 ? studentIds : ["00000000-0000-0000-0000-000000000000"]);
+
+  if (studentError) {
+    throw new Error("Bölüm talebeleri alınamadı.");
+  }
+
+  const departments = await getDepartmentsByClassIds(classIds);
+  const department = departments.find((item) => item.id === departmentId) ?? null;
+  const studentMap = new Map((students ?? []).map((student) => [student.id, student as StudentRow]));
+  const sessionMap = new Map(scopedSessions.map((session) => [session.id, session]));
+
+  const mappedRecords = (records ?? [])
+    .map((record) => ({
+      ...record,
+      student: studentMap.get(record.student_id) ?? null,
+      session: sessionMap.get(record.session_id)!,
+    }))
+    .sort((left, right) => {
+      const leftClass = left.session.course_class?.name ?? "";
+      const rightClass = right.session.course_class?.name ?? "";
+      if (leftClass !== rightClass) {
+        return leftClass.localeCompare(rightClass, "tr");
+      }
+
+      return (left.student?.full_name ?? "").localeCompare(right.student?.full_name ?? "", "tr");
+    });
+
+  return {
+    department,
+    attendanceDate,
+    attendanceType,
+    sessions: scopedSessions.sort((left, right) => (left.course_class?.name ?? "").localeCompare(right.course_class?.name ?? "", "tr")),
+    records: mappedRecords as DepartmentAttendanceRecord[],
+  };
 }
 
 export async function getAttendanceStudentSummary(profile: ProfileRow, studentId: string): Promise<AttendanceStudentSummary> {
