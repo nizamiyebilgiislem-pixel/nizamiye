@@ -5,8 +5,9 @@ import { AttendanceDashboardCard } from "@/components/attendance/attendance-dash
 import { AttendanceSessionList } from "@/components/attendance/attendance-session-list";
 import { AttendanceSessionCreateForm } from "@/components/attendance/attendance-session-create-form";
 import { PageHeader } from "@/components/layout/page-header";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { requireAuth } from "@/lib/auth";
 import { getAttendanceDashboardSummary, getAttendanceFilterOptions, getAttendanceSessionsForProfile } from "@/lib/attendance/queries";
 import { attendanceTypes } from "@/lib/attendance/constants";
@@ -83,11 +84,11 @@ export default async function AttendancePage({ searchParams }: AttendancePagePro
           <form className="grid gap-3 lg:grid-cols-6" action="/yoklama" method="get">
             <div className="space-y-2">
               <label className="text-xs font-medium text-muted-foreground">Tarih Başlangıç</label>
-              <input type="date" name="from" defaultValue={query.from} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm" />
+              <Input type="date" name="from" defaultValue={query.from} className="h-10" />
             </div>
             <div className="space-y-2">
               <label className="text-xs font-medium text-muted-foreground">Tarih Bitiş</label>
-              <input type="date" name="to" defaultValue={query.to} className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm" />
+              <Input type="date" name="to" defaultValue={query.to} className="h-10" />
             </div>
             <div className="space-y-2">
               <label className="text-xs font-medium text-muted-foreground">Tür</label>
@@ -133,17 +134,17 @@ export default async function AttendancePage({ searchParams }: AttendancePagePro
             <div className="space-y-2 lg:col-span-6">
               <label className="text-xs font-medium text-muted-foreground">Arama</label>
               <div className="flex gap-2">
-                <input
+                <Input
                   type="search"
                   name="search"
                   defaultValue={query.search}
                   placeholder="başlık, açıklama, hoca, sınıf"
-                  className="h-10 flex-1 rounded-md border border-border bg-background px-3 text-sm"
+                  className="h-10 flex-1"
                 />
-                <button type="submit" className={cn(buttonVariants({ variant: "secondary" }), "inline-flex items-center gap-2")}>
+                <Button type="submit" variant="secondary">
                   <Filter className="size-4" aria-hidden="true" />
                   Filtrele
-                </button>
+                </Button>
               </div>
             </div>
           </form>

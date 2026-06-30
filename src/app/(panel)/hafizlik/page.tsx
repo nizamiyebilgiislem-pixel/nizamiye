@@ -191,7 +191,7 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
                   ))}
                 </select>
               ) : null}
-              <Input
+               <Input
                 name="search"
                 placeholder="Öğrenci ara..."
                 defaultValue={query.search ?? ""}

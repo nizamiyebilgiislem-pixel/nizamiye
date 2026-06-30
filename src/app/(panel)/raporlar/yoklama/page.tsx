@@ -4,7 +4,9 @@ import { AttendanceDashboardCard } from "@/components/attendance/attendance-dash
 import { AttendanceSessionList } from "@/components/attendance/attendance-session-list";
 import { PageHeader } from "@/components/layout/page-header";
 import { PdfPrintButton } from "@/components/reports/pdf-print-button";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { requireAuth } from "@/lib/auth";
 import { attendanceTypeLabels, attendanceTypes } from "@/lib/attendance/constants";
 import { getAttendanceDashboardSummary, getAttendanceFilterOptions, getAttendanceReportData } from "@/lib/attendance/queries";
@@ -97,9 +99,9 @@ export default async function AttendanceReportsPage({ searchParams }: { searchPa
               <Field label="Arama" name="search" type="search" defaultValue={query.search} placeholder="Başlık, sınıf, bölüm, alan" />
             </div>
             <div className="flex items-end gap-2 xl:col-span-3">
-              <button type="submit" className="inline-flex h-10 items-center rounded-md bg-[#093657] px-4 text-sm font-medium text-white hover:bg-[#072943]">
+              <Button type="submit" className="h-10">
                 Filtrele
-              </button>
+              </Button>
               <Link href="/raporlar/yoklama" className={cn("inline-flex h-10 items-center rounded-md border border-[#093657]/15 bg-white px-4 text-sm font-medium text-[#093657]")}>
                 Temizle
               </Link>
@@ -144,13 +146,7 @@ function Field({
   return (
     <label className="space-y-1 text-sm">
       <span className="text-xs uppercase tracking-wide text-muted-foreground">{label}</span>
-      <input
-        type={type}
-        name={name}
-        defaultValue={defaultValue}
-        placeholder={placeholder}
-        className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-      />
+      <Input type={type} name={name} defaultValue={defaultValue} placeholder={placeholder} className="h-10" />
     </label>
   );
 }
