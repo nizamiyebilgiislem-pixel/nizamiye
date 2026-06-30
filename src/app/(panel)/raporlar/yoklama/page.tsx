@@ -43,14 +43,14 @@ export default async function AttendanceReportsPage({ searchParams }: { searchPa
     entityType: "report",
     entityId: "attendance",
     title: "Yoklama Raporu PDF",
-    description: "GÃ¼nlÃ¼k ve namaz yoklama raporu oluÅŸturuldu.",
+    description: "Günlük ve namaz yoklama raporu oluşturuldu.",
   });
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
         <Link href="/raporlar" className={cn("text-sm font-medium text-[#093657] hover:underline")}>
-          Raporlar&apos;a dÃ¶n
+          Raporlar&apos;a dön
         </Link>
         <PdfPrintButton />
       </div>
@@ -58,7 +58,7 @@ export default async function AttendanceReportsPage({ searchParams }: { searchPa
       <PageHeader
         eyebrow="Raporlar"
         title="Yoklama Raporu"
-        description="GÃ¼nlÃ¼k ve namaz yoklamalarÄ±nÄ± filtreleyip resmi PDF gÃ¶rÃ¼nÃ¼mÃ¼nde alÄ±n."
+        description="Günlük ve namaz yoklamalarını filtreleyip resmi PDF görünümünde alın."
       />
 
       <AttendanceDashboardCard summary={dashboardSummary} />
@@ -66,38 +66,38 @@ export default async function AttendanceReportsPage({ searchParams }: { searchPa
       <Card size="sm">
         <CardContent className="space-y-4 p-4">
           <form className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-            <Field label="BaÅŸlangÄ±Ã§" name="from" type="date" defaultValue={query.from} />
-            <Field label="BitiÅŸ" name="to" type="date" defaultValue={query.to} />
+            <Field label="Başlangıç" name="from" type="date" defaultValue={query.from} />
+            <Field label="Bitiş" name="to" type="date" defaultValue={query.to} />
             <SelectField
-              label="TÃ¼r"
+              label="Tür"
               name="attendanceType"
               defaultValue={query.attendanceType ?? "all"}
-              options={[{ value: "all", label: "TÃ¼mÃ¼" }, ...attendanceTypes.map((type) => ({ value: type, label: attendanceTypeLabels[type] }))]}
+              options={[{ value: "all", label: "Tümü" }, ...attendanceTypes.map((type) => ({ value: type, label: attendanceTypeLabels[type] }))]}
             />
             <SelectField
-              label="BÃ¶lÃ¼m"
+              label="Bölüm"
               name="departmentId"
               defaultValue={query.departmentId ?? ""}
-              options={[{ value: "", label: "TÃ¼mÃ¼" }, ...filters.departments.map((department) => ({ value: department.id, label: department.name }))]}
+              options={[{ value: "", label: "Tümü" }, ...filters.departments.map((department) => ({ value: department.id, label: department.name }))]}
             />
             <SelectField
-              label="SÄ±nÄ±f"
+              label="Sınıf"
               name="classId"
               defaultValue={query.classId ?? ""}
-              options={[{ value: "", label: "TÃ¼mÃ¼" }, ...filters.classes.map((classRow) => ({ value: classRow.id, label: classRow.name }))]}
+              options={[{ value: "", label: "Tümü" }, ...filters.classes.map((classRow) => ({ value: classRow.id, label: classRow.name }))]}
             />
             <SelectField
               label="Durum"
               name="status"
               defaultValue={query.status ?? "all"}
               options={[
-                { value: "all", label: "TÃ¼mÃ¼" },
-                { value: "completed", label: "TamamlandÄ±" },
+                { value: "all", label: "Tümü" },
+                { value: "completed", label: "Tamamlandı" },
                 { value: "draft", label: "Taslak" },
               ]}
             />
             <div className="xl:col-span-2">
-              <Field label="Arama" name="search" type="search" defaultValue={query.search} placeholder="BaÅŸlÄ±k, sÄ±nÄ±f, bÃ¶lÃ¼m, alan" />
+              <Field label="Arama" name="search" type="search" defaultValue={query.search} placeholder="Başlık, sınıf, bölüm, alan" />
             </div>
             <div className="flex items-end gap-2 xl:col-span-3">
               <Button type="submit" className="h-10">
@@ -115,13 +115,13 @@ export default async function AttendanceReportsPage({ searchParams }: { searchPa
         <CardContent className="space-y-3 p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-base font-semibold text-[#093657]">Yoklama OturumlarÄ±</h2>
+              <h2 className="text-base font-semibold text-[#093657]">Yoklama Oturumları</h2>
               <p className="text-sm text-muted-foreground">
-                {reportData.summary.totalSessions} oturum Â· {reportData.summary.totalRecords} kayÄ±t
+                {reportData.summary.totalSessions} oturum Â· {reportData.summary.totalRecords} kayıt
               </p>
             </div>
             <p className="text-sm text-muted-foreground">
-              {reportData.summary.dailySessionCount} gÃ¼nlÃ¼k Â· {reportData.summary.prayerSessionCount} namaz
+              {reportData.summary.dailySessionCount} günlük Â· {reportData.summary.prayerSessionCount} namaz
             </p>
           </div>
           <AttendanceSessionList sessions={reportData.rows} />

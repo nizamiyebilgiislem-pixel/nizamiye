@@ -30,8 +30,8 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
   if (!scope.selectedDepartment) {
     return (
       <div className="space-y-6">
-        <PageHeader title="HafÄ±zlÄ±k Takibi" description="GÃ¶rÃ¼ntÃ¼leyebileceÄŸiniz aktif bÃ¶lÃ¼m bulunamadÄ±." />
-        <EmptyState title="HafÄ±zlÄ±k takibi iÃ§in eriÅŸilebilir aktif bÃ¶lÃ¼m bulunamadÄ±." />
+        <PageHeader title="Hafızlık Takibi" description="Görüntüleyebileceğiniz aktif bölüm bulunamadı." />
+        <EmptyState title="Hafızlık takibi için erişilebilir aktif bölüm bulunamadı." />
       </div>
     );
   }
@@ -62,12 +62,12 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <PageHeader
-          title="HafÄ±zlÄ±k Takibi"
-          description={`${scope.selectedDepartment.name} bÃ¶lÃ¼mÃ¼ndeki hafÄ±z Ã¶ÄŸrencilerin cÃ¼z bazlÄ± ilerleme takibi.`}
+          title="Hafızlık Takibi"
+          description={`${scope.selectedDepartment.name} bölümündeki hafız öğrencilerin cüz bazlı ilerleme takibi.`}
         />
         <div className="flex gap-2">
           <Link href={`/hafizlik/guncelle?department=${scope.selectedDepartment.id}`} className={buttonVariants()}>
-            Toplu GÃ¼ncelle
+            Toplu Güncelle
           </Link>
         </div>
       </div>
@@ -76,13 +76,13 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
         <Card>
           <CardContent className="pt-6">
             <div className="text-2xl font-bold">{studentsWithProgress.length}</div>
-            <p className="text-sm text-muted-foreground">HafÄ±zlÄ±k KaydÄ±</p>
+            <p className="text-sm text-muted-foreground">Hafızlık Kaydı</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
             <div className="text-2xl font-bold text-blue-600">{learningCount}</div>
-            <p className="text-sm text-muted-foreground">Ã–ÄŸreniyor</p>
+            <p className="text-sm text-muted-foreground">Ã–ğreniyor</p>
           </CardContent>
         </Card>
         <Card>
@@ -104,7 +104,7 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2 text-red-900">
               <AlertTriangle className="size-5" />
-              <CardTitle className="text-sm">Hedef Tarihi GeÃ§en Ã–ÄŸrenciler</CardTitle>
+              <CardTitle className="text-sm">Hedef Tarihi Geçen Ã–ğrenciler</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -123,8 +123,8 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
                       <span className="ml-2 text-sm text-red-700">{student.course_class?.name}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-red-600">{daysOverdue} gÃ¼n geÃ§miÅŸ</span>
-                      <Badge variant="destructive">GecikmiÅŸ</Badge>
+                      <span className="text-sm font-medium text-red-600">{daysOverdue} gün geçmiş</span>
+                      <Badge variant="destructive">Gecikmiş</Badge>
                     </div>
                   </div>
                 );
@@ -139,7 +139,7 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2 text-yellow-900">
               <Clock className="size-5" />
-              <CardTitle className="text-sm">Hedef Tarihi YaklaÅŸan Ã–ÄŸrenciler (7 gÃ¼n)</CardTitle>
+              <CardTitle className="text-sm">Hedef Tarihi Yaklaşan Ã–ğrenciler (7 gün)</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -158,9 +158,9 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
                       <span className="ml-2 text-sm text-yellow-700">{student.course_class?.name}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-yellow-600">{daysLeft} gÃ¼n kaldÄ±</span>
+                      <span className="text-sm font-medium text-yellow-600">{daysLeft} gün kaldı</span>
                       <Badge variant="outline" className="border-yellow-300 bg-yellow-100 text-yellow-800">
-                        YaklaÅŸÄ±yor
+                        Yaklaşıyor
                       </Badge>
                     </div>
                   </div>
@@ -174,7 +174,7 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
       <Card>
         <CardHeader>
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <CardTitle>Ã–ÄŸrenci Listesi</CardTitle>
+            <CardTitle>Ã–ğrenci Listesi</CardTitle>
             <form className="flex flex-col gap-2 md:flex-row">
               {scope.canSelectDepartment && scope.departments.length > 1 ? (
                 <NativeSelect
@@ -191,7 +191,7 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
               ) : null}
                <Input
                 name="search"
-                placeholder="Ã–ÄŸrenci ara..."
+                placeholder="Ã–ğrenci ara..."
                 defaultValue={query.search ?? ""}
                 className="w-48"
               />
@@ -212,13 +212,13 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
                       <span className="text-sm text-muted-foreground">Â· {student.course_class?.name}</span>
                     </div>
                     {student.teacherName ? (
-                      <p className="text-sm text-muted-foreground">SÄ±nÄ±f HocasÄ±: {student.teacherName}</p>
+                      <p className="text-sm text-muted-foreground">Sınıf Hocası: {student.teacherName}</p>
                     ) : null}
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="w-32">
                       <div className="flex justify-between text-xs">
-                        <span>{student.progress?.current_juz}. CÃ¼z</span>
+                        <span>{student.progress?.current_juz}. Cüz</span>
                         <span>{student.percentage}%</span>
                       </div>
                       <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-muted">
@@ -234,10 +234,10 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
                       )}
                     >
                       {student.progress?.status === "learning"
-                        ? "Ã–ÄŸreniyor"
+                        ? "Ã–ğreniyor"
                         : student.progress?.status === "reviewing"
                           ? "Tekrar"
-                          : "TamamlandÄ±"}
+                          : "Tamamlandı"}
                     </Badge>
                     {student.progress?.target_completion_date ? (
                       <span
@@ -257,7 +257,7 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
               ))}
             </div>
           ) : (
-            <EmptyState title={searchTerm ? "Arama sonucu bulunamadÄ±." : "Bu bÃ¶lÃ¼mde hafÄ±zlÄ±k kaydÄ± olan aktif Ã¶ÄŸrenci bulunmuyor."} />
+            <EmptyState title={searchTerm ? "Arama sonucu bulunamadı." : "Bu bölümde hafızlık kaydı olan aktif öğrenci bulunmuyor."} />
           )}
         </CardContent>
       </Card>

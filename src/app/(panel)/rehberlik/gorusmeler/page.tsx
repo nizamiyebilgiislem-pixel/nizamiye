@@ -18,7 +18,7 @@ const interviewTypeLabels: Record<string, string> = {
 };
 
 const statusLabels: Record<string, string> = {
-  open: "AÃ§Ä±k", followed: "Takip Ediliyor", closed: "KapalÄ±",
+  open: "Açık", followed: "Takip Ediliyor", closed: "Kapalı",
 };
 
 const statusColors: Record<string, "default" | "secondary" | "outline"> = {
@@ -34,7 +34,7 @@ export default async function GorusmelerPage({ searchParams }: Props) {
   const params = await searchParams;
 
   if (!canViewGuidance(profile)) {
-    return <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Bu sayfaya eriÅŸim yetkiniz bulunmamaktadÄ±r.</div>;
+    return <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Bu sayfaya erişim yetkiniz bulunmamaktadır.</div>;
   }
 
   const interviews = await getInterviews(profile, params);
@@ -44,7 +44,7 @@ export default async function GorusmelerPage({ searchParams }: Props) {
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Rehberlik" title="GÃ¶rÃ¼ÅŸmeler" description="TÃ¼m rehberlik gÃ¶rÃ¼ÅŸmeleri." actions={canManage ? <Link href="/rehberlik/gorusmeler/yeni" className={cn(buttonVariants({ size: "sm" }))}><Plus className="mr-1.5 size-4" /> Yeni GÃ¶rÃ¼ÅŸme</Link> : undefined} />
+      <PageHeader eyebrow="Rehberlik" title="Görüşmeler" description="Tüm rehberlik görüşmeleri." actions={canManage ? <Link href="/rehberlik/gorusmeler/yeni" className={cn(buttonVariants({ size: "sm" }))}><Plus className="mr-1.5 size-4" /> Yeni Görüşme</Link> : undefined} />
 
       <Card>
         <CardHeader>
@@ -54,21 +54,21 @@ export default async function GorusmelerPage({ searchParams }: Props) {
           <form className="flex flex-wrap items-end gap-3">
             <label className="grid gap-1 text-xs font-medium">
               Arama
-              <Input name="search" defaultValue={params.search ?? ""} placeholder="BaÅŸlÄ±k veya Ã¶zet..." />
+              <Input name="search" defaultValue={params.search ?? ""} placeholder="Başlık veya özet..." />
             </label>
             <label className="grid gap-1 text-xs font-medium">
               Durum
               <NativeSelect name="status" defaultValue={params.status ?? ""} className="h-9 rounded-md border border-input bg-background px-2.5 text-sm outline-none focus:border-[#093657]">
-                <option value="">TÃ¼mÃ¼</option>
-                <option value="open">AÃ§Ä±k</option>
+                <option value="">Tümü</option>
+                <option value="open">Açık</option>
                 <option value="followed">Takip Ediliyor</option>
-                <option value="closed">KapalÄ±</option>
+                <option value="closed">Kapalı</option>
               </NativeSelect>
             </label>
             <label className="grid gap-1 text-xs font-medium">
-              TÃ¼r
+              Tür
               <NativeSelect name="interview_type" defaultValue={params.interview_type ?? ""} className="h-9 rounded-md border border-input bg-background px-2.5 text-sm outline-none focus:border-[#093657]">
-                <option value="">TÃ¼mÃ¼</option>
+                <option value="">Tümü</option>
                 <option value="individual">Bireysel</option>
                 <option value="group">Grup</option>
                 <option value="parent">Veli</option>
@@ -79,16 +79,16 @@ export default async function GorusmelerPage({ searchParams }: Props) {
             <label className="grid gap-1 text-xs font-medium">
               Rehberlik
               <NativeSelect name="counselor_id" defaultValue={params.counselor_id ?? ""} className="h-9 rounded-md border border-input bg-background px-2.5 text-sm outline-none focus:border-[#093657]">
-                <option value="">TÃ¼mÃ¼</option>
+                <option value="">Tümü</option>
                 {(counselors ?? []).map((c) => <option key={c.id} value={c.id}>{c.full_name}</option>)}
               </NativeSelect>
             </label>
             <label className="grid gap-1 text-xs font-medium">
-              BaÅŸlangÄ±Ã§
+              Başlangıç
               <Input name="date_from" type="date" defaultValue={params.date_from ?? ""} />
             </label>
             <label className="grid gap-1 text-xs font-medium">
-              BitiÅŸ
+              Bitiş
               <Input name="date_to" type="date" defaultValue={params.date_to ?? ""} />
             </label>
             <Button type="submit">Filtrele</Button>
@@ -104,16 +104,16 @@ export default async function GorusmelerPage({ searchParams }: Props) {
                 <tr className="border-b border-border bg-muted/50">
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Talebe</th>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Tarih</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">TÃ¼r</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">BaÅŸlÄ±k</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Tür</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Başlık</th>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Durum</th>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Takip Tarihi</th>
-                  {canManage && <th className="px-4 py-3 text-right font-medium text-muted-foreground">Ä°ÅŸlem</th>}
+                  {canManage && <th className="px-4 py-3 text-right font-medium text-muted-foreground">İşlem</th>}
                 </tr>
               </thead>
               <tbody>
                 {interviews.length === 0 ? (
-                  <tr><td colSpan={canManage ? 7 : 6} className="px-4 py-8 text-center text-muted-foreground">HiÃ§ gÃ¶rÃ¼ÅŸme bulunamadÄ±.</td></tr>
+                  <tr><td colSpan={canManage ? 7 : 6} className="px-4 py-8 text-center text-muted-foreground">Hiç görüşme bulunamadı.</td></tr>
                 ) : interviews.map((i) => (
                   <tr key={i.id} className="border-b border-border last:border-0 hover:bg-muted/30">
                     <td className="px-4 py-3">{i.student?.full_name ?? "â€”"}</td>

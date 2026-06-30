@@ -27,27 +27,27 @@ export default async function EducationPlanningPage({ searchParams }: EducationP
     <div className="space-y-6">
       <PageHeader
         eyebrow="Akademik"
-        title="EÄŸitim Planlama"
-        description="SÄ±nÄ±f ders atamalarÄ± ve haftalÄ±k program yÃ¶netimi."
+        title="Eğitim Planlama"
+        description="Sınıf ders atamaları ve haftalık program yönetimi."
       />
 
       <EducationErrorMessage error={query.error} saved={query.saved} />
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <SummaryCard label="Aktif SÄ±nÄ±f" value={dashboard.summary.activeClassCount} />
-        <SummaryCard label="AtamalÄ± SÄ±nÄ±f" value={dashboard.summary.assignedClassCount} />
-        <SummaryCard label="ProgramlÄ± SÄ±nÄ±f" value={dashboard.summary.scheduledClassCount} />
-        <SummaryCard label="HocasÄ±z Ders" value={dashboard.summary.missingTeacherAssignmentCount} />
+        <SummaryCard label="Aktif Sınıf" value={dashboard.summary.activeClassCount} />
+        <SummaryCard label="Atamalı Sınıf" value={dashboard.summary.assignedClassCount} />
+        <SummaryCard label="Programlı Sınıf" value={dashboard.summary.scheduledClassCount} />
+        <SummaryCard label="Hocasız Ders" value={dashboard.summary.missingTeacherAssignmentCount} />
       </section>
 
       <Card>
         <CardHeader className="border-b border-border">
-          <CardTitle>SÄ±nÄ±f SeÃ§imi</CardTitle>
+          <CardTitle>Sınıf Seçimi</CardTitle>
         </CardHeader>
         <CardContent className="p-4">
           <form action="/egitim-planlama" className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
             <NativeSelect name="department" defaultValue={query.department ?? selection.selectedDepartment?.id ?? ""} className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
-              <option value="">BÃ¶lÃ¼m seÃ§in</option>
+              <option value="">Bölüm seçin</option>
               {selection.departments.map((department) => (
                 <option key={department.id} value={department.id}>
                   {department.name}
@@ -55,7 +55,7 @@ export default async function EducationPlanningPage({ searchParams }: EducationP
               ))}
             </NativeSelect>
             <NativeSelect name="class" defaultValue={selection.selectedClass?.id ?? ""} className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
-              <option value="">SÄ±nÄ±f seÃ§in</option>
+              <option value="">Sınıf seçin</option>
               {selection.classes.map((classRow) => (
                 <option key={classRow.id} value={classRow.id}>
                   {classRow.name}
@@ -71,20 +71,20 @@ export default async function EducationPlanningPage({ searchParams }: EducationP
 
       <Card>
         <CardHeader className="border-b border-border">
-          <CardTitle>SÄ±nÄ±flar</CardTitle>
+          <CardTitle>Sınıflar</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>SÄ±nÄ±f</TableHead>
-                  <TableHead>BÃ¶lÃ¼m</TableHead>
-                  <TableHead>Ders SayÄ±sÄ±</TableHead>
+                  <TableHead>Sınıf</TableHead>
+                  <TableHead>Bölüm</TableHead>
+                  <TableHead>Ders Sayısı</TableHead>
                   <TableHead>Program Slotu</TableHead>
-                  <TableHead>HocasÄ±z Ders</TableHead>
+                  <TableHead>Hocasız Ders</TableHead>
                   <TableHead>Durum</TableHead>
-                  <TableHead className="text-right">Ä°ÅŸlemler</TableHead>
+                  <TableHead className="text-right">İşlemler</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -104,12 +104,12 @@ export default async function EducationPlanningPage({ searchParams }: EducationP
                       <div className="flex justify-end gap-2">
                         {["admin", "genel_mudur", "bolum_muduru"].includes(profile.role) ? (
                           <Link href={`/egitim-planlama/ders-atamalari/${classRow.id}`} className={cn(buttonVariants({ variant: "secondary", size: "sm" }))}>
-                            Ders AtamalarÄ±
+                            Ders Atamaları
                           </Link>
                         ) : null}
                         {profile.role !== "destek_birim_muduru" ? (
                           <Link href={`/egitim-planlama/ders-programi/${classRow.id}`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
-                            Ders ProgramÄ±
+                            Ders Programı
                           </Link>
                         ) : null}
                       </div>

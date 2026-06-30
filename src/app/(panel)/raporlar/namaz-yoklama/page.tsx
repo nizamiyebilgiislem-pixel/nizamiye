@@ -39,23 +39,23 @@ export default async function PrayerAttendanceReportsPage({ searchParams }: { se
     reportType: "prayer_attendance_report",
     entityType: "report",
     entityId: "prayer-attendance",
-    title: "Namaz YoklamasÄ± Raporu PDF",
-    description: "Namaz yoklamasÄ± raporu oluÅŸturuldu.",
+    title: "Namaz Yoklaması Raporu PDF",
+    description: "Namaz yoklaması raporu oluşturuldu.",
   });
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
         <Link href="/raporlar" className={cn("text-sm font-medium text-[#093657] hover:underline")}>
-          Raporlar&apos;a dÃ¶n
+          Raporlar&apos;a dön
         </Link>
         <PdfPrintButton />
       </div>
 
       <PageHeader
         eyebrow="Raporlar"
-        title="Namaz YoklamasÄ± Raporu"
-        description="Sabah, Ã¶ÄŸle, ikindi, akÅŸam ve yatsÄ± namaz yoklamalarÄ±nÄ± PDF olarak alÄ±n."
+        title="Namaz Yoklaması Raporu"
+        description="Sabah, öğle, ikindi, akşam ve yatsı namaz yoklamalarını PDF olarak alın."
       />
 
       <AttendanceDashboardCard summary={dashboardSummary} />
@@ -63,22 +63,22 @@ export default async function PrayerAttendanceReportsPage({ searchParams }: { se
       <Card size="sm">
         <CardContent className="space-y-4 p-4">
           <form className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            <Field label="BaÅŸlangÄ±Ã§" name="from" type="date" defaultValue={query.from} />
-            <Field label="BitiÅŸ" name="to" type="date" defaultValue={query.to} />
+            <Field label="Başlangıç" name="from" type="date" defaultValue={query.from} />
+            <Field label="Bitiş" name="to" type="date" defaultValue={query.to} />
             <SelectField
-              label="BÃ¶lÃ¼m"
+              label="Bölüm"
               name="departmentId"
               defaultValue={query.departmentId ?? ""}
-              options={[{ value: "", label: "TÃ¼mÃ¼" }, ...filters.departments.map((department) => ({ value: department.id, label: department.name }))]}
+              options={[{ value: "", label: "Tümü" }, ...filters.departments.map((department) => ({ value: department.id, label: department.name }))]}
             />
             <SelectField
-              label="SÄ±nÄ±f"
+              label="Sınıf"
               name="classId"
               defaultValue={query.classId ?? ""}
-              options={[{ value: "", label: "TÃ¼mÃ¼" }, ...filters.classes.map((classRow) => ({ value: classRow.id, label: classRow.name }))]}
+              options={[{ value: "", label: "Tümü" }, ...filters.classes.map((classRow) => ({ value: classRow.id, label: classRow.name }))]}
             />
             <div className="xl:col-span-2">
-              <Field label="Arama" name="search" type="search" defaultValue={query.search} placeholder="BaÅŸlÄ±k, sÄ±nÄ±f, bÃ¶lÃ¼m, alan" />
+              <Field label="Arama" name="search" type="search" defaultValue={query.search} placeholder="Başlık, sınıf, bölüm, alan" />
             </div>
             <div className="flex items-end gap-2 xl:col-span-2">
               <Button type="submit">Filtrele</Button>
@@ -94,7 +94,7 @@ export default async function PrayerAttendanceReportsPage({ searchParams }: { se
         <CardContent className="space-y-4 p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-base font-semibold text-[#093657]">Namaz YoklamasÄ± OturumlarÄ±</h2>
+              <h2 className="text-base font-semibold text-[#093657]">Namaz Yoklaması Oturumları</h2>
               <p className="text-sm text-muted-foreground">
                 {prayerRows.length} oturum Â· {reportData.summary.prayerSessionCount} toplam namaz oturumu
               </p>

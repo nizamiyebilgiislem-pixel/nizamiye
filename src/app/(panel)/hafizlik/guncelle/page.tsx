@@ -32,21 +32,21 @@ export default async function BulkUpdatePage({ searchParams }: BulkUpdatePagePro
           <ArrowLeft className="size-4" />
         </Link>
         <PageHeader
-          title="Toplu HafÄ±zlÄ±k GÃ¼ncelleme"
-          description={`${department?.name ?? "BÃ¶lÃ¼m"} bÃ¶lÃ¼mÃ¼ndeki aktif Ã¶ÄŸrencilerin hafÄ±zlÄ±k ilerlemesini toplu gÃ¼ncelle.`}
+          title="Toplu Hafızlık Güncelleme"
+          description={`${department?.name ?? "Bölüm"} bölümündeki aktif öğrencilerin hafızlık ilerlemesini toplu güncelle.`}
         />
       </div>
 
       {query.success ? (
         <div className="rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900">
-          {query.success} Ã¶ÄŸrenci gÃ¼ncellendi.
+          {query.success} öğrenci güncellendi.
         </div>
       ) : null}
 
       <Card>
         <CardHeader>
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <CardTitle>Ã–ÄŸrenci Listesi</CardTitle>
+            <CardTitle>Ã–ğrenci Listesi</CardTitle>
             {canSelectDepartment && departments.length > 1 ? (
               <form className="flex gap-2">
                 <NativeSelect
@@ -60,7 +60,7 @@ export default async function BulkUpdatePage({ searchParams }: BulkUpdatePagePro
                     </option>
                   ))}
                 </NativeSelect>
-                <Button type="submit" variant="outline">BÃ¶lÃ¼mÃ¼ AÃ§</Button>
+                <Button type="submit" variant="outline">Bölümü Aç</Button>
               </form>
             ) : null}
           </div>
@@ -73,7 +73,7 @@ export default async function BulkUpdatePage({ searchParams }: BulkUpdatePagePro
               updateAction={bulkUpdateHafizlikProgressAction}
             />
           ) : (
-            <EmptyState title="Bu bÃ¶lÃ¼mde aktif Ã¶ÄŸrenci bulunmuyor." />
+            <EmptyState title="Bu bölümde aktif öğrenci bulunmuyor." />
           )}
         </CardContent>
       </Card>

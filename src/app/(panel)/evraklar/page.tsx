@@ -30,27 +30,27 @@ export default async function DocumentsPage({ searchParams }: DocumentsPageProps
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <PageHeader eyebrow="Evraklar" title="Evrak YÃ¶netimi" description="Talebe evrak URL kayÄ±tlarÄ±nÄ± yÃ¶netin." />
+        <PageHeader eyebrow="Evraklar" title="Evrak Yönetimi" description="Talebe evrak URL kayıtlarını yönetin." />
         {profile.role !== "destek_birim_muduru" ? <Link href="/evraklar/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Evrak</Link> : null}
       </div>
       <DocumentErrorMessage error={params.error} />
       <section className="grid gap-4 md:grid-cols-3">
         <Metric label="Toplam Evrak" value={summary.totalCount} />
         <Metric label="Bu Ay Eklenen" value={summary.currentMonthCount} />
-        <Metric label="EvrakÄ± Olmayan Aktif Talebe" value={summary.missingDocumentStudentCount} />
+        <Metric label="Evrakı Olmayan Aktif Talebe" value={summary.missingDocumentStudentCount} />
       </section>
-      <Card><CardHeader><CardTitle>Evrak TÃ¼rlerine GÃ¶re DaÄŸÄ±lÄ±m</CardTitle></CardHeader><CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">{summary.typeCounts.map((item)=><div key={item.type} className="rounded-md border border-border bg-background p-3"><p className="text-sm text-muted-foreground">{item.type}</p><p className="mt-1 text-2xl font-semibold">{item.count}</p></div>)}</CardContent></Card>
+      <Card><CardHeader><CardTitle>Evrak Türlerine Göre Dağılım</CardTitle></CardHeader><CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">{summary.typeCounts.map((item)=><div key={item.type} className="rounded-md border border-border bg-background p-3"><p className="text-sm text-muted-foreground">{item.type}</p><p className="mt-1 text-2xl font-semibold">{item.count}</p></div>)}</CardContent></Card>
       <Card><CardContent className="p-4"><form action="/evraklar" className="grid gap-3 xl:grid-cols-[1fr_180px_180px_180px_150px_150px_auto]">
-        <Input name="q" defaultValue={params.q ?? ""} placeholder="Talebe, tÃ¼r veya URL" className="h-10" />
-        <NativeSelect name="department" defaultValue={params.department ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">TÃ¼m bÃ¶lÃ¼mler</option>{list.departments.map((d)=><option key={d.id} value={d.id}>{d.name}</option>)}</NativeSelect>
-        <NativeSelect name="class" defaultValue={params.class ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">TÃ¼m sÄ±nÄ±flar</option>{list.classes.map((c)=><option key={c.id} value={c.id}>{c.name}</option>)}</NativeSelect>
-        <NativeSelect name="type" defaultValue={params.type ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">TÃ¼m tÃ¼rler</option>{documentTypes.map((type)=><option key={type} value={type}>{type}</option>)}</NativeSelect>
+        <Input name="q" defaultValue={params.q ?? ""} placeholder="Talebe, tür veya URL" className="h-10" />
+        <NativeSelect name="department" defaultValue={params.department ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Tüm bölümler</option>{list.departments.map((d)=><option key={d.id} value={d.id}>{d.name}</option>)}</NativeSelect>
+        <NativeSelect name="class" defaultValue={params.class ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Tüm sınıflar</option>{list.classes.map((c)=><option key={c.id} value={c.id}>{c.name}</option>)}</NativeSelect>
+        <NativeSelect name="type" defaultValue={params.type ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Tüm türler</option>{documentTypes.map((type)=><option key={type} value={type}>{type}</option>)}</NativeSelect>
         <Input name="from" type="date" defaultValue={params.from ?? ""} className="h-10" />
         <Input name="to" type="date" defaultValue={params.to ?? ""} className="h-10" />
         <Button type="submit">Filtrele</Button>
       </form></CardContent></Card>
       <div><h2 className="mb-3 text-lg font-semibold">Son Eklenen 10 Evrak</h2><DocumentList documents={summary.latestDocuments} profile={profile} /></div>
-      <div><h2 className="mb-3 text-lg font-semibold">Evrak Listesi</h2>{list.documents.length > 0 ? <><DocumentList documents={list.documents} profile={profile} />        <Pagination currentPage={page} totalPages={totalPages} basePath="/evraklar" searchParams={params} /></> : <EmptyState title="Evrak bulunamadÄ±." />}</div>
+      <div><h2 className="mb-3 text-lg font-semibold">Evrak Listesi</h2>{list.documents.length > 0 ? <><DocumentList documents={list.documents} profile={profile} />        <Pagination currentPage={page} totalPages={totalPages} basePath="/evraklar" searchParams={params} /></> : <EmptyState title="Evrak bulunamadı." />}</div>
     </div>
   );
 }

@@ -20,7 +20,7 @@ export default async function EvaluationEntryPage({ searchParams }: EvaluationEn
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Kanaat Sistemi" title="Kanaat GiriÅŸi" description="BÃ¶lÃ¼m ve sÄ±nÄ±f seÃ§erek aktif talebelerin kanaatlerini yÃ¶netin." />
+      <PageHeader eyebrow="Kanaat Sistemi" title="Kanaat Girişi" description="Bölüm ve sınıf seçerek aktif talebelerin kanaatlerini yönetin." />
       <EvaluationErrorMessage error={params.error} />
       <Card>
         <CardContent className="p-4">
@@ -31,14 +31,14 @@ export default async function EvaluationEntryPage({ searchParams }: EvaluationEn
             <NativeSelect name="class" defaultValue={selectedClass?.id ?? ""} className="h-10 rounded-md border border-input bg-background px-3 text-sm">
               {classes.map((classRow) => <option key={classRow.id} value={classRow.id}>{classRow.name}</option>)}
             </NativeSelect>
-            <Button type="submit">GÃ¶ster</Button>
+            <Button type="submit">Göster</Button>
           </form>
         </CardContent>
       </Card>
       {students.length > 0 ? (
         <EvaluationEntryList students={students} profile={profile} selectedClass={selectedClass} />
       ) : (
-        <EmptyState title="SeÃ§ili sÄ±nÄ±fta aktif talebe bulunamadÄ±." />
+        <EmptyState title="Seçili sınıfta aktif talebe bulunamadı." />
       )}
     </div>
   );

@@ -21,7 +21,7 @@ export default async function DokumanlarPage({ searchParams }: Props) {
   const filters = await searchParams;
 
   if (!canViewLibrary(profile)) {
-    return <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Bu sayfaya eriÅŸim yetkiniz bulunmamaktadÄ±r.</div>;
+    return <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">Bu sayfaya erişim yetkiniz bulunmamaktadır.</div>;
   }
 
   const [documents, categories] = await Promise.all([
@@ -34,14 +34,14 @@ export default async function DokumanlarPage({ searchParams }: Props) {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="KÃ¼tÃ¼phane"
-        title="DokÃ¼manlar"
-        description="Dijital dokÃ¼man arÅŸivi."
+        eyebrow="Kütüphane"
+        title="Dokümanlar"
+        description="Dijital doküman arşivi."
         actions={
           canManage ? (
             <Link href="/kutuphane/dokumanlar/yeni" className={cn(buttonVariants({ size: "sm" }))}>
               <Plus className="size-4" aria-hidden />
-              DokÃ¼man Ekle
+              Doküman Ekle
             </Link>
           ) : null
         }
@@ -55,7 +55,7 @@ export default async function DokumanlarPage({ searchParams }: Props) {
               defaultValue={filters.category_id ?? ""}
               className="h-9 rounded-md border border-input bg-background px-3 text-sm outline-none focus:border-ring"
             >
-              <option value="">TÃ¼m Kategoriler</option>
+              <option value="">Tüm Kategoriler</option>
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
@@ -65,12 +65,12 @@ export default async function DokumanlarPage({ searchParams }: Props) {
               defaultValue={filters.document_type ?? ""}
               className="h-9 rounded-md border border-input bg-background px-3 text-sm outline-none focus:border-ring"
             >
-              <option value="">TÃ¼m TÃ¼rler</option>
+              <option value="">Tüm Türler</option>
               <option value="pdf">PDF</option>
               <option value="word">Word</option>
               <option value="excel">Excel</option>
-              <option value="image">GÃ¶rsel</option>
-              <option value="other">DiÄŸer</option>
+              <option value="image">Görsel</option>
+              <option value="other">Diğer</option>
             </NativeSelect>
             <Button type="submit" variant="secondary" size="sm">Filtrele</Button>
             {(filters.category_id || filters.document_type) && (
@@ -84,13 +84,13 @@ export default async function DokumanlarPage({ searchParams }: Props) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>BaÅŸlÄ±k</TableHead>
-              <TableHead>TÃ¼r</TableHead>
+              <TableHead>Başlık</TableHead>
+              <TableHead>Tür</TableHead>
               <TableHead>Kategori</TableHead>
-              <TableHead>Dosya AdÄ±</TableHead>
-              <TableHead>YÃ¼kleyen</TableHead>
+              <TableHead>Dosya Adı</TableHead>
+              <TableHead>Yükleyen</TableHead>
               <TableHead>Tarih</TableHead>
-              <TableHead>Ä°ÅŸlemler</TableHead>
+              <TableHead>İşlemler</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -114,7 +114,7 @@ export default async function DokumanlarPage({ searchParams }: Props) {
                         className={cn(buttonVariants({ variant: "ghost", size: "xs" }))}
                       >
                         <ExternalLink className="size-3" aria-hidden />
-                        GÃ¶rÃ¼ntÃ¼le
+                        Görüntüle
                       </a>
                     </div>
                   </TableCell>
@@ -122,7 +122,7 @@ export default async function DokumanlarPage({ searchParams }: Props) {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">HenÃ¼z dokÃ¼man yÃ¼klenmemiÅŸ.</TableCell>
+                <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">Henüz doküman yüklenmemiş.</TableCell>
               </TableRow>
             )}
           </TableBody>
@@ -136,6 +136,6 @@ function DocTypeBadge({ type }: { type: string | null }) {
   if (type === "pdf") return <Badge variant="destructive">PDF</Badge>;
   if (type === "word") return <Badge variant="secondary">Word</Badge>;
   if (type === "excel") return <Badge variant="secondary">Excel</Badge>;
-  if (type === "image") return <Badge>GÃ¶rsel</Badge>;
-  return <Badge variant="outline">DiÄŸer</Badge>;
+  if (type === "image") return <Badge>Görsel</Badge>;
+  return <Badge variant="outline">Diğer</Badge>;
 }

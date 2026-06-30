@@ -55,7 +55,7 @@ export function ModuleAssignmentManager({
             className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
             required
           >
-            <option value="">KullanÄ±cÄ± seÃ§in...</option>
+            <option value="">Kullanıcı seçin...</option>
             {profiles
               .filter((p) => !assigneeIds.has(p.id))
               .map((p) => (
@@ -82,7 +82,7 @@ export function ModuleAssignmentManager({
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="text-xs text-muted-foreground">
-                    {a.assigned_by_profile?.full_name ?? "Bilinmeyen"} tarafÄ±ndan
+                    {a.assigned_by_profile?.full_name ?? "Bilinmeyen"} tarafından
                   </span>
                   <form action={deactivateFormAction}>
                     <input type="hidden" name="assignment_id" value={a.id} />
@@ -91,7 +91,7 @@ export function ModuleAssignmentManager({
                       className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50"
                     >
                       <UserRoundX className="size-3" />
-                      Yetkiyi KaldÄ±r
+                      Yetkiyi Kaldır
                     </button>
                   </form>
                 </div>

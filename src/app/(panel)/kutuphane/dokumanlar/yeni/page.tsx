@@ -18,17 +18,17 @@ export default function DokumanEklePage() {
     <div className="mx-auto max-w-2xl space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">DokÃ¼man Ekle</CardTitle>
-          <CardDescription>PDF, Word, Excel veya gÃ¶rsel dosyasÄ± yÃ¼kleyin.</CardDescription>
+          <CardTitle className="text-lg">Doküman Ekle</CardTitle>
+          <CardDescription>PDF, Word, Excel veya görsel dosyası yükleyin.</CardDescription>
         </CardHeader>
         <CardContent>
           <form action={formAction} className="space-y-5">
             <label className="grid gap-2 text-sm font-medium">
-              BaÅŸlÄ±k *
+              Başlık *
               <Input
                 name="title"
                 required
-                placeholder="DokÃ¼man baÅŸlÄ±ÄŸÄ±"
+                placeholder="Doküman başlığı"
                 className="h-10"
               />
             </label>
@@ -39,7 +39,7 @@ export default function DokumanEklePage() {
                 name="category_id"
                 className="h-10 rounded-md border border-input bg-background px-3 text-sm font-normal outline-none focus:border-ring"
               >
-                <option value="">Kategori seÃ§in</option>
+                <option value="">Kategori seçin</option>
               </NativeSelect>
             </label>
 
@@ -52,14 +52,14 @@ export default function DokumanEklePage() {
                 accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.webp"
                 className="h-10"
               />
-              <p className="text-xs text-muted-foreground">Maksimum 20 MB. PDF, Word, Excel veya gÃ¶rsel.</p>
+              <p className="text-xs text-muted-foreground">Maksimum 20 MB. PDF, Word, Excel veya görsel.</p>
             </label>
 
             <label className="grid gap-2 text-sm font-medium">
-              AÃ§Ä±klama
+              Açıklama
               <textarea
                 name="description"
-                placeholder="Opsiyonel aÃ§Ä±klama"
+                placeholder="Opsiyonel açıklama"
                 rows={3}
                 className="rounded-md border border-input bg-background px-3 py-2 text-sm font-normal outline-none focus:border-ring"
               />
@@ -70,12 +70,12 @@ export default function DokumanEklePage() {
             )}
 
             {state?.success && (
-              <div className="rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-700">DokÃ¼man baÅŸarÄ±yla yÃ¼klendi.</div>
+              <div className="rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-700">Doküman başarıyla yüklendi.</div>
             )}
 
             <div className="flex items-center gap-3">
-              <FormSubmitButton pendingLabel="YÃ¼kleniyor...">DosyayÄ± YÃ¼kle</FormSubmitButton>
-              <Link href="/kutuphane/dokumanlar" className={cn(buttonVariants({ variant: "outline" }))}>Ä°ptal</Link>
+              <FormSubmitButton pendingLabel="Yükleniyor...">Dosyayı Yükle</FormSubmitButton>
+              <Link href="/kutuphane/dokumanlar" className={cn(buttonVariants({ variant: "outline" }))}>İptal</Link>
             </div>
           </form>
         </CardContent>

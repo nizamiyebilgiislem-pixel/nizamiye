@@ -21,17 +21,17 @@ export default async function EducationAssignmentLandingPage({ searchParams }: P
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Akademik" title="Ders AtamalarÄ±" description="BÃ¶lÃ¼m ve sÄ±nÄ±f seÃ§erek ders atama ekranÄ±na geÃ§in." />
+      <PageHeader eyebrow="Akademik" title="Ders Atamaları" description="Bölüm ve sınıf seçerek ders atama ekranına geçin." />
       <EducationErrorMessage error={query.error} saved={query.saved} />
 
       <Card>
         <CardHeader className="border-b border-border">
-          <CardTitle>SÄ±nÄ±f SeÃ§imi</CardTitle>
+          <CardTitle>Sınıf Seçimi</CardTitle>
         </CardHeader>
         <CardContent className="p-4">
           <form action="/egitim-planlama/ders-atamalari" className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
             <NativeSelect name="department" defaultValue={query.department ?? selection.selectedDepartment?.id ?? ""} className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
-              <option value="">BÃ¶lÃ¼m seÃ§in</option>
+              <option value="">Bölüm seçin</option>
               {selection.departments.map((department) => (
                 <option key={department.id} value={department.id}>
                   {department.name}
@@ -39,7 +39,7 @@ export default async function EducationAssignmentLandingPage({ searchParams }: P
               ))}
             </NativeSelect>
             <NativeSelect name="class" defaultValue={selection.selectedClass?.id ?? ""} className="h-10 rounded-md border border-border bg-background px-3 text-sm shadow-sm">
-              <option value="">SÄ±nÄ±f seÃ§in</option>
+              <option value="">Sınıf seçin</option>
               {selection.classes.map((classRow) => (
                 <option key={classRow.id} value={classRow.id}>
                   {classRow.name}
@@ -47,7 +47,7 @@ export default async function EducationAssignmentLandingPage({ searchParams }: P
               ))}
             </NativeSelect>
             <Button type="submit">
-              SÄ±nÄ±fa Git
+              Sınıfa Git
             </Button>
           </form>
         </CardContent>
@@ -56,7 +56,7 @@ export default async function EducationAssignmentLandingPage({ searchParams }: P
       {selection.classes.length > 0 ? (
         <Card>
           <CardHeader className="border-b border-border">
-            <CardTitle>SÄ±nÄ±flar</CardTitle>
+            <CardTitle>Sınıflar</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3 p-4 md:grid-cols-2 xl:grid-cols-3">
             {selection.classes.map((classRow) => (
@@ -65,7 +65,7 @@ export default async function EducationAssignmentLandingPage({ searchParams }: P
                 <p className="mt-1 text-lg font-semibold text-[#093657]">{classRow.name}</p>
                 <div className="mt-4 flex justify-end">
                   <Link href={`/egitim-planlama/ders-atamalari/${classRow.id}`} className={cn(buttonVariants({ size: "sm" }))}>
-                    SÄ±nÄ±fa Git
+                    Sınıfa Git
                   </Link>
                 </div>
               </div>
@@ -73,7 +73,7 @@ export default async function EducationAssignmentLandingPage({ searchParams }: P
           </CardContent>
         </Card>
       ) : (
-        <EmptyState title="GÃ¶rÃ¼ntÃ¼lenecek sÄ±nÄ±f bulunamadÄ±." />
+        <EmptyState title="Görüntülenecek sınıf bulunamadı." />
       )}
     </div>
   );
