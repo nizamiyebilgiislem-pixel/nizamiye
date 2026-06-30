@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { DormitoryAssignmentWithRelations } from "@/lib/dormitory/queries";
 
 type StudentDormitoryPanelProps = {
@@ -23,11 +24,7 @@ export function StudentDormitoryPanel({ activeAssignment, history }: StudentDorm
           </CardContent>
         </Card>
       ) : (
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">
-            Bu talebenin aktif yatakhane kaydı bulunmamaktadır.
-          </CardContent>
-        </Card>
+        <EmptyState title="Bu talebenin aktif yatakhane kaydı bulunmamaktadır." />
       )}
 
       {history.length > 0 && (

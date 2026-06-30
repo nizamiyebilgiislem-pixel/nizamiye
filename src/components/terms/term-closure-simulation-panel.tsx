@@ -8,6 +8,7 @@ import { AlertTriangle, Ban, CalendarDays, CheckCircle2, Play, ShieldAlert, X } 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useToast } from "@/components/toast/toast-provider";
 import {
   Table,
@@ -119,11 +120,7 @@ export function TermClosureSimulationPanel({
           </CardContent>
         </Card>
       ) : (
-        <Card>
-          <CardContent className="py-12 text-center text-sm text-muted-foreground">
-            Sonlandırılabilecek aktif dönem bulunamadı.
-          </CardContent>
-        </Card>
+        <EmptyState title="Sonlandırılabilecek aktif dönem bulunamadı." />
       )}
 
       {errorMessage ? (

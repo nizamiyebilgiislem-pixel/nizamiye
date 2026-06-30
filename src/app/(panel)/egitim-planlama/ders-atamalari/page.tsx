@@ -4,6 +4,7 @@ import { EducationErrorMessage } from "@/components/education/education-error-me
 import { PageHeader } from "@/components/layout/page-header";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { getEducationSelectionData } from "@/lib/education/queries";
 import { cn } from "@/lib/utils";
@@ -71,9 +72,7 @@ export default async function EducationAssignmentLandingPage({ searchParams }: P
           </CardContent>
         </Card>
       ) : (
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">Görüntülenecek sınıf bulunamadı.</CardContent>
-        </Card>
+        <EmptyState title="Görüntülenecek sınıf bulunamadı." />
       )}
     </div>
   );

@@ -4,6 +4,7 @@ import { ArrowRight, CalendarClock, ClipboardList, FileText, GraduationCap, Stet
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { buildStudentTermHistoryView, type StudentTermHistoryItem } from "@/lib/terms/student-term-history";
 import type { StudentTermSnapshotWithRelations } from "@/lib/terms/queries";
 import type { AcademicTermStatus } from "@/types/database";
@@ -15,11 +16,7 @@ type StudentTermHistoryPanelProps = {
 
 export function StudentTermHistoryPanel({ snapshots }: StudentTermHistoryPanelProps) {
   if (snapshots.length === 0) {
-    return (
-      <Card>
-        <CardContent className="py-10 text-center text-sm text-muted-foreground">Bu talebe için dönem geçmişi yok.</CardContent>
-      </Card>
-    );
+    return <EmptyState title="Bu talebe için dönem geçmişi yok." />;
   }
 
   const { items, comparison } = buildStudentTermHistoryView(snapshots);

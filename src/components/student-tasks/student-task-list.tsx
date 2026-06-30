@@ -5,6 +5,7 @@ import { useFormStatus } from "react-dom"
 import { Badge } from "@/components/ui/badge"
 import { buttonVariants } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { EmptyState } from "@/components/ui/empty-state"
 import { StudentAvatar } from "@/components/students/student-avatar"
 import { cn } from "@/lib/utils"
 import type { StudentTaskWithStudent } from "@/lib/student-tasks/queries"
@@ -45,13 +46,7 @@ export function StudentTaskList({
   emptyText?: string
 }) {
   if (tasks.length === 0) {
-    return (
-      <Card>
-        <CardContent className="py-10 text-center text-sm text-muted-foreground">
-          {emptyText}
-        </CardContent>
-      </Card>
-    )
+    return <EmptyState title={emptyText} />
   }
 
   return (

@@ -17,6 +17,7 @@ import { TodayLessonLogsCard } from "@/components/dashboard/today-lesson-logs-ca
 import { StudentQuickCard } from "@/components/parents/student-quick-card";
 import { StudentComparisonTable } from "@/components/parents/student-comparison-table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { requireRole } from "@/lib/auth";
@@ -269,11 +270,7 @@ export default async function SponsorPanelPage({ params, searchParams }: PagePro
           )}
         </>
       ) : (
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">
-            Bu sponsor hesabına bağlı öğrenci bulunamadı. Yönetici panelinden sponsor-öğrenci bağlantısı oluşturulmalıdır.
-          </CardContent>
-        </Card>
+        <EmptyState title="Bu sponsor hesabına bağlı öğrenci bulunamadı." description="Yönetici panelinden sponsor-öğrenci bağlantısı oluşturulmalıdır." />
       )}
     </div>
   );

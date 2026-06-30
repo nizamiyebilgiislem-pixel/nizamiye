@@ -1,15 +1,12 @@
 import { AttendanceStatusBadge, AttendanceStatusLabel, AttendanceTypeBadge } from "@/components/attendance/attendance-badges";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { attendanceTypeDescriptions } from "@/lib/attendance/constants";
 import type { AttendanceStudentSummary } from "@/lib/attendance/queries";
 
 export function StudentAttendanceSummaryPanel({ summary }: { summary: AttendanceStudentSummary }) {
   if (!summary.student) {
-    return (
-      <Card>
-        <CardContent className="py-10 text-center text-sm text-muted-foreground">Bu talebe için yoklama verisi bulunamadı.</CardContent>
-      </Card>
-    );
+    return <EmptyState title="Bu talebe için yoklama verisi bulunamadı." />;
   }
 
   return (

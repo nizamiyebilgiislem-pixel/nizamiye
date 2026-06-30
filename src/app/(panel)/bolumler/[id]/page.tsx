@@ -13,6 +13,7 @@ import { StudentMiniCard } from "@/components/students/student-mini-card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { canViewDepartment } from "@/lib/classes/permissions";
 import { DEPARTMENT_CAPACITY, getDepartmentAnalyticsById } from "@/lib/departments/analytics";
@@ -126,7 +127,7 @@ export default async function DepartmentDetailPage({ params, searchParams }: Dep
             ))}
           </div>
         ) : (
-          <EmptyCard text="Bu bölümde görüntülenecek sınıf bulunmuyor." />
+          <EmptyState title="Bu bölümde görüntülenecek sınıf bulunmuyor." />
         )}
       </section>
 
@@ -172,10 +173,4 @@ function Info({ label, value }: { label: string; value: number }) {
   );
 }
 
-function EmptyCard({ text }: { text: string }) {
-  return (
-    <Card>
-      <CardContent className="py-8 text-center text-sm text-muted-foreground">{text}</CardContent>
-    </Card>
-  );
-}
+

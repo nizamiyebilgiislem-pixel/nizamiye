@@ -6,6 +6,7 @@ import { RichProfileCard } from "@/components/profiles/rich-profile-card";
 import { StudentMiniCard } from "@/components/students/student-mini-card";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { DEPARTMENT_CAPACITY, getDepartmentAnalyticsForProfile, type DepartmentAnalytics } from "@/lib/departments/analytics";
 
@@ -43,9 +44,7 @@ export default async function DepartmentReportsPage() {
           ))}
         </div>
       ) : (
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">Görüntülenecek bölüm bulunamadı.</CardContent>
-        </Card>
+        <EmptyState title="Görüntülenecek bölüm bulunamadı." />
       )}
     </div>
   );

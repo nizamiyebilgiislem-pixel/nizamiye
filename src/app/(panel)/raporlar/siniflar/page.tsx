@@ -6,6 +6,7 @@ import { RichProfileCard } from "@/components/profiles/rich-profile-card";
 import { StudentCompactCard } from "@/components/students/student-compact-card";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { getDepartmentAnalyticsForProfile, type ClassAnalytics } from "@/lib/departments/analytics";
 
@@ -44,9 +45,7 @@ export default async function ClassReportsPage() {
           ))}
         </div>
       ) : (
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">Görüntülenecek sınıf bulunamadı.</CardContent>
-        </Card>
+        <EmptyState title="Görüntülenecek sınıf bulunamadı." />
       )}
     </div>
   );

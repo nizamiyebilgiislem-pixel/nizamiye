@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { LoanWithBook } from "@/lib/library/queries";
 
@@ -41,11 +42,7 @@ export function StudentLibraryPanel({ loans }: StudentLibraryPanelProps) {
       )}
 
       {activeLoans.length === 0 && loans.length === 0 && (
-        <Card className="bg-white">
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">
-            Bu talebenin kütüphane kaydı bulunmamaktadır.
-          </CardContent>
-        </Card>
+        <EmptyState title="Bu talebenin kütüphane kaydı bulunmamaktadır." />
       )}
 
       {loans.length > 0 && (

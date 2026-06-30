@@ -6,6 +6,7 @@ import { requireAuth } from "@/lib/auth";
 import { canViewTalepler, canCreateTalep } from "@/lib/talepler/permissions";
 import { getTalepler, getTalepCounts, statusLabels, priorityLabels } from "@/lib/talepler/queries";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -103,9 +104,7 @@ export default async function TaleplerPage({
       </div>
 
       {filteredTalepler.length === 0 ? (
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">Henüz talep bulunmuyor.</CardContent>
-        </Card>
+        <EmptyState title="Henüz talep bulunmuyor." />
       ) : (
         <div className="space-y-3">
           {filteredTalepler.map((t) => {

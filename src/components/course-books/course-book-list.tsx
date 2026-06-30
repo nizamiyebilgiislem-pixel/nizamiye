@@ -6,6 +6,7 @@ import { Plus, Edit, Trash2, Play, CheckCircle2, BookOpen } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { EmptyState } from "@/components/ui/empty-state"
 import {
   Dialog,
   DialogContent,
@@ -98,11 +99,7 @@ export function CourseBookList({
       </div>
 
       {books.length === 0 ? (
-        <Card>
-          <CardContent className="py-8 text-center text-sm text-muted-foreground">
-            Bu derse henüz kitap eklenmemiş.
-          </CardContent>
-        </Card>
+        <EmptyState title="Bu derse henüz kitap eklenmemiş." />
       ) : (
         <div className="space-y-3">
           {books.map((book, index) => {

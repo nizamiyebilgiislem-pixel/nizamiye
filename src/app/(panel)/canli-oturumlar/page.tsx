@@ -7,6 +7,7 @@ import { requireAuth } from "@/lib/auth";
 import { canCreateSession } from "@/lib/live-sessions/permissions";
 import { getSessions, getSessionCounts } from "@/lib/live-sessions/queries";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -113,9 +114,7 @@ export default async function CanliOturumlarPage({
       </div>
 
       {filteredSessions.length === 0 ? (
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">Henüz oturum bulunmuyor.</CardContent>
-        </Card>
+        <EmptyState title="Henüz oturum bulunmuyor." />
       ) : (
         <div className="space-y-3">
           {filteredSessions.map((s) => {

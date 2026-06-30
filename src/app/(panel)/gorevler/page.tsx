@@ -6,6 +6,7 @@ import { requireAuth } from "@/lib/auth";
 import { canCreateTask } from "@/lib/tasks/permissions";
 import { getTasks, getTaskCounts } from "@/lib/tasks/queries";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { statusLabels, statusColors, priorityLabels, priorityColors } from "@/types/tasks";
@@ -90,9 +91,7 @@ export default async function GorevlerPage({
       </div>
 
       {filteredTasks.length === 0 ? (
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">Henüz görev bulunmuyor.</CardContent>
-        </Card>
+        <EmptyState title="Henüz görev bulunmuyor." />
       ) : (
         <div className="space-y-3">
           {filteredTasks.map((t) => {

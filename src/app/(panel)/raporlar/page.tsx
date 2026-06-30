@@ -4,6 +4,7 @@ import { ReportCard } from "@/components/reports/report-card";
 import { ReportPrintActions } from "@/components/reports/report-print-actions";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAuth } from "@/lib/auth";
 import { reportCategories } from "@/lib/reports/constants";
 import {
@@ -93,11 +94,7 @@ export default async function ReportsPage() {
       </div>
 
       {visibleCategories.length === 0 && (
-        <Card>
-          <CardContent className="py-12 text-center text-sm text-muted-foreground">
-            Yetki kapsamınızda görüntüleyebileceğiniz rapor bulunmamaktadır.
-          </CardContent>
-        </Card>
+        <EmptyState title="Yetki kapsamınızda görüntüleyebileceğiniz rapor bulunmamaktadır." />
       )}
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
