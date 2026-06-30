@@ -8,6 +8,7 @@ import { AssistantLauncher } from "@/components/assistant/assistant-launcher";
 import { ProfileAvatar } from "@/components/profiles/profile-avatar";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Button } from "@/components/ui/button";
+import { NotificationBadge } from "@/components/ui/notification-badge";
 import { roleLabels } from "@/lib/route-permissions";
 import type { NavigationGroup } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
@@ -50,6 +51,7 @@ export function PanelShell({ children, navigationGroups, profile }: PanelShellPr
 
               {/* User section */}
               <div className="flex items-center gap-3">
+                <NotificationBadge />
                 <Link
                   href="/hesabim"
                   className="flex items-center gap-3 rounded-lg border border-[#e5e7eb] bg-white px-3 py-1.5 shadow-sm transition-all hover:border-[#d1dae3] hover:bg-[#fafcfd]"

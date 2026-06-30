@@ -66,13 +66,23 @@ export function NotificationBadge() {
     }
   }, []);
 
+  const handleToggle = useCallback(() => {
+    setIsOpen((prev) => {
+      const next = !prev;
+      if (next && unreadCount > 0) {
+        void markAllAsRead();
+      }
+      return next;
+    });
+  }, [markAllAsRead, unreadCount]);
+
   return (
     <div className="relative">
       <Button
         variant="ghost"
         size="icon"
         className="relative size-9 text-muted-foreground hover:text-foreground"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggle}
       >
         <Bell className="size-5" />
         {unreadCount > 0 && (
