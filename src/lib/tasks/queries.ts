@@ -50,33 +50,42 @@ export async function getTasks(profile: ProfileRow, page?: number, pageSize = 20
 }
 
 export async function getTaskById(id: string) {
-  const supabase = createSupabaseAdminClient();
+  try {
+    const supabase = createSupabaseAdminClient();
 
-  const { data: task } = await supabase
-    .from("tasks")
-    .select(taskSelectFields)
-    .eq("id", id)
-    .single();
+    const { data: task, error } = await supabase
+      .from("tasks")
+      .select(taskSelectFields)
+      .eq("id", id)
+      .eq("is_active", true)
+      .maybeSingle();
 
-  if (!task) return null;
+    if (error || !task) return null;
 
-  const { data: comments } = await supabase
-    .from("task_comments")
-    .select(commentSelectFields)
-    .eq("task_id", id)
-    .order("created_at", { ascending: true });
+    const [commentsResult, attachmentsResult] = await Promise.all([
+      supabase
+        .from("task_comments")
+        .select(commentSelectFields)
+        .eq("task_id", id)
+        .order("created_at", { ascending: true }),
+      supabase
+        .from("task_attachments")
+        .select(attachmentSelectFields)
+        .eq("task_id", id)
+        .order("created_at", { ascending: false }),
+    ]);
 
-  const { data: attachments } = await supabase
-    .from("task_attachments")
-    .select(attachmentSelectFields)
-    .eq("task_id", id)
-    .order("created_at", { ascending: false });
+    const comments = commentsResult.data ?? [];
+    const attachments = attachmentsResult.data ?? [];
 
-  return {
-    ...(task as TaskRowWithProfiles),
-    comments: (comments ?? []) as unknown as TaskCommentWithProfile[],
-    attachments: (attachments ?? []) as unknown as TaskAttachmentWithProfile[],
-  } as TaskWithFullRelations;
+    return {
+      ...(task as TaskRowWithProfiles),
+      comments: comments as unknown as TaskCommentWithProfile[],
+      attachments: attachments as unknown as TaskAttachmentWithProfile[],
+    } as TaskWithFullRelations;
+  } catch {
+    return null;
+  }
 }
 
 export async function getDepartmentOptions() {

@@ -132,7 +132,7 @@ export default async function GorevDetayPage({ params }: { params: Promise<{ id:
                   <div key={a.id} className="flex items-center justify-between rounded-md border border-border bg-muted/30 px-3 py-2">
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">{a.file_name}</p>
-                      <p className="text-[11px] text-muted-foreground">{a.uploader.full_name} · {new Date(a.created_at).toLocaleDateString("tr-TR")}</p>
+                      <p className="text-[11px] text-muted-foreground">{a.uploader?.full_name ?? "Bilinmeyen"} · {new Date(a.created_at).toLocaleDateString("tr-TR")}</p>
                     </div>
                     <a
                       href={a.file_url}
@@ -162,9 +162,9 @@ export default async function GorevDetayPage({ params }: { params: Promise<{ id:
                   <div key={c.id} className="rounded-md border border-border bg-muted/20 px-3 py-2.5">
                     <div className="mb-1 flex items-center gap-2">
                       <div className="flex size-6 items-center justify-center rounded-full bg-[#093657]/10 text-[10px] font-semibold text-[#093657]">
-                        {c.profile.full_name.charAt(0)}
+                        {c.profile?.full_name?.charAt(0) ?? "?"}
                       </div>
-                      <p className="text-xs font-medium">{c.profile.full_name}</p>
+                      <p className="text-xs font-medium">{c.profile?.full_name ?? "Bilinmeyen"}</p>
                       <p className="text-[10px] text-muted-foreground">{new Date(c.created_at).toLocaleDateString("tr-TR", { dateStyle: "short", timeStyle: "short" })}</p>
                     </div>
                     <p className="whitespace-pre-wrap text-sm">{c.comment}</p>

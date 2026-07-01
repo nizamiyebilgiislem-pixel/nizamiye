@@ -345,13 +345,13 @@ export async function deleteTaskAction(_previousState: unknown, formData: FormDa
     return { error: "Görev ID gerekli." };
   }
 
-  const { data: task } = await supabase
+  const { data: task, error: findError } = await supabase
     .from("tasks")
     .select("*")
     .eq("id", taskId)
-    .single();
+    .maybeSingle();
 
-  if (!task) {
+  if (findError || !task) {
     return { error: "Görev bulunamadı." };
   }
 
