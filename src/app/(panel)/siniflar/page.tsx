@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 
+import { CsvExportButton } from "@/components/export/csv-export-button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ClassErrorMessage } from "@/components/classes/class-error-message";
 import { ClassFilters } from "@/components/classes/class-filters";
@@ -29,6 +30,13 @@ export default async function ClassesPage({ searchParams }: ClassesPageProps) {
     departmentId: params.department,
     status: params.status,
   });
+  const csvData = classes.map((c) => ({
+    "Sınıf Adı": c.name,
+    "Bölüm": c.department?.name ?? "",
+    "Durum": c.is_active ? "Aktif" : "Pasif",
+    "Aktif Öğrenci Sayısı": c.active_student_count,
+    "Sınıf Hocası": c.class_teacher?.full_name ?? "",
+  }));
 
   return (
     <div className="space-y-6">
@@ -36,7 +44,7 @@ export default async function ClassesPage({ searchParams }: ClassesPageProps) {
         eyebrow="Sınıflar"
         title="Sınıflar"
         description="Bölüm bazlı sınıfları, sınıf hocası atamalarını ve aktif talebe sayılarını yönetin."
-        actions={canManageClasses(profile) ? <Link href="/siniflar/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Sınıf Ekle</Link> : undefined}
+        actions={<div className="flex flex-wrap gap-2">{canManageClasses(profile) ? <Link href="/siniflar/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Sınıf Ekle</Link> : null}<CsvExportButton data={csvData} filename="siniflar" /></div>}
       />
       <ClassErrorMessage error={params.error} />
       <ClassFilters departments={departments} values={{ search: params.q, departmentId: params.department, status: params.status }} />

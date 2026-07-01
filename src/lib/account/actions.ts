@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { buildAuditActor, createAuditLog } from "@/lib/audit/log";
 import { requireAuth } from "@/lib/auth";
 import { uploadProfilePhoto, validateImageFile } from "@/lib/storage/upload";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -85,6 +86,15 @@ export async function updateOwnProfileAction(formData: FormData) {
     }
   }
 
+  createAuditLog({
+    ...buildAuditActor(profile),
+    action: "profile_updated",
+    entityType: "profile",
+    entityId: profile.id,
+    title: "Profil güncellendi",
+    description: "Profil bilgileri güncellendi.",
+  });
+
   revalidatePath("/hesabim");
   revalidatePath("/hesabim/profil");
   revalidatePath("/hesabim/guvenlik");
@@ -92,7 +102,7 @@ export async function updateOwnProfileAction(formData: FormData) {
 }
 
 export async function updateOwnPasswordAction(formData: FormData) {
-  await requireAuth();
+  const { profile } = await requireAuth();
   const parsed = passwordSchema.safeParse({
     password: formData.get("password"),
     password_confirm: formData.get("password_confirm"),
@@ -110,6 +120,15 @@ export async function updateOwnPasswordAction(formData: FormData) {
   if (error) {
     redirect("/hesabim/guvenlik?error=password-update");
   }
+
+  createAuditLog({
+    ...buildAuditActor(profile),
+    action: "password_changed",
+    entityType: "profile",
+    entityId: profile.id,
+    title: "Şifre değiştirildi",
+    description: "Hesap şifresi değiştirildi.",
+  });
 
   revalidatePath("/hesabim/guvenlik");
   redirect("/hesabim/guvenlik?success=password-updated");

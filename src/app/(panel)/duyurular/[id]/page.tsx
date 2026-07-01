@@ -7,7 +7,7 @@ import { requireAuth } from "@/lib/auth";
 import { canViewAnnouncements, canManageAnnouncements } from "@/lib/duyurular/permissions";
 import { getAnnouncementById } from "@/lib/duyurular/queries";
 import { deleteAnnouncementAction } from "@/lib/duyurular/actions";
-import { markAnnouncementNotificationsAsRead } from "@/lib/notifications/queries";
+import { markModuleNotificationsAsRead } from "@/lib/notifications/queries";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -26,7 +26,7 @@ export default async function DuyuruDetayPage({ params }: { params: Promise<{ id
 
   const announcement = await getAnnouncementById(id);
   if (!announcement) notFound();
-  await markAnnouncementNotificationsAsRead(profile.id);
+  await markModuleNotificationsAsRead(profile.id, "announcements");
 
   const canManage = canManageAnnouncements(profile);
 

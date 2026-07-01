@@ -255,6 +255,9 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
                     <Link href={`/talebeler/${student.id}?tab=hafizlik`} className={buttonVariants({ variant: "ghost", size: "sm" })}>
                       Detay
                     </Link>
+                    <Link href={`/hafizlik/${student.id}`} className={buttonVariants({ variant: "ghost", size: "sm" })}>
+                      Düzenle
+                    </Link>
                     {student.progress?.id ? (
                       <form action={deleteHafizlikProgressAction.bind(null, student.progress.id) as unknown as (formData: FormData) => void}>
                         <FormSubmitButton variant="destructive" size="xs">

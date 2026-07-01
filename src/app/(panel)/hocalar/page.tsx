@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 
+import { CsvExportButton } from "@/components/export/csv-export-button";
 import { PageHeader } from "@/components/layout/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ProfileErrorMessage } from "@/components/profiles/profile-error-message";
@@ -32,6 +33,14 @@ export default async function TeachersPage({ searchParams }: TeachersPageProps) 
     status: params.status,
     staffOnly: true,
   });
+  const csvData = profiles.map((p) => ({
+    "Ad Soyad": p.full_name,
+    "E-posta": p.email ?? "",
+    "Telefon": p.phone ?? "",
+    "Rol": p.role,
+    "Bölüm": p.department?.name ?? "",
+    "Durum": p.is_active ? "Aktif" : "Pasif",
+  }));
 
   return (
     <div className="space-y-6">
@@ -39,7 +48,7 @@ export default async function TeachersPage({ searchParams }: TeachersPageProps) 
         eyebrow="Hocalar"
         title="Hocalar"
         description="Hoca, bölüm müdürü ve genel müdür profillerini görüntüleyin."
-        actions={canCreateStaffProfile(profile) ? <Link href="/hocalar/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Hoca Ekle</Link> : undefined}
+        actions={<div className="flex flex-wrap gap-2">{canCreateStaffProfile(profile) ? <Link href="/hocalar/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Hoca Ekle</Link> : null}<CsvExportButton data={csvData} filename="hocalar" /></div>}
       />
 
       <ProfileErrorMessage error={params.error} />

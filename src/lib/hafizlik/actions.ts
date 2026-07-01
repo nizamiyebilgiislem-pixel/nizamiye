@@ -85,7 +85,10 @@ export async function updateHafizlikProgressAction(formData: FormData) {
 
   await syncMemorizationScore(supabase, parsed.data.student_id, parsed.data.current_juz, parsed.data.current_page);
 
-  revalidatePath(`/talebeler/${parsed.data.student_id}`);
+  const studentId = parsed.data.student_id;
+  revalidatePath(`/talebeler/${studentId}`);
+  revalidatePath("/hafizlik");
+  revalidatePath(`/hafizlik/${studentId}`);
   return;
 }
 

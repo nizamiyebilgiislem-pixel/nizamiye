@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Plus, Search } from "lucide-react";
 
+import { CsvExportButton } from "@/components/export/csv-export-button";
 import { PageHeader } from "@/components/layout/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
@@ -40,6 +41,16 @@ export default async function KitaplarPage({ searchParams }: Props) {
   const pageSize = 20;
   const totalPages = Math.ceil(totalCount / pageSize);
   const canManage = await canManageBooks(profile);
+  const csvData = books.map((b) => ({
+    "Kitap Adı": b.title,
+    "Yazar": b.author ?? "",
+    "Kategori": b.category?.name ?? "",
+    "Raf/Konum": b.shelf_code ?? b.location_note ?? "",
+    "Toplam": b.total_count,
+    "Mevcut": b.available_count,
+    "Emanette": b.total_count - b.available_count,
+    "Durum": b.is_active ? "Aktif" : "Pasif",
+  }));
 
   return (
     <div className="space-y-6">
@@ -48,12 +59,15 @@ export default async function KitaplarPage({ searchParams }: Props) {
         title="Kitaplar"
         description="Tüm kitap kayıtları."
         actions={
-          canManage ? (
-            <Link href="/kutuphane/kitaplar/yeni" className={cn(buttonVariants({ size: "sm" }))}>
-              <Plus className="size-4" aria-hidden />
-              Yeni Kitap
-            </Link>
-          ) : null
+          <div className="flex flex-wrap gap-2">
+            <CsvExportButton data={csvData} filename="kitaplar" />
+            {canManage ? (
+              <Link href="/kutuphane/kitaplar/yeni" className={cn(buttonVariants({ size: "sm" }))}>
+                <Plus className="size-4" aria-hidden />
+                Yeni Kitap
+              </Link>
+            ) : null}
+          </div>
         }
       />
 

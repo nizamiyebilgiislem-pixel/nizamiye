@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { requireAuth } from "@/lib/auth";
 import { canCreateAnnouncements, canViewAnnouncements } from "@/lib/duyurular/permissions";
 import { getAnnouncements } from "@/lib/duyurular/queries";
-import { markAnnouncementNotificationsAsRead } from "@/lib/notifications/queries";
+import { markModuleNotificationsAsRead } from "@/lib/notifications/queries";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -22,7 +22,7 @@ export default async function DuyurularPage() {
 
   const announcements = await getAnnouncements();
   const canCreate = canCreateAnnouncements(profile);
-  await markAnnouncementNotificationsAsRead(profile.id);
+  await markModuleNotificationsAsRead(profile.id, "announcements");
 
   return (
     <div className="space-y-6">

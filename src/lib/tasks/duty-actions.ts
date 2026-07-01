@@ -7,6 +7,7 @@ import { requireAuth } from "@/lib/auth";
 import { buildAuditActor, createAuditLog } from "@/lib/audit/log";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isAssignableRole } from "@/lib/tasks/permissions";
+import { createNotification } from "@/lib/notifications/actions";
 
 const assignTeacherDutySchema = z.object({
   assigned_to: z.string().min(1, "Hoca seçilmedi."),
@@ -63,6 +64,16 @@ export async function assignTeacherDutyAction(_previousState: unknown, formData:
 
   if (error) {
     return { error: "Nöbetçi hocası atanamadı." };
+  }
+
+  if (assigned_to !== profile.id) {
+    await createNotification({
+      profileId: assigned_to,
+      type: "info",
+      moduleKey: "tasks",
+      title: `Nöbetçi hocası atandı - ${date}`,
+      message: `${date} tarihinde nöbetçi olarak atandınız.`,
+    });
   }
 
   createAuditLog({
@@ -147,7 +158,19 @@ export async function removeDutyAction(_previousState: unknown, formData: FormDa
 
   const { id, type } = parsed.data;
 
+  let assignedTo: string | null = null;
+
   if (type === "teacher") {
+    const { data: teacherTask } = await supabase
+      .from("tasks")
+      .select("assigned_to")
+      .eq("id", id)
+      .single();
+
+    if (teacherTask) {
+      assignedTo = teacherTask.assigned_to;
+    }
+
     await supabase.from("tasks").update({ is_active: false }).eq("id", id);
   } else {
     await supabase.from("student_tasks").update({ status: "completed" }).eq("id", id);
@@ -161,6 +184,16 @@ export async function removeDutyAction(_previousState: unknown, formData: FormDa
     title: "Nöbetçi kaldırıldı",
     description: "Nöbetçi görevi kaldırıldı.",
   });
+
+  if (type === "teacher" && assignedTo && assignedTo !== profile.id) {
+    await createNotification({
+      profileId: assignedTo,
+      type: "warning",
+      moduleKey: "tasks",
+      title: "Nöbetçi görevi kaldırıldı",
+      message: "Nöbetçi hocası göreviniz kaldırıldı.",
+    });
+  }
 
   revalidatePath("/gorevler/nobetci");
   revalidatePath("/dashboard");

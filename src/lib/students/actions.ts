@@ -6,7 +6,8 @@ import { z } from "zod";
 
 import { uploadStudentPhoto, validateImageFile } from "@/lib/storage/upload";
 import { requireAuth } from "@/lib/auth";
-import { buildAuditActor, createStudentAuditLog } from "@/lib/audit/log";
+import { buildAuditActor, createAuditLog, createStudentAuditLog } from "@/lib/audit/log";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { canCreateStudent, canEditStudent, canReactivateArchivedStudent } from "@/lib/students/permissions";
 import { getStudentById } from "@/lib/students/queries";
@@ -430,6 +431,61 @@ export async function deleteStudentAction(studentId: string) {
     studentId,
     beforeData: { full_name: student.full_name },
     afterData: null,
+  });
+
+  revalidatePath("/talebeler");
+  return { success: true };
+}
+
+export async function batchUpdateStudentStatusAction(_previousState: unknown, formData: FormData) {
+  const { profile } = await requireAuth();
+  const supabase = createSupabaseAdminClient();
+
+  const newStatus = formData.get("status") as string;
+
+  if (!newStatus) {
+    return { error: "Öğrenci ve durum seçilmelidir." };
+  }
+
+  let studentIdsRaw = formData.get("student_ids");
+  let studentIds: string[];
+
+  if (studentIdsRaw) {
+    try {
+      studentIds = JSON.parse(studentIdsRaw as string);
+    } catch {
+      return { error: "Geçersiz öğrenci listesi." };
+    }
+  } else {
+    const raw = (formData.get("student_ids_raw") as string) ?? "";
+    studentIds = raw.split("\n").map((s) => s.trim()).filter(Boolean);
+  }
+
+  if (studentIds.length === 0) {
+    return { error: "En az bir öğrenci ID'si girin." };
+  }
+
+  if (!["active", "passive", "graduated", "left"].includes(newStatus)) {
+    return { error: "Geçersiz durum." };
+  }
+
+  const { error } = await supabase
+    .from("students")
+    .update({ status: newStatus as "active" | "passive" | "graduated" | "left" })
+    .in("id", studentIds);
+
+  if (error) {
+    logSupabaseActionError({ action: "batchUpdateStudentStatus", profile, payload: { studentIds, newStatus }, error });
+    return { error: buildFriendlyDbErrorMessage(error) };
+  }
+
+  await createAuditLog({
+    ...buildAuditActor(profile),
+    action: "students_status_updated",
+    entityType: "student",
+    entityId: studentIds.join(","),
+    title: "Toplu öğrenci durum güncellemesi",
+    description: `${studentIds.length} öğrencinin durumu "${newStatus}" olarak güncellendi.`,
   });
 
   revalidatePath("/talebeler");

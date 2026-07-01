@@ -5,11 +5,11 @@ import { z } from "zod";
 
 import { requireAuth } from "@/lib/auth";
 import { buildAuditActor, createAuditLog } from "@/lib/audit/log";
-import { ANNOUNCEMENT_MODULE_KEY } from "@/lib/notifications/queries";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { canCreateAnnouncements, canManageAnnouncements } from "@/lib/duyurular/permissions";
 import { logSupabaseActionError, buildFriendlyDbErrorMessage } from "@/lib/supabase-action-error";
+import { createBatchNotifications } from "@/lib/notifications/actions";
 import type { ProfileRole } from "@/types/rbac";
 
 const announcementSchema = z.object({
@@ -56,7 +56,7 @@ async function createAnnouncementNotifications(params: {
     recipients.map((recipient) => ({
       profile_id: recipient.id,
       type: "info" as const,
-      module_key: ANNOUNCEMENT_MODULE_KEY,
+      module_key: "announcements",
       title: `Yeni duyuru: ${params.title}`,
       message: messagePreview,
       sent_via: "app" as const,

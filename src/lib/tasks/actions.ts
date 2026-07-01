@@ -8,6 +8,7 @@ import { buildAuditActor, createAuditLog } from "@/lib/audit/log";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { canCreateTask, canAssignToProfile, canEditTask, canUpdateTaskStatus, canCommentOnTask, canDeleteTask, isAssignableRole } from "@/lib/tasks/permissions";
 import { logSupabaseActionError, buildFriendlyDbErrorMessage } from "@/lib/supabase-action-error";
+import { createNotification } from "@/lib/notifications/actions";
 import type { TaskRow } from "@/types/database";
 
 const createTaskSchema = z.object({
@@ -96,6 +97,16 @@ export async function createTaskAction(_previousState: unknown, formData: FormDa
   if (error) {
     logSupabaseActionError({ action: "createTask", profile, payload: parsed.data, error });
     return { error: buildFriendlyDbErrorMessage(error) };
+  }
+
+  if (assigned_to !== profile.id) {
+    await createNotification({
+      profileId: assigned_to,
+      type: "info",
+      moduleKey: "tasks",
+      title: `Yeni görev: ${title}`,
+      message: `Size "${title}" görevi atandı.`,
+    });
   }
 
   createAuditLog({
@@ -247,6 +258,16 @@ export async function editTaskAction(_previousState: unknown, formData: FormData
     return { error: buildFriendlyDbErrorMessage(error) };
   }
 
+  if (assigned_to && assigned_to !== profile.id && assigned_to !== task.assigned_to) {
+    await createNotification({
+      profileId: assigned_to,
+      type: "info",
+      moduleKey: "tasks",
+      title: `Görev güncellendi: ${title}`,
+      message: `Size "${title}" görevi atandı.`,
+    });
+  }
+
   createAuditLog({
     ...buildAuditActor(profile),
     action: "task_updated",
@@ -346,6 +367,16 @@ export async function deleteTaskAction(_previousState: unknown, formData: FormDa
   if (error) {
     logSupabaseActionError({ action: "deleteTask", profile, payload: { taskId }, error });
     return { error: buildFriendlyDbErrorMessage(error) };
+  }
+
+  if (task.assigned_to && task.assigned_to !== profile.id) {
+    await createNotification({
+      profileId: task.assigned_to,
+      type: "warning",
+      moduleKey: "tasks",
+      title: `Görev silindi: ${task.title}`,
+      message: `"${task.title}" görevi silindi.`,
+    });
   }
 
   createAuditLog({

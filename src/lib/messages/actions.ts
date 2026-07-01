@@ -3,6 +3,7 @@
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { ProfileRow } from "@/types/database";
+import { buildAuditActor, createAuditLog } from "@/lib/audit/log";
 import { canSendToRecipient, getSmsLimit, getSmsCountForMonth, incrementSmsCount } from "./permissions";
 import { sendSMS } from "@/lib/sms";
 
@@ -80,14 +81,25 @@ export async function sendMessage(
     }
   }
 
-  await supabase.from("messages").insert({
+  const { data: newMessage } = await supabase.from("messages").insert({
     sender_profile_id: sender.id,
     recipient_profile_id: recipientId,
     subject: subject ?? null,
     message,
     sent_via: sendAsSms && !smsFailed ? "sms" : "app",
     student_id: studentId ?? null,
-  });
+  }).select("id").single();
+
+  if (newMessage) {
+    createAuditLog({
+      ...buildAuditActor(sender),
+      action: "message_sent",
+      entityType: "message",
+      entityId: newMessage.id,
+      title: "Mesaj gönderildi",
+      description: `${subject ?? "Konusuz"} konulu mesaj gönderildi.`,
+    });
+  }
 
   if (smsFailed) {
     return { success: true, via: "app", smsFailed: true, smsError: smsErrorMessage };

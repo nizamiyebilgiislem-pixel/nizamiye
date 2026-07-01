@@ -147,6 +147,7 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/gorevler/[id]/duzenle": topManagerRoles,
   "/ders-sistemi": managerRoles,
   "/ders-sistemi/yeni": managerRoles,
+  "/ders-sistemi/[id]": managerRoles,
   "/ders-sistemi/[id]/duzenle": managerRoles,
   "/canli-oturumlar": liveSessionViewRoles,
   "/canli-oturumlar/yeni": liveSessionManageRoles,

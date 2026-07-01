@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Archive, Plus } from "lucide-react";
 
+import { CsvExportButton } from "@/components/export/csv-export-button";
 import { PageHeader } from "@/components/layout/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -39,6 +40,14 @@ export default async function StudentsPage({ searchParams }: StudentsPageProps) 
 
   const pageSize = 20;
   const totalPages = Math.ceil(totalCount / pageSize);
+  const csvData = students.map((s) => ({
+    "Ad Soyad": s.full_name,
+    "Bölüm": s.department?.name ?? "",
+    "Kurs Sınıfı": s.course_class?.name ?? "",
+    "Okul Sınıfı": s.school_class ?? "",
+    "Veli Telefonu": s.guardian_phone ?? "",
+    "Durum": s.status === "active" ? "Aktif" : s.status,
+  }));
 
   return (
     <div className="space-y-6">
@@ -46,7 +55,7 @@ export default async function StudentsPage({ searchParams }: StudentsPageProps) 
         eyebrow="Talebeler"
         title="Aktif Talebeler"
         description="Aktif durumdaki talebeleri görüntüleyin, filtreleyin ve yetkiniz dahilinde yönetin."
-        actions={<div className="flex flex-wrap gap-2">{canViewArchive(profile) ? <Link href="/talebeler/arsiv" className={cn(buttonVariants({ variant: "secondary" }))}><Archive className="size-4" aria-hidden="true" />Arşiv Talebeler</Link> : null}{canCreateStudent(profile) ? <Link href="/talebeler/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Talebe Ekle</Link> : null}</div>}
+        actions={<div className="flex flex-wrap gap-2">{canViewArchive(profile) ? <Link href="/talebeler/arsiv" className={cn(buttonVariants({ variant: "secondary" }))}><Archive className="size-4" aria-hidden="true" />Arşiv Talebeler</Link> : null}{canCreateStudent(profile) ? <Link href="/talebeler/yeni" className={cn(buttonVariants())}><Plus className="size-4" aria-hidden="true" />Yeni Talebe Ekle</Link> : null}<CsvExportButton data={csvData} filename="talebeler" /></div>}
       />
 
       <StudentErrorMessage error={params.error} />

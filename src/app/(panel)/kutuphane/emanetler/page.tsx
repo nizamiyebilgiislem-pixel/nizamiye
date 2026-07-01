@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Plus, Search } from "lucide-react";
 
+import { CsvExportButton } from "@/components/export/csv-export-button";
 import { PageHeader } from "@/components/layout/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
@@ -40,6 +41,18 @@ export default async function EmanetlerPage({ searchParams }: Props) {
   const totalPages = Math.ceil(totalCount / pageSize);
   const canManage = await canManageLoans(profile);
   const today = new Date().toISOString().split("T")[0];
+  const csvData = loans.map((l) => {
+    const isOverdue = l.status === "borrowed" && l.due_date && l.due_date < today;
+    return {
+      "Kitap": l.book?.title ?? "Kitap silinmiş",
+      "Alan Kişi": l.student?.full_name ?? l.profile?.full_name ?? "-",
+      "Tür": l.borrower_type === "student" ? "Talebe" : "Personel",
+      "Alış Tarihi": l.loan_date,
+      "Son Teslim": l.due_date ?? "-",
+      "Durum": l.status === "borrowed" ? "Emanette" : l.status === "returned" ? "Teslim Edildi" : "Kayıp",
+      "Gecikme": isOverdue ? `${Math.ceil((new Date(today).getTime() - new Date(l.due_date!).getTime()) / (1000 * 60 * 60 * 24))} gün` : "-",
+    };
+  });
 
   return (
     <div className="space-y-6">
@@ -48,12 +61,15 @@ export default async function EmanetlerPage({ searchParams }: Props) {
         title="Emanetler"
         description="Tüm kitap emanet kayıtları."
         actions={
-          canManage ? (
-            <Link href="/kutuphane/emanetler/yeni" className={cn(buttonVariants({ size: "sm" }))}>
-              <Plus className="size-4" aria-hidden />
-              Yeni Emanet
-            </Link>
-          ) : null
+          <div className="flex flex-wrap gap-2">
+            <CsvExportButton data={csvData} filename="emanetler" />
+            {canManage ? (
+              <Link href="/kutuphane/emanetler/yeni" className={cn(buttonVariants({ size: "sm" }))}>
+                <Plus className="size-4" aria-hidden />
+                Yeni Emanet
+              </Link>
+            ) : null}
+          </div>
         }
       />
 
