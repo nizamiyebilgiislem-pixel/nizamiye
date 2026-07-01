@@ -16,12 +16,17 @@ export async function getAnnouncements(): Promise<AnnouncementWithCreator[]> {
 }
 
 export async function getAnnouncementById(id: string): Promise<AnnouncementWithCreator | null> {
-  const supabase = await createSupabaseServerClient();
-  const { data } = await supabase
-    .from("announcements")
-    .select("*, creator:created_by(id, full_name)")
-    .eq("id", id)
-    .single();
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase
+      .from("announcements")
+      .select("*, creator:created_by(id, full_name)")
+      .eq("id", id)
+      .maybeSingle();
 
-  return data as AnnouncementWithCreator | null;
+    if (error || !data) return null;
+    return data as AnnouncementWithCreator;
+  } catch {
+    return null;
+  }
 }

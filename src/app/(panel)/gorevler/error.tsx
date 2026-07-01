@@ -3,10 +3,10 @@
 import { Button } from "@/components/ui/button";
 
 export default function GorevlerError({
-  _error,
+  error,
   reset,
 }: {
-  _error: Error & { digest?: string };
+  error: Error & { digest?: string };
   reset: () => void;
 }) {
   return (
@@ -16,6 +16,12 @@ export default function GorevlerError({
         <p className="mt-1 text-sm text-muted-foreground">
           Görevler yüklenirken beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.
         </p>
+        {error && (
+          <details className="mx-auto mt-4 max-w-lg rounded-md border border-red-200 bg-red-50 p-3 text-left">
+            <summary className="cursor-pointer text-xs font-medium text-red-700">Hata detayı</summary>
+            <pre className="mt-2 whitespace-pre-wrap text-xs text-red-600">{error.message}</pre>
+          </details>
+        )}
       </div>
       <Button onClick={reset} variant="default">
         Tekrar Dene
