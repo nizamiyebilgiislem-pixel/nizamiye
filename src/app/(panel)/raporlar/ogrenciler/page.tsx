@@ -28,7 +28,7 @@ export default async function StudentReportsPage({ searchParams }: StudentReport
   const filterClasses = selectedDepartmentId
     ? baseScope.classes.filter((classRow) => classRow.department_id === selectedDepartmentId)
     : baseScope.classes;
-  const bulkPdfHref = buildBulkPdfHref({ departmentId: selectedDepartmentId, classId: selectedClassId });
+  const bulkProfilePrintHref = buildProfilePrintHref({ departmentId: selectedDepartmentId, classId: selectedClassId });
   const showDepartmentFilter = isGlobalViewRole(profile.role);
   const showClassFilter = isGlobalViewRole(profile.role) || profile.role === "bolum_muduru";
   const groupedClasses = scope.classes.map((classRow) => ({
@@ -45,13 +45,13 @@ export default async function StudentReportsPage({ searchParams }: StudentReport
         actions={
           scope.students.length > 0 ? (
             <Link
-              href={bulkPdfHref}
+              href={bulkProfilePrintHref}
               className={cn(buttonVariants({ variant: "default", size: "sm" }))}
               target="_blank"
               rel="noreferrer"
             >
               <Download className="size-4" aria-hidden="true" />
-              Toplu PDF Al
+              Profil Raporu Al
             </Link>
           ) : null
         }
@@ -124,19 +124,19 @@ export default async function StudentReportsPage({ searchParams }: StudentReport
             <div>
               <h2 className="text-sm font-semibold text-[#093657]">Tek tik toplu PDF</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Bolum muduru yalniz kendi bolumunu, sinif hocasi yalniz sinif hocasi oldugu siniflari indirir.
+                Rapor, talebe detayindaki profil sekmesi ve veli paneli gorunumune yakin sekilde hazirlanir.
               </p>
             </div>
           </div>
           {scope.students.length > 0 ? (
             <Link
-              href={bulkPdfHref}
+              href={bulkProfilePrintHref}
               className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
               target="_blank"
               rel="noreferrer"
             >
               <Download className="size-4" aria-hidden="true" />
-              Tum Kapsami Indir
+              Tum Kapsami Yazdir
             </Link>
           ) : null}
         </CardContent>
@@ -158,13 +158,13 @@ export default async function StudentReportsPage({ searchParams }: StudentReport
                     <Badge variant="outline">{students.length} talebe</Badge>
                     {students.length > 0 ? (
                       <Link
-                        href={`/api/reports/students/bulk-pdf?classId=${classRow.id}`}
+                        href={`/raporlar/ogrenciler/profil-yazdir?classId=${classRow.id}`}
                         className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
                         target="_blank"
                         rel="noreferrer"
                       >
                         <Download className="size-4" aria-hidden="true" />
-                        Sinif PDF
+                        Sinif Profil Raporu
                       </Link>
                     ) : null}
                   </div>
@@ -192,12 +192,12 @@ export default async function StudentReportsPage({ searchParams }: StudentReport
   );
 }
 
-function buildBulkPdfHref(filters: { departmentId?: string | null; classId?: string | null }) {
+function buildProfilePrintHref(filters: { departmentId?: string | null; classId?: string | null }) {
   const params = new URLSearchParams();
   if (filters.departmentId) params.set("departmentId", filters.departmentId);
   if (filters.classId) params.set("classId", filters.classId);
   const query = params.toString();
-  return query ? `/api/reports/students/bulk-pdf?${query}` : "/api/reports/students/bulk-pdf";
+  return query ? `/raporlar/ogrenciler/profil-yazdir?${query}` : "/raporlar/ogrenciler/profil-yazdir";
 }
 
 function MiniStat({ label, value }: { label: string; value: number | string }) {
