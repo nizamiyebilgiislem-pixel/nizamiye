@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { Eye, Pencil } from "lucide-react";
 
-import { StudentAvatar } from "@/components/students/student-avatar";
+import { FormSubmitButton } from "@/components/forms/form-submit-button";
+import { StudentCompactCard } from "@/components/students/student-compact-card";
 import { StatusBadge } from "@/components/students/status-badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { canEditStudent } from "@/lib/students/permissions";
 import type { StudentWithRelations } from "@/lib/students/queries";
@@ -27,14 +27,13 @@ export function StudentListTable({ students, profile, showReactivate, reactivate
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Fotoğraf</TableHead>
-                <TableHead>Ad Soyad</TableHead>
-                <TableHead>Bölüm</TableHead>
-                <TableHead>Kurs Sınıfı</TableHead>
-                <TableHead>Okul Sınıfı</TableHead>
+                <TableHead>Talebe</TableHead>
+                <TableHead>Bolum</TableHead>
+                <TableHead>Kurs Sinifi</TableHead>
+                <TableHead>Okul Sinifi</TableHead>
                 <TableHead>Veli Telefonu</TableHead>
                 <TableHead>Durum</TableHead>
-                <TableHead className="text-right">İşlemler</TableHead>
+                <TableHead className="text-right">Islemler</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -43,27 +42,16 @@ export function StudentListTable({ students, profile, showReactivate, reactivate
                 const detailHref = `/talebeler/${student.id}`;
 
                 return (
-                  <TableRow key={student.id} className="group">
-                    <TableCell>
-                      <Link href={detailHref} aria-label={`${student.full_name} detayını aç`}>
-                        <StudentAvatar name={student.full_name} photoUrl={student.photo_url} previewable />
-                      </Link>
+                  <TableRow key={student.id}>
+                    <TableCell className="min-w-72">
+                      <StudentCompactCard
+                        student={student}
+                        href={detailHref}
+                        className="border-0 bg-transparent p-0 shadow-none hover:bg-transparent"
+                      />
                     </TableCell>
-                    <TableCell className="min-w-48 font-medium">
-                      <Link href={detailHref} className="text-[#093657] hover:underline group-hover:underline">
-                        {student.full_name}
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <Link href={detailHref} className="hover:underline">
-                        {student.department?.name ?? "-"}
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <Link href={detailHref} className="hover:underline">
-                        {student.course_class?.name ?? "-"}
-                      </Link>
-                    </TableCell>
+                    <TableCell>{student.department?.name ?? "-"}</TableCell>
+                    <TableCell>{student.course_class?.name ?? "-"}</TableCell>
                     <TableCell>{student.school_class ?? "-"}</TableCell>
                     <TableCell>{student.guardian_phone ?? "-"}</TableCell>
                     <TableCell>
@@ -74,7 +62,7 @@ export function StudentListTable({ students, profile, showReactivate, reactivate
                         <Link
                           href={detailHref}
                           className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
-                          aria-label="Talebe detayını aç"
+                          aria-label="Talebe detayini ac"
                         >
                           <Eye className="size-4" aria-hidden="true" />
                         </Link>
@@ -82,7 +70,7 @@ export function StudentListTable({ students, profile, showReactivate, reactivate
                           <Link
                             href={`/talebeler/${student.id}/duzenle`}
                             className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
-                            aria-label="Talebeyi düzenle"
+                            aria-label="Talebeyi duzenle"
                           >
                             <Pencil className="size-4" aria-hidden="true" />
                           </Link>
@@ -90,7 +78,7 @@ export function StudentListTable({ students, profile, showReactivate, reactivate
                         {showReactivate && reactivateAction ? (
                           <form action={reactivateAction}>
                             <input type="hidden" name="id" value={student.id} />
-                            <FormSubmitButton pendingLabel="Aktifleştiriliyor..." variant="secondary" size="sm">
+                            <FormSubmitButton pendingLabel="Aktiflestiriliyor..." variant="secondary" size="sm">
                               Aktif yap
                             </FormSubmitButton>
                           </form>
