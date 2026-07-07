@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import {
+  deleteDersSistemiAction,
   toggleClassCourseAction,
   updateClassCourseTeacherAction,
   updateDersSistemiAction,
@@ -77,6 +78,7 @@ export function DersSistemiEditForm({
       </div>
 
       {activeTab === "details" && (
+        <>
         <form action={updateDersSistemiAction} className="space-y-5">
           <input type="hidden" name="course_id" value={course.id} />
           <input type="hidden" name="class_ids" value={selectedClassIds.join(",")} />
@@ -114,6 +116,32 @@ export function DersSistemiEditForm({
             <FormSubmitButton pendingLabel="Kaydediliyor...">Kaydet</FormSubmitButton>
           </div>
         </form>
+
+        <div className="rounded-md border border-red-200 bg-red-50 p-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-medium text-red-800">Dersi tamamen kaldir</p>
+              <p className="text-xs text-red-700">
+                Ders, sinif atamalari, ders programi baglantilari ve not kayitlari silinir.
+              </p>
+            </div>
+            <form action={deleteDersSistemiAction}>
+              <input type="hidden" name="course_id" value={course.id} />
+              <button
+                type="submit"
+                onClick={(event) => {
+                  if (!window.confirm("Bu dersi tamamen kaldirmak istiyor musunuz?")) {
+                    event.preventDefault();
+                  }
+                }}
+                className="h-9 rounded-md bg-red-600 px-3 text-sm font-medium text-white hover:bg-red-700"
+              >
+                Dersi Kaldir
+              </button>
+            </form>
+          </div>
+        </div>
+        </>
       )}
 
       {activeTab === "assignments" && (

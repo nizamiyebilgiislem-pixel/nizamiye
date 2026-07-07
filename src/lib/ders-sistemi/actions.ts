@@ -142,6 +142,10 @@ const updateClassCourseTeacherSchema = z.object({
   teacher_id: z.union([z.string().uuid(), z.literal("")]).transform((value) => value || null),
 });
 
+const deleteCourseSchema = z.object({
+  course_id: z.string().uuid(),
+});
+
 export async function toggleClassCourseAction(formData: FormData) {
   const { profile } = await requireAuth();
 
@@ -166,7 +170,7 @@ export async function toggleClassCourseAction(formData: FormData) {
 
   const { data: course } = await supabase
     .from("courses")
-    .select("department_id")
+    .select("id, department_id")
     .eq("id", classCourse.course_id)
     .single();
 
@@ -179,13 +183,25 @@ export async function toggleClassCourseAction(formData: FormData) {
   }
 
   if (action === "delete") {
-    const { error: deleteError } = await supabase
+    const mutationClient = await createDersSistemiMutationClient();
+
+    await mutationClient
+      .from("weekly_schedule_slots")
+      .delete()
+      .eq("class_course_id", classCourseId);
+
+    await mutationClient
+      .from("daily_lesson_logs")
+      .delete()
+      .eq("class_course_id", classCourseId);
+
+    const { error: deleteError } = await mutationClient
       .from("class_courses")
       .delete()
       .eq("id", classCourseId);
 
     if (deleteError) {
-      redirect("/ders-sistemi?error=delete");
+      redirect(`/ders-sistemi/${course.id}/duzenle?error=delete`);
     }
   } else {
     const isActive = action === "activate";
@@ -195,7 +211,7 @@ export async function toggleClassCourseAction(formData: FormData) {
       .eq("id", classCourseId);
 
     if (updateError) {
-      redirect("/ders-sistemi?error=update");
+      redirect(`/ders-sistemi/${course.id}/duzenle?error=update`);
     }
   }
 
@@ -210,7 +226,8 @@ export async function toggleClassCourseAction(formData: FormData) {
 
   revalidatePath("/ders-sistemi");
   revalidatePath("/egitim-planlama");
-  redirect("/ders-sistemi?success=updated");
+  revalidatePath(`/ders-sistemi/${course.id}/duzenle`);
+  redirect(`/ders-sistemi/${course.id}/duzenle?success=assignment-updated`);
 }
 
 export async function updateClassCourseTeacherAction(formData: FormData) {
@@ -282,6 +299,101 @@ export async function updateClassCourseTeacherAction(formData: FormData) {
   revalidatePath(`/egitim-planlama/ders-atamalari/${classCourse.class_id}`);
   revalidatePath(`/egitim-planlama/ders-programi/${classCourse.class_id}`);
   redirect(`/ders-sistemi/${course.id}/duzenle?success=teacher-updated`);
+}
+
+export async function deleteDersSistemiAction(formData: FormData) {
+  const { profile } = await requireAuth();
+
+  const parsed = deleteCourseSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) {
+    redirect("/ders-sistemi?error=invalid");
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { data: course, error: fetchError } = await supabase
+    .from("courses")
+    .select("*")
+    .eq("id", parsed.data.course_id)
+    .single();
+
+  if (fetchError || !course) {
+    redirect("/ders-sistemi?error=notfound");
+  }
+
+  if (!canManageDepartmentCourses(profile, course.department_id)) {
+    redirect("/ders-sistemi?error=unauthorized");
+  }
+
+  const mutationClient = await createDersSistemiMutationClient();
+
+  const { data: classCourses } = await mutationClient
+    .from("class_courses")
+    .select("id")
+    .eq("course_id", course.id);
+  const classCourseIds = (classCourses ?? []).map((row) => row.id);
+
+  const { data: courseBooks } = await mutationClient
+    .from("course_books")
+    .select("id")
+    .eq("course_id", course.id);
+  const courseBookIds = (courseBooks ?? []).map((row) => row.id);
+
+  if (classCourseIds.length > 0) {
+    await mutationClient
+      .from("weekly_schedule_slots")
+      .delete()
+      .in("class_course_id", classCourseIds);
+
+    await mutationClient
+      .from("daily_lesson_logs")
+      .delete()
+      .in("class_course_id", classCourseIds);
+  }
+
+  if (courseBookIds.length > 0) {
+    await mutationClient
+      .from("student_books")
+      .update({ course_book_id: null })
+      .in("course_book_id", courseBookIds);
+  }
+
+  await mutationClient
+    .from("student_books")
+    .update({ course_id: null })
+    .eq("course_id", course.id);
+
+  const deleteSteps = [
+    mutationClient.from("grades").delete().eq("course_id", course.id),
+    mutationClient.from("exam_types").delete().eq("course_id", course.id),
+    mutationClient.from("course_books").delete().eq("course_id", course.id),
+    mutationClient.from("class_courses").delete().eq("course_id", course.id),
+    mutationClient.from("courses").delete().eq("id", course.id),
+  ];
+
+  for (const step of deleteSteps) {
+    const { error } = await step;
+    if (error) {
+      redirect(`/ders-sistemi/${course.id}/duzenle?error=delete`);
+    }
+  }
+
+  await createAuditLog({
+    ...buildAuditActor(profile),
+    action: "course_deleted",
+    title: "Ders kaldÄ±rÄ±ldÄ±",
+    entityType: "course",
+    entityId: course.id,
+    beforeData: {
+      department_id: course.department_id,
+      name: course.name,
+      slug: course.slug,
+    },
+  });
+
+  revalidatePath("/ders-sistemi");
+  revalidatePath("/not-sistemi/dersler");
+  revalidatePath("/egitim-planlama");
+  redirect("/ders-sistemi?success=deleted");
 }
 
 export async function updateDersSistemiAction(formData: FormData) {
@@ -410,5 +522,17 @@ async function getActiveCourseTeacherById(teacherId: string): Promise<ProfileRow
       .maybeSingle();
 
     return data ?? null;
+  }
+}
+
+async function createDersSistemiMutationClient() {
+  try {
+    return createSupabaseAdminClient();
+  } catch (error) {
+    if (!(error instanceof SupabaseAdminConfigError)) {
+      throw error;
+    }
+
+    return createSupabaseServerClient();
   }
 }
