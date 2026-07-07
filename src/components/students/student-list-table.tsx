@@ -40,15 +40,30 @@ export function StudentListTable({ students, profile, showReactivate, reactivate
             <TableBody>
               {students.map((student) => {
                 const editable = canEditStudent(profile, student, student.course_class);
+                const detailHref = `/talebeler/${student.id}`;
 
                 return (
-                  <TableRow key={student.id}>
+                  <TableRow key={student.id} className="group">
                     <TableCell>
-                      <StudentAvatar name={student.full_name} photoUrl={student.photo_url} previewable />
+                      <Link href={detailHref} aria-label={`${student.full_name} detayını aç`}>
+                        <StudentAvatar name={student.full_name} photoUrl={student.photo_url} previewable />
+                      </Link>
                     </TableCell>
-                    <TableCell className="min-w-48 font-medium">{student.full_name}</TableCell>
-                    <TableCell>{student.department?.name ?? "-"}</TableCell>
-                    <TableCell>{student.course_class?.name ?? "-"}</TableCell>
+                    <TableCell className="min-w-48 font-medium">
+                      <Link href={detailHref} className="text-[#093657] hover:underline group-hover:underline">
+                        {student.full_name}
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      <Link href={detailHref} className="hover:underline">
+                        {student.department?.name ?? "-"}
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      <Link href={detailHref} className="hover:underline">
+                        {student.course_class?.name ?? "-"}
+                      </Link>
+                    </TableCell>
                     <TableCell>{student.school_class ?? "-"}</TableCell>
                     <TableCell>{student.guardian_phone ?? "-"}</TableCell>
                     <TableCell>
@@ -57,7 +72,7 @@ export function StudentListTable({ students, profile, showReactivate, reactivate
                     <TableCell>
                       <div className="flex justify-end gap-2">
                         <Link
-                          href={`/talebeler/${student.id}`}
+                          href={detailHref}
                           className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
                           aria-label="Talebe detayını aç"
                         >
