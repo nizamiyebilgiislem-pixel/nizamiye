@@ -8,7 +8,9 @@ import { requireAuth } from "@/lib/auth";
 import { buildAuditActor, createAuditLog } from "@/lib/audit/log";
 import { canManageDepartmentCourses } from "@/lib/courses/permissions";
 import { ensureDefaultExamTypesForCourses } from "@/lib/grades/default-exam-types";
+import { createSupabaseAdminClient, SupabaseAdminConfigError } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import type { ProfileRow } from "@/types/database";
 
 const createCourseWithAssignmentsSchema = z.object({
   name: z.string().trim().min(2, "Ders adı zorunludur."),
@@ -135,6 +137,11 @@ const updateCourseSchema = z.object({
   is_active: z.coerce.boolean().optional(),
 });
 
+const updateClassCourseTeacherSchema = z.object({
+  class_course_id: z.string().uuid(),
+  teacher_id: z.union([z.string().uuid(), z.literal("")]).transform((value) => value || null),
+});
+
 export async function toggleClassCourseAction(formData: FormData) {
   const { profile } = await requireAuth();
 
@@ -204,6 +211,77 @@ export async function toggleClassCourseAction(formData: FormData) {
   revalidatePath("/ders-sistemi");
   revalidatePath("/egitim-planlama");
   redirect("/ders-sistemi?success=updated");
+}
+
+export async function updateClassCourseTeacherAction(formData: FormData) {
+  const { profile } = await requireAuth();
+
+  const parsed = updateClassCourseTeacherSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) {
+    redirect("/ders-sistemi?error=invalid");
+  }
+
+  const supabase = await createSupabaseServerClient();
+
+  const { data: classCourse, error: fetchError } = await supabase
+    .from("class_courses")
+    .select("*")
+    .eq("id", parsed.data.class_course_id)
+    .single();
+
+  if (fetchError || !classCourse) {
+    redirect("/ders-sistemi?error=notfound");
+  }
+
+  const { data: course } = await supabase
+    .from("courses")
+    .select("id, department_id")
+    .eq("id", classCourse.course_id)
+    .single();
+
+  if (!course) {
+    redirect("/ders-sistemi?error=notfound");
+  }
+
+  if (!canManageDepartmentCourses(profile, course.department_id)) {
+    redirect("/ders-sistemi?error=unauthorized");
+  }
+
+  if (parsed.data.teacher_id) {
+    const teacher = await getActiveCourseTeacherById(parsed.data.teacher_id);
+    if (!teacher) {
+      redirect(`/ders-sistemi/${course.id}/duzenle?error=invalid-teacher`);
+    }
+  }
+
+  const { error: updateError } = await supabase
+    .from("class_courses")
+    .update({ teacher_id: parsed.data.teacher_id })
+    .eq("id", parsed.data.class_course_id);
+
+  if (updateError) {
+    redirect(`/ders-sistemi/${course.id}/duzenle?error=update`);
+  }
+
+  await createAuditLog({
+    ...buildAuditActor(profile),
+    action: "class_course_teacher_updated",
+    title: "SÄ±nÄ±f ders hocasÄ± gÃ¼ncellendi",
+    entityType: "class_course",
+    entityId: parsed.data.class_course_id,
+    afterData: {
+      class_course_id: parsed.data.class_course_id,
+      teacher_id: parsed.data.teacher_id,
+    },
+  });
+
+  revalidatePath("/ders-sistemi");
+  revalidatePath(`/ders-sistemi/${course.id}`);
+  revalidatePath(`/ders-sistemi/${course.id}/duzenle`);
+  revalidatePath("/egitim-planlama");
+  revalidatePath(`/egitim-planlama/ders-atamalari/${classCourse.class_id}`);
+  revalidatePath(`/egitim-planlama/ders-programi/${classCourse.class_id}`);
+  redirect(`/ders-sistemi/${course.id}/duzenle?success=teacher-updated`);
 }
 
 export async function updateDersSistemiAction(formData: FormData) {
@@ -303,4 +381,34 @@ export async function updateDersSistemiAction(formData: FormData) {
   revalidatePath("/ders-sistemi/[id]/duzenle");
   revalidatePath("/egitim-planlama");
   redirect("/ders-sistemi?success=updated");
+}
+
+async function getActiveCourseTeacherById(teacherId: string): Promise<ProfileRow | null> {
+  try {
+    const admin = createSupabaseAdminClient();
+    const { data } = await admin
+      .from("profiles")
+      .select("*")
+      .eq("id", teacherId)
+      .eq("role", "hoca")
+      .eq("is_active", true)
+      .maybeSingle();
+
+    return data ?? null;
+  } catch (error) {
+    if (!(error instanceof SupabaseAdminConfigError)) {
+      throw error;
+    }
+
+    const supabase = await createSupabaseServerClient();
+    const { data } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", teacherId)
+      .eq("role", "hoca")
+      .eq("is_active", true)
+      .maybeSingle();
+
+    return data ?? null;
+  }
 }

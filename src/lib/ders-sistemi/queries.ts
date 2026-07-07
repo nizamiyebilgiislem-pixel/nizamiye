@@ -1,4 +1,5 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient, SupabaseAdminConfigError } from "@/lib/supabase/admin";
 import type { ClassRow, CourseRow, DepartmentRow, ProfileRow } from "@/types/database";
 
 export type DersSistemiCourse = CourseRow & {
@@ -63,18 +64,46 @@ export async function getDersSistemiCreateData(profile: ProfileRow) {
   const { data: departments } = await deptQuery;
   const departmentIds = (departments ?? []).map((d) => d.id);
 
-  const [{ data: classes }, { data: allTeachers }] = await Promise.all([
+  const [{ data: classes }, teachersResult] = await Promise.all([
     departmentIds.length > 0
       ? supabase.from("classes").select("*").in("department_id", departmentIds).eq("is_active", true).order("name", { ascending: true })
       : Promise.resolve({ data: [] }),
-    supabase.from("profiles").select("*").eq("is_active", true),
+    getAllCourseTeachers(),
   ]);
 
   return {
     departments: departments ?? [],
     classes: classes ?? [],
-    teachers: allTeachers ?? [],
+    teachers: teachersResult.data ?? [],
   };
+}
+
+async function getAllCourseTeachers(): Promise<{ data: ProfileRow[]; error: { code?: string | null; message?: string | null } | null }> {
+  try {
+    const admin = createSupabaseAdminClient();
+    const { data, error } = await admin
+      .from("profiles")
+      .select("*")
+      .eq("role", "hoca")
+      .eq("is_active", true)
+      .order("full_name", { ascending: true });
+
+    return { data: data ?? [], error };
+  } catch (error) {
+    if (!(error instanceof SupabaseAdminConfigError)) {
+      throw error;
+    }
+
+    const supabase = await createSupabaseServerClient();
+    const { data, error: serverError } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("role", "hoca")
+      .eq("is_active", true)
+      .order("full_name", { ascending: true });
+
+    return { data: data ?? [], error: serverError };
+  }
 }
 
 export type DersSistemiEditData = {

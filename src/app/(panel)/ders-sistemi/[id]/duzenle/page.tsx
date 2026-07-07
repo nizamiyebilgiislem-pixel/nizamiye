@@ -46,8 +46,6 @@ export default async function EditDersPage({ params, searchParams }: Props) {
             classes={editData.classes}
             teachers={editData.teachers}
             assignedClassIds={editData.assignedClassIds}
-            profileRole={profile.role}
-            profileDepartmentId={profile.department_id}
           />
         </CardContent>
       </Card>

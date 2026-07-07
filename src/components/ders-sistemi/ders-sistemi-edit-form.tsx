@@ -4,10 +4,13 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 
 import { FormSubmitButton } from "@/components/forms/form-submit-button";
-import { toggleClassCourseAction, updateDersSistemiAction } from "@/lib/ders-sistemi/actions";
+import {
+  toggleClassCourseAction,
+  updateClassCourseTeacherAction,
+  updateDersSistemiAction,
+} from "@/lib/ders-sistemi/actions";
 import { cn } from "@/lib/utils";
 import type { ClassRow, DepartmentRow, ProfileRow } from "@/types/database";
-import type { UserRole } from "@/types/rbac";
 import type { DersSistemiCourse } from "@/lib/ders-sistemi/queries";
 
 type DersSistemiEditFormProps = {
@@ -16,8 +19,6 @@ type DersSistemiEditFormProps = {
   classes: ClassRow[];
   teachers: ProfileRow[];
   assignedClassIds: string[];
-  profileRole: UserRole;
-  profileDepartmentId: string | null;
 };
 
 export function DersSistemiEditForm({
@@ -26,8 +27,6 @@ export function DersSistemiEditForm({
   classes,
   teachers,
   assignedClassIds: initialAssigned,
-  profileRole,
-  profileDepartmentId,
 }: DersSistemiEditFormProps) {
   const [selectedClassIds, setSelectedClassIds] = useState<string[]>(initialAssigned);
   const [activeTab, setActiveTab] = useState<"details" | "assignments">("details");
@@ -130,7 +129,7 @@ export function DersSistemiEditForm({
                 {activeAssignments.map((assignment) => (
                   <div
                     key={assignment.id}
-                    className="flex items-center justify-between rounded-md border border-border bg-[#f8fafc] px-3 py-2"
+                    className="grid gap-3 rounded-md border border-border bg-[#f8fafc] px-3 py-3 lg:grid-cols-[minmax(0,1fr)_auto]"
                   >
                     <div className="min-w-0">
                       <Link
@@ -148,7 +147,28 @@ export function DersSistemiEditForm({
                         </Link>
                       )}
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <form action={updateClassCourseTeacherAction} className="flex items-center gap-2">
+                        <input type="hidden" name="class_course_id" value={assignment.id} />
+                        <select
+                          name="teacher_id"
+                          defaultValue={assignment.teacher?.id ?? ""}
+                          className={cn(
+                            "h-8 w-52 rounded-md border border-input bg-background px-2 text-xs",
+                            "focus:outline-none focus:ring-2 focus:ring-[#093657]/20",
+                          )}
+                        >
+                          <option value="">Hoca secilmedi</option>
+                          {filteredTeachers.map((teacher) => (
+                            <option key={teacher.id} value={teacher.id}>
+                              {teacher.full_name}
+                            </option>
+                          ))}
+                        </select>
+                        <button type="submit" className="text-xs font-medium text-[#093657] hover:underline">
+                          Hoca Kaydet
+                        </button>
+                      </form>
                       <form action={toggleClassCourseAction}>
                         <input type="hidden" name="class_course_id" value={assignment.id} />
                         <input type="hidden" name="action" value="deactivate" />
@@ -250,18 +270,11 @@ export function DersSistemiEditForm({
                                 )}
                               >
                                 <option value="">Hoca seç (opsiyonel)</option>
-                                {filteredTeachers
-                                  .filter(
-                                    (t) =>
-                                      profileRole !== "bolum_muduru" ||
-                                      t.department_id === profileDepartmentId ||
-                                      t.department_id === classRow.department_id,
-                                  )
-                                  .map((teacher) => (
-                                    <option key={teacher.id} value={teacher.id}>
-                                      {teacher.full_name}
-                                    </option>
-                                  ))}
+                                {filteredTeachers.map((teacher) => (
+                                  <option key={teacher.id} value={teacher.id}>
+                                    {teacher.full_name}
+                                  </option>
+                                ))}
                               </select>
                             </div>
                           )}
