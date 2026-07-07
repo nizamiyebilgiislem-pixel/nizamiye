@@ -29,7 +29,7 @@ export const reportCategories: ReportCategory[] = [
     key: "students",
     title: "Öğrenci Raporları",
     description: "Talebe temel bilgileri, sınıf, bölüm, veli ve durum bilgilerini içerir.",
-    href: "/raporlar",
+    href: "/raporlar/ogrenciler",
     icon: UsersRound,
     permissionKey: "student",
     badge: "Öğrenci",

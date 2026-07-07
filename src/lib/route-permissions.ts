@@ -84,6 +84,7 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/evrak-yonetimi": managerRoles,
   "/raporlar": allRoles,
 
+  "/raporlar/ogrenciler": staffAndSupportRoles,
   "/raporlar/siniflar": allRoles,
   "/raporlar/bolumler": allRoles,
   "/raporlar/notlar": allRoles,
