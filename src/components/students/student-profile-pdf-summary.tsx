@@ -5,7 +5,6 @@ import type { EvaluationWithRelations } from "@/lib/evaluations/queries";
 import type { StudentGradeSummary } from "@/lib/grades/queries";
 import type { StudentWithRelations } from "@/lib/students/queries";
 import type { StudentProfileNoteWithRelations } from "@/lib/student-profile/queries";
-import { cn } from "@/lib/utils";
 
 type StudentProfilePdfSummaryProps = {
   student: StudentWithRelations;
@@ -30,7 +29,7 @@ export function StudentProfilePdfSummary({
   return (
     <section className={className}>
       <Card className="bg-white">
-        <CardContent className={cn("grid gap-4 p-4", compact ? "lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]" : "lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]")}>
+        <CardContent className="flex flex-col gap-4 p-4 md:flex-row md:items-start md:justify-between">
           <div className="flex items-start gap-4">
             <StudentAvatar name={student.full_name} photoUrl={student.photo_url} size={compact ? "default" : "lg"} />
             <div className="min-w-0 space-y-2">
@@ -51,11 +50,9 @@ export function StudentProfilePdfSummary({
             </div>
           </div>
 
-          <div className="flex justify-end">
-            <Badge variant="outline" className="max-w-full truncate text-[11px]">
-              Dönem: {latestTermName}
-            </Badge>
-          </div>
+          <Badge variant="outline" className="self-start max-w-full truncate text-[11px] md:ml-4 md:mt-1">
+            Dönem: {latestTermName}
+          </Badge>
         </CardContent>
       </Card>
 
