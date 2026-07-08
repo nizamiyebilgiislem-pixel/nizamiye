@@ -4,14 +4,12 @@ import { StudentAvatar } from "@/components/students/student-avatar";
 import type { EvaluationWithRelations } from "@/lib/evaluations/queries";
 import type { StudentGradeSummary } from "@/lib/grades/queries";
 import type { StudentWithRelations } from "@/lib/students/queries";
-import type { StudentProfileNoteWithRelations } from "@/lib/student-profile/queries";
 import { cn } from "@/lib/utils";
 
 type StudentProfilePdfSummaryProps = {
   student: StudentWithRelations;
   gradeSummary: StudentGradeSummary | null;
   evaluations: EvaluationWithRelations[];
-  notes: StudentProfileNoteWithRelations[];
   compact?: boolean;
 };
 
@@ -19,12 +17,10 @@ export function StudentProfilePdfSummary({
   student,
   gradeSummary,
   evaluations,
-  notes,
   compact = false,
 }: StudentProfilePdfSummaryProps) {
   const latestEvaluation = evaluations[0] ?? null;
   const courseSummaries = gradeSummary?.courseSummaries ?? [];
-  const recentNotes = notes.slice(0, 2);
   const className = compact ? "space-y-3" : "space-y-4";
 
   return (
@@ -51,10 +47,9 @@ export function StudentProfilePdfSummary({
             </div>
           </div>
 
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-2 sm:grid-cols-3">
             <SummaryMetric label="Ders" value={String(courseSummaries.length)} />
             <SummaryMetric label="Kanaat" value={String(evaluations.length)} />
-            <SummaryMetric label="Not" value={String(notes.length)} />
             <SummaryMetric label="Son Dönem" value={latestEvaluation?.term?.name ?? "-"} />
           </div>
         </CardContent>
@@ -73,7 +68,7 @@ export function StudentProfilePdfSummary({
             {courseSummaries.length > 0 ? (
               <div className="space-y-2">
                 {courseSummaries.slice(0, 4).map((course) => (
-                  <div key={course.courseId} className="flex items-center justify-between rounded-md border border-border bg-[#f8fafc] px-3 py-2 text-sm">
+                  <div key={course.courseId} className="flex items-center justify-between gap-3 rounded-md border border-border bg-[#f8fafc] px-3 py-2 text-sm">
                     <span className="min-w-0 truncate font-medium">{course.courseName}</span>
                     <Badge variant="outline">Ortalama {formatAverage(course.average)}</Badge>
                   </div>
@@ -89,38 +84,22 @@ export function StudentProfilePdfSummary({
           <CardContent className="space-y-3 p-4">
             <div>
               <h3 className="text-base font-semibold text-[#093657]">Kanaat Özeti</h3>
-              <p className="text-xs text-muted-foreground">Son değerlendirme ve kısa profil notları.</p>
+              <p className="text-xs text-muted-foreground">Son değerlendirme ve kısa kanaat özeti.</p>
             </div>
             {latestEvaluation ? (
-              <div className="space-y-3 rounded-md border border-border bg-[#f8fafc] p-3">
-                <div className="grid grid-cols-5 gap-2">
+              <div className="space-y-2 rounded-md border border-border bg-[#f8fafc] p-3">
+                <div className="grid grid-cols-3 gap-2">
                   <SummaryScore label="Davranış" value={latestEvaluation.behavior_score} />
                   <SummaryScore label="Devam" value={latestEvaluation.attendance_score} />
                   <SummaryScore label="Ders" value={latestEvaluation.lesson_performance_score} />
-                  <SummaryScore label="Disiplin" value={latestEvaluation.discipline_score} />
-                  <SummaryScore label="Ezber" value={latestEvaluation.memorization_score} />
                 </div>
-                <p className="text-sm leading-6 text-muted-foreground">
+                <p className="text-sm leading-5 text-muted-foreground">
                   {latestEvaluation.general_opinion ?? "Genel kanaat girilmedi."}
                 </p>
               </div>
             ) : (
               <p className="text-sm text-muted-foreground">Kanaat kaydı bulunamadı.</p>
             )}
-
-            {recentNotes.length > 0 ? (
-              <div className="space-y-2">
-                {recentNotes.map((note) => (
-                  <div key={note.id} className="rounded-md border border-border bg-[#f8fafc] p-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="text-sm font-medium text-[#093657]">{note.term?.name ?? "Dönem yok"}</p>
-                      <p className="text-xs text-muted-foreground">{formatDate(note.created_at)}</p>
-                    </div>
-                    <p className="mt-1 max-h-10 overflow-hidden text-sm leading-5 text-muted-foreground">{note.note}</p>
-                  </div>
-                ))}
-              </div>
-            ) : null}
           </CardContent>
         </Card>
       </div>
@@ -139,7 +118,7 @@ function SummaryMetric({ label, value }: { label: string; value: string }) {
 
 function SummaryScore({ label, value }: { label: string; value: number | null }) {
   return (
-    <div className="rounded-md border border-border bg-white p-2 text-center">
+    <div className="rounded-md border border-border bg-white px-2 py-1.5 text-center">
       <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
       <p className="mt-1 text-sm font-semibold text-[#093657]">{value ?? "-"}</p>
     </div>
@@ -148,8 +127,4 @@ function SummaryScore({ label, value }: { label: string; value: number | null })
 
 function formatAverage(value: number | null) {
   return value === null ? "-" : value.toFixed(2);
-}
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("tr-TR", { dateStyle: "medium" }).format(new Date(value));
 }

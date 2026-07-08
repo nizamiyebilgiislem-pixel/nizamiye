@@ -70,7 +70,6 @@ export default async function StudentInfoPdfPage({ params }: { params: Promise<{
         student={student}
         gradeSummary={gradeSummary}
         evaluations={evaluations}
-        notes={profileEntries.notes}
       />
     </PrintableReportShell>
   );
