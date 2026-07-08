@@ -23,7 +23,7 @@ export function StudentProfilePdfSummary({
   compact = false,
 }: StudentProfilePdfSummaryProps) {
   const latestEvaluation = evaluations[0] ?? null;
-  const recentNotes = notes.slice(0, 2);
+  const recentNotes = notes.slice(0, 1);
   const courseSummaries = gradeSummary?.courseSummaries ?? [];
   const className = compact ? "space-y-3" : "space-y-4";
 
@@ -122,7 +122,7 @@ export function StudentProfilePdfSummary({
               <div className="space-y-2">
                 <div className="flex items-center justify-between gap-3">
                   <h4 className="text-sm font-semibold text-[#093657]">Hoca Yorumu</h4>
-                  <Badge variant="outline">Son 2 not</Badge>
+                  <Badge variant="outline">Son not</Badge>
                 </div>
                 {recentNotes.map((note) => (
                   <div key={note.id} className="rounded-md border border-border bg-[#f8fafc] p-2.5">
