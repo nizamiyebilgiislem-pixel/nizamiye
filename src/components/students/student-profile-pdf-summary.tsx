@@ -61,16 +61,29 @@ export function StudentProfilePdfSummary({
             <div className="flex items-center justify-between gap-3">
               <div>
                 <h3 className="text-base font-semibold text-[#093657]">Not Özeti</h3>
-                <p className="text-xs text-muted-foreground">Sadece ders ortalamaları.</p>
+                <p className="text-xs text-muted-foreground">Sınav notları ve ders ortalaması.</p>
               </div>
               <Badge variant="outline">İlk 4 ders</Badge>
             </div>
             {courseSummaries.length > 0 ? (
               <div className="space-y-2">
                 {courseSummaries.slice(0, 4).map((course) => (
-                  <div key={course.courseId} className="flex items-center justify-between gap-3 rounded-md border border-border bg-[#f8fafc] px-3 py-2 text-sm">
-                    <span className="min-w-0 truncate font-medium">{course.courseName}</span>
-                    <Badge variant="outline">Ortalama {formatAverage(course.average)}</Badge>
+                  <div key={course.courseId} className="space-y-2 rounded-md border border-border bg-[#f8fafc] px-3 py-2 text-sm">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="min-w-0 truncate font-medium">{course.courseName}</span>
+                      <Badge variant="outline">Ortalama {formatAverage(course.average)}</Badge>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {course.examGrades.slice(0, 6).map((exam) => (
+                        <span
+                          key={exam.examTypeId}
+                          className="inline-flex items-center gap-1 rounded-full border border-border bg-white px-2 py-1 text-[11px] text-muted-foreground"
+                        >
+                          <span className="max-w-24 truncate">{exam.examTypeName}</span>
+                          <strong className="text-[#093657]">{exam.grade ?? "-"}</strong>
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>
