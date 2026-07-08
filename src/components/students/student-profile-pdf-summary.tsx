@@ -25,6 +25,7 @@ export function StudentProfilePdfSummary({
   const recentNotes = notes.slice(0, 1);
   const courseSummaries = gradeSummary?.courseSummaries ?? [];
   const className = compact ? "space-y-3" : "space-y-4";
+  const latestTermName = evaluations[0]?.term?.name ?? "-";
 
   return (
     <section className={className}>
@@ -50,10 +51,10 @@ export function StudentProfilePdfSummary({
             </div>
           </div>
 
-          <div className="grid gap-2 sm:grid-cols-3">
-            <SummaryMetric label="Ders" value={String(courseSummaries.length)} />
-            <SummaryMetric label="Yorum" value={String(notes.length)} />
-            <SummaryMetric label="Son Dönem" value={evaluations[0]?.term?.name ?? "-"} />
+          <div className="flex justify-end">
+            <Badge variant="outline" className="max-w-full truncate text-[11px]">
+              Dönem: {latestTermName}
+            </Badge>
           </div>
         </CardContent>
       </Card>
@@ -99,18 +100,16 @@ export function StudentProfilePdfSummary({
         <Card className="bg-white">
           <CardContent className="space-y-3 p-4">
             {recentNotes.length > 0 ? (
-              <div className="space-y-2">
-                <div className="flex items-center justify-between gap-3">
-                  <h4 className="text-sm font-semibold text-[#093657]">Hoca Yorumu</h4>
-                  <Badge variant="outline">Son not</Badge>
-                </div>
+              <div className="rounded-md border border-border bg-[#f8fafc] p-2.5">
                 {recentNotes.map((note) => (
-                  <div key={note.id} className="rounded-md border border-border bg-[#f8fafc] p-2.5">
-                    <div className="flex items-center justify-between gap-2">
+                  <div key={note.id} className="space-y-1">
+                    <div className="flex items-start justify-between gap-2">
                       <p className="text-sm font-medium text-[#093657]">{note.creator?.full_name ?? "Hoca"}</p>
-                      <p className="text-[11px] text-muted-foreground">{note.term?.name ?? "Dönem yok"}</p>
+                      <Badge variant="outline" className="shrink-0 text-[10px]">
+                        {note.term?.name ?? "Dönem yok"}
+                      </Badge>
                     </div>
-                    <p className="mt-1 text-sm leading-5 text-muted-foreground">{note.note}</p>
+                    <p className="text-sm leading-5 text-muted-foreground">{note.note}</p>
                   </div>
                 ))}
               </div>
@@ -119,15 +118,6 @@ export function StudentProfilePdfSummary({
         </Card>
       </div>
     </section>
-  );
-}
-
-function SummaryMetric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-md border border-border bg-[#f8fafc] p-3">
-      <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</p>
-      <p className="mt-1 truncate text-sm font-semibold text-[#093657]">{value}</p>
-    </div>
   );
 }
 
