@@ -8,6 +8,7 @@ import type { StudentWithRelations } from "@/lib/students/queries";
 import type { StudentBookWithRelations, StudentProfileNoteWithRelations } from "@/lib/student-profile/queries";
 import type { InfirmaryRecordRow, ProfileRow } from "@/types/database";
 import { StudentAvatar } from "@/components/students/student-avatar";
+import { StudentProfilePdfSummary } from "@/components/students/student-profile-pdf-summary";
 import { StudentProfilePdfButton } from "@/components/students/student-profile-pdf-button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,6 +42,17 @@ export function StudentProfileOverview({
 
   return (
     <div className="student-profile-print-area space-y-4">
+      <div className="hidden print:block">
+        <StudentProfilePdfSummary
+          student={student}
+          gradeSummary={gradeSummary}
+          evaluations={evaluations}
+          notes={notes}
+          compact
+        />
+      </div>
+
+      <div className="space-y-4 print:hidden">
       <Card className="bg-white">
         <CardContent className="grid gap-4 p-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1.6fr)]">
           <div className="flex items-start gap-4">
@@ -183,6 +195,7 @@ export function StudentProfileOverview({
             )}
           </CardContent>
         </Card>
+      </div>
       </div>
     </div>
   );
