@@ -22,7 +22,6 @@ export function StudentProfilePdfSummary({
   notes,
   compact = false,
 }: StudentProfilePdfSummaryProps) {
-  const latestEvaluation = evaluations[0] ?? null;
   const recentNotes = notes.slice(0, 1);
   const courseSummaries = gradeSummary?.courseSummaries ?? [];
   const className = compact ? "space-y-3" : "space-y-4";
@@ -53,8 +52,8 @@ export function StudentProfilePdfSummary({
 
           <div className="grid gap-2 sm:grid-cols-3">
             <SummaryMetric label="Ders" value={String(courseSummaries.length)} />
-            <SummaryMetric label="Kanaat" value={String(evaluations.length)} />
-            <SummaryMetric label="Son Dönem" value={latestEvaluation?.term?.name ?? "-"} />
+            <SummaryMetric label="Yorum" value={String(notes.length)} />
+            <SummaryMetric label="Son Dönem" value={evaluations[0]?.term?.name ?? "-"} />
           </div>
         </CardContent>
       </Card>
@@ -99,25 +98,6 @@ export function StudentProfilePdfSummary({
 
         <Card className="bg-white">
           <CardContent className="space-y-3 p-4">
-            <div>
-              <h3 className="text-base font-semibold text-[#093657]">Kanaat Özeti</h3>
-              <p className="text-xs text-muted-foreground">Son değerlendirme ve kısa kanaat özeti.</p>
-            </div>
-            {latestEvaluation ? (
-              <div className="space-y-2 rounded-md border border-border bg-[#f8fafc] p-3">
-                <div className="grid grid-cols-3 gap-2">
-                  <SummaryScore label="Davranış" value={latestEvaluation.behavior_score} />
-                  <SummaryScore label="Devam" value={latestEvaluation.attendance_score} />
-                  <SummaryScore label="Ders" value={latestEvaluation.lesson_performance_score} />
-                </div>
-                <p className="text-sm leading-5 text-muted-foreground">
-                  {latestEvaluation.general_opinion ?? "Genel kanaat girilmedi."}
-                </p>
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">Kanaat kaydı bulunamadı.</p>
-            )}
-
             {recentNotes.length > 0 ? (
               <div className="space-y-2">
                 <div className="flex items-center justify-between gap-3">
@@ -147,15 +127,6 @@ function SummaryMetric({ label, value }: { label: string; value: string }) {
     <div className="rounded-md border border-border bg-[#f8fafc] p-3">
       <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</p>
       <p className="mt-1 truncate text-sm font-semibold text-[#093657]">{value}</p>
-    </div>
-  );
-}
-
-function SummaryScore({ label, value }: { label: string; value: number | null }) {
-  return (
-    <div className="rounded-md border border-border bg-white px-2 py-1.5 text-center">
-      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-[#093657]">{value ?? "-"}</p>
     </div>
   );
 }

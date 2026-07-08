@@ -62,7 +62,6 @@ export default async function StudentInfoPdfPage({ params }: { params: Promise<{
           <Badge variant="outline">Durum: {student.status}</Badge>
           <Badge variant="outline">Genel Ortalama: {formatAverage(gradeSummary?.generalAverage ?? null)}</Badge>
           <Badge variant="outline">Not: {profileEntries.notes.length}</Badge>
-          <Badge variant="outline">Kanaat: {evaluations.length}</Badge>
         </>
       }
     >
