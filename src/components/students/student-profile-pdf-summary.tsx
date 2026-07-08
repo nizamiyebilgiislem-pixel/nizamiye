@@ -4,12 +4,14 @@ import { StudentAvatar } from "@/components/students/student-avatar";
 import type { EvaluationWithRelations } from "@/lib/evaluations/queries";
 import type { StudentGradeSummary } from "@/lib/grades/queries";
 import type { StudentWithRelations } from "@/lib/students/queries";
+import type { StudentProfileNoteWithRelations } from "@/lib/student-profile/queries";
 import { cn } from "@/lib/utils";
 
 type StudentProfilePdfSummaryProps = {
   student: StudentWithRelations;
   gradeSummary: StudentGradeSummary | null;
   evaluations: EvaluationWithRelations[];
+  notes: StudentProfileNoteWithRelations[];
   compact?: boolean;
 };
 
@@ -17,9 +19,11 @@ export function StudentProfilePdfSummary({
   student,
   gradeSummary,
   evaluations,
+  notes,
   compact = false,
 }: StudentProfilePdfSummaryProps) {
   const latestEvaluation = evaluations[0] ?? null;
+  const recentNotes = notes.slice(0, 2);
   const courseSummaries = gradeSummary?.courseSummaries ?? [];
   const className = compact ? "space-y-3" : "space-y-4";
 
@@ -113,6 +117,24 @@ export function StudentProfilePdfSummary({
             ) : (
               <p className="text-sm text-muted-foreground">Kanaat kaydı bulunamadı.</p>
             )}
+
+            {recentNotes.length > 0 ? (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-3">
+                  <h4 className="text-sm font-semibold text-[#093657]">Hoca Yorumu</h4>
+                  <Badge variant="outline">Son 2 not</Badge>
+                </div>
+                {recentNotes.map((note) => (
+                  <div key={note.id} className="rounded-md border border-border bg-[#f8fafc] p-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-sm font-medium text-[#093657]">{note.creator?.full_name ?? "Hoca"}</p>
+                      <p className="text-[11px] text-muted-foreground">{note.term?.name ?? "Dönem yok"}</p>
+                    </div>
+                    <p className="mt-1 text-sm leading-5 text-muted-foreground">{note.note}</p>
+                  </div>
+                ))}
+              </div>
+            ) : null}
           </CardContent>
         </Card>
       </div>

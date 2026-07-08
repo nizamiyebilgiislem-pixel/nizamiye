@@ -47,6 +47,7 @@ export function StudentProfileOverview({
           student={student}
           gradeSummary={gradeSummary}
           evaluations={evaluations}
+          notes={notes}
           compact
         />
       </div>
