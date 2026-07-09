@@ -1,8 +1,9 @@
 import type { ProfileRow } from "@/types/database";
+import { isGlobalViewRole } from "@/types/rbac";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export function canViewHafizlikProgress(profile: ProfileRow) {
-  return ["admin", "genel_mudur", "bolum_muduru", "hoca", "rehberlik"].includes(profile.role);
+  return isGlobalViewRole(profile.role) || ["bolum_muduru", "hoca", "rehberlik"].includes(profile.role);
 }
 
 export async function canManageHafizlikProgress(

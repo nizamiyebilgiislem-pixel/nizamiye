@@ -15,7 +15,7 @@ export default async function GradesDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Not Sistemi" title="Not Sistemi" description="Ders, dönem ve sınav giriş süreçlerini yönetin." />
+      <PageHeader eyebrow="Not Sistemi" title="Not Sistemi" description="Ders ve dönem süreçlerini yönetin." />
       <section className="grid gap-4 md:grid-cols-3">
         <SummaryCard icon={BookOpen} label="Aktif Ders" value={summary.activeCourseCount} />
         <SummaryCard icon={CalendarDays} label="Aktif Dönem" value={summary.activeTermCount} />
@@ -39,7 +39,6 @@ export default async function GradesDashboardPage() {
         ) : (
           <Link href="/not-sistemi/donemler" className={cn(buttonVariants({ variant: "secondary" }))}>Dönemler</Link>
         )}
-        {profile.role !== "destek_birim_muduru" ? <Link href="/not-sistemi/not-girisi" className={cn(buttonVariants())}>Sınav Girişi</Link> : null}
         <Link href="/egitim-planlama" className={cn(buttonVariants({ variant: "outline" }))}>Eğitim Planlama</Link>
       </div>
     </div>

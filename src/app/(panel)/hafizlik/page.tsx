@@ -6,6 +6,7 @@ import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { deleteHafizlikProgressAction } from "@/lib/hafizlik/actions";
 
 import { PageHeader } from "@/components/layout/page-header";
+import { canViewHafizlikProgress } from "@/lib/hafizlik/permissions";
 import { getHafizlikDepartmentScope, getHafizlikStudentsByDepartment } from "@/lib/hafizlik/queries";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -24,11 +25,12 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
   const { profile } = await requireAuth();
   const query = await searchParams;
 
-  if (!["admin", "genel_mudur", "bolum_muduru", "hoca"].includes(profile.role)) {
+  if (!canViewHafizlikProgress(profile)) {
     redirect("/dashboard?error=unauthorized");
   }
 
   const scope = await getHafizlikDepartmentScope(profile, query.department);
+  const canManageHafizlik = ["admin", "genel_mudur", "bolum_muduru", "hoca"].includes(profile.role);
 
   if (!scope.selectedDepartment) {
     return (
@@ -68,11 +70,13 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
           title="Hafızlık Takibi"
           description={`${scope.selectedDepartment.name} bölümündeki hafız öğrencilerin cüz bazlı ilerleme takibi.`}
         />
-        <div className="flex gap-2">
-          <Link href={`/hafizlik/guncelle?department=${scope.selectedDepartment.id}`} className={buttonVariants()}>
-            Toplu Güncelle
-          </Link>
-        </div>
+        {canManageHafizlik ? (
+          <div className="flex gap-2">
+            <Link href={`/hafizlik/guncelle?department=${scope.selectedDepartment.id}`} className={buttonVariants()}>
+              Toplu Güncelle
+            </Link>
+          </div>
+        ) : null}
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
@@ -255,10 +259,12 @@ export default async function HafizlikDashboardPage({ searchParams }: HafizlikDa
                     <Link href={`/talebeler/${student.id}?tab=hafizlik`} className={buttonVariants({ variant: "ghost", size: "sm" })}>
                       Detay
                     </Link>
-                    <Link href={`/hafizlik/${student.id}`} className={buttonVariants({ variant: "ghost", size: "sm" })}>
-                      Düzenle
-                    </Link>
-                    {student.progress?.id ? (
+                    {canManageHafizlik ? (
+                      <Link href={`/hafizlik/${student.id}`} className={buttonVariants({ variant: "ghost", size: "sm" })}>
+                        Düzenle
+                      </Link>
+                    ) : null}
+                    {canManageHafizlik && student.progress?.id ? (
                       <form action={deleteHafizlikProgressAction.bind(null, student.progress.id) as unknown as (formData: FormData) => void}>
                         <FormSubmitButton variant="destructive" size="xs">
                           <Trash2 className="size-4" />

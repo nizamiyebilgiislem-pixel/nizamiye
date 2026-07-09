@@ -226,14 +226,39 @@ export async function bulkUpdateHafizlikProgressAction(formData: FormData): Prom
 export async function deleteHafizlikProgressAction(progressId: string) {
   const { profile } = await requireAuth();
   const supabase = await createSupabaseServerClient();
+  const parsedProgressId = z.string().uuid().safeParse(progressId);
+
+  if (!parsedProgressId.success) {
+    return { error: "Geçersiz hafızlık kaydı." };
+  }
+
+  const { data: progress, error: progressError } = await supabase
+    .from("hafizlik_progress")
+    .select("student_id")
+    .eq("id", parsedProgressId.data)
+    .maybeSingle();
+
+  if (progressError) {
+    logSupabaseActionError({ action: "deleteHafizlikProgress.lookup", profile, payload: { id: parsedProgressId.data }, error: progressError });
+    return { error: buildFriendlyDbErrorMessage(progressError) };
+  }
+
+  if (!progress?.student_id) {
+    return { error: "Hafızlık kaydı bulunamadı." };
+  }
+
+  const permResult = await canManageHafizlikProgress(supabase, profile, progress.student_id);
+  if (permResult.error) {
+    return { error: permResult.error.message };
+  }
 
   const { error } = await supabase
     .from("hafizlik_progress")
     .delete()
-    .eq("id", progressId);
+    .eq("id", parsedProgressId.data);
 
   if (error) {
-    logSupabaseActionError({ action: "deleteHafizlikProgress", profile, payload: { id: progressId }, error });
+    logSupabaseActionError({ action: "deleteHafizlikProgress", profile, payload: { id: parsedProgressId.data }, error });
     return { error: buildFriendlyDbErrorMessage(error) };
   }
 

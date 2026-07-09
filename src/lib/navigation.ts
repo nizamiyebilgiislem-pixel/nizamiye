@@ -26,7 +26,7 @@ const academicTermViewerRoles: UserRole[] = ["bolum_muduru"];
 const parentManagerRoles: UserRole[] = [...staffViewerRoles];
 const allRoles: UserRole[] = [...topViewerRoles, "bolum_muduru", "hoca", "veli", "destek_birim_muduru"];
 const accountRoles: UserRole[] = [...allRoles, "muhasebe"];
-const assistantRoles: UserRole[] = ["admin", "genel_mudur", "bolum_muduru", "hoca", "kutuphane_gorevlisi", "destek_birim_muduru", "rehberlik", "veli"];
+const assistantRoles: UserRole[] = ["admin", "genel_mudur", "yonetim", "bolum_muduru", "hoca", "kutuphane_gorevlisi", "destek_birim_muduru", "rehberlik", "veli"];
 const libraryRoles: UserRole[] = ["admin", "genel_mudur", "yonetim", "kutuphane_gorevlisi", "bolum_muduru", "hoca", "destek_birim_muduru"];
 const guidanceRoles: UserRole[] = ["admin", "genel_mudur", "yonetim", "rehberlik", "bolum_muduru", "hoca"];
 const talepRoles: UserRole[] = ["admin", "genel_mudur", "yonetim", "bolum_muduru", "destek_birim_muduru"];
@@ -57,7 +57,6 @@ export const moduleGroups: NavigationGroup[] = [
     items: [
       { label: "Ders Sistemi", href: "/ders-sistemi", iconKey: "grades", allowedRoles: managerRoles },
       { label: "Ders Notları", href: "/ders-notlari", iconKey: "book", allowedRoles: staffRoles },
-      { label: "Sınav Girişi", href: "/not-sistemi/not-girisi", iconKey: "grades", allowedRoles: staffViewerRoles },
       { label: "Dönemler", href: "/not-sistemi/donemler", iconKey: "calendar", allowedRoles: academicTermViewerRoles },
       { label: "Eğitim Planlama", href: "/egitim-planlama", iconKey: "calendar", allowedRoles: staffViewerRoles },
       { label: "Kanaat Sistemi", href: "/kanaat-sistemi", iconKey: "evaluations", allowedRoles: staffViewerRoles },

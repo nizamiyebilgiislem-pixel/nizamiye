@@ -28,7 +28,7 @@ export default async function StudentReportsPage({ searchParams }: StudentReport
   const filterClasses = selectedDepartmentId
     ? baseScope.classes.filter((classRow) => classRow.department_id === selectedDepartmentId)
     : baseScope.classes;
-  const bulkProfilePrintHref = buildProfilePrintHref({ departmentId: selectedDepartmentId, classId: selectedClassId });
+  const bulkPdfHref = buildBulkPdfHref({ departmentId: selectedDepartmentId, classId: selectedClassId });
   const showDepartmentFilter = isGlobalViewRole(profile.role);
   const showClassFilter = isGlobalViewRole(profile.role) || profile.role === "bolum_muduru";
   const groupedClasses = scope.classes.map((classRow) => ({
@@ -44,15 +44,14 @@ export default async function StudentReportsPage({ searchParams }: StudentReport
         description="Yetki kapsaminizdaki aktif talebelerin toplu bilgi formu PDF ciktisini alin."
         actions={
           scope.students.length > 0 ? (
-            <Link
-              href={bulkProfilePrintHref}
+            <a
+              href={bulkPdfHref}
               className={cn(buttonVariants({ variant: "default", size: "sm" }))}
-              target="_blank"
-              rel="noreferrer"
+              download
             >
               <Download className="size-4" aria-hidden="true" />
-              Profil Raporu Al
-            </Link>
+              Toplu PDF İndir
+            </a>
           ) : null
         }
       />
@@ -124,20 +123,19 @@ export default async function StudentReportsPage({ searchParams }: StudentReport
             <div>
               <h2 className="text-sm font-semibold text-[#093657]">Tek tik toplu PDF</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Rapor, talebe detayindaki profil sekmesi ve veli paneli gorunumune yakin sekilde hazirlanir.
+                Bolum muduru yalniz kendi bolumunu, sinif hocasi yalniz sinif hocasi oldugu siniflari indirir.
               </p>
             </div>
           </div>
           {scope.students.length > 0 ? (
-            <Link
-              href={bulkProfilePrintHref}
+            <a
+              href={bulkPdfHref}
               className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
-              target="_blank"
-              rel="noreferrer"
+              download
             >
               <Download className="size-4" aria-hidden="true" />
-              Tum Kapsami Yazdir
-            </Link>
+              Tüm Kapsamı İndir
+            </a>
           ) : null}
         </CardContent>
       </Card>
@@ -157,15 +155,14 @@ export default async function StudentReportsPage({ searchParams }: StudentReport
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge variant="outline">{students.length} talebe</Badge>
                     {students.length > 0 ? (
-                      <Link
-                        href={`/raporlar/ogrenciler/profil-yazdir?classId=${classRow.id}`}
+                      <a
+                        href={`/api/reports/students/bulk-pdf?classId=${classRow.id}`}
                         className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
-                        target="_blank"
-                        rel="noreferrer"
+                        download
                       >
                         <Download className="size-4" aria-hidden="true" />
-                        Sinif Profil Raporu
-                      </Link>
+                        Sınıf PDF İndir
+                      </a>
                     ) : null}
                   </div>
                 </div>
@@ -192,12 +189,12 @@ export default async function StudentReportsPage({ searchParams }: StudentReport
   );
 }
 
-function buildProfilePrintHref(filters: { departmentId?: string | null; classId?: string | null }) {
+function buildBulkPdfHref(filters: { departmentId?: string | null; classId?: string | null }) {
   const params = new URLSearchParams();
   if (filters.departmentId) params.set("departmentId", filters.departmentId);
   if (filters.classId) params.set("classId", filters.classId);
   const query = params.toString();
-  return query ? `/raporlar/ogrenciler/profil-yazdir?${query}` : "/raporlar/ogrenciler/profil-yazdir";
+  return query ? `/api/reports/students/bulk-pdf?${query}` : "/api/reports/students/bulk-pdf";
 }
 
 function MiniStat({ label, value }: { label: string; value: number | string }) {

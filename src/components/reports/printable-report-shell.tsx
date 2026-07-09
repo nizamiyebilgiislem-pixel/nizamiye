@@ -33,7 +33,7 @@ export function PrintableReportShell({
         <PdfPrintButton />
       </div>
 
-      <article className="mx-auto max-w-[210mm] space-y-6 rounded-md border border-border bg-white p-6 shadow-sm print:max-w-none print:border-0 print:p-0 print:shadow-none">
+      <article data-print-root="true" className="mx-auto max-w-[210mm] space-y-6 rounded-md border border-border bg-white p-6 shadow-sm print:max-w-none print:border-0 print:p-0 print:shadow-none">
         <header className="space-y-3 border-b border-border pb-4">
           <p className="text-xs font-medium uppercase tracking-[0.24em] text-[#093657]">Nizamiye Öğrenci Sistemi</p>
           <div className="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">

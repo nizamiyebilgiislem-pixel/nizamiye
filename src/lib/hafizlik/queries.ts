@@ -1,5 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { DepartmentRow, HafizlikProgressRow, ProfileRow } from "@/types/database";
+import { isGlobalViewRole } from "@/types/rbac";
 
 type ScopedDepartment = Pick<DepartmentRow, "id" | "name" | "slug">;
 
@@ -38,7 +39,7 @@ export async function getHafizlikDepartmentScope(
     .eq("is_active", true)
     .order("name", { ascending: true });
 
-  const canSelectDepartment = profile.role === "admin" || profile.role === "genel_mudur";
+  const canSelectDepartment = isGlobalViewRole(profile.role);
 
   if (!canSelectDepartment) {
     query = query.eq("id", profile.department_id ?? "");

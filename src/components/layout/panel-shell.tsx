@@ -23,7 +23,7 @@ type PanelShellProps = {
 export function PanelShell({ children, navigationGroups, profile }: PanelShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const roleLabel = roleLabels[profile.role];
-  const canUseAssistant = ["admin", "genel_mudur", "bolum_muduru", "hoca", "kutuphane_gorevlisi", "destek_birim_muduru", "rehberlik", "veli"].includes(profile.role);
+  const canUseAssistant = ["admin", "genel_mudur", "yonetim", "bolum_muduru", "hoca", "kutuphane_gorevlisi", "destek_birim_muduru", "rehberlik", "veli"].includes(profile.role);
 
   return (
     <div className="min-h-screen bg-[#f6f8fa] text-foreground">
@@ -79,7 +79,7 @@ export function PanelShell({ children, navigationGroups, profile }: PanelShellPr
           </header>
 
           {/* Main content */}
-          <main className={cn("flex-1 px-5 py-6 lg:px-8")}>{children}</main>
+          <main data-print-root="true" className={cn("flex-1 px-5 py-6 lg:px-8")}>{children}</main>
         </div>
       </div>
 

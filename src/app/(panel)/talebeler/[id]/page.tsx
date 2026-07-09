@@ -55,7 +55,7 @@ import { getStudentTermSnapshots } from "@/lib/terms/queries";
 import { canEditStudent, canViewStudent } from "@/lib/students/permissions";
 import { getStudentById } from "@/lib/students/queries";
 import { getHafizlikProgress, updateHafizlikProgressAction } from "@/lib/hafizlik/actions";
-import { canManageHafizlikProgress } from "@/lib/hafizlik/permissions";
+import { canManageHafizlikProgress, canViewHafizlikProgress } from "@/lib/hafizlik/permissions";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
@@ -108,6 +108,7 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
   const supabase = await createSupabaseServerClient();
   const hafizlikPermResult = await canManageHafizlikProgress(supabase, profile, student.id);
   const canManageHafizlik = !hafizlikPermResult.error;
+  const canViewHafizlik = canViewHafizlikProgress(profile);
   const hafizlikProgress = await getHafizlikProgress(student.id);
 
   return (
@@ -168,7 +169,7 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
         <Link href={`/talebeler/${student.id}/revir/pdf`} target="_blank" rel="noreferrer" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
           Revir PDF
         </Link>
-        {canManageHafizlik && (
+        {canViewHafizlik && (
           <Link href={`/talebeler/${student.id}/hafizlik/pdf`} target="_blank" rel="noreferrer" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
             Hafızlık PDF
           </Link>
@@ -184,7 +185,7 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
           <TabsTrigger value="egitim">Eğitim Bilgileri</TabsTrigger>
           <TabsTrigger value="notlar">Notlar</TabsTrigger>
           <TabsTrigger value="kanaatler">Kanaatler</TabsTrigger>
-          {canManageHafizlik && <TabsTrigger value="hafizlik">Hafızlık</TabsTrigger>}
+          {canViewHafizlik && <TabsTrigger value="hafizlik">Hafızlık</TabsTrigger>}
           {canViewInfirmaryTab && <TabsTrigger value="revir">Revir</TabsTrigger>}
           <TabsTrigger value="evraklar">Evraklar</TabsTrigger>
           {canViewAttendanceTab && <TabsTrigger value="yoklama">Yoklama</TabsTrigger>}
@@ -267,7 +268,7 @@ export default async function StudentDetailPage({ params, searchParams }: Studen
         <TabsContent value="kanaatler">
           <EvaluationSummary evaluations={evaluations} studentId={student.id} canEdit={canEditEvaluations} />
         </TabsContent>
-        {canManageHafizlik && (
+        {canViewHafizlik && (
           <TabsContent value="hafizlik">
             <HafizlikProgressPanel
               studentId={student.id}

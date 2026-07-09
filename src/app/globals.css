@@ -134,6 +134,37 @@
     margin: 14mm;
   }
 
+  body:has([data-print-root="true"]) {
+    background: #ffffff;
+  }
+
+  body:has([data-print-root="true"]) * {
+    visibility: hidden;
+  }
+
+  body:has([data-print-root="true"]) [data-print-root="true"],
+  body:has([data-print-root="true"]) [data-print-root="true"] * {
+    visibility: visible;
+  }
+
+  body:has([data-print-root="true"]) [data-print-root="true"] {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    padding: 0 !important;
+  }
+
+  body:has([data-print-root="true"]) [data-print-hidden="true"],
+  body:has([data-print-root="true"]) [data-print-hidden="true"] * {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  body:has([data-print-root="true"]) [data-slot="card"] {
+    break-inside: avoid;
+    box-shadow: none;
+  }
+
   body:has(.student-profile-print-area[data-print-active="true"]) {
     background: #ffffff;
   }

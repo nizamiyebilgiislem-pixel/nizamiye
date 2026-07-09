@@ -103,7 +103,7 @@ export default async function ReportsPage() {
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Yazdırılabilir</p>
             </div>
             <p className="mt-2 text-sm text-muted-foreground">
-              Tüm rapor sayfaları <strong>PDF</strong> olarak yazdırılabilir. Raporu açın, &quot;Yazdır / PDF Al&quot; butonunu kullanın.
+              Tüm rapor sayfaları yazdırılabilir. Raporu açın, &quot;Yazdır&quot; butonunu kullanın.
             </p>
           </CardContent>
         </Card>

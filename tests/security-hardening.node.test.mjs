@@ -13,6 +13,7 @@ import { canEditInfirmaryRecord } from "../src/lib/infirmary/permissions.ts";
 import { canBindParentFromStudentDetail } from "../src/lib/parents/permissions.ts";
 import { canManageAcademicTerms } from "../src/lib/terms/management-permissions.ts";
 import { canManageGuidance, canViewGuidance } from "../src/lib/guidance/permissions.ts";
+import { canViewHafizlikProgress } from "../src/lib/hafizlik/permissions.ts";
 import { isAssignableRole } from "../src/lib/tasks/permissions.ts";
 import { canCreateStudent, canViewArchive, canViewStudent } from "../src/lib/students/permissions.ts";
 import { canCreateTalep } from "../src/lib/talepler/permissions.ts";
@@ -78,8 +79,10 @@ test("hoca role can access hafizlik module from navigation and routes", () => {
 
   const nav = getNavigationForRole("hoca");
   const labels = nav.flatMap((group) => group.items.map((item) => item.label));
+  const hrefs = nav.flatMap((group) => group.items.map((item) => item.href));
 
   assert.equal(labels.includes("Hafızlık Takibi"), true);
+  assert.equal(hrefs.includes("/not-sistemi/not-girisi"), false);
 });
 
 test("rehberlik can view students but cannot create students or talepler", () => {
@@ -110,8 +113,12 @@ test("yonetim role can view global routes but cannot use write helpers", async (
   assert.equal(getRouteAllowedRoles("/dashboard")?.includes("yonetim"), true);
   assert.equal(getRouteAllowedRoles("/kullanicilar")?.includes("yonetim"), true);
   assert.equal(getRouteAllowedRoles("/audit-log")?.includes("yonetim"), true);
+  assert.equal(getRouteAllowedRoles("/asistan")?.includes("yonetim"), true);
+  assert.equal(getRouteAllowedRoles("/hafizlik")?.includes("yonetim"), true);
+  assert.equal(getRouteAllowedRoles("/hafizlik/guncelle")?.includes("yonetim"), false);
   assert.equal(getRouteAllowedRoles("/talebeler/yeni")?.includes("yonetim"), false);
   assert.equal(getRouteAllowedRoles("/kullanicilar/yeni")?.includes("yonetim"), false);
+  assert.equal(getNavigationForRole("yonetim").flatMap((group) => group.items.map((item) => item.href)).includes("/asistan"), true);
 
   assert.equal(canViewStudent(yonetim, { department_id: "dep-1" }), true);
   assert.equal(canCreateStudent(yonetim), false);
@@ -120,6 +127,7 @@ test("yonetim role can view global routes but cannot use write helpers", async (
   assert.equal(canManageAttendance(yonetim), false);
   assert.equal(await canManageGuidance(yonetim), false);
   assert.equal(canViewGuidance(yonetim), true);
+  assert.equal(canViewHafizlikProgress(yonetim), true);
   assert.equal(canEditStudentGrades(yonetim, { status: "active" }, { department_id: "dep-1", class_teacher_id: null }, []), false);
   assert.equal(canEditStudentEvaluations(yonetim, { status: "active" }, { department_id: "dep-1", class_teacher_id: null }), false);
   assert.equal(canEditInfirmaryRecord(yonetim, { status: "active" }, { department_id: "dep-1", class_teacher_id: null }), false);
