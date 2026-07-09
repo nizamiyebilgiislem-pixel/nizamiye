@@ -31,9 +31,10 @@ export default async function EducationSchedulePage({ params, searchParams }: Pr
 
   const canManage = canManageClassSchedule(profile, data.classRow);
   const activeClassCourses = data.classCourses.filter((classCourse) => classCourse.is_active);
-  const visibleSlots = canManage
-    ? data.slots
-    : data.slots.filter((slot) => data.classRow.class_teacher_id === profile.id || slot.class_course?.teacher_id === profile.id);
+  const shouldScopeSlotsToTeacher = !canManage && profile.role === "hoca";
+  const visibleSlots = shouldScopeSlotsToTeacher
+    ? data.slots.filter((slot) => data.classRow.class_teacher_id === profile.id || slot.class_course?.teacher_id === profile.id)
+    : data.slots;
   const selectedDay = clampDay(Number(query.day ?? 1));
   const selectedPeriod = Math.max(1, Number(query.period ?? 1) || 1);
   const selectedSlot = query.slotId ? visibleSlots.find((slot) => slot.id === query.slotId) ?? null : null;
@@ -120,7 +121,7 @@ export default async function EducationSchedulePage({ params, searchParams }: Pr
       ) : (
         <Card>
           <CardContent className="py-4 text-sm text-muted-foreground">
-            Bu sayfa yalnızca yönetim rolünde ders programı düzenlemek için kullanılabilir.
+            Bu sayfa salt okunur görüntüleme modundadır. Ders programında değişiklik yapma yetkiniz bulunmuyor.
           </CardContent>
         </Card>
       )}

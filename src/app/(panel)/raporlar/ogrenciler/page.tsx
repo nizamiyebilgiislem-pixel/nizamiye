@@ -41,7 +41,7 @@ export default async function StudentReportsPage({ searchParams }: StudentReport
       <PageHeader
         eyebrow="PDF Merkezi"
         title="Talebe Raporlari"
-        description="Yetki kapsaminizdaki aktif talebelerin toplu bilgi formu PDF ciktisini alin."
+        description="Yetki kapsaminizdaki aktif talebelerin detayli profil PDF ciktisini alin."
         actions={
           scope.students.length > 0 ? (
             <a
@@ -123,7 +123,7 @@ export default async function StudentReportsPage({ searchParams }: StudentReport
             <div>
               <h2 className="text-sm font-semibold text-[#093657]">Tek tik toplu PDF</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Bolum muduru yalniz kendi bolumunu, sinif hocasi yalniz sinif hocasi oldugu siniflari indirir.
+                Her talebe ayri sayfada; notlar, kanaat/yorum, hoca notlari ve diger profil ozetleriyle indirilir.
               </p>
             </div>
           </div>

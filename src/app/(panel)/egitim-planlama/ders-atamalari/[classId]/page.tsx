@@ -27,9 +27,10 @@ export default async function EducationAssignmentPage({ params, searchParams }: 
   }
 
   const canManage = canManageClassAssignments(profile, data.classRow);
-  const visibleClassCourses = canManage
-    ? data.classCourses
-    : data.classCourses.filter((classCourse) => classCourse.teacher_id === profile.id || data.classRow.class_teacher_id === profile.id);
+  const shouldScopeCoursesToTeacher = !canManage && profile.role === "hoca";
+  const visibleClassCourses = shouldScopeCoursesToTeacher
+    ? data.classCourses.filter((classCourse) => classCourse.teacher_id === profile.id || data.classRow.class_teacher_id === profile.id)
+    : data.classCourses;
 
   return (
     <div className="space-y-6">
@@ -99,7 +100,7 @@ export default async function EducationAssignmentPage({ params, searchParams }: 
       ) : (
         <Card>
           <CardContent className="py-4 text-sm text-muted-foreground">
-            Bu sayfa yalnızca yönetim rolünde ders ataması yapmak için kullanılabilir.
+            Bu sayfa salt okunur görüntüleme modundadır. Ders atamalarında değişiklik yapma yetkiniz bulunmuyor.
           </CardContent>
         </Card>
       )}

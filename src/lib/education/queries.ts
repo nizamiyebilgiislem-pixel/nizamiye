@@ -1,6 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { createSupabaseAdminClient, SupabaseAdminConfigError } from "@/lib/supabase/admin";
 import { canManageEducationPlanning, canViewClassSchedule, canViewEducationClass } from "@/lib/education/permissions";
+import { isGlobalViewRole } from "@/types/rbac";
 import type {
   ClassCourseRow,
   ClassRow,
@@ -90,9 +90,10 @@ export async function getEducationAssignmentData(profile: ProfileRow, classId: s
 
   const supabase = await createSupabaseServerClient();
   const departmentId = classRow.department_id;
-  const [coursesResult, teacherProfilesResult, classCoursesResult, slotsResult] = await Promise.all([
+  const [coursesResult, teacherProfilesResult, managerProfilesResult, classCoursesResult, slotsResult] = await Promise.all([
     supabase.from("courses").select("*").eq("department_id", departmentId).eq("is_active", true).order("name", { ascending: true }),
-    getAllAssignableTeachers(),
+    supabase.from("profiles").select("*").eq("role", "hoca").eq("is_active", true).order("full_name", { ascending: true }),
+    supabase.from("profiles").select("*").eq("department_id", departmentId).eq("role", "bolum_muduru").eq("is_active", true).order("full_name", { ascending: true }),
     supabase.from("class_courses").select("*").eq("class_id", classId).order("created_at", { ascending: true }),
     supabase.from("weekly_schedule_slots").select("*").eq("class_id", classId),
   ]);
@@ -100,6 +101,7 @@ export async function getEducationAssignmentData(profile: ProfileRow, classId: s
   const loadError = collectEducationLoadError([
     coursesResult.error,
     teacherProfilesResult.error,
+    managerProfilesResult.error,
     classCoursesResult.error,
     slotsResult.error,
   ]);
@@ -111,7 +113,10 @@ export async function getEducationAssignmentData(profile: ProfileRow, classId: s
   const classCourses = await attachClassCourseRelations(classCoursesResult.data ?? [], slotsResult.data ?? []);
   const assignedCourseIds = new Set(classCourses.map((classCourse) => classCourse.course_id));
 
-  const availableTeachers = dedupeProfilesById(teacherProfilesResult.data ?? []);
+  const availableTeachers = dedupeProfilesById([
+    ...(teacherProfilesResult.data ?? []),
+    ...(managerProfilesResult.data ?? []),
+  ]);
 
   return {
     classRow,
@@ -120,34 +125,6 @@ export async function getEducationAssignmentData(profile: ProfileRow, classId: s
     availableTeachers,
     loadError,
   };
-}
-
-async function getAllAssignableTeachers(): Promise<{ data: ProfileRow[]; error: { code?: string | null; message?: string | null } | null }> {
-  try {
-    const admin = createSupabaseAdminClient();
-    const { data, error } = await admin
-      .from("profiles")
-      .select("*")
-      .eq("role", "hoca")
-      .eq("is_active", true)
-      .order("full_name", { ascending: true });
-
-    return { data: data ?? [], error };
-  } catch (error) {
-    if (!(error instanceof SupabaseAdminConfigError)) {
-      throw error;
-    }
-
-    const supabase = await createSupabaseServerClient();
-    const { data, error: serverError } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("role", "hoca")
-      .eq("is_active", true)
-      .order("full_name", { ascending: true });
-
-    return { data: data ?? [], error: serverError };
-  }
 }
 
 export async function getEducationScheduleData(profile: ProfileRow, classId: string): Promise<EducationScheduleData | null> {
@@ -306,7 +283,7 @@ async function getVisibleEducationClasses(profile: ProfileRow) {
   ]);
 
   const classes = (classesResult.data ?? []).filter((classRow) => {
-    if (profile.role === "admin" || profile.role === "genel_mudur") {
+    if (isGlobalViewRole(profile.role)) {
       return true;
     }
 

@@ -8,6 +8,7 @@ import { getDefaultPathForRole, getRouteAllowedRoles } from "../src/lib/route-pe
 import { canManageAttendance } from "../src/lib/attendance/permissions.ts";
 import { canEditStudentDocuments } from "../src/lib/documents/permissions.ts";
 import { canEditStudentEvaluations } from "../src/lib/evaluations/permissions.ts";
+import { canManageClassAssignments, canManageClassSchedule, canViewClassSchedule } from "../src/lib/education/permissions.ts";
 import { canEditStudentGrades } from "../src/lib/grades/permissions.ts";
 import { canEditInfirmaryRecord } from "../src/lib/infirmary/permissions.ts";
 import { canBindParentFromStudentDetail } from "../src/lib/parents/permissions.ts";
@@ -114,6 +115,9 @@ test("yonetim role can view global routes but cannot use write helpers", async (
   assert.equal(getRouteAllowedRoles("/kullanicilar")?.includes("yonetim"), true);
   assert.equal(getRouteAllowedRoles("/audit-log")?.includes("yonetim"), true);
   assert.equal(getRouteAllowedRoles("/asistan")?.includes("yonetim"), true);
+  assert.equal(getRouteAllowedRoles("/egitim-planlama")?.includes("yonetim"), true);
+  assert.equal(getRouteAllowedRoles("/egitim-planlama/ders-atamalari")?.includes("yonetim"), true);
+  assert.equal(getRouteAllowedRoles("/egitim-planlama/ders-programi")?.includes("yonetim"), true);
   assert.equal(getRouteAllowedRoles("/hafizlik")?.includes("yonetim"), true);
   assert.equal(getRouteAllowedRoles("/hafizlik/guncelle")?.includes("yonetim"), false);
   assert.equal(getRouteAllowedRoles("/talebeler/yeni")?.includes("yonetim"), false);
@@ -128,6 +132,9 @@ test("yonetim role can view global routes but cannot use write helpers", async (
   assert.equal(await canManageGuidance(yonetim), false);
   assert.equal(canViewGuidance(yonetim), true);
   assert.equal(canViewHafizlikProgress(yonetim), true);
+  assert.equal(canViewClassSchedule(yonetim, { department_id: "dep-1", class_teacher_id: null }, []), true);
+  assert.equal(canManageClassAssignments(yonetim, { department_id: "dep-1" }), false);
+  assert.equal(canManageClassSchedule(yonetim, { department_id: "dep-1" }), false);
   assert.equal(canEditStudentGrades(yonetim, { status: "active" }, { department_id: "dep-1", class_teacher_id: null }, []), false);
   assert.equal(canEditStudentEvaluations(yonetim, { status: "active" }, { department_id: "dep-1", class_teacher_id: null }), false);
   assert.equal(canEditInfirmaryRecord(yonetim, { status: "active" }, { department_id: "dep-1", class_teacher_id: null }), false);
