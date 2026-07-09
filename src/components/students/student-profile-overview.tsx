@@ -30,6 +30,7 @@ export function StudentProfileOverview({
   notes,
   books,
   canEdit,
+  showPdfButton = true,
 }: {
   student: StudentWithRelations;
   gradeSummary: StudentGradeSummary | null;
@@ -38,6 +39,7 @@ export function StudentProfileOverview({
   notes: StudentProfileNoteWithRelations[];
   books: StudentBookWithRelations[];
   canEdit: boolean;
+  showPdfButton?: boolean;
 }) {
   const latestEvaluation = evaluations[0] ?? null;
   const latestInfirmary = infirmaryRecords[0] ?? null;
@@ -70,9 +72,11 @@ export function StudentProfileOverview({
               </div>
             </div>
             <div className="space-y-3">
-              <div className="flex justify-end">
-                <StudentProfilePdfButton fileName={`${student.full_name} öğrenci profili`} />
-              </div>
+              {showPdfButton ? (
+                <div className="flex justify-end">
+                  <StudentProfilePdfButton fileName={`${student.full_name} öğrenci profili`} />
+                </div>
+              ) : null}
               <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 <Metric icon={TrendingUp} label="Genel Ortalama" value={formatAverage(gradeSummary?.generalAverage ?? null)} />
                 <Metric icon={MessageSquareText} label="Hoca Yorumu" value={notes.length.toString()} />

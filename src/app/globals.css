@@ -194,6 +194,35 @@
     break-inside: avoid;
     box-shadow: none;
   }
+
+  .student-profile-bulk-page {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .student-profile-bulk-page .student-profile-print-area {
+    gap: 10px !important;
+  }
+
+  .student-profile-bulk-page [data-slot="card"] {
+    break-inside: avoid;
+    box-shadow: none !important;
+  }
+
+  .student-profile-bulk-page [data-slot="card-content"],
+  .student-profile-bulk-page [data-slot="card-header"] {
+    padding: 10px !important;
+  }
+
+  .student-profile-bulk-page h2 {
+    font-size: 18px !important;
+  }
+
+  .student-profile-bulk-page p,
+  .student-profile-bulk-page span,
+  .student-profile-bulk-page div {
+    line-height: 1.25 !important;
+  }
 }
 
 @keyframes shake {

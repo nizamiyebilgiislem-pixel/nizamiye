@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Download, FileText, UsersRound } from "lucide-react";
+import { FileText, Printer, UsersRound } from "lucide-react";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { StudentCompactCard } from "@/components/students/student-compact-card";
@@ -28,7 +28,7 @@ export default async function StudentReportsPage({ searchParams }: StudentReport
   const filterClasses = selectedDepartmentId
     ? baseScope.classes.filter((classRow) => classRow.department_id === selectedDepartmentId)
     : baseScope.classes;
-  const bulkPdfHref = buildBulkPdfHref({ departmentId: selectedDepartmentId, classId: selectedClassId });
+  const profilePrintHref = buildProfilePrintHref({ departmentId: selectedDepartmentId, classId: selectedClassId });
   const showDepartmentFilter = isGlobalViewRole(profile.role);
   const showClassFilter = isGlobalViewRole(profile.role) || profile.role === "bolum_muduru";
   const groupedClasses = scope.classes.map((classRow) => ({
@@ -45,12 +45,13 @@ export default async function StudentReportsPage({ searchParams }: StudentReport
         actions={
           scope.students.length > 0 ? (
             <a
-              href={bulkPdfHref}
+              href={profilePrintHref}
               className={cn(buttonVariants({ variant: "default", size: "sm" }))}
-              download
+              target="_blank"
+              rel="noreferrer"
             >
-              <Download className="size-4" aria-hidden="true" />
-              Toplu PDF İndir
+              <Printer className="size-4" aria-hidden="true" />
+              Profil PDF Yazdir
             </a>
           ) : null
         }
@@ -129,12 +130,13 @@ export default async function StudentReportsPage({ searchParams }: StudentReport
           </div>
           {scope.students.length > 0 ? (
             <a
-              href={bulkPdfHref}
+              href={profilePrintHref}
               className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
-              download
+              target="_blank"
+              rel="noreferrer"
             >
-              <Download className="size-4" aria-hidden="true" />
-              Tüm Kapsamı İndir
+              <Printer className="size-4" aria-hidden="true" />
+              Tum Kapsami Yazdir
             </a>
           ) : null}
         </CardContent>
@@ -156,12 +158,13 @@ export default async function StudentReportsPage({ searchParams }: StudentReport
                     <Badge variant="outline">{students.length} talebe</Badge>
                     {students.length > 0 ? (
                       <a
-                        href={`/api/reports/students/bulk-pdf?classId=${classRow.id}`}
+                        href={buildProfilePrintHref({ classId: classRow.id })}
                         className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
-                        download
+                        target="_blank"
+                        rel="noreferrer"
                       >
-                        <Download className="size-4" aria-hidden="true" />
-                        Sınıf PDF İndir
+                        <Printer className="size-4" aria-hidden="true" />
+                        Sinif Profil PDF
                       </a>
                     ) : null}
                   </div>
@@ -189,12 +192,12 @@ export default async function StudentReportsPage({ searchParams }: StudentReport
   );
 }
 
-function buildBulkPdfHref(filters: { departmentId?: string | null; classId?: string | null }) {
+function buildProfilePrintHref(filters: { departmentId?: string | null; classId?: string | null }) {
   const params = new URLSearchParams();
   if (filters.departmentId) params.set("departmentId", filters.departmentId);
   if (filters.classId) params.set("classId", filters.classId);
   const query = params.toString();
-  return query ? `/api/reports/students/bulk-pdf?${query}` : "/api/reports/students/bulk-pdf";
+  return query ? `/raporlar/ogrenciler/profil-yazdir?${query}` : "/raporlar/ogrenciler/profil-yazdir";
 }
 
 function MiniStat({ label, value }: { label: string; value: number | string }) {
