@@ -9,7 +9,7 @@ import { canManageAttendance } from "../src/lib/attendance/permissions.ts";
 import { canEditStudentDocuments } from "../src/lib/documents/permissions.ts";
 import { canEditStudentEvaluations } from "../src/lib/evaluations/permissions.ts";
 import { canManageClassAssignments, canManageClassSchedule, canViewClassSchedule } from "../src/lib/education/permissions.ts";
-import { canEditStudentGrades } from "../src/lib/grades/permissions.ts";
+import { canEditClassCourseGrades, canEditStudentGrades } from "../src/lib/grades/permissions.ts";
 import { canEditInfirmaryRecord } from "../src/lib/infirmary/permissions.ts";
 import { canBindParentFromStudentDetail } from "../src/lib/parents/permissions.ts";
 import { canManageAcademicTerms } from "../src/lib/terms/management-permissions.ts";
@@ -83,7 +83,7 @@ test("hoca role can access hafizlik module from navigation and routes", () => {
   const hrefs = nav.flatMap((group) => group.items.map((item) => item.href));
 
   assert.equal(labels.includes("Hafızlık Takibi"), true);
-  assert.equal(hrefs.includes("/not-sistemi/not-girisi"), false);
+  assert.equal(hrefs.includes("/not-sistemi/not-girisi"), true);
 });
 
 test("rehberlik can view students but cannot create students or talepler", () => {
@@ -105,6 +105,20 @@ test("rehberlik cannot use academic write helpers", async () => {
   assert.equal(canEditInfirmaryRecord(rehberlik, { status: "active" }, { department_id: "dep-1", class_teacher_id: null }), false);
   assert.equal(canEditStudentDocuments(rehberlik, { status: "active" }, { department_id: "dep-1", class_teacher_id: null }), false);
   assert.equal(canBindParentFromStudentDetail(rehberlik), false);
+});
+
+test("bolum muduru can enter grades only for active students and courses in own department", () => {
+  const manager = profile("bolum_muduru", { department_id: "dep-1" });
+  const ownClass = { department_id: "dep-1", class_teacher_id: null };
+  const otherClass = { department_id: "dep-2", class_teacher_id: null };
+  const activeCourse = { teacher_id: null, is_active: true };
+
+  assert.equal(canEditStudentGrades(manager, { status: "active" }, ownClass, []), true);
+  assert.equal(canEditStudentGrades(manager, { status: "active" }, otherClass, []), false);
+  assert.equal(canEditStudentGrades(manager, { status: "archived" }, ownClass, []), false);
+  assert.equal(canEditClassCourseGrades(manager, ownClass, activeCourse), true);
+  assert.equal(canEditClassCourseGrades(manager, otherClass, activeCourse), false);
+  assert.equal(canEditClassCourseGrades(manager, ownClass, { ...activeCourse, is_active: false }), false);
 });
 
 test("yonetim role can view global routes but cannot use write helpers", async () => {

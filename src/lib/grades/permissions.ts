@@ -31,6 +31,10 @@ export function canEditStudentGrades(
     return true;
   }
 
+  if (profile.role === "bolum_muduru") {
+    return Boolean(profile.department_id && courseClass?.department_id === profile.department_id);
+  }
+
   if (profile.role === "hoca") {
     return classCourses.some((classCourse) => classCourse.teacher_id === profile.id);
   }
@@ -53,6 +57,10 @@ export function canEditClassCourseGrades(
 
   if (profile.role === "admin" || profile.role === "genel_mudur") {
     return true;
+  }
+
+  if (profile.role === "bolum_muduru") {
+    return Boolean(profile.department_id && profile.department_id === courseClass.department_id);
   }
 
   if (profile.role === "hoca") {

@@ -150,7 +150,7 @@ export async function getGradeEntryWorkspace(
     currentTerm,
     students,
     canSubmit: canEditClassCourseGrades(profile, selectedClass, selectedClassCourse) && Boolean(selectedExamType) && isWritableTerm(currentTerm),
-    isReadOnly: profile.role === "bolum_muduru" || profile.role === "destek_birim_muduru",
+    isReadOnly: profile.role === "destek_birim_muduru",
     lockDepartmentSelection: profile.role === "bolum_muduru" || profile.role === "hoca" || profile.role === "destek_birim_muduru",
   };
 }
