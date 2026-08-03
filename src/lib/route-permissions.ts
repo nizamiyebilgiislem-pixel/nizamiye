@@ -72,6 +72,7 @@ export const routePermissions: Record<string, UserRole[]> = {
   "/yatakhane": staffAndSupportRoles,
   "/yatakhane/yeni": managerRoles,
   "/yatakhane/[id]": staffAndSupportRoles,
+  "/yatakhane/[id]/pdf": staffAndSupportRoles,
   "/yatakhane/[id]/duzenle": managerRoles,
   "/yatakhane/[id]/yerlestir": managerRoles,
   "/revir": staffAndSupportRoles,

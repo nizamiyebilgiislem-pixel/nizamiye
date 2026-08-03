@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Edit3, Eye } from "lucide-react";
+import { Download, Edit3, Eye } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
@@ -63,6 +63,10 @@ export function DormitoryCard({ dormitory, assignedCount, canManage }: Dormitory
           <Link href={`/yatakhane/${dormitory.id}`} className={cn(buttonVariants({ size: "sm", variant: "outline" }), "flex-1")}>
             <Eye className="size-3.5" aria-hidden="true" />
             Detay
+          </Link>
+          <Link href={`/yatakhane/${dormitory.id}/pdf`} target="_blank" rel="noreferrer" className={cn(buttonVariants({ size: "sm", variant: "outline" }), "flex-1")}>
+            <Download className="size-3.5" aria-hidden="true" />
+            PDF Al
           </Link>
           {canManage && (
             <Link href={`/yatakhane/${dormitory.id}/duzenle`} className={cn(buttonVariants({ size: "sm", variant: "outline" }), "flex-1")}>

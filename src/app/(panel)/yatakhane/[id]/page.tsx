@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { ArrowLeft, Bed, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Bed, Download, Plus, Trash2 } from "lucide-react";
 
 import { FormSubmitButton } from "@/components/forms/form-submit-button";
 import { deleteDormitoryAction } from "@/lib/dormitory/actions";
@@ -51,6 +51,10 @@ export default async function DormitoryDetailPage({ params }: DormitoryDetailPag
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <Link href={`/yatakhane/${dormitory.id}/pdf`} target="_blank" rel="noreferrer" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+            <Download className="size-4" aria-hidden="true" />
+            PDF Al
+          </Link>
           {canManage && !isFull && (
             <Link href={`/yatakhane/${dormitory.id}/yerlestir`} className={cn(buttonVariants())}>
               <Plus className="size-4" aria-hidden="true" />

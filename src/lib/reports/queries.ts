@@ -125,13 +125,26 @@ export type DormitoryReportRow = {
   studentCount: number;
 };
 
-export async function getDormitoryReportData() {
+export async function getDormitoryReportData(profile?: ProfileRow) {
   const supabase = await createSupabaseServerClient();
-  const { data: dormitories } = await supabase.from("dormitories").select("*").order("name");
-  const { data: rawAssignments } = await supabase
+  let dormitoryQuery = supabase.from("dormitories").select("*").order("name");
+
+  if (profile?.role === "bolum_muduru") {
+    dormitoryQuery = dormitoryQuery.eq("department_id", profile.department_id ?? "");
+  }
+
+  const { data: dormitories } = await dormitoryQuery;
+  const dormitoryIds = (dormitories ?? []).map((dormitory) => dormitory.id);
+  let assignmentQuery = supabase
     .from("dormitory_assignments")
     .select("*, student:students(*)")
     .eq("status", "active");
+
+  if (profile?.role === "bolum_muduru") {
+    assignmentQuery = assignmentQuery.in("dormitory_id", dormitoryIds.length > 0 ? dormitoryIds : [""]);
+  }
+
+  const { data: rawAssignments } = await assignmentQuery;
 
   const assignments = (rawAssignments ?? []) as unknown as (DormitoryAssignmentRow & { student: StudentRow | null })[];
 

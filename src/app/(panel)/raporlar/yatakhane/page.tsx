@@ -24,7 +24,7 @@ export default async function DormitoryReportsPage() {
 
   const [dashboard, reportData] = await Promise.all([
     getDormitoryDashboardData(profile),
-    getDormitoryReportData(),
+    getDormitoryReportData(profile),
   ]);
 
   return (
@@ -45,7 +45,7 @@ export default async function DormitoryReportsPage() {
         <div className="space-y-3">
           <h2 className="text-base font-semibold text-[#093657]">Oda Bazlı Doluluk</h2>
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-            {reportData.map(({ dormitory, studentCount }) => (
+            {reportData.map(({ dormitory, studentCount, assignments }) => (
               <Card key={dormitory.id} className="bg-white">
                 <CardHeader className="border-b border-border pb-2">
                   <div className="flex items-center justify-between">
@@ -59,6 +59,21 @@ export default async function DormitoryReportsPage() {
                   <p className="text-xs text-muted-foreground">
                     {dormitory.description ?? ""}
                   </p>
+                  {assignments.length > 0 ? (
+                    <ol className="mt-3 space-y-1 border-t border-border pt-3 text-sm">
+                      {assignments
+                        .slice()
+                        .sort((left, right) => (left.student?.full_name ?? "").localeCompare(right.student?.full_name ?? "", "tr"))
+                        .map((assignment, index) => (
+                          <li key={assignment.id} className="flex gap-2">
+                            <span className="w-5 shrink-0 text-right text-muted-foreground">{index + 1}.</span>
+                            <span className="font-medium text-[#093657]">{assignment.student?.full_name ?? "Bilinmeyen talebe"}</span>
+                          </li>
+                        ))}
+                    </ol>
+                  ) : (
+                    <p className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">Bu yatakhanede aktif talebe bulunmuyor.</p>
+                  )}
                 </CardContent>
               </Card>
             ))}
